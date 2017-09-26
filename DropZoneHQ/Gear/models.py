@@ -3,9 +3,9 @@ from django.db import models
 # Create your models here.
 
 class Employee (models.Model):
-    name = models.CharField(100)
+    name = models.CharField(max_length=100)
     # I don't know if we are keeping the users like this Django might have a better way
-    pin = models.CharField(8)
+    pin = models.CharField(max_length=200)
     employment_date = models.DateTimeField('employment date')
 
 class Instructor(models.Model):
