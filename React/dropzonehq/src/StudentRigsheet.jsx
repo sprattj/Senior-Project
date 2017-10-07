@@ -1,7 +1,7 @@
 import React from 'react';
 import Rigsheet from './Rigsheet.jsx';
 import RigsheetRow from './RigsheetRow.jsx';
-import PackButton from './PackButton.jsx';
+import PackButton from './ModalButtons/PackButton.jsx';
 
 
 /* A StudentRigsheet is a rigsheet that contains all signouts for
@@ -30,7 +30,7 @@ export default class StudentRigsheet extends React.Component {
   render() {
     var sheetRows = this.getRigsheetRows();
     return (
-      <Rigsheet style={this.props.style} headerText="Tandem">
+      <Rigsheet style={this.props.style} headerText="Student">
         {sheetRows}
       </Rigsheet>
     );

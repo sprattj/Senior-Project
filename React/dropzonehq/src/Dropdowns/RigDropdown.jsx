@@ -3,33 +3,31 @@ import Dropdown from './Dropdown.jsx';
 import DropdownOption from './DropdownOption.jsx';
 import { Form } from 'reactstrap';
 
-export default class InstructorDropdown extends React.Component {
+export default class RigDropdown extends React.Component {
 
-    getInstructors() {
+    getRigs() {
 
-        var instructorData = [{ name: "Paul B", id: "1" },
+        var rigData = [{ name: "Paul B", id: "1" },
         { name: "Paul B", id: "2" },
         { name: "Paul B", id: "3" },
         { name: "Paul B", id: "4" }];//get row data from ajax
         var options = []; //
 
-        Object.keys(instructorData).forEach(function (i) {
+        Object.keys(rigData).forEach(function (i) {
             var nextOption = <DropdownOption
                 key={i}
-                optionText={instructorData[i].name} />
+                optionText={rigData[i].name} />
             options.push(nextOption);
         });
         return options;
     }
 
     render() {
-        var instructors = this.getInstructors();
+        var rigs = this.getRigs();
         return (
-            <Form>
-                <Dropdown id={"instructorDropdown"} labelText="Instructor:">
-                    {instructors}
+                <Dropdown id={"rigDropdown"} labelText="Rig:">
+                    {rigs}
                 </Dropdown>
-            </Form>
         );
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import PackButton from './PackButton.jsx';
+import PackButton from './ModalButtons/PackButton.jsx';
 
 /*
   A RigsheetRow is a row in a list of rigsheets.

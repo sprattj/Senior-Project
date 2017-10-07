@@ -15,7 +15,7 @@ export default class PackButton extends React.Component {
  
     render() {
        return (
-           <ModalButton buttonText={"Pack"} modalTitle={"Confirm action?"}
+           <ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"Pack"} modalTitle={"Confirm action?"}
                         modalContent={<p>The modal body content</p>}
                         modalPrimaryButtonText="Authorize"
                         modalPrimaryClick={this.authorize}/>

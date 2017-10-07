@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from 'reactstrap';
-import { reactstrapColors } from './reactstrapColors.js';
+import { reactstrapColors } from '../reactstrapStyles.js';
 
 /*
     An AlertBox is a Reactstrap Alert that can have its

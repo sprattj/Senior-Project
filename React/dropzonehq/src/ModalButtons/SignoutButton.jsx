@@ -1,6 +1,9 @@
 import React from 'react';
+import { Form } from 'reactstrap';
 import ModalButton from './ModalButton.jsx';
-import InstructorDropdown from './InstructorDropdown.jsx';
+import RigDropdown from '../Dropdowns/RigDropdown.jsx';
+import PlaneLoadDropdown from '../Dropdowns/PlaneLoadDropdown.jsx';
+import InstructorDropdown from '../Dropdowns/InstructorDropdown.jsx';
 
 /*
   A SignoutButton is a button for signing out rigs on rigsheets.
@@ -15,9 +18,9 @@ export default class SignoutButton extends React.Component {
   }
  
     render() {
-      const modalContent = <InstructorDropdown/>
+      const modalContent = <Form><InstructorDropdown/><RigDropdown/><PlaneLoadDropdown/></Form>;
        return (
-           <ModalButton buttonText={"Signout Rig"} modalTitle={"Signout Rig"}
+           <ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"Signout Rig"} modalTitle={"Signout Rig"}
                         modalContent={modalContent}
                         modalPrimaryButtonText="Signout"
                         modalPrimaryClick={this.authorize}/>

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardBlock, Table } from 'reactstrap';
 import RigsheetRow from './RigsheetRow.jsx';
-import SignoutButton from './SignoutButton.jsx';
+import SignoutButton from './ModalButtons/SignoutButton.jsx';
 
 /*
     A Rigsheet is a list of rows of rig signouts.

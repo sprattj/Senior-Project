@@ -1,7 +1,7 @@
 import React from 'react';
 import Rigsheet from './Rigsheet.jsx';
 import RigsheetRow from './RigsheetRow.jsx';
-import PackButton from './PackButton.jsx';
+import PackButton from './ModalButtons/PackButton.jsx';
 
 
 /* A TandemRigsheet is a rigsheet that contains all signouts for

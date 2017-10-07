@@ -8,3 +8,4 @@
 */
 
 export const reactstrapColors = ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark" ];
+export const reactstrapButtonSizes = ["sm", "md", "lg"];
