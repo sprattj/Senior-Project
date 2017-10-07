@@ -23,9 +23,11 @@ export default class SiteNavbar extends React.Component {
   }
   render() {
     return (
-      <div>
+      
         <Navbar color="faded" light expand="md">
-          <NavbarBrand href={this.props.brandLink}>{this.props.brandText}</NavbarBrand>
+          <NavbarBrand href={this.props.brandLink}>
+          <img src={this.props.brandImage} height="75" width="75" alt="logo"/> 
+          <h1>{this.props.brandText}</h1></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
@@ -33,7 +35,7 @@ export default class SiteNavbar extends React.Component {
             </Nav>
           </Collapse>
         </Navbar>
-      </div>
+      
     );
   }
 }
@@ -41,6 +43,7 @@ export default class SiteNavbar extends React.Component {
 SiteNavbar.propTypes = {
     brandText: PropTypes.string.isRequired, //the brand text of the nav
     brandLink: PropTypes.string.isRequired, //what the brand text links to
+    brandImage: PropTypes.string
     //children: PropTypes.arrayOf(PropTypes.instanceOf(NavItem)).isRequired //the children of a SiteNavbar must be Reactstrap Navitems.
 }
 

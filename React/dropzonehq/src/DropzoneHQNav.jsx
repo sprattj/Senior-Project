@@ -10,9 +10,10 @@ import { NavItem, NavLink } from 'reactstrap';
 */
 export default class DropzoneHQNav extends React.Component {
 
+    //svg link https://docs.google.com/uc?id=0ByDw0k4qQe74SXUyNWhXb2dPc1U
     render() {
         return (
-            <SiteNavbar brandText="Dropzone HQ" brandLink="#">
+            <SiteNavbar brandImage={"https://docs.google.com/uc?id=0ByDw0k4qQe74ZE5LVHY1eTZYaXM"} brandText="Dropzone HQ" brandLink="#">
                 <NavItem>
                     <NavLink href="#">Thing</NavLink>
                 </NavItem>
