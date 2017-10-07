@@ -1,9 +1,17 @@
 import React from 'react';
-import Dropdown from './Dropdown.jsx';
+import PropTypes from 'prop-types';
+import { Card, CardHeader, CardBlock, Table } from 'reactstrap';
 import RigsheetRow from './RigsheetRow.jsx';
-import { Table, FormGroup, Label, Input } from 'reactstrap';
-import { Card, CardHeader, CardBlock } from 'reactstrap';
+import SignoutButton from './SignoutButton.jsx';
 
+/*
+    A Rigsheet is a list of rows of rig signouts.
+    Each row has an instructor, a rig #, a plane load,
+    and a packed by field. 
+
+    The style, header text, and rows of this rigsheet
+    are controlled via props.
+*/
 export default class Rigsheet extends React.Component {
     render() {
         return (
@@ -23,8 +31,14 @@ export default class Rigsheet extends React.Component {
                             {this.props.children}
                         </tbody>
                     </Table>
+                    <SignoutButton />
                 </CardBlock>
             </Card>
         );
     }
+}
+
+Rigsheet.propTypes = {
+    headerText: PropTypes.string.isRequired, //the text in the header of the rigsheet
+    //children: PropTypes.arrayOf(RigsheetRow).isRequired //an array of rigsheet rows
 }

@@ -1,29 +1,44 @@
-import React, { Component } from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import React from 'react';
+import { Row, Col } from 'reactstrap';
+import DropzoneHQNav from './DropzoneHQNav.jsx';
 import TandemRigsheet from './TandemRigsheet.jsx';
 import StudentRigsheet from './StudentRigsheet.jsx';
 import SignoutAlertList from './SignoutAlertList.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
+import {styles} from './styles.js';
 
-class SheetsScreen extends Component {
+const marginTopStyle = {
+    marginTop: styles.marginTop
+};
+
+/*
+    SheetsScreen is a view for seeing the tandem and
+    student rigsheets, any errors/reports for rigs that
+    instructors and packers should know, signing out rigs,
+    reporting rigs as packed, and report rig damage.
+
+    All related features as per the design will also be 
+    covered here.
+*/
+export default class SheetsScreen extends React.Component {
   render() {
     return (
         <div>
             <Row>
-                <Col md={{size: 12}}>
-                <h1> Dropzone HQ </h1>
+                <Col lg={{size: 12}}>
+                <DropzoneHQNav/>
                 </Col>
             </Row>
-            <Row>
-                <Col md={{size: 5, offset: 1}}>
+            <Row style={marginTopStyle}>
+                <Col lg={{size: 5, offset: 1}}>
                     <TandemRigsheet/>
                 </Col>
-                <Col md={{size: 5}}>
+                <Col lg={{size: 5}}>
                     <StudentRigsheet/>
                 </Col>
             </Row>
-            <Row>
-                <Col md={{size: 10, offset:1}}>
+            <Row style={marginTopStyle}>
+                <Col lg={{size: 10, offset:1}}>
                     <SignoutAlertList/>
                 </Col>
             </Row>
@@ -31,5 +46,3 @@ class SheetsScreen extends Component {
     );
   }
 }
-
-export default SheetsScreen;

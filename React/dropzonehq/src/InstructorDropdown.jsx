@@ -1,16 +1,35 @@
 import React from 'react';
 import Dropdown from './Dropdown.jsx';
-import { FormGroup, Label, Input } from 'reactstrap';
+import DropdownOption from './DropdownOption.jsx';
+import { Form } from 'reactstrap';
 
-export default class instructorDropdown extends React.Component {
-  render() {
-      var id = "instructorDropdown";
-      var labelText = "Instructor: ";
-    return (
-        <Dropdown id={id} labelText={labelText}>
-            <option>instructor 1</option>
-            <option>instructor 2</option>
-        </Dropdown>
-    );
-  }
+export default class InstructorDropdown extends React.Component {
+
+    getInstructors() {
+
+        var instructorData = [{ name: "Paul B", id: "1" },
+        { name: "Paul B", id: "2" },
+        { name: "Paul B", id: "3" },
+        { name: "Paul B", id: "4" }];//get row data from ajax
+        var options = []; //
+
+        Object.keys(instructorData).forEach(function (i) {
+            var nextOption = <DropdownOption
+                key={i}
+                optionText={instructorData[i].name} />
+            options.push(nextOption);
+        });
+        return options;
+    }
+
+    render() {
+        var instructors = this.getInstructors();
+        return (
+            <Form>
+                <Dropdown id={"instructorDropdown"} labelText="Instructor:">
+                    {instructors}
+                </Dropdown>
+            </Form>
+        );
+    }
 }

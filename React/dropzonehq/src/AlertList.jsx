@@ -1,6 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Card, CardHeader, CardBlock } from 'reactstrap';
+import AlertBox from './AlertBox.jsx';
 
+/*
+    An AlertList is a list of Reactstrap alerts.
+
+    It has a header that can be set via props.
+    AlertLists must have children, and those children
+    must be AlertBoxes.
+*/
 export default class AlertList extends React.Component {
     render() {
         return (
@@ -12,4 +21,9 @@ export default class AlertList extends React.Component {
             </Card>
         );
     }
+}
+
+AlertList.propTypes = {
+    headerText: PropTypes.string.isRequired, //the title of the alerts
+    //children: PropTypes.arrayOf(AlertBox).isRequired //the children of AlertLists must be AlertBoxes.
 }
