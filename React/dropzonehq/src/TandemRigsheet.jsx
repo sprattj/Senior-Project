@@ -10,10 +10,24 @@ import PackButton from './ModalButtons/PackButton.jsx';
 export default class TandemRigsheet extends React.Component {
 
   getRigsheetRows() {
+    var rowData;
     
-    var rowData = [{instructor: "Paul B",rigNum:"S9",planeLoad: "111",packedBy: <PackButton/>},
-    {instructor: "Paul B",rigNum:"S9",planeLoad: "111",packedBy: "Brian K"},
-    {instructor: "Paul B",rigNum:"S9",planeLoad: "111",packedBy: "Brian K"}];//get row data from ajax
+    // Optionally the request above could also be done as
+    axios.get('http://www.dropzonehq.com/evs', {
+      params: {
+        isTandem: true
+      }
+    })
+      .then(function (response) {
+        rowData = response;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    /*var rowData = [{ instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: <PackButton /> },
+    { instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: "Brian K" },
+    { instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: "Brian K" }];//get row data from ajax*/
     var rows = []; //
 
     Object.keys(rowData).forEach(function (i) {

@@ -12,7 +12,6 @@ import { styles } from './styles.js';
 const marginStyle = {
     marginTop: 25,
     marginBottom: 25
-
 };
 
 /*
