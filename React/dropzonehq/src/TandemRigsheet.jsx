@@ -12,8 +12,8 @@ export default class TandemRigsheet extends React.Component {
   getRigsheetRows() {
     var rowData;
     
-    /* Optionally the request above could also be done as
-    axios.get('www.dropzonehq.com/evs', {
+    // Optionally the request above could also be done as
+    axios.get('http://www.dropzonehq.com/evs', {
       params: {
         isTandem: true
       }
@@ -23,11 +23,11 @@ export default class TandemRigsheet extends React.Component {
       })
       .catch(function (error) {
         console.log(error);
-      });*/
+      });
 
-    var rowData = [{ instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: <PackButton /> },
+    /*var rowData = [{ instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: <PackButton /> },
     { instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: "Brian K" },
-    { instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: "Brian K" }];//get row data from ajax
+    { instructor: "Paul B", rigNum: "S9", planeLoad: "111", packedBy: "Brian K" }];//get row data from ajax*/
     var rows = []; //
 
     Object.keys(rowData).forEach(function (i) {
