@@ -15,7 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.http import HttpRequest
+
+from DropZoneHQ.Django import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    # url(r'^', include('DropZoneHQ.urls')),
+    url(r'^rigs/$', views.RigViewSet.rig_list),
+    url(r'^rigs/(?P<pk>[0-9]+/$)', views.RigViewSet.rig_detail),
+    url(r'^dropzonehq.com/evs$',
+        views.EmployeeVsSignoutViewSet.get(request=HttpRequest.GET, istandem=False), name='EvsRegular'),
+    url(r'^dropzonehq.com/evs?istandem=True$',
+        views.EmployeeVsSignoutViewSet.get(request=HttpRequest.GET, istandem=True), name='EvsIsTandem')
 ]
