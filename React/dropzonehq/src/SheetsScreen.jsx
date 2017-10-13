@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 import DropzoneHQNav from './DropzoneHQNav.jsx';
-import TandemRigsheet from './TandemRigsheet.jsx';
-import StudentRigsheet from './StudentRigsheet.jsx';
+import TandemRigsheetTable from './Table/TandemRigsheetTable.jsx';
+import StudentRigsheetTable from './Table/StudentRigsheetTable.jsx';
 import SignoutAlertList from './Alerts/SignoutAlertList.jsx';
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
 import PackedWrongRigButton from './ModalButtons/PackedWrongRigButton.jsx';
@@ -24,7 +24,7 @@ const marginStyle = {
     All related features as per the design will also be 
     covered here.
 */
-export default class SheetsScreen extends React.Component {
+class SheetsScreen extends React.Component {
     render() {
         return (
             <div>
@@ -35,10 +35,10 @@ export default class SheetsScreen extends React.Component {
                 </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
-                        <TandemRigsheet />
+                        <TandemRigsheetTable />
                     </Col>
                     <Col lg={{ size: 5 }}>
-                        <StudentRigsheet />
+                        <StudentRigsheetTable />
                     </Col>
                 </Row>
                 <Row style={marginStyle}>
@@ -59,4 +59,6 @@ export default class SheetsScreen extends React.Component {
             </div>
         );
     }
-}
+};
+
+export default SheetsScreen;
