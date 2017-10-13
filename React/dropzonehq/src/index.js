@@ -2,12 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import SheetsScreen from './SheetsScreen.jsx';
-import EmployeeAdminScreen from './EmployeeAdminScreen.jsx'
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
-
-import {Alert} from 'reactstrap';
-
-ReactDOM.render(<EmployeeAdminScreen/>, document.getElementById('root'));
+ReactDOM.render(<SheetsScreen />, document.getElementById('root'));
 registerServiceWorker();
