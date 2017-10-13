@@ -12,19 +12,6 @@ import { FormGroup, Label, Input } from 'reactstrap';
   A Dropdown must be rendered inside a Reactstrap form.
 */
 export default class TextArea extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputValue: ''
-    };
-  }
-  
-  updateInputValue(evt) {
-    this.setState({
-      inputValue: evt.target.value
-    })
-  }
-
   render() {
     return (
       <FormGroup>
