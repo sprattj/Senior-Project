@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'DropZoneHQ.Django.apps.DropzonehqappConfig'
+    'datastore.apps.DropZoneHQAppConfig'
 ]
 
 MIDDLEWARE = [
@@ -50,12 +50,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'DropZoneHQ.Django.urls'
+ROOT_URLCONF = 'DropZoneHQ.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, '../../templates')],
+        'DIRS': [os.path.join(BASE_DIR, '../../../../../../Templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'dropzone_hq',
         'HOST': 'localhost',
         'USER': 'root',
-        'PASSWORD': 'hpmx7575',
+        'PASSWORD': 'root',
         'PORT': '3306'
     }
 }

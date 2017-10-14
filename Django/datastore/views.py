@@ -1,11 +1,11 @@
-from DropZoneHQ.models import *
+from Django.datastore.serializers import *
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 # from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-from DropZoneHQ.Django.serializers import *
+from Django.datastore.models import *
 
 
 class RigViewSet(viewsets.ModelViewSet):
