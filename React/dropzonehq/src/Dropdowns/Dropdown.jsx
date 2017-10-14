@@ -13,11 +13,26 @@ import DropdownOption from './DropdownOption.jsx';
   A Dropdown must be rendered inside a Reactstrap form.
 */
 export default class Dropdown extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputValue: ''
+    };
+  }
+
+  updateInputValue(evt) {
+    this.setState({
+      inputValue: evt.target.value
+    });
+  }
+
   render() {
     return (
         <FormGroup>
           <Label for={this.props.id}>{this.props.labelText}</Label>
-          <Input type="select" name="select" id={this.props.id}>
+          <Input type="select" name="select" id={this.props.id} 
+                value={this.state.inputValue} 
+                onChange={evt => this.updateInputValue(evt)}>
             {this.props.children}
           </Input>
         </FormGroup>
