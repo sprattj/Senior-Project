@@ -25,6 +25,7 @@ class Actions(models.Model):
         managed = False
         # Name of table in DB
         db_table = 'actions'
+        app_label = 'dropZoneHQ'
 
 
 # An item used on a rig that automatically deploys a parachute at a certain altitude
@@ -42,6 +43,7 @@ class AutomaticActivationDevices(models.Model):
     class Meta:
         managed = False
         db_table = 'automatic_activation_devices'
+        app_label = 'dropZoneHQ'
 
 
 # An item that is classified as a canopy for a skydiving rig
@@ -62,6 +64,7 @@ class Canopies(models.Model):
     class Meta:
         managed = False
         db_table = 'canopies'
+        app_label = 'dropZoneHQ'
 
 
 # An item that holds a canopy
@@ -74,6 +77,7 @@ class Containers(models.Model):
     class Meta:
         managed = False
         db_table = 'containers'
+        app_label = 'dropZoneHQ'
 
 
 class DjangoMigrations(models.Model):
@@ -84,6 +88,7 @@ class DjangoMigrations(models.Model):
     class Meta:
         managed = False
         db_table = 'django_migrations'
+        app_label = 'dropZoneHQ'
 
 
 # A location that is used as a skydiving drop zone.
@@ -101,6 +106,7 @@ class Dropzones(models.Model):
     class Meta:
         managed = False
         db_table = 'dropzones'
+        app_label = 'dropZoneHQ'
 
 
 # Roles of employees
@@ -113,7 +119,7 @@ class EmployeeRoles(models.Model):
     class Meta:
         managed = False
         db_table = 'employee_roles'
-
+        app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone
 class Employees(models.Model):
@@ -130,6 +136,7 @@ class Employees(models.Model):
     class Meta:
         managed = False
         db_table = 'employees'
+        app_label = 'dropZoneHQ'
 
 
 # Bridge between Employees and Actions. Many employees can perform many actions.
@@ -143,6 +150,7 @@ class EmployeesActions(models.Model):
         managed = False
         db_table = 'employees_actions'
         unique_together = (('employee', 'action'),)
+        app_label = 'dropZoneHQ'
 
 
 # Bridge between Employees and Roles. Many employees can perform many roles.
@@ -154,6 +162,7 @@ class EmployeesEmployeeRoles(models.Model):
         managed = False
         db_table = 'employees_employee_roles'
         unique_together = (('employee', 'role'),)
+        app_label = 'dropZoneHQ'
 
 
 # Bridge between Employees and Rentals. Many employees can authorize many rentals.
@@ -165,6 +174,7 @@ class EmployeesRentals(models.Model):
         managed = False
         db_table = 'employees_rentals'
         unique_together = (('employee', 'rental'),)
+        app_label = 'dropZoneHQ'
 
 
 # Bridge between Employees and Services. Many employees can perform many services.
@@ -180,7 +190,7 @@ class EmployeesServices(models.Model):
         managed = False
         db_table = 'employees_services'
         unique_together = (('employee', 'service'),)
-
+        app_label = 'dropZoneHQ'
 
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
@@ -195,6 +205,7 @@ class EmployeesSignouts(models.Model):
         managed = False
         db_table = 'employees_signouts'
         unique_together = (('employee', 'signout'),)
+        app_label = 'dropZoneHQ'
 
 
 # Types of items
@@ -207,6 +218,7 @@ class ItemTypes(models.Model):
     class Meta:
         managed = False
         db_table = 'item_types'
+        app_label = 'dropZoneHQ'
 
 
 # Items that will be interacted with by employees at the drop zone.
@@ -226,6 +238,7 @@ class Items(models.Model):
     class Meta:
         managed = False
         db_table = 'items'
+        app_label = 'dropZoneHQ'
 
 
 # Bridge between Items and Rentals. Many items can be rented many times.
@@ -237,6 +250,7 @@ class ItemsRentals(models.Model):
         managed = False
         db_table = 'items_rentals'
         unique_together = (('item', 'rental'),)
+        app_label = 'dropZoneHQ'
 
 
 # Gear rentals from the drop zone
@@ -253,6 +267,7 @@ class Rentals(models.Model):
     class Meta:
         managed = False
         db_table = 'rentals'
+        app_label = 'dropZoneHQ'
 
 
 # A subclass of items and canopies.
@@ -270,6 +285,7 @@ class ReserveCanopies(models.Model):
     class Meta:
         managed = False
         db_table = 'reserve_canopies'
+        app_label = 'dropZoneHQ'
 
 
 # An item that is comprised of the key components used for a skydiving outfit.(AKA a rig)
@@ -287,6 +303,7 @@ class Rigs(models.Model):
     class Meta:
         managed = False
         db_table = 'rigs'
+        app_label = 'dropZoneHQ'
 
 
 # A record of changes made to rigs. Inserted into after update to Rigs
@@ -308,6 +325,7 @@ class RigsAuditTrail(models.Model):
     class Meta:
         managed = False
         db_table = 'rigs_audit_trail'
+        app_label = 'dropZoneHQ'
 
 
 # Services that employees need to perform
@@ -325,6 +343,7 @@ class Services(models.Model):
     class Meta:
         managed = False
         db_table = 'services'
+        app_label = 'dropZoneHQ'
 
 
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.
@@ -337,6 +356,7 @@ class Signouts(models.Model):
     rig = models.ForeignKey(Rigs, models.DO_NOTHING)
 
     class Meta:
+        app_label = 'dropZoneHQ'
         managed = False
         db_table = 'signouts'
 
@@ -359,6 +379,7 @@ class AllCanopies(models.Model):
     ride_count = models.IntegerField()
 
     class Meta:
+        app_label = 'dropZoneHQ'
         managed = False
         db_table = 'all_canopies'
 
@@ -388,6 +409,7 @@ class AllItems(models.Model):
     packed_by_employee_id = models.IntegerField()
 
     class Meta:
+        app_label = 'dropZoneHQ'
         managed = False
         db_table = 'all_items'
 
@@ -401,6 +423,7 @@ class EmployeesVsSignouts(models.Model):
     packed_by = models.CharField(max_length=90)
 
     class Meta:
+        app_label = 'dropZoneHQ'
         managed = False
         db_table = 'employees_vs_signouts'
 
@@ -413,5 +436,6 @@ class EmployeesVsSignoutsTandem(models.Model):
     packed_by = models.CharField(max_length=90)
 
     class Meta:
+        app_label = 'dropZoneHQ'
         managed = False
         db_table = 'employees_vs_signouts_tandem'

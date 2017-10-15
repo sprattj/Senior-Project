@@ -1,12 +1,10 @@
-import sys
-sys.path.append('../')
-from datastore.serializers import *
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 # from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from datastore.models import *
+from .models import *
+from .serializers import *
 
 
 class RigViewSet(viewsets.ModelViewSet):

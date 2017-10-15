@@ -4,7 +4,7 @@ from django.utils.six import BytesIO
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 
-from backend.datastore.serializers import *
+from .serializers import *
 
 # print(Canopies.objects.all().values().__str__())
 # print(RigViewSet.get_queryset(RigViewSet.serializer_class).values().__str__())
