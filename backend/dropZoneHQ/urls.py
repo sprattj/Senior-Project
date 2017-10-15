@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^rigs/$', RigViewSet.rig_list),
     url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.rig_detail),
     url(r'^dropzonehq.com/evs$',
-       EmployeeVsSignoutViewSet.get(request=HttpRequest.GET, istandem=False), name='EvsRegular'),
+       EmployeeVsSignoutViewSet.get(request=HttpRequest, is_tandem=False), name='EvsRegular'),
     url(r'^dropzonehq.com/evs?istandem=True$',
-       EmployeeVsSignoutViewSet.get(request=HttpRequest.GET, istandem=True), name='EvsIsTandem')
+       EmployeeVsSignoutViewSet.get(request=HttpRequest, is_tandem=True), name='EvsIsTandem')
 ]
