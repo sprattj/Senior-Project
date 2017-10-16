@@ -28,8 +28,6 @@ urlpatterns = [
     url(r'^', include('dropZoneHQ.urls')),
     url(r'^rigs/$', RigViewSet.rig_list),
     url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.rig_detail),
-    url(r'^dropzonehq.com/evs$',
-       EmployeeVsSignoutViewSet.get(request=HttpRequest, is_tandem=False), name='EvsRegular'),
-    url(r'^dropzonehq.com/evs?istandem=True$',
-       EmployeeVsSignoutViewSet.get(request=HttpRequest, is_tandem=True), name='EvsIsTandem')
+    url(r'^dropzonehq.com/evs$',EmployeeVsSignoutViewSet.employee_signout_records),
+    url(r'^dropzonehq.com/evs?istandem=True$',EmployeeVsSignoutViewSet.employee_signout_records),
 ]

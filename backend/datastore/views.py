@@ -58,12 +58,12 @@ class RigViewSet(viewsets.ModelViewSet):
 class EmployeeVsSignoutViewSet(viewsets.ModelViewSet):
 
     @csrf_exempt
-    def get(self, request, is_tandem):
+    def employee_signout_records(self, request, is_tandem):
         if is_tandem:
             queryset = EmployeesVsSignoutsTandem.objects.all()
         else:
             queryset = EmployeesVsSignouts.objects.all()
-        serializer_class = EmployeeVsSignoutSerializer
+        serializer_class = EmployeeVsSignoutSerializer()
         if request.method == 'GET':
             serializer = serializer_class(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
@@ -71,4 +71,4 @@ class EmployeeVsSignoutViewSet(viewsets.ModelViewSet):
 
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employees.objects.all()
-    serializer_class = EmployeeSerializer
+    serializer_class = EmployeeSerializer()
