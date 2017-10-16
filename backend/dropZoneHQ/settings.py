@@ -26,7 +26,7 @@ SECRET_KEY = '_@j1a4@c3ap8w92s+p-$_kqap%au7bl6@)$b*@$uwr+95#2^z^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.dropzone.com']
 
 # Application definition
 
