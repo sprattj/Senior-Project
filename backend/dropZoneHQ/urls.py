@@ -25,7 +25,6 @@ from backend.datastore.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('dropZoneHQ.urls')),
     url(r'^rigs/$', RigViewSet.rig_list),
     url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.rig_detail),
     url(r'^dropzonehq.com/evs$',EmployeeVsSignoutViewSet.employee_signout_records),
