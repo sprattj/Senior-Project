@@ -12,7 +12,7 @@ class RigViewSet(viewsets.ModelViewSet):
     API endpoint that allows rigs to be viewed or edited.
     """
     queryset = Rigs.objects.all()
-    serializer_class = RigSerializer
+    
 
     @csrf_exempt
     def rig_list(self, request):
@@ -36,8 +36,9 @@ class RigViewSet(viewsets.ModelViewSet):
             rig = RigViewSet.queryset.get(pk=pk)
         except Rigs.DoesNotExist:
             return HttpResponse(status=404)
-
-        if request.method == 'GET':
+        """if request.method == 'GET': request.method == 'GET'"""
+        if 1 == 1:
+            serializer_class = RigSerializer
             serializer = RigViewSet.serializer_class(rig)
             return JsonResponse(serializer.data)
 
@@ -55,20 +56,21 @@ class RigViewSet(viewsets.ModelViewSet):
             return HttpResponse(status=204)
 
 
+
 class EmployeeVsSignoutViewSet(viewsets.ModelViewSet):
 
     @csrf_exempt
-    def employee_signout_records(self, request, is_tandem):
-        if is_tandem:
-            queryset = EmployeesVsSignoutsTandem.objects.all()
-        else:
+    def employee_signout_records(self): 
             queryset = EmployeesVsSignouts.objects.all()
-        serializer_class = EmployeeVsSignoutSerializer()
-        if request.method == 'GET':
+            serializer_class = EmployeeVsSignoutSerializer
             serializer = serializer_class(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employees.objects.all()
-    serializer_class = EmployeeSerializer()
+
+    def employees(self):
+        queryset = Employees.objects.all()
+        serializer_class = EmployeeSerializer
+        serializer = serializer_class(queryset, many=True)
+        return JsonResponse(serializer.data, safe=False)
