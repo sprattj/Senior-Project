@@ -2,3 +2,13 @@ body {
     background-color: #97CCF1;
     overflow-x: hidden;
 }
+
+.navbar-brand {
+    padding: 0px;
+  }
+  .navbar-brand>img {
+    height: 75px;
+    padding-bottom: 0px;
+    width: auto;
+    float: left;
+  }

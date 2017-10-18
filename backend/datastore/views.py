@@ -60,17 +60,32 @@ class RigViewSet(viewsets.ModelViewSet):
 class EmployeeVsSignoutViewSet(viewsets.ModelViewSet):
 
     @csrf_exempt
+<<<<<<< HEAD:backend/datastore/views.py
     def employee_signout_records(self): 
             queryset = EmployeesVsSignouts.objects.all()
             serializer_class = EmployeeVsSignoutSerializer
+=======
+    def employee_signout_records(self, request, is_tandem):
+        if is_tandem:
+            queryset = EmployeesVsSignoutsTandem.objects.all()
+        else:
+            queryset = EmployeesVsSignouts.objects.all()
+        serializer_class = EmployeeVsSignoutSerializer()
+        if request.method == 'GET':
+>>>>>>> 11198e8d09d85a91ffa1802055a239c47fdaf783:backend/datastore/views.py
             serializer = serializer_class(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
+<<<<<<< HEAD:backend/datastore/views.py
 
     def employees(self):
         queryset = Employees.objects.all()
         serializer_class = EmployeeSerializer
         serializer = serializer_class(queryset, many=True)
         return JsonResponse(serializer.data, safe=False)
+=======
+    queryset = Employees.objects.all()
+    serializer_class = EmployeeSerializer()
+>>>>>>> 11198e8d09d85a91ffa1802055a239c47fdaf783:backend/datastore/views.py
