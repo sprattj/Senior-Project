@@ -26,6 +26,7 @@ SECRET_KEY = '_@j1a4@c3ap8w92s+p-$_kqap%au7bl6@)$b*@$uwr+95#2^z^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#CHANGE FOR PRODUCTION
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -78,17 +79,29 @@ WSGI_APPLICATION = 'dropZoneHQ.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'dropzonehq',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+            'PORT': 3306
+        }
+    }
 
-DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'dropzonehq',
-		'USER': 'root',
-		'PASSWORD': '',
-		'HOST': 'localhost',
-		'PORT': 3306
-	}
-}
 
 
 # Password validation
