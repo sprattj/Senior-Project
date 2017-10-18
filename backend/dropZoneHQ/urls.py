@@ -24,10 +24,18 @@ sys.path.append('../')
 from backend.datastore.views import *
 
 urlpatterns = [
+<<<<<<< HEAD:backend/dropZoneHQ/urls.py
     url(r'^a/', admin.site.urls),
     url(r'^rigs/$', RigViewSet.rig_list, HttpRequest().GET),
     url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.rig_detail),
 	url(r'^aaaa/',EmployeeViewSet.employees),
     url(r'^evs/',EmployeeVsSignoutViewSet.employee_signout_records),
     url(r'^evs?istandem=True$',EmployeeVsSignoutViewSet.employee_signout_records),
+=======
+    url(r'^admin/', admin.site.urls),
+    url(r'^rigs/$', RigViewSet.rig_list),
+    url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.rig_detail),
+    url(r'^dropzonehq.com/evs$',EmployeeVsSignoutViewSet.employee_signout_records),
+    url(r'^dropzonehq.com/evs?istandem=True$',EmployeeVsSignoutViewSet.employee_signout_records),
+>>>>>>> 11198e8d09d85a91ffa1802055a239c47fdaf783:backend/dropZoneHQ/urls.py
 ]
