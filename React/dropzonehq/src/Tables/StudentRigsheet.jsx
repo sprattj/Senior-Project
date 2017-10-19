@@ -1,6 +1,7 @@
 import React from 'react';
 import Rigsheet from './Rigsheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
+import SignoutButton from '../ModalButtons/SignoutButton.jsx';
 
 
 /* A StudentRigsheet is a rigsheet that contains all signouts for
@@ -86,6 +87,6 @@ export default class StudentRigsheet extends React.Component {
   ];//get row data from ajax
 
     //change to {this.state.rowData when running from server}
-    return <Rigsheet headerText="Student">{rowData}</Rigsheet>;
+    return <Rigsheet headerText="Student" footerContent={<SignoutButton/>}>{rowData}</Rigsheet>;
   }
 }

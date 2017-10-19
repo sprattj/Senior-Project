@@ -10,14 +10,15 @@ export default class TableSheet extends React.Component {
             <Card>
                 <CardHeader>{this.props.headerText}</CardHeader>
                 <CardBlock>
+                {this.props.footer}
                     <ReactTable
                         data={this.props.children}
-                        columns={this.props.columns} 
+                        columns={this.props.columns}
                         defaultPageSize={5}
-          style={{
-            height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
-          }}
-          className="-striped -highlight"/>
+                        style={{
+                            height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
+                        }}
+                        className="-striped -highlight" />
                 </CardBlock>
             </Card>
         );

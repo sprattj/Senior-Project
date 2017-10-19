@@ -4,6 +4,7 @@ import { Card, CardHeader, CardBlock } from 'reactstrap';
 import TableSheet from './TableSheet.jsx';
 import SignoutButton from '../ModalButtons/SignoutButton.jsx';
 
+
 /*
     A Rigsheet is a list of rows of rig signouts.
     Each row has an instructor, a rig #, a plane load,
@@ -17,22 +18,22 @@ export default class Rigsheet extends React.Component {
         const columns = [{
             Header: 'Instructor',
             accessor: 'jumpmaster' // String-based value accessors!
-          }, {
+        }, {
             Header: 'Rig ID',
             accessor: 'rig_id',
-          }, {
+        }, {
             Header: 'Plane Load',
             accessor: 'load_number'
-          }, {
+        }, {
             Header: 'Packed By',
             accessor: 'packed_by'
-          }]
-        
+        }]
+
         return (
             <TableSheet headerText={this.props.headerText}
-            columns={columns} >
+                columns={columns} footer={this.props.footerContent}>
                 {this.props.children}
-            </TableSheet> 
+            </TableSheet>
         );
     }
 }
@@ -40,14 +41,4 @@ export default class Rigsheet extends React.Component {
 Rigsheet.propTypes = {
     headerText: PropTypes.string.isRequired, //the text in the header of the rigsheet
     //children: PropTypes.arrayOf(RigsheetRow).isRequired //an array of rigsheet rows
-}/* <TableSheet header={header}>
-                {this.props.children}
-            </TableSheet>*/
-/*var header = (<thead>
-            <tr>
-                <th>Instructor</th>
-                <th>Rig #</th>
-                <th>Plane Load</th>
-                <th>Packed By</th>
-            </tr>
-        </thead>);*/
+}

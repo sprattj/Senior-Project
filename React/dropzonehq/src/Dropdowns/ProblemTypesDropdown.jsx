@@ -7,10 +7,10 @@ export default class ProblemTypesDropdown extends React.Component {
 
     getProblemTypes() {
 
-        var problemTypesData = [{ name: "Paul B", id: "1" },
-        { name: "Paul B", id: "2" },
-        { name: "Paul B", id: "3" },
-        { name: "Paul B", id: "4" }];//get row data from ajax
+        var problemTypesData = [{ name: "Problem Type 1", id: "1" },
+        { name: "Problem Type 2", id: "2" },
+        { name: "Problem Type 3", id: "3" },
+        { name: "Problem Type 4", id: "4" }];//get row data from ajax
         var options = []; //
 
         Object.keys(problemTypesData).forEach(function (i) {
@@ -25,7 +25,7 @@ export default class ProblemTypesDropdown extends React.Component {
     render() {
         var problemTypes = this.getProblemTypes();
         return (
-                <Dropdown id={"problemTypesDropdown"} labelText="Problem:">
+                <Dropdown id={"problemTypesDropdown"} onChange={this.props.onChange} labelText="Problem:">
                     {problemTypes}
                 </Dropdown>
         );

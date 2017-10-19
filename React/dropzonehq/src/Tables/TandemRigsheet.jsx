@@ -1,7 +1,7 @@
 import React from 'react';
 import Rigsheet from './Rigsheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
-
+import SignoutButton from '../ModalButtons/SignoutButton.jsx';
 
 /* A TandemRigsheet is a rigsheet that contains all signouts for
   tandem rigs.
@@ -86,6 +86,6 @@ export default class TandemRigsheet extends React.Component {
   ];//get row data from ajax
 
     //change to {this.state.rowData when running from server}
-    return <Rigsheet headerText="Tandem">{rowData}</Rigsheet>;
+    return <Rigsheet headerText="Tandem" footerContent={<SignoutButton/>}>{rowData}</Rigsheet>;
   }
 }
