@@ -17,7 +17,8 @@ export default class TandemRigsheet extends React.Component {
     this.passwordChanged = this.passwordChanged.bind(this);
     this.packRow = this.packRow.bind(this);
     this.validateUsername = this.validateUsername.bind(this);
-
+    this.addSignout = this.addSignout.bind(this);
+    
     var rowData = [
       { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: null },
       { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" }
@@ -97,7 +98,11 @@ export default class TandemRigsheet extends React.Component {
   packRow(key, instructor) {
     console.log(key);
     if (this.validateUsername(this.state.username, this.state.password)) {
-      this.state.rows[key].packed_by = instructor;
+      var rows = this.state.rows;
+      rows[key].packed_by = instructor;
+      this.setState({
+        rows: rows
+      })
       console.log('username validated');
     } else {
       console.log('error');
@@ -106,6 +111,25 @@ export default class TandemRigsheet extends React.Component {
 
   validateUsername(username, password) {
     return true;
+  }
+
+  addSignout(instructor, planeLoad, rig){
+    var row = { 
+      jumpmaster: instructor, 
+      rig_id: rig, 
+      load_number: planeLoad, 
+      packed_by: <PackButton rig={rig}
+      instructor={instructor}
+      load={planeLoad}
+      authorize={this.packRow}
+      index={this.state.rows.length + 1} /> 
+    };
+
+    var rows = this.state.rows;
+    rows.push(row);
+    this.setState({
+      rows: rows
+    })
   }
 
   render() {
@@ -125,7 +149,7 @@ export default class TandemRigsheet extends React.Component {
 
     //change to {this.state.rowData when running from server}
     return (
-      <TableSheet headerText={"Tandem"} columns={columns} footer={<SignoutButton />}>
+      <TableSheet headerText={"Tandem"} columns={columns} footer={<SignoutButton authorize={this.addSignout}/>}>
         {this.state.rows}
       </TableSheet>);
   }
