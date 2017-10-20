@@ -6,5 +6,5 @@ import EmployeeAdminScreen from './Screens/EmployeeAdminScreen.jsx';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
-ReactDOM.render(<SheetsScreen />, document.getElementById('root'));
+ReactDOM.render(<EmployeeAdminScreen />, document.getElementById('root'));
 registerServiceWorker();
