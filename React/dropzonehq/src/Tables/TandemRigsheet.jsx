@@ -122,7 +122,7 @@ export default class TandemRigsheet extends React.Component {
       instructor={instructor}
       load={planeLoad}
       authorize={this.packRow}
-      index={this.state.rows.length + 1} /> 
+      index={this.state.rows.length} /> 
     };
 
     var rows = this.state.rows;
