@@ -7,10 +7,10 @@ export default class PlaneLoadDropdown extends React.Component {
 
     getPlaneloads() {
 
-        var planeLoadData = [{ name: "Paul B", id: "1" },
-        { name: "Paul B", id: "2" },
-        { name: "Paul B", id: "3" },
-        { name: "Paul B", id: "4" }];//get row data from ajax
+        var planeLoadData = [{ name: "111", id: "1" },
+        { name: "222", id: "2" },
+        { name: "333", id: "3" },
+        { name: "444", id: "4" }];//get row data from ajax
         var options = []; //
 
         Object.keys(planeLoadData).forEach(function (i) {
@@ -25,7 +25,7 @@ export default class PlaneLoadDropdown extends React.Component {
     render() {
         var planeLoads = this.getPlaneloads();
         return (
-                <Dropdown id={"planeLoadDropdown"} labelText="Plane Load:">
+                <Dropdown onChange={this.props.onChange} id={"planeLoadDropdown"} labelText="Plane Load:">
                     {planeLoads}
                 </Dropdown>
         );

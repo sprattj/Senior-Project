@@ -8,9 +8,11 @@ export default class InstructorDropdown extends React.Component {
     getInstructors() {
 
         var instructorData = [{ name: "Paul B", id: "1" },
-        { name: "Paul B", id: "2" },
-        { name: "Paul B", id: "3" },
-        { name: "Paul B", id: "4" }];//get row data from ajax
+        { name: "Jatin B", id: "2" },
+        { name: "Andres B", id: "3" },
+        { name: "Brian K", id: "4" },
+        { name: "Jon S", id: "5" },
+        { name: "Paul T", id: "6" }];//get row data from ajax
         var options = []; //
 
         Object.keys(instructorData).forEach(function (i) {
@@ -26,7 +28,7 @@ export default class InstructorDropdown extends React.Component {
         var instructors = this.getInstructors();
         return (
             
-                <Dropdown id={"instructorDropdown"} labelText="Instructor:">
+                <Dropdown onChange={this.props.onChange} id={"instructorDropdown"} labelText="Instructor:">
                     {instructors}
                 </Dropdown>
         );

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBlock, Table, CardFooter } from 'reactstrap';
+import { Card, CardHeader, CardBlock, CardFooter, Table } from 'reactstrap';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 
@@ -12,15 +12,15 @@ export default class TableSheet extends React.Component {
                 <CardBlock>
                     <ReactTable
                         data={this.props.children}
-                        columns={this.props.columns} 
+                        columns={this.props.columns}
                         defaultPageSize={5}
-          style={{
-            height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
-          }}
-          className="-striped -highlight"/>
+                        style={{
+                            height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
+                        }}
+                        className="-striped -highlight" />
                 </CardBlock>
                 <CardFooter>
-                    {this.props.footerContent}
+                {this.props.footer}
                 </CardFooter>
             </Card>
         );

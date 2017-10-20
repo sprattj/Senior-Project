@@ -15,24 +15,29 @@ import DropdownOption from './DropdownOption.jsx';
 export default class Dropdown extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      inputValue: ''
-    };
+    //bind handlechange so it is available inside render
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  updateInputValue(evt) {
-    this.setState({
-      inputValue: evt.target.value
-    });
-  }
+  //when the selected item in this dropdown is changed
+  //grab its new value from the selection event
+  //and pass it to the parent component's passed-in
+  //onChange method. This allows the value of this 
+  //dropdown to be available to parent components.
+  handleChange(event) {
+        var value = event.target.value;
+        this.props.onChange(this.props.id, value);
+    }
 
+  //indicate this.handlechange as the onChange method
+  //so that values are properly updated when this
+  //dropdown has a new value selected
   render() {
     return (
         <FormGroup>
           <Label for={this.props.id}>{this.props.labelText}</Label>
-          <Input type="select" name="select" id={this.props.id} 
-                value={this.state.inputValue} 
-                onChange={evt => this.updateInputValue(evt)}>
+          <Input type="select" name="select" id={this.props.id}
+                onChange={this.handleChange}>
             {this.props.children}
           </Input>
         </FormGroup>
