@@ -47,8 +47,6 @@ export default class EmployeeTable extends React.Component {
       });
   }
 
-
-
     render() {
 
         const columns = [{
@@ -68,7 +66,7 @@ export default class EmployeeTable extends React.Component {
           {name: "Andres B",info:"Senior Program",job: "Rigger/Packer",actions: <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton/></ButtonGroup>},
           {name: "Jatin B",info:"Full Stack Developer",job: "Tandem",actions: <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton/></ButtonGroup>}];  
         return (
-            <TableSheet headerText="Employees" columns={columns} footerContent= {<AddEmployeeButton />}>
+            <TableSheet headerText="Employees" columns={columns} footer={<AddEmployeeButton />}>
                 {rowData}
             </TableSheet> 
         );

@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Label, Input } from 'reactstrap';
+import { FormGroup, Label, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 
 export default class UsernameField extends React.Component {
   constructor(props) {
     super(props);
-    this.handleChange= this.handleChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
@@ -16,10 +16,12 @@ export default class UsernameField extends React.Component {
 
   render() {
     return (
-        <FormGroup>
-          <Label for={this.props.id}>{this.props.labelText}</Label>
+      <FormGroup>
+        <InputGroup>
+          <InputGroupAddon>{this.props.labelText}</InputGroupAddon>
           <Input onChange={this.handleChange} type="username" name="username" id={this.props.id} placeholder={this.props.placeholder} />
-        </FormGroup>
+        </InputGroup>
+      </FormGroup>
     );
   }
 }

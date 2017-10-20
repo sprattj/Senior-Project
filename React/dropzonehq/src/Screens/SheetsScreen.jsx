@@ -1,8 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
-import TandemRigsheet from '../Tables/TandemRigsheet.jsx';
-import StudentRigsheet from '../Tables/StudentRigsheet.jsx';
+import Rigsheet from '../Tables/Rigsheet.jsx';
 import SignoutAlertList from '../Alerts/SignoutAlertList.jsx';
 import RigProblemButton from '../ModalButtons/RigProblemButton.jsx';
 import PackedWrongRigButton from '../ModalButtons/PackedWrongRigButton.jsx';
@@ -34,10 +33,10 @@ class SheetsScreen extends React.Component {
                 </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
-                        <TandemRigsheet />
+                        <Rigsheet sheetType="Tandems" />
                     </Col>
                     <Col lg={{ size: 5 }}>
-                         <StudentRigsheet />
+                         <Rigsheet sheetType="Students"/>
                     </Col>
                 </Row>
                 <Row style={marginStyle}>

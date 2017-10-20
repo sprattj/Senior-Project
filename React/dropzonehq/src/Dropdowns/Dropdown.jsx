@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Label, Input } from 'reactstrap';
+import { FormGroup, Label, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import DropdownOption from './DropdownOption.jsx';
 
 /*
@@ -35,11 +35,13 @@ export default class Dropdown extends React.Component {
   render() {
     return (
         <FormGroup>
-          <Label for={this.props.id}>{this.props.labelText}</Label>
+          <InputGroup>
+          <InputGroupAddon>{this.props.labelText}</InputGroupAddon>
           <Input type="select" name="select" id={this.props.id}
                 onChange={this.handleChange}>
             {this.props.children}
           </Input>
+          </InputGroup>
         </FormGroup>
     );
   }

@@ -4,6 +4,11 @@ import { Card, CardHeader, CardBlock, CardFooter, Table } from 'reactstrap';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 
+/*
+    A TableSheet is a React-Table that is displayed on a card background.
+    It can take a header, footer content, columns, (passed via props)
+    and rows (passed via this.props.children).
+*/
 export default class TableSheet extends React.Component {
     render() {
         return (
@@ -15,8 +20,11 @@ export default class TableSheet extends React.Component {
                         columns={this.props.columns}
                         defaultPageSize={5}
                         style={{
-                            height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
+                            //This will force the table body to overflow 
+                            //and scroll, since there is not enough room.
+                            height: "400px" 
                         }}
+                        //stripe every other row for readability
                         className="-striped -highlight" />
                 </CardBlock>
                 <CardFooter>
@@ -30,5 +38,5 @@ export default class TableSheet extends React.Component {
 TableSheet.propTypes = {
     headerText: PropTypes.string.isRequired,
     columns: PropTypes.array.isRequired,
-    footerContent: PropTypes.any.isRequired
+    footer: PropTypes.any.isRequired
 }
