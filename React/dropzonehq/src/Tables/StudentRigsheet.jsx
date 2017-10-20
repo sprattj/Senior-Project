@@ -1,14 +1,15 @@
 import React from 'react';
-import Rigsheet from './Rigsheet.jsx';
+import PropTypes from 'prop-types';
+import TableSheet from './TableSheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
 import SignoutButton from '../ModalButtons/SignoutButton.jsx';
+import { rootURL } from '../restInfo.js';
 
 
 /* A StudentRigsheet is a rigsheet that contains all signouts for
-  Student rigs.
+  tandem rigs.
 */
-export default class StudentRigsheet extends React.Component {
-
+export default class TandemRigsheet extends React.Component {
 
   constructor(props) {
     super(props)
@@ -21,16 +22,12 @@ export default class StudentRigsheet extends React.Component {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    var url = 'http://127.0.0.1:8000/evs/';
-
-    const params = {
-      isStudent: true
-    };
+    var url = rootURL + '/evs/';
     var self = this;
+
     fetch(url, {
       method: "GET",
-      mode: 'cors',
-
+      mode: 'CORS'
     }).then(function (response) {
       if (response.status >= 400) {
         throw new Error("Bad response from server");
@@ -40,8 +37,8 @@ export default class StudentRigsheet extends React.Component {
       .then(function (rowData) {
         var rows = [];
         for (var i = 0; i < rowData.length; i++) {
-          if(rowData[i].packed_by === null)
-            rowData[i].packed_by = <PackButton/>; 
+          if (rowData[i].packed_by === null)
+            rowData[i].packed_by = <PackButton />;
         };
         self.setState({
           rows: rowData
@@ -50,43 +47,35 @@ export default class StudentRigsheet extends React.Component {
   }
 
   render() {
-    var rowData = [{ jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-    { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
-  ];//get row data from ajax
+    const columns = [{
+      Header: 'Instructor',
+      accessor: 'jumpmaster' // String-based value accessors!
+    }, {
+      Header: 'Rig ID',
+      accessor: 'rig_id',
+    }, {
+      Header: 'Plane Load',
+      accessor: 'load_number'
+    }, {
+      Header: 'Packed By',
+      accessor: 'packed_by'
+    }]
+
+    var rowData = [
+      { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
+      { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" }
+    ];
 
     //change to {this.state.rowData when running from server}
-    return <Rigsheet headerText="Student" footerContent={<SignoutButton/>}>{rowData}</Rigsheet>;
+    return (
+      <TableSheet headerText={"Student"} columns={columns} footer={<SignoutButton />}>
+        {rowData}
+      </TableSheet>
+      );
   }
+}
+
+TableSheet.propTypes = {
+  headerText: PropTypes.string.isRequired, //the text in the header of the rigsheet
+  //children: PropTypes.arrayOf(RigsheetRow).isRequired //an array of rigsheet rows
 }

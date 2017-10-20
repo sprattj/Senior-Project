@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBlock, Table } from 'reactstrap';
+import { Card, CardHeader, CardBlock, CardFooter, Table } from 'reactstrap';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 
@@ -10,7 +10,6 @@ export default class TableSheet extends React.Component {
             <Card>
                 <CardHeader>{this.props.headerText}</CardHeader>
                 <CardBlock>
-                {this.props.footer}
                     <ReactTable
                         data={this.props.children}
                         columns={this.props.columns}
@@ -20,6 +19,9 @@ export default class TableSheet extends React.Component {
                         }}
                         className="-striped -highlight" />
                 </CardBlock>
+                <CardFooter>
+                {this.props.footer}
+                </CardFooter>
             </Card>
         );
     }
