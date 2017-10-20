@@ -1,8 +1,7 @@
 import React from 'react';
 import ModalButton from './ModalButton.jsx';
-import {Form} from 'reactstrap'
+import {Form, FormGroup, Input, Label, Row, Col,InputGroup, InputGroupAddon} from 'reactstrap';
 import TextArea from '../TextInputs/TextArea.jsx';
-import JobsDropdown from '../Dropdowns/JobsDropdown.jsx';
 
 
 export default class EditEmployeeButton extends React.Component {
@@ -13,9 +12,15 @@ export default class EditEmployeeButton extends React.Component {
  
     render() {
        const modalContent = <Form>
-       <TextArea id="editEmployeeFirstNameTextArea" labelText="First Name:"/>
-       <TextArea id="editEmployeeLastNameTextArea" labelText="Last Name:"/>
-       <JobsDropdown/>
+        <InputGroup>
+            <InputGroupAddon id="addEmployeeLastName">First Name:</InputGroupAddon>
+            <Input />
+        </InputGroup>
+        <br/>
+        <InputGroup>
+            <InputGroupAddon id="addEmployeeLastName">Last Name:</InputGroupAddon>
+            <Input />
+        </InputGroup>  
        </Form>;
        return (
            <ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"Edit"} modalTitle={"Edit Employee"}

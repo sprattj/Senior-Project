@@ -1,5 +1,5 @@
 import React from 'react';
-import Rigsheet from './Rigsheet.jsx';
+import TableSheet from './TableSheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
 
 
@@ -21,15 +21,11 @@ export default class TandemRigsheet extends React.Component {
     require('es6-promise').polyfill();
 
     var url = 'http://127.0.0.1:8000/evs/';
-
-    const params = {
-      isTandem: true
-    };
     var self = this;
+
     fetch(url, {
       method: "GET",
       mode: 'cors',
-
     }).then(function (response) {
       if (response.status >= 400) {
         throw new Error("Bad response from server");
@@ -49,6 +45,20 @@ export default class TandemRigsheet extends React.Component {
   }
 
   render() {
+        const columns = [{
+            Header: 'Instructor',
+            accessor: 'jumpmaster' // String-based value accessors!
+          }, {
+            Header: 'Rig ID',
+            accessor: 'rig_id',
+          }, {
+            Header: 'Plane Load',
+            accessor: 'load_number'
+          }, {
+            Header: 'Packed By',
+            accessor: 'packed_by'
+          }]
+
     var rowData = [{ jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
     { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" },
     { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" },
@@ -86,6 +96,8 @@ export default class TandemRigsheet extends React.Component {
   ];//get row data from ajax
 
     //change to {this.state.rowData when running from server}
-    return <Rigsheet headerText="Tandem">{rowData}</Rigsheet>;
+    return(<TableSheet headerText="Students" columns={columns} >
+              {rowData}
+           </TableSheet> );
   }
 }

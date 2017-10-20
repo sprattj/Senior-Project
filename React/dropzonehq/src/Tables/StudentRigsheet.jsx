@@ -1,5 +1,5 @@
 import React from 'react';
-import Rigsheet from './Rigsheet.jsx';
+import TableSheet from './TableSheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
 
 
@@ -22,9 +22,6 @@ export default class StudentRigsheet extends React.Component {
 
     var url = 'http://127.0.0.1:8000/evs/';
 
-    const params = {
-      isStudent: true
-    };
     var self = this;
     fetch(url, {
       method: "GET",
@@ -49,6 +46,20 @@ export default class StudentRigsheet extends React.Component {
   }
 
   render() {
+        const columns = [{
+            Header: 'Instructor',
+            accessor: 'jumpmaster' // String-based value accessors!
+          }, {
+            Header: 'Rig ID',
+            accessor: 'rig_id',
+          }, {
+            Header: 'Plane Load',
+            accessor: 'load_number'
+          }, {
+            Header: 'Packed By',
+            accessor: 'packed_by'
+          }]
+
     var rowData = [{ jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: <PackButton /> },
     { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" },
     { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" },
@@ -86,6 +97,8 @@ export default class StudentRigsheet extends React.Component {
   ];//get row data from ajax
 
     //change to {this.state.rowData when running from server}
-    return <Rigsheet headerText="Student">{rowData}</Rigsheet>;
+    return(<TableSheet headerText="Students" columns={columns} >
+              {rowData}
+           </TableSheet> );
   }
 }
