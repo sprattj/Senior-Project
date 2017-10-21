@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Label, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+import { FormGroup, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 
 
 export default class UsernameField extends React.Component {

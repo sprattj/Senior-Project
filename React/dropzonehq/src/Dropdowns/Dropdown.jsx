@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Label, Input, InputGroup, InputGroupAddon } from 'reactstrap';
-import DropdownOption from './DropdownOption.jsx';
+import { FormGroup, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+
 
 /*
   A Dropdown is a Reactstrap select Input whose id, 

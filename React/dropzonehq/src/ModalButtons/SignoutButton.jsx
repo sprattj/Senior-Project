@@ -1,8 +1,7 @@
 import React from 'react';
-import { Form, Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
+import { Form, Button} from 'reactstrap';
 import ModalDialog from '../ModalDialog.jsx';
-import VerifyForm from '../VerifyForm.jsx';
-import ModalButton from './ModalButton.jsx';
+import VerifyPopover from '../VerifyPopover.jsx';
 import RigDropdown from '../Dropdowns/RigDropdown.jsx';
 import PlaneLoadDropdown from '../Dropdowns/PlaneLoadDropdown.jsx';
 import InstructorDropdown from '../Dropdowns/InstructorDropdown.jsx';
@@ -23,7 +22,7 @@ export default class SignoutButton extends React.Component {
     this.toggleVerifyModal = this.toggleVerifyModal.bind(this);
     this.verify = this.verify.bind(this);
 
-    this.instructorChanged = this.instructorChanged.bind(this);    
+    this.instructorChanged = this.instructorChanged.bind(this);
     this.rigChanged = this.rigChanged.bind(this);
     this.planeLoadChanged = this.planeLoadChanged.bind(this);
     //keep state for the values of the components in this modal
@@ -101,27 +100,14 @@ export default class SignoutButton extends React.Component {
           {modalContent}
         </ModalDialog>
 
-        <Popover placement="bottom" isOpen={this.state.verifyOpen} target="SignoutButton" toggle={this.toggleVerifyModal}>
-          <PopoverTitle>Verify Signout</PopoverTitle>
-          <PopoverContent>
-            <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged}/>
-            <Button color="primary" onClick={this.verify}>Verify</Button>{' '}
-            <Button color="secondary" onClick={this.toggleVerifyModal}>Cancel</Button>
-          </PopoverContent>
-        </Popover>
+        <VerifyPopover isOpen={this.state.verifyOpen}
+          title={"Confirm Signout"}
+          buttonID="SignoutButton"
+          toggle={this.toggleVerifyModal}
+          verify={this.verify}
+          passwordChanged={this.props.passwordChanged}
+          usernameChanged={this.props.usernameChanged} />
       </div>
     );
   }
 }
-/*() => this.props.authorize(this.state.instructor, this.state.planeLoad, this.state.selectedRig)
-
-
-<ModalDialog title="Verify Signout"
-          isOpen={this.state.verifyOpen}
-          onCancelClick={this.toggleVerifyModal}
-          primaryButtonText="Verify"
-          onPrimaryClick={this.verify}>
-          <VerifyForm />
-        </ModalDialog>
-
-*/

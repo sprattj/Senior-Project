@@ -3,13 +3,13 @@ import TableSheet from './TableSheet.jsx';
 import EditEmployeeButton from '../ModalButtons/EditEmployeeButton.jsx';
 import DeleteEmployeeButton from '../ModalButtons/DeleteEmployeeButton.jsx';
 import AddEmployeeButton from '../ModalButtons/AddEmployeeButton.jsx';
-import {ButtonGroup} from 'reactstrap';
-import {rootURL} from '../restInfo.js';
+import { ButtonGroup } from 'reactstrap';
+import { rootURL } from '../restInfo.js';
 
 
 export default class EmployeeTable extends React.Component {
 
- constructor(props) {
+  constructor(props) {
     super(props)
     this.state = {
       rows: []
@@ -20,7 +20,7 @@ export default class EmployeeTable extends React.Component {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    var url = rootURL+ '/evs/';
+    var url = rootURL + '/evs/';
     var self = this;
 
     fetch(url, {
@@ -36,39 +36,40 @@ export default class EmployeeTable extends React.Component {
       .then(function (rowData) {
         var rows = [];
         for (var i = 0; i < rowData.length; i++) {
-          if(rowData[i].job === "Admin"){
-            rowData[i].actions = <EditEmployeeButton/>;
-          }else{
-            rowData[i].actions = <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton/></ButtonGroup>};
-          } 
+          if (rowData[i].job === "Admin") {
+            rowData[i].actions = <EditEmployeeButton />;
+          } else {
+            rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>
+          };
+        }
         self.setState({
           rows: rowData
         });
       });
   }
 
-    render() {
+  render() {
 
-        const columns = [{
-            Header: 'Name',
-            accessor: 'name' // String-based value accessors!
-          }, {
-            Header: 'Info',
-            accessor: 'info',
-          }, {
-            Header: 'Job(s)',
-            accessor: 'load_number'
-          }, {
-            Header: 'Actions',
-            accessor: 'actions'
-          }]
-          var rowData = [{name: "Paul B",info:"Senior Developer",job: "Admin",actions: <EditEmployeeButton/>},
-          {name: "Andres B",info:"Senior Program",job: "Rigger/Packer",actions: <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton/></ButtonGroup>},
-          {name: "Jatin B",info:"Full Stack Developer",job: "Tandem",actions: <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton/></ButtonGroup>}];  
-        return (
-            <TableSheet headerText="Employees" columns={columns} footer={<AddEmployeeButton />}>
-                {rowData}
-            </TableSheet> 
-        );
-    }
+    const columns = [{
+      Header: 'Name',
+      accessor: 'name' // String-based value accessors!
+    }, {
+      Header: 'Info',
+      accessor: 'info',
+    }, {
+      Header: 'Job(s)',
+      accessor: 'load_number'
+    }, {
+      Header: 'Actions',
+      accessor: 'actions'
+    }]
+    var rowData = [{ name: "Paul B", info: "Senior Developer", job: "Admin", actions: <EditEmployeeButton /> },
+    { name: "Andres B", info: "Senior Program", job: "Rigger/Packer", actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> },
+    { name: "Jatin B", info: "Full Stack Developer", job: "Tandem", actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> }];
+    return (
+      <TableSheet headerText="Employees" columns={columns} footer={<AddEmployeeButton />}>
+        {rowData}
+      </TableSheet>
+    );
+  }
 }

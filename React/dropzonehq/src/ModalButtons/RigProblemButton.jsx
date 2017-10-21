@@ -1,11 +1,8 @@
 import React from 'react';
-import { Form, Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
+import { Form, Button } from 'reactstrap';
 import ModalDialog from '../ModalDialog.jsx';
-import VerifyForm from '../VerifyForm.jsx';
-import ModalButton from './ModalButton.jsx';
+import VerifyPopover from '../VerifyPopover.jsx';
 import RigDropdown from '../Dropdowns/RigDropdown.jsx';
-import PlaneLoadDropdown from '../Dropdowns/PlaneLoadDropdown.jsx';
-import InstructorDropdown from '../Dropdowns/InstructorDropdown.jsx';
 import ProblemTypesDropdown from '../Dropdowns/ProblemTypesDropdown.jsx';
 import TextArea from '../TextInputs/TextArea.jsx';
 
@@ -97,24 +94,15 @@ export default class RigProblemButton extends React.Component {
           {modalContent}
         </ModalDialog>
 
-        <Popover placement="bottom" isOpen={this.state.verifyOpen} target="ReportButton" toggle={this.toggleVerifyModal}>
-          <PopoverTitle>Verify Report</PopoverTitle>
-          <PopoverContent>
-            <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged} />
-            <Button color="primary" onClick={this.verify}>Verify</Button>{' '}
-            <Button color="secondary" onClick={this.toggleVerifyModal}>Cancel</Button>
-          </PopoverContent>
-        </Popover>
+        <VerifyPopover 
+          isOpen={this.state.verifyOpen}
+          title={"Confirm Report"}
+          buttonID="ReportButton"
+          toggle={this.toggleVerifyModal}
+          verify={this.verify}
+          passwordChanged={this.props.passwordChanged}
+          usernameChanged={this.props.usernameChanged} />
       </div>
         );
   }
 }
-
-/*
-
-<ModalButton buttonSize="lg" buttonColor="danger" buttonText={"Report Rig Issue or Damage"}
-        modalTitle={"Rig Issue Report"}
-        modalContent={modalContent}
-        modalPrimaryButtonText="Signout"
-        modalPrimaryClick={this.authorize} />
-*/

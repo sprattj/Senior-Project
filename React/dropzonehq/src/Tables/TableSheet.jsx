@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBlock, CardFooter, Table } from 'reactstrap';
+import { Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import ModalButton from './ModalButton.jsx';
 import VerifyForm from '../VerifyForm.jsx';
 import { Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
 

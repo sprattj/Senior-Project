@@ -1,8 +1,7 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import EmployeeTable from '../Tables/EmployeeTable.jsx';
-import AddEmployButton from '../ModalButtons/AddEmployeeButton.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const marginStyle = {

@@ -1,7 +1,6 @@
 import React from 'react';
 import Dropdown from './Dropdown.jsx';
 import DropdownOption from './DropdownOption.jsx';
-import { Form } from 'reactstrap';
 
 export default class RigDropdown extends React.Component {
 

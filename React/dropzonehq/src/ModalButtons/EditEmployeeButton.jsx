@@ -1,7 +1,6 @@
 import React from 'react';
 import ModalButton from './ModalButton.jsx';
-import {Form, FormGroup, Input, Label, Row, Col,InputGroup, InputGroupAddon} from 'reactstrap';
-import TextArea from '../TextInputs/TextArea.jsx';
+import {Form, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 
 
 export default class EditEmployeeButton extends React.Component {
