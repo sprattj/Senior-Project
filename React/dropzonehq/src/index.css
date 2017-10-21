@@ -6,6 +6,7 @@
 body {
     background-color: #97CCF1;
     overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .navbar-brand {

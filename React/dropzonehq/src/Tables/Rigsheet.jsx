@@ -32,7 +32,7 @@ export default class Rigsheet extends React.Component {
       { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" }
     ];
 
-    
+
     this.processRows(rowData);
     //END SAMPLE DATA.
 
@@ -59,7 +59,7 @@ export default class Rigsheet extends React.Component {
     };
   }
 
-  
+
   //Process the rows that are passed in to fill in the missing 
   //"Packed By" data with a PackButton
   processRows(rowData) {
@@ -126,16 +126,16 @@ export default class Rigsheet extends React.Component {
       method: "GET",
       mode: 'CORS'
     })//when we get a response back
-    .then(function (response) {
-      //check to see if the call we made failed
-      //if it failed, throw an error and stop.
-      if (response.status >= 400) {
-        throw new Error("Bad response from server");
-      }
-      //if it didn't fail, process the data we got back
-      //into JSON format
-      return response.json();
-    })//when the call succeeds
+      .then(function (response) {
+        //check to see if the call we made failed
+        //if it failed, throw an error and stop.
+        if (response.status >= 400) {
+          throw new Error("Bad response from server");
+        }
+        //if it didn't fail, process the data we got back
+        //into JSON format
+        return response.json();
+      })//when the call succeeds
       .then(function (rowData) {
         //process the row data we received back
         self.processRows(rowData);
@@ -166,10 +166,10 @@ export default class Rigsheet extends React.Component {
       });
 
       console.log('ROW PACKED');
-    } 
+    }
     //else the current username/password 
     //are INVALID
-    else { 
+    else {
       console.log('ERROR PACKING ROW');
     }
   }
@@ -200,11 +200,13 @@ export default class Rigsheet extends React.Component {
       packed_by: <PackButton rig={rig}
         instructor={instructor}
         load={planeLoad}
+        usernameChanged={this.usernameChanged}
+        passwordChanged={this.passwordChanged}
         authorize={this.packRow}
         index={this.state.rows.length} />
     };
     //grab the current rows
-    var newRows = Array.from(this.state.rows);    
+    var newRows = Array.from(this.state.rows);
     //add our new row
     newRows.push(row);
     //update the state with the new rows so it rerenders
@@ -217,11 +219,13 @@ export default class Rigsheet extends React.Component {
 
     //Return a tablesheet with a signout button footer
     return (
-      <TableSheet 
-      headerText={this.props.sheetType} 
-      columns={this.state.columns} 
-      footer={<SignoutButton 
-      authorize={this.addSignout} />}>
+      <TableSheet
+        headerText={this.props.sheetType}
+        columns={this.state.columns}
+        footer={<SignoutButton
+          usernameChanged={this.usernameChanged}
+          passwordChanged={this.passwordChanged}
+          authorize={this.addSignout} />}>
         {this.state.rows}
       </TableSheet>);
   }

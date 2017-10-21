@@ -1,5 +1,7 @@
 import React from 'react';
-import { Form } from 'reactstrap';
+import { Form, Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
+import ModalDialog from '../ModalDialog.jsx';
+import VerifyForm from '../VerifyForm.jsx';
 import ModalButton from './ModalButton.jsx';
 import RigDropdown from '../Dropdowns/RigDropdown.jsx';
 import PlaneLoadDropdown from '../Dropdowns/PlaneLoadDropdown.jsx';
@@ -17,18 +19,38 @@ export default class SignoutButton extends React.Component {
     super(props);
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
-    this.instructorChanged = this.instructorChanged.bind(this);
+    this.toggleSignoutModal = this.toggleSignoutModal.bind(this);
+    this.toggleVerifyModal = this.toggleVerifyModal.bind(this);
+    this.verify = this.verify.bind(this);
+
+    this.instructorChanged = this.instructorChanged.bind(this);    
     this.rigChanged = this.rigChanged.bind(this);
     this.planeLoadChanged = this.planeLoadChanged.bind(this);
     //keep state for the values of the components in this modal
     this.state = {
       instructor: 'Input text here..',
       selectedRig: 'problem',
-      planeLoad: '123'
+      planeLoad: '123',
+      signoutOpen: false,
+      verifyOpen: false
     }
   }
 
-  //when the text area text is changed, update our state
+  //change the SIGNOUT modal's visibility via state
+  toggleSignoutModal() {
+    this.setState({
+      signoutOpen: !this.state.signoutOpen
+    });
+  }
+
+  //change the VERFIY modal's visibility via state
+  toggleVerifyModal() {
+    this.setState({
+      verifyOpen: !this.state.verifyOpen
+    });
+  }
+
+  //when selected instructor is changed, update our state
   instructorChanged(id, selectedInstr) {
     this.setState({
       instructor: selectedInstr
@@ -44,12 +66,17 @@ export default class SignoutButton extends React.Component {
     console.log(this.state.selectedRig);
   }
 
-  //when the selected problem type is changed, update our state
+  //when the selected plane load is changed, update our state
   planeLoadChanged(id, planeLoad) {
     this.setState({
       planeLoad: planeLoad
     })
     console.log(this.state.planeLoad);
+  }
+
+  verify() {
+    console.log("Click!");
+    this.props.authorize(this.state.instructor, this.state.planeLoad, this.state.selectedRig);
   }
 
   render() {
@@ -59,11 +86,42 @@ export default class SignoutButton extends React.Component {
         <RigDropdown onChange={this.rigChanged} />
         <PlaneLoadDropdown onChange={this.planeLoadChanged} />
       </Form>;
+
     return (
-      <ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"Signout Rig"} modalTitle={"Signout Rig"}
-        modalContent={modalContent}
-        modalPrimaryButtonText="Signout"
-        modalPrimaryClick={() => this.props.authorize(this.state.instructor, this.state.planeLoad, this.state.selectedRig)} />
+      <div>
+        <Button size="lg" color="primary"
+          onClick={this.toggleSignoutModal}>Signout Rig</Button>
+
+        <ModalDialog title="Signout Rig"
+          isOpen={this.state.signoutOpen}
+          onCancelClick={this.toggleSignoutModal}
+          primaryButtonText="Signout"
+          onPrimaryClick={this.toggleVerifyModal}
+          primaryButtonID="SignoutButton">
+          {modalContent}
+        </ModalDialog>
+
+        <Popover placement="bottom" isOpen={this.state.verifyOpen} target="SignoutButton" toggle={this.toggleVerifyModal}>
+          <PopoverTitle>Verify Signout</PopoverTitle>
+          <PopoverContent>
+            <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged}/>
+            <Button color="primary" onClick={this.verify}>Verify</Button>{' '}
+            <Button color="secondary" onClick={this.toggleVerifyModal}>Cancel</Button>
+          </PopoverContent>
+        </Popover>
+      </div>
     );
   }
 }
+/*() => this.props.authorize(this.state.instructor, this.state.planeLoad, this.state.selectedRig)
+
+
+<ModalDialog title="Verify Signout"
+          isOpen={this.state.verifyOpen}
+          onCancelClick={this.toggleVerifyModal}
+          primaryButtonText="Verify"
+          onPrimaryClick={this.verify}>
+          <VerifyForm />
+        </ModalDialog>
+
+*/

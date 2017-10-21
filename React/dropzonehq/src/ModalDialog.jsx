@@ -17,7 +17,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
             {this.props.children}
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.props.onPrimaryClick}>{this.props.primaryButtonText}</Button>{' '}
+            <Button id={this.props.primaryButtonID} color="primary" onClick={this.props.onPrimaryClick}>{this.props.primaryButtonText}</Button>{' '}
             <Button color="secondary" onClick={this.props.onCancelClick}>Cancel</Button>
           </ModalFooter>
         </Modal>
