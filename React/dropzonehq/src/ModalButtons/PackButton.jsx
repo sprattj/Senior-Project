@@ -49,13 +49,3 @@ export default class PackButton extends React.Component {
     );
   }
 }
-/*
-<ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"Pack"} modalTitle={"Confirm action?"}
-        modalContent={
-          <div>
-            <h3><b>Pack rig {this.props.rig} from {this.props.instructor} on load {this.props.load}?</b></h3>
-            <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged}/>
-          </div>}
-        modalPrimaryButtonText="Authorize"
-        modalPrimaryClick={() => this.props.authorize(this.props.index, this.props.instructor)} />
-*/

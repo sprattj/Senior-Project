@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardBlock } from 'reactstrap';
+import { ListGroup, ListGroupItem } from 'reactstrap';
 
 /*
     An AlertList is a list of Reactstrap alerts.
@@ -10,19 +10,27 @@ import { Card, CardHeader, CardBlock } from 'reactstrap';
     must be AlertBoxes.
 */
 export default class AlertList extends React.Component {
+
+    processListItems(){
+        var listItems = [];
+        for(var i =0; i < this.props.children.length; i++)
+        {
+            var nextItem = <ListGroupItem>{this.props.children[i]}</ListGroupItem>;
+            listItems.push(nextItem);
+        }
+        return listItems;
+    }
     render() {
+        var items = this.processListItems();
         return (
-            <Card>
-                <CardHeader>{this.props.headerText}</CardHeader>
-                <CardBlock>
-                    {this.props.children}
-                </CardBlock>
-            </Card>
+            <ListGroup>
+                {items}
+            </ListGroup>
         );
     }
 }
 
 AlertList.propTypes = {
     headerText: PropTypes.string.isRequired, //the title of the alerts
-     //the children of AlertLists must be AlertBoxes.
+    //the children of AlertLists must be AlertBoxes.
 }

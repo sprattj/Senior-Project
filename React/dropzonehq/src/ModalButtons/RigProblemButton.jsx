@@ -1,11 +1,9 @@
 import React from 'react';
-import { Form, Button } from 'reactstrap';
-import ModalDialog from '../ModalDialog.jsx';
-import VerifyPopover from '../VerifyPopover.jsx';
+import { Form } from 'reactstrap';
 import RigDropdown from '../Dropdowns/RigDropdown.jsx';
 import ProblemTypesDropdown from '../Dropdowns/ProblemTypesDropdown.jsx';
 import TextArea from '../TextInputs/TextArea.jsx';
-
+import ModalWithVerify from '../ModalWithVerify.jsx';
 /*
 
 */
@@ -13,42 +11,24 @@ export default class RigProblemButton extends React.Component {
 
   constructor(props) {
     super(props);
+
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
-    this.toggleReportModal = this.toggleReportModal.bind(this);
-    this.toggleVerifyModal = this.toggleVerifyModal.bind(this);
-    this.verify = this.verify.bind(this);
-
     this.textChanged = this.textChanged.bind(this);
     this.rigChanged = this.rigChanged.bind(this);
     this.problemChanged = this.problemChanged.bind(this);
+    this.verify = this.verify.bind(this);
+    
     //keep state for the values of the components in this modal
     this.state = {
       noteText: 'Input text here..',
-      selectedRig: 'problem',
-      selectedProblem: 'rig',
-      reportOpen: false,
-      verifyOpen: false
+      selectedRig: 'rig',
+      selectedProblem: 'problem'
     }
   }
 
-  verify() {
-    console.log("Click!");
-    //this.props.authorize(this.state.noteText, this.state.selectedRig, this.state.selectedProblem);
-  }
-
-   //change the REPORT modal's visibility via state
-   toggleReportModal() {
-    this.setState({
-      reportOpen: !this.state.reportOpen
-    });
-  }
-
-  //change the VERFIY modal's visibility via state
-  toggleVerifyModal() {
-    this.setState({
-      verifyOpen: !this.state.verifyOpen
-    });
+  verify(){
+    this.props.verify(this.state.selectedRig, this.state.selectedProblem, this.state.noteText)
   }
 
   //when the text area text is changed, update our state
@@ -81,28 +61,18 @@ export default class RigProblemButton extends React.Component {
       <ProblemTypesDropdown onChange={this.problemChanged} />
       <TextArea onChange={this.textChanged} id="problemNotesTextArea" labelText="Describe the problem:" /></Form>;
     return (
-      <div>
-        <Button size="lg" color="danger"
-          onClick={this.toggleReportModal}>Report Rig Issue or Damage</Button>
-
-        <ModalDialog title="Rig Issue Report"
-          isOpen={this.state.reportOpen}
-          onCancelClick={this.toggleReportModal}
-          primaryButtonText="Report"
-          onPrimaryClick={this.toggleVerifyModal}
-          primaryButtonID="ReportButton">
-          {modalContent}
-        </ModalDialog>
-
-        <VerifyPopover 
-          isOpen={this.state.verifyOpen}
-          title={"Confirm Report"}
-          buttonID="ReportButton"
-          toggle={this.toggleVerifyModal}
-          verify={this.verify}
-          passwordChanged={this.props.passwordChanged}
-          usernameChanged={this.props.usernameChanged} />
-      </div>
-        );
+      <ModalWithVerify
+        mainButtonColor="danger"
+        mainButtonText="Report Rig Issue or Damage"
+        modalButtonText="Report"
+        modalTitle="Rig Issue Report"
+        ID="RigIssueReport"
+        modalContent={modalContent}
+        popoverTitle="Confirm Report"
+        verify={this.verify}
+        passwordChanged={this.props.passwordChanged}
+        usernameChanged={this.props.usernameChanged}
+      />
+    );
   }
 }

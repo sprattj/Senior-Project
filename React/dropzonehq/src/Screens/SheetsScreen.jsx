@@ -1,10 +1,8 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import Rigsheet from '../Tables/Rigsheet.jsx';
-import SignoutAlertList from '../Alerts/SignoutAlertList.jsx';
-import RigProblemButton from '../ModalButtons/RigProblemButton.jsx';
-import PackedWrongRigButton from '../ModalButtons/PackedWrongRigButton.jsx';
+import RigAlertsContainer from '../RigAlertsContainer.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const marginStyle = {
@@ -40,18 +38,8 @@ class SheetsScreen extends React.Component {
                     </Col>
                 </Row>
                 <Row style={marginStyle}>
-                    <Col lg={{ size: 6, offset: 1 }}>
-                        <SignoutAlertList />
-                    </Col>
-                    <Col lg={{ size: 4 }}>
-                        <Card>
-                            <CardHeader>Report</CardHeader>
-                            <CardBlock>
-                                <RigProblemButton />
-                                <br/>
-                                <PackedWrongRigButton />
-                            </CardBlock>
-                        </Card>
+                    <Col lg={{ size: 10, offset: 1 }}>
+                        <RigAlertsContainer/>
                     </Col>
                 </Row>
             </div>

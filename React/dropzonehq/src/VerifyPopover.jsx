@@ -7,10 +7,15 @@ export default class VerifyPopover extends React.Component {
 
     render() {
         return (
-            <Popover placement="bottom" isOpen={this.props.isOpen} target={this.props.buttonID} toggle={this.props.toggle}>
+            <Popover placement="bottom" 
+                     isOpen={this.props.isOpen} 
+                     target={this.props.buttonID} 
+                     toggle={this.props.toggle}
+            >
                 <PopoverTitle>{this.props.title}</PopoverTitle>
                 <PopoverContent>
-                    <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged} />
+                    <VerifyForm passwordChanged={this.props.passwordChanged} 
+                                usernameChanged={this.props.usernameChanged} />
                     <Button color="primary" onClick={this.props.verify}>Verify</Button>{' '}
                     <Button color="secondary" onClick={this.props.toggle}>Cancel</Button>
                 </PopoverContent>
