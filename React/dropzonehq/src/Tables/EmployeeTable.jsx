@@ -11,16 +11,60 @@ export default class EmployeeTable extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      rows: []
+    this.URLsection = "/employeetable";
+
+   // this.editEmployee = this.editEmployee.bind(this);
+   // this.deleteEmployee = this.deleteEmployee.bind(this);
+    this.addEmployee = this.addEmployee.bind(this);
+
+    var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton /> },
+    { name: "Andres B", info: "Senior Program", jobs:["Rigger","Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> },
+    { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> }];
+
+    this.processRows(rowData);
+    
+    this.state ={
+      columns: [{
+        Header: 'Name',
+        accessor: 'name' // String-based value accessors!
+      }, {
+        Header: 'Info',
+        accessor: 'info',
+      }, {
+        Header: 'Job(s)',
+        accessor: 'jobs'
+      }, {
+        Header: 'Actions',
+        accessor: 'actions'
+      }],
+      rows: rowData
     };
   }
 
+  //Process the rows that are passed in to fill in the missing 
+  //"Packed By" data with a PackButton
+  processRows(rowData) {
+    for (var i = 0; i < rowData.length; i++) {
+      for(var j =0; j <rowData[i].jobs.length; j++){
+        if(rowData[i].jobs[j] === "Administrator"){
+          rowData[i].actions = <EditEmployeeButton />; //TODO
+        }else{
+          rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>; //ALSO TODO
+        }
+      }
+    }
+  }
+
+
   componentDidMount() {
+    this.fetchRows();
+  }
+
+  fetchRows() {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    var url = rootURL + '/evs/';
+    var url = rootURL + this.URLsection;
     var self = this;
 
     fetch(url, {
@@ -34,41 +78,34 @@ export default class EmployeeTable extends React.Component {
       return response.json();
     })
       .then(function (rowData) {
-        var rows = [];
-        for (var i = 0; i < rowData.length; i++) {
-          if (rowData[i].job === "Admin") {
-            rowData[i].actions = <EditEmployeeButton />;
-          } else {
-            rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>
-          };
-        }
+        self.processRows(rowData);
         self.setState({
           rows: rowData
         });
       });
   }
 
-  render() {
+  addEmployee(name, info, jobs) {
+      var row = {
+        name: name,
+        info: info,
+        jobs: jobs,
+        actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>
+      };
+      var newRows = Array.from(this.state.rows);
+      newRows.push(row);
+      this.setState({
+        rows: newRows
+      })
+    }
 
-    const columns = [{
-      Header: 'Name',
-      accessor: 'name' // String-based value accessors!
-    }, {
-      Header: 'Info',
-      accessor: 'info',
-    }, {
-      Header: 'Job(s)',
-      accessor: 'load_number'
-    }, {
-      Header: 'Actions',
-      accessor: 'actions'
-    }]
-    var rowData = [{ name: "Paul B", info: "Senior Developer", job: "Admin", actions: <EditEmployeeButton /> },
-    { name: "Andres B", info: "Senior Program", job: "Rigger/Packer", actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> },
-    { name: "Jatin B", info: "Full Stack Developer", job: "Tandem", actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> }];
+  render() {
     return (
-      <TableSheet headerText="Employees" columns={columns} footer={<AddEmployeeButton />}>
-        {rowData}
+      <TableSheet headerText="Employees" 
+                  columns={this.state.columns} 
+                  footer={<AddEmployeeButton 
+                  authorize={this.addEmployee}/>}>
+        {this.state.rows}
       </TableSheet>
     );
   }
