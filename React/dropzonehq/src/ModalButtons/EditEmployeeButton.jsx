@@ -12,12 +12,12 @@ export default class EditEmployeeButton extends React.Component {
     render() {
        const modalContent = <Form>
         <InputGroup>
-            <InputGroupAddon id="addEmployeeLastName">First Name:</InputGroupAddon>
+            <InputGroupAddon id="addEmployeeFullName">First Name:</InputGroupAddon>
             <Input />
         </InputGroup>
         <br/>
         <InputGroup>
-            <InputGroupAddon id="addEmployeeLastName">Last Name:</InputGroupAddon>
+            <InputGroupAddon id="addEmployeeInfo">Last Name:</InputGroupAddon>
             <Input />
         </InputGroup>  
        </Form>;

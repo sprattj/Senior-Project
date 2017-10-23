@@ -13,17 +13,17 @@ export default class EmployeeTable extends React.Component {
     super(props)
     this.URLsection = "/employeetable";
 
-   // this.editEmployee = this.editEmployee.bind(this);
-   // this.deleteEmployee = this.deleteEmployee.bind(this);
+    // this.editEmployee = this.editEmployee.bind(this);
+    this.deleteEmployee = this.deleteEmployee.bind(this);
     this.addEmployee = this.addEmployee.bind(this);
 
-    var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton /> },
-    { name: "Andres B", info: "Senior Program", jobs:["Rigger","Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> },
-    { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup> }];
+    //   var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton />, rowID: 1},
+    //   { name: "Andres B", info: "Senior Program", jobs: ["Rigger", "Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>, rowID: 2 },
+    //   { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>,rowID: 3 }];
 
-    this.processRows(rowData);
-    
-    this.state ={
+    //   this.processRows(rowData);
+
+    this.state = {
       columns: [{
         Header: 'Name',
         accessor: 'name' // String-based value accessors!
@@ -37,7 +37,8 @@ export default class EmployeeTable extends React.Component {
         Header: 'Actions',
         accessor: 'actions'
       }],
-      rows: rowData
+      rows: [],
+      rowID: 0
     };
   }
 
@@ -45,10 +46,10 @@ export default class EmployeeTable extends React.Component {
   //"Packed By" data with a PackButton
   processRows(rowData) {
     for (var i = 0; i < rowData.length; i++) {
-      for(var j =0; j <rowData[i].jobs.length; j++){
-        if(rowData[i].jobs[j] === "Administrator"){
+      for (var j = 0; j < rowData[i].jobs.length; j++) {
+        if (rowData[i].jobs[j] === "Administrator") {
           rowData[i].actions = <EditEmployeeButton />; //TODO
-        }else{
+        } else {
           rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>; //ALSO TODO
         }
       }
@@ -85,26 +86,72 @@ export default class EmployeeTable extends React.Component {
       });
   }
 
+
+
   addEmployee(name, info, jobs) {
-      var row = {
-        name: name,
-        info: info,
-        jobs: jobs,
-        actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>
-      };
-      var newRows = Array.from(this.state.rows);
-      newRows.push(row);
-      this.setState({
-        rows: newRows
-      })
+    var jobsString = "";
+    var actionButtons = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton id={this.state.rowID} onClick={this.deleteEmployee} /></ButtonGroup>;
+    var newRowID = this.state.rowID;
+
+    for (var i = 0; i < jobs.length; i++) {
+      if (i === jobs.length - 1) {
+        jobsString += jobs[i];
+      } else {
+        jobsString += jobs[i] + ", ";
+      }
+      if (jobs[i] === "Administrator") {
+        actionButtons = <EditEmployeeButton />;
+      }
     }
+
+    var row = {
+      name: name,
+      info: info,
+      jobs: jobsString,
+      actions: actionButtons,
+      rowID: newRowID
+    };
+
+    newRowID++;
+
+    var newRows = Array.from(this.state.rows);
+    newRows.push(row);
+    
+    this.setState({
+      rows: newRows,
+      rowID: newRowID
+    })
+  }
+
+  deleteEmployee(id) {
+    var newRows = Array.from(this.state.rows);
+    console.log("Its being hit but nothing is happening")
+    for (var i = 0; i < newRows.length; i++) {
+      console.log("It got inside but nothing is happening")
+      console.log("NewRowns[i].rowId = " + newRows[i].rowID + " ID: " + id);
+      console.log("i = " + i);
+      if (newRows[i].rowID === id) {
+        console.log("BEFORE Splicing index: " + i + " Length: " + newRows.length);
+        newRows.splice(i, 1);
+        console.log("AFTER Splicing index: " + i + " Length: " + newRows.length);
+      }
+    }
+    this.setState({
+      rows: newRows
+    })
+
+  }
+
+
+
+
 
   render() {
     return (
-      <TableSheet headerText="Employees" 
-                  columns={this.state.columns} 
-                  footer={<AddEmployeeButton 
-                  authorize={this.addEmployee}/>}>
+      <TableSheet headerText="Employees"
+        columns={this.state.columns}
+        footer={<AddEmployeeButton
+          authorize={this.addEmployee} />}>
         {this.state.rows}
       </TableSheet>
     );

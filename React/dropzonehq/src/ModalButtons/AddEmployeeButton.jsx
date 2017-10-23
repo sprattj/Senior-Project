@@ -23,31 +23,42 @@ export default class AddEmployeeButton extends React.Component {
 
   verify() {
     this.props.authorize(this.state.fullName, this.state.info, this.state.jobs);
+    this.setState({ fullName: '',
+                    info: '',
+                    jobs: ''})
   }
 
-  fullNameChanged(e){
-    this.setState({ fullName: e.target.value});
+  fullNameChanged(e) {
+    this.setState({ fullName: e.target.value });
   }
 
-  infoChanged(e){
-    this.setState({ info: e.target.value});
+  infoChanged(e) {
+    this.setState({ info: e.target.value });
   }
 
-  jobsChanged(label){
-    if(this.state.jobs.length !== 0){
-      for(var i = 0; i<this.state.jobs.length; i++){
-        console.log("I: " + i + " Label: " + {label});
-        if(this.state.jobs[i] === {label}){
-          console.log("Splice");
-          //this.state.jobs.splice(i,1);
-        }else{
-          //this.state.jobs.push({label});
+  jobsChanged(job) {
+    var newJobs = Array.from(this.state.jobs);
+    if (newJobs.length !== 0) {
+      var found = false;
+      for (var i = 0; i < newJobs.length; i++) {
+        if (newJobs[i] === job) {
+          newJobs.splice(i, 1);
+          this.setState({
+            jobs: newJobs
+          })
+          return;
         }
       }
-    }else{
-      this.state.jobs.push({label});
+      if (!found) {
+        newJobs.push(job);
+      }
+    } else {
+      newJobs.push(job);
     }
-      console.log(this.state.jobs);
+    console.log(newJobs);
+    this.setState({
+      jobs: newJobs
+    })
   }
 
   getCheckBoxes() {
@@ -60,8 +71,8 @@ export default class AddEmployeeButton extends React.Component {
 
     for (var i = 0; i < jobs.length; i++) {
       var nextJob = jobs[i];
-      var nextItem = <Checkbox label={nextJob} updateCheckBoxArray={this.jobsChanged}/>
-          
+      var nextItem = <Checkbox label={nextJob} updateCheckBoxArray={this.jobsChanged} />
+
       if (i % 3 === 0) {
         col1.push(nextItem);
       } else if (i % 3 === 1) {
