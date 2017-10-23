@@ -26,12 +26,7 @@ const marginStyle = {
 class SheetsScreen extends React.Component {
     render() {
         return (
-            <div>
-                <Row>
-                    <Col lg={{ size: 12 }}>
-                        <DropzoneHQNav />
-                    </Col>
-                </Row>
+            <div>                
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
                         <TandemRigsheet />
