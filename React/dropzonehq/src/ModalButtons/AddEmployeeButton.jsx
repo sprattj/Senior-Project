@@ -23,9 +23,11 @@ export default class AddEmployeeButton extends React.Component {
 
   verify() {
     this.props.authorize(this.state.fullName, this.state.info, this.state.jobs);
-    this.setState({ fullName: '',
-                    info: '',
-                    jobs: ''})
+    this.setState({
+      fullName: '',
+      info: '',
+      jobs: ''
+    })
   }
 
   fullNameChanged(e) {

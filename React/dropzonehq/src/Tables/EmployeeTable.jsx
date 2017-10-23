@@ -125,15 +125,9 @@ export default class EmployeeTable extends React.Component {
 
   deleteEmployee(id) {
     var newRows = Array.from(this.state.rows);
-    console.log("Its being hit but nothing is happening")
     for (var i = 0; i < newRows.length; i++) {
-      console.log("It got inside but nothing is happening")
-      console.log("NewRowns[i].rowId = " + newRows[i].rowID + " ID: " + id);
-      console.log("i = " + i);
       if (newRows[i].rowID === id) {
-        console.log("BEFORE Splicing index: " + i + " Length: " + newRows.length);
         newRows.splice(i, 1);
-        console.log("AFTER Splicing index: " + i + " Length: " + newRows.length);
       }
     }
     this.setState({

@@ -12,7 +12,8 @@ export default class DeleteEmployeeButton extends React.Component {
     }
   }
   verify() {
-    this.props.onClick(this.state.id);
+    this.setState({state: this.props.id})
+    this.props.onClick(this.props.id);
   }
 
   render() {
