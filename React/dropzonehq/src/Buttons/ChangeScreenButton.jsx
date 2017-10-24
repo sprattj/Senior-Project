@@ -21,8 +21,3 @@ export default class ScreenChangeButton extends React.Component {
     }    
 }
 
-ScreenChangeButton.propTypes = {
-        buttonSize: PropTypes.oneOf(reactstrapButtonSizes).isRequired,
-        buttonColor: PropTypes.oneOf(reactstrapColors).isRequired,
-        buttonText: PropTypes.string.isRequired
-}

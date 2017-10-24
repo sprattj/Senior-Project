@@ -36,7 +36,7 @@ export default class TableSheet extends React.Component {
 }
 
 TableSheet.propTypes = {
-    headerText: PropTypes.string.isRequired,
+    //headerText: PropTypes.string.isRequired,
     columns: PropTypes.array.isRequired,
     footer: PropTypes.any.isRequired
 }
