@@ -3,7 +3,7 @@ import TableSheet from './TableSheet.jsx';
 import RentButton from '../Buttons/RentButton.jsx';
 import RentalFilterDropdown from '../Dropdowns/RentalFilterDropdown.jsx';
 import PropTypes from 'prop-types';
-import { Row, Col, Card, CardHeader, CardBody, CardFooter } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 
@@ -60,9 +60,9 @@ export default class RentalTable extends React.Component {
                     </Col>
                     <Card body>
                         <CardHeader>Current Item Details</CardHeader>
-                        <CardBody>
+                        <CardBlock>
                             This is where a full item description would go
-                        </CardBody>
+                        </CardBlock>
                         <RentButton buttonText="Rent" disabled={true} />
                     </Card>
                 </Row>

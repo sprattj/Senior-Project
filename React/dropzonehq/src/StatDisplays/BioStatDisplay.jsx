@@ -1,6 +1,6 @@
 import React from 'react';
 import StatDisplay from './StatDisplay.jsx';
-import { Row, Col, Card, CardHeader, CardBody, CardFooter } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 
 
 export default class BioStatDisplay extends React.Component {

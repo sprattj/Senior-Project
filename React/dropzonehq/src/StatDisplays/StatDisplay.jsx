@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBody, CardFooter } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 
 export default class StatDisplay extends React.Component {
     constructor(props) {
@@ -17,9 +17,9 @@ export default class StatDisplay extends React.Component {
                     <Col>
                         <Card >
                             <CardHeader>{this.state.headerText}</CardHeader>
-                            <CardBody>
+                            <CardBlock>
                                 {this.state.statsToDisplay}
-                            </CardBody>
+                            </CardBlock>
                         </Card>
                     </Col>
                 </Row>
