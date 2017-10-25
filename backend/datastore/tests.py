@@ -1,17 +1,17 @@
 # from DropZoneHQ.models import Rigs, Canopies, AllCanopies, AllItems, Items
 # from dropZoneHQ.views import RigViewSet
-from django.utils.six import BytesIO
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
-
-from .serializers import *
-
+import django
+#django.setup()
+from backend.datastore.views import *
+from rest_framework import request
 # print(Canopies.objects.all().values().__str__())
 # print(RigViewSet.get_queryset(RigViewSet.serializer_class).values().__str__())
 # print(AllCanopies.objects.all().values().__str__())
 # print(AllItems.objects.all().values().__str__())
 
+print(EmployeeVsSignoutViewSet().specific_signout(request='GET', pk=4).getvalue().__str__())
 
+"""
 signouts = EmployeesVsSignouts.objects.all()
 serializer = EmployeeVsSignoutSerializer(signouts, many=True)
 print(serializer.data)
@@ -40,4 +40,4 @@ print(serializer.validated_data)
 
 serializer = ItemSerializer(Items.objects.all(), many=True)
 print(serializer.data)
-
+"""

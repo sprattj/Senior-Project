@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import django
+from rest_framework.settings import api_settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -74,6 +75,17 @@ TEMPLATES = [
     },
 ]
 
+"""
+REST_FRAMEWORK = {
+    'ENCODING': (
+        'api_settings.STRICT_JSON'
+    ),
+    'DEFAULT_RENDERER_SETTINGS': (
+        'rest_framework.renderers.JSONRenderer'
+    )
+}
+"""
+
 WSGI_APPLICATION = 'dropZoneHQ.wsgi.application'
 
 
@@ -94,9 +106,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'dropzonehq',
+            'NAME': 'dropzone_hq',
             'USER': 'root',
-            'PASSWORD': '',
+            'PASSWORD': 'hpmx7575',
             'HOST': 'localhost',
             'PORT': 3306
         }
@@ -139,4 +151,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-django.setup()
+#django.setup()
