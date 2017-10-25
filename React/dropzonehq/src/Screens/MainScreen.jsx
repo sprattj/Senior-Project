@@ -9,8 +9,8 @@ import EmployeeInfoScreen from '../Screens/EmployeeInfoScreen.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const marginStyle = {
-    marginTop: 25,
-    marginBottom: 25
+    marginTop: 15,
+    marginBottom: 15
 };
 
 export default class MainScreen extends React.Component {
@@ -21,30 +21,35 @@ export default class MainScreen extends React.Component {
     render() {
         return (
             <div>
-                <Row style={marginStyle}>
-                    <Col>
-                        <ChangeScreenButton screen={<EmployeeInfoScreen />}
-                            changeScreen={this.props.changeScreen}
-                            buttonText="Employee Information" />
-                    </Col>
-                    <Col>
-                        <ChangeScreenButton screen={<EmployeeAdminScreen />}
-                            changeScreen={this.props.changeScreen}
-                            buttonText="Employee Management" />
-                    </Col>
-                </Row>
-                <Row style={marginStyle}>
-                    <Col>
-                        <ChangeScreenButton screen={<RentalScreen />}
-                            changeScreen={this.props.changeScreen}
-                            buttonText="Rentals" />
-                    </Col>
-                    <Col>
-                        <ChangeScreenButton screen={<SheetsScreen />}
-                            changeScreen={this.props.changeScreen}
-                            buttonText="Rig Sheets" />
-                    </Col>
-                </Row>
+                <Card>
+                    <CardBlock>
+                        <Row style={marginStyle}>
+                            <Col>
+                                <ChangeScreenButton screen={<EmployeeInfoScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="Employee Information" />
+                            </Col>
+                            <Col>
+                                <ChangeScreenButton screen={<EmployeeAdminScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="Employee Management" />
+                            </Col>
+                        </Row>
+                        <Row style={marginStyle}>
+                            <Col>
+                                <ChangeScreenButton screen={<RentalScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="Rentals" />
+                            </Col>
+                            <Col>
+                                <ChangeScreenButton screen={<SheetsScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="Rig Sheets" />
+                            </Col>
+                        </Row>
+                    </CardBlock>
+                </Card>
+
             </div>
         );
     }

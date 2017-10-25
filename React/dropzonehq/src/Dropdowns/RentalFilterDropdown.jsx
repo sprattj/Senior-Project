@@ -3,6 +3,11 @@ import Dropdown from './Dropdown.jsx';
 import DropdownOption from './DropdownOption.jsx';
 
 export default class RentalFilterDropdown extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+    }
 
     getRentalItems() {
 
@@ -21,11 +26,16 @@ export default class RentalFilterDropdown extends React.Component {
         return options;
     }
 
+    handleChange(e) {
+        const newFilter = e.target.value;
+        this.props.onChange(newFilter);
+    }
+
     render() {
         var rentalFilters = this.getRentalItems();
         return (
             <div>                
-                <Dropdown onChange={this.props.onChange} id={"rentalFilterDropdown"} labelText="Rental Filters:">
+                <Dropdown onChange={this.props.handleChange} id={"rentalFilterDropdown"} labelText="Rental Filters:">
                     {rentalFilters}
                 </Dropdown>
             </div>

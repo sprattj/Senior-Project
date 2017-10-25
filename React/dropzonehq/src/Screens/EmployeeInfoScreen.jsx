@@ -32,13 +32,7 @@ export default class EmployeeInfoScreen extends React.Component {
                             <CardBlock>
                                 <BioStatDisplay />
 
-                                <RiggingStatDisplay
-                                    reservesPackedToday={0}
-                                    reservesPackedWeek={3}
-                                    reservesPackedMonth={12}
-                                    reservesPackedYear={24}
-                                    reservesPackedTotal={45}
-                                    reserveSaves={3} />
+                                <RiggingStatDisplay />
 
                                 <TandemInstructorStatDisplay />
 
