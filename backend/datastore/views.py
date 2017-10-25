@@ -97,9 +97,15 @@ class EmployeeVsSignoutViewSet(viewsets.ViewSet):
             serializer = EmployeeVsSignoutSerializer(signout)
             return JsonResponse(serializer.data)
 
+        elif request.method == 'PUT':
+            serializer = EmployeeVsSignoutSerializer(signout, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
     @csrf_exempt
     def new_signout(self, request):
-        if request.method == 'PUT':
+        if request.method == 'POST':
             '''
             cursor = connection.cursor()
             ret = cursor.callproc("new_signout")
@@ -107,7 +113,7 @@ class EmployeeVsSignoutViewSet(viewsets.ViewSet):
             serializer = EmployeeVsSignoutSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+                return HttpResponse(status=status.HTTP_201_CREATED)
             return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
