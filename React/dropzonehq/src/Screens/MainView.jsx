@@ -38,7 +38,7 @@ export default class MainView extends React.Component {
             <div>
                 <Row>
                     <Col lg={{ size:12 }}>
-                        <DropzoneHQNav />
+                        <DropzoneHQNav changeScreen={this.changeScreen} />
                     </Col>
                 </Row>
                 <Row>

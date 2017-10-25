@@ -24,6 +24,7 @@ export default class ModalButton extends React.Component {
          open: false
        }
        this.toggleModal = this.toggleModal.bind(this);
+       this.verify = this.verify.bind(this);       
     }
  
     //change the state to toggle the modal's visibility
@@ -32,18 +33,23 @@ export default class ModalButton extends React.Component {
          open: !this.state.open
        });
     }
+
+    verify(){
+      this.props.modalPrimaryClick();
+      this.toggleModal();
+    }
  
     //render the button and the modal inside a div using all relevant props.
     //note that content is passed to the modal via props.children
     render() {
        return (
           <div>
-              <Button size={this.props.buttonSize} color={this.props.buttonColor} onClick={this.toggleModal.bind(this)}>{this.props.buttonText}</Button>
+              <Button size={this.props.buttonSize} color={this.props.buttonColor} onClick={this.toggleModal}>{this.props.buttonText}</Button>
             <ModalDialog  title={this.props.modalTitle} 
                           isOpen={this.state.open} 
                           onCancelClick={this.toggleModal.bind(this)}
                           primaryButtonText={this.props.modalPrimaryButtonText} 
-                          onPrimaryClick={this.props.modalPrimaryClick}>
+                          onPrimaryClick={this.verify}>
                   {this.props.modalContent} 
             </ModalDialog>
           </div>

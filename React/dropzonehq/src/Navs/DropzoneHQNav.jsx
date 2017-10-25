@@ -1,6 +1,8 @@
 import React from 'react';
 import SiteNavbar from './SiteNavbar.jsx';
 import { NavItem, NavLink } from 'reactstrap';
+import ChangeScreenButton from '../Buttons/ChangeScreenButton.jsx';
+import MainScreen from '../Screens/MainScreen.jsx';
 
 
 /*
@@ -16,7 +18,9 @@ export default class DropzoneHQNav extends React.Component {
             <SiteNavbar brandImage={"https://docs.google.com/uc?id=0ByDw0k4qQe74ZE5LVHY1eTZYaXM"} 
             brandText="Dropzone HQ" brandLink="#">
                 <NavItem>
-                    <NavLink href="#">Thing</NavLink>
+                    <ChangeScreenButton screen={<MainScreen changeScreen={this.props.changeScreen} />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="Return to Main" />
                 </NavItem>
                 <NavItem>
                     <NavLink href="#">Thing 2</NavLink>

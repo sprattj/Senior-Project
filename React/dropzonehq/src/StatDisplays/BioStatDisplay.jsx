@@ -13,6 +13,8 @@ export default class BioStatDisplay extends React.Component {
         
         //Test data
         this.state = {
+            visible: true,  //Bio will always be visible
+            show: true,     //allow collapse and expand
             firstName: "Brian",
             lastName: "Krick",
             employmentDate: "04/2010",
@@ -21,6 +23,7 @@ export default class BioStatDisplay extends React.Component {
         };
         //---------
     }
+
 
     //on loading it will try to fetch the bio but 
     //if it fails it will show test data
