@@ -19,7 +19,7 @@ export default class SignoutButton extends React.Component {
     //with this.methodName from the onChange props in render
 
     this.verify = this.verify.bind(this);
-
+    
     this.instructorChanged = this.instructorChanged.bind(this);
     this.rigChanged = this.rigChanged.bind(this);
     this.planeLoadChanged = this.planeLoadChanged.bind(this);

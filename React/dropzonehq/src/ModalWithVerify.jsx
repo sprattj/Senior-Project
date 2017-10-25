@@ -15,6 +15,7 @@ export default class ModalWithVerify extends React.Component {
         //with this.methodName from the onChange props in render
         this.toggleModal = this.toggleModal.bind(this);
         this.togglePopover = this.togglePopover.bind(this);
+        this.verify = this.verify.bind(this);
 
         //keep state for the values of the components in this modal
         this.state = {
@@ -35,6 +36,15 @@ export default class ModalWithVerify extends React.Component {
         this.setState({
             popoverOpen: !this.state.popoverOpen
         });
+    }
+
+    verify(){
+        
+        //if (this.props.verify){
+            this.props.verify();
+            this.toggleModal();
+            this.togglePopover();
+        //}
     }
 
     //pass the corresponding onchange methods down to the child components so 
@@ -60,7 +70,7 @@ export default class ModalWithVerify extends React.Component {
                     title={this.props.popoverTitle}
                     buttonID={this.props.ID}
                     toggle={this.togglePopover}
-                    verify={this.props.verify}
+                    verify={this.verify}
                     passwordChanged={this.props.passwordChanged}
                     usernameChanged={this.props.usernameChanged} />
             </div>

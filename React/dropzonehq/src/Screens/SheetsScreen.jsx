@@ -20,7 +20,7 @@ const marginStyle = {
     All related features as per the design will also be 
     covered here.
 */
-class SheetsScreen extends React.Component {
+export default class SheetsScreen extends React.Component {
     render() {
         return (
             <div>
@@ -41,5 +41,3 @@ class SheetsScreen extends React.Component {
         );
     }
 };
-
-export default SheetsScreen;
