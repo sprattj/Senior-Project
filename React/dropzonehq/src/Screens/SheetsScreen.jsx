@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
-import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import Rigsheet from '../Tables/Rigsheet.jsx';
 import RigAlertsContainer from '../RigAlertsContainer.jsx';
 import 'bootstrap/dist/css/bootstrap.css';

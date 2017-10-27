@@ -26,7 +26,7 @@ export default class Dropdown extends React.Component {
   //dropdown to be available to parent components.
   handleChange(event) {
         var value = event.target.value;
-        this.props.onChange(this.props.id, value);
+        this.props.handleChange(this.props.id, value);
     }
 
   //indicate this.handlechange as the onChange method

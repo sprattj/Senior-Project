@@ -6,7 +6,7 @@ import TandemInstructorStatDisplay from '../StatDisplays/TandemInstructorStatDis
 import AFPInstructorStatDisplay from '../StatDisplays/AFPInstructorStatDisplay.jsx';
 import PackingStatDisplay from '../StatDisplays/PackingStatDisplay.jsx';
 import RentalStatDisplay from '../StatDisplays/RentalStatDisplay.jsx';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 
 import 'bootstrap/dist/css/bootstrap.css';
 

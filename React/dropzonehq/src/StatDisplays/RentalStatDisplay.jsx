@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import StatDisplay from './StatDisplay.jsx';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 
 export default class RentalStatDisplay extends React.Component {
