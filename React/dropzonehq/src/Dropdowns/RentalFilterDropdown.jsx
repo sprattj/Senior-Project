@@ -5,13 +5,16 @@ import DropdownOption from './DropdownOption.jsx';
 export default class RentalFilterDropdown extends React.Component {
     constructor(props) {
         super(props);
-
-        this.handleChange = this.handleChange.bind(this);
+        this.onChange = this.props.onChange.bind(this);
+        this.state = {
+            
+        }
     }
 
     getRentalItems() {
 
-        var rentalFiltersData = [{ name: "Show All", id: "1" },
+        var rentalFiltersData = 
+        [{ name: "Show All",  id: "1" },
         { name: "Rigs Only", id: "2" },
         { name: "Canopies Only", id: "3" },
         { name: "Containers Only", id: "4" },];//get row data from ajax
@@ -26,18 +29,14 @@ export default class RentalFilterDropdown extends React.Component {
         return options;
     }
 
-    handleChange(e) {
-        const newFilter = e.target.value;
-        this.props.onChange(newFilter);
-    }
-
+    
     render() {
         var rentalFilters = this.getRentalItems();
         return (
             <div>                
-                <Dropdown onChange={this.props.handleChange} id={"rentalFilterDropdown"} labelText="Rental Filters:">
+                <Dropdown handleChange={() => this.props.onChange("test")}  labelText="Rental Filters:" id="rentalFilterDropdown">
                     {rentalFilters}
-                </Dropdown>
+                </Dropdown>                
             </div>
         );
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter, Table } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock, Table } from 'reactstrap';
 import ChangeScreenButton from '../Buttons/ChangeScreenButton.jsx';
 import EmployeeAdminScreen from '../Screens/EmployeeAdminScreen.jsx';
 import RentalScreen from '../Screens/RentalScreen.jsx';

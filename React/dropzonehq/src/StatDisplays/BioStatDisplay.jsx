@@ -1,6 +1,6 @@
 import React from 'react';
 import StatDisplay from './StatDisplay.jsx';
-import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 
 

@@ -16,10 +16,16 @@ export default class RentalTable extends React.Component {
         this.URLsection = "/rentals";
 
         //this.toggleRented = this.toggleRented.bind(this);
-        this.changeFilter = this.changeFilter.bind(this);
+        this.filterChanged = this.filterChanged.bind(this);
         
+        var rowData = [{ number: "04", desc: "Old Yellow in Gray and Brown Jav", isRented: true, type: "rig", rowID: 1 },
+        { number: "09", desc: "Black main in Black Jav", type: "rig", isRented: false, rowID: 2 },
+        { number: "01", desc: "Orange and Green man, Pink and Blue Jav", type: "rig", isRented: true, rowID: 3 },
+        { number: "01125", desc: "Red and Black Navigator", type: "canopy", isRented: false, rowID: 4 },
+        { number: "07663", desc: "Blue and Black Mirage", type: "container", isRented: false, rowID: 5 } ];
+
         this.state = {
-            filter: "all",
+            filter: "rig",
             columns: [{
                 Header: 'Item Number',
                 accessor: 'number' // String-based value accessors!
@@ -31,22 +37,18 @@ export default class RentalTable extends React.Component {
             rowID: 0
         };
 
-        var rowData = [{ number: "04", desc: "Old Yellow in Gray and Brown Jav", isRented: true, type: "rig", rowID: 1 },
-        { number: "09", desc: "Black main in Black Jav", type: "rig", isRented: false, rowID: 2 },
-        { number: "01", desc: "Orange and Green man, Pink and Blue Jav", type: "rig", isRented: true, rowID: 3 },
-        { number: "01125", desc: "Red and Black Navigator", type: "canopy", isRented: false, rowID: 4 },
-        { number: "07663", desc: "Blue and Black Mirage", type: "container", isRented: false, rowID: 5 } ];
+        
         this.processRows(rowData, this.state.filter);
     }
 
     //Process the rows that are passed in to fill in the Table
     processRows(rowData, filter) {
         for (var i = 0; i < rowData.length; i++) {
-            if (filter == "all" || filter == rowData[i].type) {
+            //if (filter === "all" || filter === rowData[i].type) {
                 number: { rowData[i].number };
                 desc: { rowData[i].desc };
                 index: { i };
-            }            
+            //}            
 
             if (rowData[i].isRented) {
                 //change the way its viewed
@@ -55,10 +57,12 @@ export default class RentalTable extends React.Component {
     }
 
     //for the dropdown    
-    changeFilter(newFilter) {
+    filterChanged(newFilter) {
+        console.log(newFilter);
         this.setState({
            filter: newFilter 
         });
+        this.processRows(this.state.rowData, newFilter);
     }
 
     //When this rigsheet component loads on the page, fetch the rows
@@ -117,13 +121,15 @@ export default class RentalTable extends React.Component {
             <div>
                 <Row>
                     <Col>
-
+                        <p>{"Current filter: " + this.state.filter}</p>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                        <TableSheet headerText={<RentalFilterDropdown onChange={this.changeFilter} />}
-                            columns={this.state.columns} >
+                        <TableSheet 
+                            headerText={<RentalFilterDropdown onChange={this.filterChanged} />}
+                            columns={this.state.columns} 
+                            footer="">
                             {this.state.rows}
                         </TableSheet>
                     </Col>
