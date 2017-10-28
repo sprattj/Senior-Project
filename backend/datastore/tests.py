@@ -1,43 +1,17 @@
-# from DropZoneHQ.models import Rigs, Canopies, AllCanopies, AllItems, Items
-# from dropZoneHQ.views import RigViewSet
+from django.test import TestCase
+import sys
 import django
-#django.setup()
+django.setup()
+sys.path.append('../')
 from backend.datastore.views import *
-from rest_framework import request
-# print(Canopies.objects.all().values().__str__())
-# print(RigViewSet.get_queryset(RigViewSet.serializer_class).values().__str__())
-# print(AllCanopies.objects.all().values().__str__())
-# print(AllItems.objects.all().values().__str__())
 
-print(EmployeeVsSignoutViewSet().specific_signout(request='GET', pk=4).getvalue().__str__())
 
-"""
-signouts = EmployeesVsSignouts.objects.all()
-serializer = EmployeeVsSignoutSerializer(signouts, many=True)
-print(serializer.data)
+print(EmployeeVsSignoutViewSet.all_signout_records)
 
-'''Get an object'''
-item = Items.objects.all().get(item_id=2)
-'''Serialize an object'''
-serializer = ItemSerializer(item)
-'''Render serialized data into JSON'''
-content = JSONRenderer().render(serializer.data)
-# test json
-print(content)
-'''Deserialization:
-    Convert JSON content into a stream'''
-stream = BytesIO(content)
-'''Parse the stream into deserialized data'''
-data = JSONParser().parse(stream)
-# test data
-print(data)
 
-serializer = ItemSerializer(data=data)
-print(serializer.is_valid())
-print(serializer.errors.__str__())  # Empty: No errors
-print(serializer.validated_data)
-# serializer.save()
+class EmployeeVsSignoutViewSetTestCase(TestCase):
 
-serializer = ItemSerializer(Items.objects.all(), many=True)
-print(serializer.data)
-"""
+    def test_signouts_get(self):
+        signouts = EmployeesVsSignouts.objects.get(3)
+        self.assertEqual(signouts.field(name='signout_id'), 3)
+        self.assertContains(HttpResponse, status_code=200)
