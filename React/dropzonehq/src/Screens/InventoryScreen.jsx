@@ -7,19 +7,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 const marginStyle = {
     marginTop: 25,
     marginBottom: 25
-
 };
 
 /*
-    SheetsScreen is a view for seeing the tandem and
-    student rigsheets, any errors/reports for rigs that
-    instructors and packers should know, signing out rigs,
-    reporting rigs as packed, and report rig damage.
-
-    All related features as per the design will also be 
-    covered here.
+    InventoryScreen ...
 */
-export default class SheetsScreen extends React.Component {
+class InventoryScreen extends React.Component {
     render() {
         return (
             <div>
@@ -40,3 +33,5 @@ export default class SheetsScreen extends React.Component {
         );
     }
 };
+
+export default InventoryScreen;

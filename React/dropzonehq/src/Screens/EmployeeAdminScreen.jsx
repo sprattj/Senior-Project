@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
-import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import EmployeeTable from '../Tables/EmployeeTable.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 

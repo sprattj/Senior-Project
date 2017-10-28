@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 
 export default class StatDisplay extends React.Component {
     constructor(props) {
