@@ -1,34 +1,58 @@
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+# from django.db import connection
 from rest_framework import viewsets
+from rest_framework import status
 # from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from .models import *
 from .serializers import *
+
+
+class ItemViewSet(viewsets.ModelViewSet):
+    @csrf_exempt
+    def all_items(self, request):
+        if request.method == 'GET':
+            items = AllItems.objects.all()
+            serializer = AllItemSerializer(items, many=True)
+            return JsonResponse(serializer.data, safe=False)
+
+    @csrf_exempt
+    def specific_item(self, request, pk):
+        if request.method == 'GET':
+            item = AllItems.objects.get(pk)
+            serializer = AllItemSerializer(item)
+            return JsonResponse(serializer.data, safe=False)
+
+    @csrf_exempt
+    def items_by_type(self, request, item_type):
+        if request.method == 'GET':
+            items = AllItems.objects.all().filter(item_type=item_type)
+            serializer = AllItemSerializer(items, many=True)
+            return JsonResponse(serializer.data, safe=False)
 
 
 class RigViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows rigs to be viewed or edited.
     """
-    queryset = Rigs.objects.all()
-    
-
     @csrf_exempt
-    def rig_list(self, request):
+    def specific_rig(self, request, pk):
+        try:
+            rig = Rigs.objects.get(pk)
+        except Rigs.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         if request.method == 'GET':
-            rigs = RigViewSet.queryset
-            serializer = RigViewSet.serializer_class(rigs, many=True)
+            serializer = RigSerializer(rig)
             return JsonResponse(serializer.data, safe=False)
 
         elif request.method == 'POST':
             data = JSONParser().parse(request)
-            serializer = RigViewSet.serializer_class(data=data)
+            serializer = RigSerializer(data=data)
 
             if serializer.is_valid():
                 serializer.save()
-                return JsonResponse(serializer.data, status=201)
-            return JsonResponse(serializer.errors, status=400)
+                return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @csrf_exempt
     def rig_detail(self, request, pk):
@@ -36,15 +60,13 @@ class RigViewSet(viewsets.ModelViewSet):
             rig = RigViewSet.queryset.get(pk=pk)
         except Rigs.DoesNotExist:
             return HttpResponse(status=404)
-        """if request.method == 'GET': request.method == 'GET'"""
-        if 1 == 1:
-            serializer_class = RigSerializer
-            serializer = RigViewSet.serializer_class(rig)
+        if request.method == 'GET':
+            serializer = RigSerializer(rig)
             return JsonResponse(serializer.data)
 
         elif request.method == 'PUT':
             data = JSONParser().parse(request)
-            serializer = RigViewSet.serializer_class(rig, data=data)
+            serializer = RigSerializer(rig, data=data)
 
             if serializer.is_valid():
                 serializer.save()
@@ -56,36 +78,102 @@ class RigViewSet(viewsets.ModelViewSet):
             return HttpResponse(status=204)
 
 
-
-class EmployeeVsSignoutViewSet(viewsets.ModelViewSet):
+class EmployeeVsSignoutViewSet(viewsets.ViewSet):
+    @csrf_exempt
+    def all_signout_records(self, request):
+        queryset = EmployeesVsSignouts.objects.all()
+        if request.method == 'GET':
+            serializer = EmployeeVsSignoutSerializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
 
     @csrf_exempt
-<<<<<<< HEAD:backend/datastore/views.py
-    def employee_signout_records(self): 
-            queryset = EmployeesVsSignouts.objects.all()
-            serializer_class = EmployeeVsSignoutSerializer
-=======
-    def employee_signout_records(self, request, is_tandem):
-        if is_tandem:
-            queryset = EmployeesVsSignoutsTandem.objects.all()
-        else:
-            queryset = EmployeesVsSignouts.objects.all()
-        serializer_class = EmployeeVsSignoutSerializer()
+    def student_signout_records(self, request):
+        queryset = EmployeesVsSignoutsStudent.objects.all()
+        serializer_class = EmployeeVsSignoutSerializer
         if request.method == 'GET':
->>>>>>> 11198e8d09d85a91ffa1802055a239c47fdaf783:backend/datastore/views.py
             serializer = serializer_class(queryset, many=True)
             return JsonResponse(serializer.data, safe=False)
 
+        elif request.method == 'POST':
+            serializer = EmployeeVsSignoutSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(status=status.HTTP_201_CREATED)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @csrf_exempt
+    def tandem_signout_records(self, request):
+        queryset = EmployeesVsSignoutsTandem.objects.all()
+        if request.method == 'GET':
+            serializer = EmployeeVsSignoutSerializer(queryset, many=True)
+            return JsonResponse(serializer.data, safe=False)
+
+    @csrf_exempt
+    def specific_signout(self, request, pk):
+        queryset = EmployeesVsSignouts.objects.all()
+        try:
+            signout = queryset.get(pk=pk)
+        except EmployeesVsSignouts.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+        if request.method == 'GET':
+            serializer = EmployeeVsSignoutSerializer(signout)
+            return JsonResponse(serializer.data)
+
+        elif request.method == 'PUT':
+            serializer = EmployeeVsSignoutSerializer(signout, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+    @csrf_exempt
+    def new_signout(self, request):
+        if request.method == 'POST':
+            '''
+            cursor = connection.cursor()
+            ret = cursor.callproc("new_signout")
+            '''
+            serializer = EmployeeVsSignoutSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(status=status.HTTP_201_CREATED)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-<<<<<<< HEAD:backend/datastore/views.py
 
-    def employees(self):
-        queryset = Employees.objects.all()
-        serializer_class = EmployeeSerializer
-        serializer = serializer_class(queryset, many=True)
-        return JsonResponse(serializer.data, safe=False)
-=======
-    queryset = Employees.objects.all()
-    serializer_class = EmployeeSerializer()
->>>>>>> 11198e8d09d85a91ffa1802055a239c47fdaf783:backend/datastore/views.py
+    @csrf_exempt
+    def all_employees(self, request):
+        if request.method == 'GET':
+            emps = Employees.objects.all()
+            serializer = EmployeeSerializer(emps, many=True)
+            return JsonResponse(serializer.data, safe=False)
+
+        elif request.method == 'POST':
+            serializer = EmployeeSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(status=status.HTTP_201_CREATED)
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+    @csrf_exempt
+    def specific_employee(self, request, pk):
+        try:
+            emp = Employees.objects.get(pk)
+        except Employees.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+        if request.method == 'GET':
+            serializer = EmployeeSerializer(emp)
+            return JsonResponse(serializer.data)
+
+        elif request.method == 'PUT':
+            serializer = EmployeeSerializer(request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == 'DELETE':
+            emp.delete()
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
