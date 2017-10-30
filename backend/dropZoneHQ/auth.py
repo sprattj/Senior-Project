@@ -1,6 +1,7 @@
 #
 from Crypto.Hash import SHA256
 from backend.datastore.models import Dropzones
+from django.http import HttpResponse
 
 class Auth:
 
@@ -10,7 +11,7 @@ class Auth:
     # authenticate a dropzone based on the
     def authenticateDropzone(self, request, name=None, password=None):
         check = self.authenticatePasswordDropzone(self.authenticateNameDropzone(name), password)
-        return (check if check is not None else )
+        return (check if check is not None else HttpResponse(status=402))
     #
     def authenticateDropzone(self, request, token=None):
 
