@@ -15,8 +15,8 @@ import { FormGroup, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 export default class Dropdown extends React.Component {
   constructor(props) {
     super(props);
-    //bind handlechange so it is available inside render
-    this.handleChange = this.handleChange.bind(this);
+    //bind onChange so it is available inside render
+    this.onChange = this.onChange.bind(this);
   }
 
   //when the selected item in this dropdown is changed
@@ -24,12 +24,13 @@ export default class Dropdown extends React.Component {
   //and pass it to the parent component's passed-in
   //onChange method. This allows the value of this 
   //dropdown to be available to parent components.
-  handleChange(event) {
+  onChange(event) {
         var value = event.target.value;
-        this.props.handleChange(this.props.id, value);
+        this.props.onChange(this.props.id, value);
+        console.log(value)
     }
 
-  //indicate this.handlechange as the onChange method
+  //indicate this.onChange as the onChange method
   //so that values are properly updated when this
   //dropdown has a new value selected
   render() {
@@ -38,7 +39,7 @@ export default class Dropdown extends React.Component {
           <InputGroup>
           <InputGroupAddon>{this.props.labelText}</InputGroupAddon>
           <Input type="select" name="select" id={this.props.id}
-                onChange={this.handleChange}>
+                onChange={this.onChange}>
             {this.props.children}
           </Input>
           </InputGroup>

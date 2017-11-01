@@ -425,7 +425,20 @@ class EmployeesVsSignouts(models.Model):
     class Meta:
         app_label = 'dropZoneHQ'
         managed = False
-        db_table = 'employees_vs_signouts'
+        db_table = 'all_employees_vs_signouts'
+
+
+class EmployeesVsSignoutsStudent(models.Model):
+    signout_id = models.AutoField(primary_key=True)
+    jumpmaster = models.CharField(max_length=90)
+    load_number = models.IntegerField()
+    rig_id = models.IntegerField()
+    packed_by = models.CharField(max_length=90)
+
+    class Meta:
+        app_label = 'dropZoneHQ'
+        managed = False
+        db_table = 'employees_vs_signouts_student'
 
 
 class EmployeesVsSignoutsTandem(models.Model):

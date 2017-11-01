@@ -1,13 +1,18 @@
 import React from 'react';
 import TableSheet from './TableSheet.jsx';
 import RentButton from '../Buttons/RentButton.jsx';
-import RentalFilterDropdown from '../Dropdowns/RentalFilterDropdown.jsx';
+import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
+import ItemTable from './ItemTable.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 import ReactTable from 'react-table';
 import { rootURL } from '../restInfo.js';
 import "react-table/react-table.css";
 
+var all;
+var rigs;
+var canopies;
+var containers;
 export default class RentalTable extends React.Component {
     constructor(props) {
         super(props);
@@ -17,7 +22,8 @@ export default class RentalTable extends React.Component {
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
-        
+       
+        //Test Data to fill the table until we connect to the DB
         var rowData = [{ number: "04", desc: "Old Yellow in Gray and Brown Jav", isRented: true, type: "rig", rowID: 1 },
         { number: "09", desc: "Black main in Black Jav", type: "rig", isRented: false, rowID: 2 },
         { number: "01", desc: "Orange and Green man, Pink and Blue Jav", type: "rig", isRented: true, rowID: 3 },
@@ -25,7 +31,7 @@ export default class RentalTable extends React.Component {
         { number: "07663", desc: "Blue and Black Mirage", type: "container", isRented: false, rowID: 5 } ];
 
         this.state = {
-            filter: "rig",
+            filter: "all",
             columns: [{
                 Header: 'Item Number',
                 accessor: 'number' // String-based value accessors!
@@ -33,36 +39,46 @@ export default class RentalTable extends React.Component {
                 Header: 'Item Description',
                 accessor: 'desc',
             }],
-            rows: rowData,
+            rows: rowData,            
             rowID: 0
-        };
-
-        
-        this.processRows(rowData, this.state.filter);
-    }
-
-    //Process the rows that are passed in to fill in the Table
-    processRows(rowData, filter) {
-        for (var i = 0; i < rowData.length; i++) {
-            //if (filter === "all" || filter === rowData[i].type) {
-                number: { rowData[i].number };
-                desc: { rowData[i].desc };
-                index: { i };
-            //}            
-
-            if (rowData[i].isRented) {
-                //change the way its viewed
+        }; 
+        this.GetFilteredRows(this.state.rows);       
+    }   
+    
+    GetFilteredRows(rowData) {
+        all = rowData;                                  //save everything first
+        for (var i = 0; i < rowData.length; i++) {      //if the type is rig
+            if (rowData[i].type === "rig") {
+                rigs += rowData[i];
+            } else if (rowData[i].type === "canopy") {  //if the type is canopy
+                canopies += rowData[i];
+            } else if (rowData[i].type === "container") { //if the type is container
+                containers += rowData[i];
             }
-        };
+        }
     }
+    
 
     //for the dropdown    
-    filterChanged(newFilter) {
-        console.log(newFilter);
-        this.setState({
-           filter: newFilter 
-        });
-        this.processRows(this.state.rowData, newFilter);
+    filterChanged(id, selection) {
+        switch (selection) {
+            case "Show All":
+            this.setState({filter: "all", rows: all});
+            break;
+            case "Rigs Only":
+            this.setState({filter: "rig", rows: rigs});
+            break;            
+            case "Canopies Only":
+            this.setState({filter: "canopy", rows: canopies});
+            break;            
+            case "Containers Only":
+            this.setState({filter: "container", rows: containers});
+            break;
+            default:
+            this.setState({filter: "all", rows: all});
+            break;           
+        }
+        //this.processRows(this.state.rows, this.state.filter);
     }
 
     //When this rigsheet component loads on the page, fetch the rows
@@ -121,25 +137,16 @@ export default class RentalTable extends React.Component {
             <div>
                 <Row>
                     <Col>
-                        <p>{"Current filter: " + this.state.filter}</p>
+                        <ItemTable 
+                        rows={this.state.rows} 
+                        top = {<FilterDropdown 
+                            onChange={this.filterChanged}
+                            labelText="Rental Item Filters:"
+                            id="RentalFilterDropdown"
+                            />}
+                        bottom={this.state.filter}
+                        />
                     </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <TableSheet 
-                            headerText={<RentalFilterDropdown onChange={this.filterChanged} />}
-                            columns={this.state.columns} 
-                            footer="">
-                            {this.state.rows}
-                        </TableSheet>
-                    </Col>
-                    <Card body>
-                        <CardHeader>Current Item Details</CardHeader>
-                        <CardBlock>
-                            This is where a full item description would go
-                        </CardBlock>
-                        <RentButton buttonText="Rent" disabled={true} />
-                    </Card>
                 </Row>
             </div>
         );
