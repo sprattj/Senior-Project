@@ -6,7 +6,7 @@ import RentalScreen from '../Screens/RentalScreen.jsx';
 import SheetsScreen from '../Screens/SheetsScreen.jsx';
 import EmployeeInfoScreen from '../Screens/EmployeeInfoScreen.jsx';
 import InventoryScreen from '../Screens/InventoryScreen.jsx';
-
+import TestScreen from '../Screens/TestScreen.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const marginStyle = {
@@ -55,7 +55,13 @@ export default class MainScreen extends React.Component {
                                     buttonText="Inventory Sheets" />
                             </Col>
                         </Row>
-                            
+                        <Row style={marginStyle}>
+                            <Col>
+                                <ChangeScreenButton screen={<TestScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="FETCH CALL TEST SCREEN" />
+                            </Col>
+                        </Row>
                     </CardBlock>
                 </Card>
 
