@@ -26,14 +26,10 @@ export default class ItemTable extends React.Component {
             }, {
                 Header: 'Item Description',
                 accessor: 'desc'
-            }],
-            top: this.props.top,
-            rows: this.props.rows,
-            bottom: this.props.bottom,
+            }],            
             rowID: 0
         };
         //this.displayChoice(this.props.displayType);
-        this.processRows(this.state.rows);
     }    
 
     //Process the rows that are passed in to fill in the Table
@@ -49,6 +45,8 @@ export default class ItemTable extends React.Component {
                 //change the way its viewed
             }
         };
+
+        return rowData;
     }
     
 
@@ -59,10 +57,10 @@ export default class ItemTable extends React.Component {
                 <Row>
                     <Col>
                         <TableSheet
-                            headerText={this.state.top}
+                            headerText={this.props.top}
                             columns={this.state.columns}
-                            footer={this.state.bottom}>
-                            {this.state.rows}
+                            footer={this.props.bottom}>
+                            {this.processRows(this.props.rows)}
                         </TableSheet>
                     </Col>
                 </Row>

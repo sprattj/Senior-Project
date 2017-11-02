@@ -9,10 +9,7 @@ import ReactTable from 'react-table';
 import { rootURL } from '../restInfo.js';
 import "react-table/react-table.css";
 
-var all;
-var rigs;
-var canopies;
-var containers;
+
 export default class RentalTable extends React.Component {
     constructor(props) {
         super(props);
@@ -22,13 +19,18 @@ export default class RentalTable extends React.Component {
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
-       
+
+        this.all=[];
+        this.rigs=[];
+        this.canopies=[];
+        this.containers=[];
+
         //Test Data to fill the table until we connect to the DB
         var rowData = [{ number: "04", desc: "Old Yellow in Gray and Brown Jav", isRented: true, type: "rig", rowID: 1 },
         { number: "09", desc: "Black main in Black Jav", type: "rig", isRented: false, rowID: 2 },
         { number: "01", desc: "Orange and Green man, Pink and Blue Jav", type: "rig", isRented: true, rowID: 3 },
         { number: "01125", desc: "Red and Black Navigator", type: "canopy", isRented: false, rowID: 4 },
-        { number: "07663", desc: "Blue and Black Mirage", type: "container", isRented: false, rowID: 5 } ];
+        { number: "07663", desc: "Blue and Black Mirage", type: "container", isRented: false, rowID: 5 }];
 
         this.state = {
             filter: "all",
@@ -39,56 +41,56 @@ export default class RentalTable extends React.Component {
                 Header: 'Item Description',
                 accessor: 'desc',
             }],
-            rows: rowData,            
+            rows: rowData,
             rowID: 0
-        }; 
-        this.GetFilteredRows(this.state.rows);       
-    }   
-    
+        };
+        this.GetFilteredRows(this.state.rows);
+    }
+
     GetFilteredRows(rowData) {
-        all = rowData;                                  //save everything first
+        this.all = rowData;                                  //save everything first
         for (var i = 0; i < rowData.length; i++) {      //if the type is rig
             if (rowData[i].type === "rig") {
-                rigs += rowData[i];
+                this.rigs.push(rowData[i]);
             } else if (rowData[i].type === "canopy") {  //if the type is canopy
-                canopies += rowData[i];
+                this.canopies.push(rowData[i]);
             } else if (rowData[i].type === "container") { //if the type is container
-                containers += rowData[i];
+                this.containers.push(rowData[i]);
             }
         }
     }
-    
+
 
     //for the dropdown    
     filterChanged(id, selection) {
         switch (selection) {
             case "Show All":
-            this.setState({filter: "all", rows: all});
-            break;
+                this.setState({ filter: "all", rows: this.all });
+                break;
             case "Rigs Only":
-            this.setState({filter: "rig", rows: rigs});
-            break;            
+                this.setState({ filter: "rig", rows: this.rigs });
+                break;
             case "Canopies Only":
-            this.setState({filter: "canopy", rows: canopies});
-            break;            
+                this.setState({ filter: "canopy", rows: this.canopies });
+                break;
             case "Containers Only":
-            this.setState({filter: "container", rows: containers});
-            break;
+                this.setState({ filter: "container", rows: this.containers });
+                break;
             default:
-            this.setState({filter: "all", rows: all});
-            break;           
+                this.setState({ filter: "all", rows: this.all });
+                break;
         }
         //this.processRows(this.state.rows, this.state.filter);
     }
 
-    //When this rigsheet component loads on the page, fetch the rows
+    //When this RentalTable component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
         this.fetchRows();
     }
 
-    //Fetch the tandem signouts from the database and 
-    //update this rigsheet's state to display them.
+    //Fetch the items from the database that are 
+    //rentals and update the RentalTable's state to display them.
     fetchRows() {
 
         //make sure we have the packages required to
@@ -133,18 +135,19 @@ export default class RentalTable extends React.Component {
     }
 
     render() {
+        var filterDropdown = <FilterDropdown
+                                onChange={this.filterChanged}
+                                labelText="Rental Item Filters:"
+                                id="RentalFilterDropdown"
+                            />
         return (
             <div>
                 <Row>
                     <Col>
-                        <ItemTable 
-                        rows={this.state.rows} 
-                        top = {<FilterDropdown 
-                            onChange={this.filterChanged}
-                            labelText="Rental Item Filters:"
-                            id="RentalFilterDropdown"
-                            />}
-                        bottom={this.state.filter}
+                        <ItemTable
+                            rows={this.state.rows}
+                            top={filterDropdown}
+                            bottom={""}
                         />
                     </Col>
                 </Row>
@@ -152,10 +155,4 @@ export default class RentalTable extends React.Component {
         );
     }
 
-
-
-
-
-
 }
-
