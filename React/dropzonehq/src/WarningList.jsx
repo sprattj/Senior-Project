@@ -8,8 +8,8 @@ export default class WarningList extends React.Component {
     render() {
         var footerContent = 
         <div>
-            <Button>Add To Queue</Button>
-            <Button>Dismiss</Button>
+            <Button color="info">Add To Queue</Button>
+            <Button color="danger">Dismiss</Button>
         </div>;
         return (
             <LoftList headerText="Warnings" footerContent={footerContent}>

@@ -7,8 +7,8 @@ export default class QueueList extends React.Component {
     render() {
         var footerContent = 
         <div>
-            <Button>Add New</Button>
-            <Button>Dismiss</Button>
+            <Button color="info">Add New</Button>
+            <Button color="danger">Dismiss</Button>
         </div>;
         return (
             <LoftList headerText="Queue" footerContent={footerContent}>

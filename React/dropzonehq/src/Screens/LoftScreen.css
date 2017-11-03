@@ -1,0 +1,7 @@
+.viewport{
+    height: 100%;
+}
+
+.main_view{
+    min-height: 500px;
+}

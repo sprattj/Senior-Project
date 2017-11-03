@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardBlock, CardFooter, ListGroup} from 'reactstrap';
+import './LoftList.css';
 
 
 export default class LoftList extends React.Component {
@@ -9,7 +10,7 @@ export default class LoftList extends React.Component {
         return (
             <Card>
                 <CardHeader>{this.props.headerText}</CardHeader>
-                <CardBlock>
+                <CardBlock  className="loft_list">
                     <ListGroup>
                         {this.props.children}
                     </ListGroup>

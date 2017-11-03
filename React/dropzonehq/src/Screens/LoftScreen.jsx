@@ -8,6 +8,7 @@ import QueueListItem from '../QueueListItem.jsx';
 import WarningDisplay from '../WarningDisplay.jsx';
 import WarningList from '../WarningList.jsx';
 import WarningListItem from '../WarningListItem.jsx';
+import './LoftScreen.css';
 
 export default class LoftScreen extends React.Component {
 
@@ -35,10 +36,9 @@ export default class LoftScreen extends React.Component {
         this.state.queueDisplay,
         this.state.warningDisplay];
         return (
-            <div>
-                <Row>
+                <Row className="viewport">
                     <Col xs={{ size: 12 }} md={{ size: 6 }}>
-                        <Card>
+                        <Card className="main_view">
                             <CardHeader>Main View</CardHeader>
                             <CardBlock>
                                 <TabGroup tabHeaders={tabHeaders} tabContents={tabContents} />
@@ -58,7 +58,6 @@ export default class LoftScreen extends React.Component {
                         </WarningList>
                     </Col>
                 </Row>
-            </div>
         );
     }
 };
