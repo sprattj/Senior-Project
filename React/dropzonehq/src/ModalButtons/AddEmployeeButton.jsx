@@ -1,7 +1,7 @@
 import React from 'react';
 import ModalButton from './ModalButton.jsx';
 import Checkbox from '../CheckBox/Checkbox.js';
-import { Form, FormGroup, Input, Label, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export default class AddEmployeeButton extends React.Component {
 

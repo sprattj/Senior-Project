@@ -17,10 +17,6 @@ const marginStyle = {
 };
 
 export default class EmployeeInfoScreen extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
 
     render() {
         return (

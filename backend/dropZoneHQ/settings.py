@@ -106,10 +106,10 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'dropzone_hq',
-            'USER': 'root',
-            'PASSWORD': 'hpmx7575',
-            'HOST': 'localhost',
+            'NAME': 'ebdb',
+            'USER': 'dropzonehq',
+            'PASSWORD': 'DropzoneHQSQL2017',
+            'HOST': 'aa1xao7vtsdjaou.cfsukzzhrolk.us-east-1.rds.amazonaws.com',
             'PORT': 3306
         }
     }

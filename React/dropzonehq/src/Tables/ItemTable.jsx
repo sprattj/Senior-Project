@@ -1,12 +1,8 @@
 import React from 'react';
 import TableSheet from './TableSheet.jsx';
-import RentButton from '../Buttons/RentButton.jsx';
-import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import PropTypes from 'prop-types';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
-import ReactTable from 'react-table';
+import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
-import "react-table/react-table.css";
 
 //a generic table to show just a brief description of the items to be clicked and
 //have their info be displayed on a larger section elsewhere on screen.
@@ -22,18 +18,16 @@ export default class ItemTable extends React.Component {
         this.state = {            
             columns: [{
                 Header: 'Item Number',
-                accessor: 'number' // String-based value accessors!
+                accessor: 'number', // String-based value accessors!
+                width: 150
             }, {
                 Header: 'Item Description',
-                accessor: 'desc'
-            }],
-            top: this.props.top,
-            rows: this.props.rows,
-            bottom: this.props.bottom,
+                accessor: 'desc',
+                width: 400
+            }],            
             rowID: 0
         };
         //this.displayChoice(this.props.displayType);
-        this.processRows(this.state.rows);
     }    
 
     //Process the rows that are passed in to fill in the Table
@@ -49,6 +43,8 @@ export default class ItemTable extends React.Component {
                 //change the way its viewed
             }
         };
+
+        return rowData;
     }
     
 
@@ -59,10 +55,11 @@ export default class ItemTable extends React.Component {
                 <Row>
                     <Col>
                         <TableSheet
-                            headerText={this.state.top}
+                            getTrProps={this.props.getTrProps}
+                            headerText={this.props.top}
                             columns={this.state.columns}
-                            footer={this.state.bottom}>
-                            {this.state.rows}
+                            footer={this.props.bottom}>
+                            {this.processRows(this.props.rows)}
                         </TableSheet>
                     </Col>
                 </Row>

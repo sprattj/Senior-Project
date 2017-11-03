@@ -1,12 +1,13 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock, Table } from 'reactstrap';
+import { Row, Col, Card, CardBlock } from 'reactstrap';
 import ChangeScreenButton from '../Buttons/ChangeScreenButton.jsx';
 import EmployeeAdminScreen from '../Screens/EmployeeAdminScreen.jsx';
 import RentalScreen from '../Screens/RentalScreen.jsx';
 import SheetsScreen from '../Screens/SheetsScreen.jsx';
 import EmployeeInfoScreen from '../Screens/EmployeeInfoScreen.jsx';
 import InventoryScreen from '../Screens/InventoryScreen.jsx';
-
+import LoftScreen from '../Screens/LoftScreen.jsx';
+import TestScreen from '../Screens/TestScreen.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 
 const marginStyle = {
@@ -15,9 +16,6 @@ const marginStyle = {
 };
 
 export default class MainScreen extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
@@ -54,8 +52,19 @@ export default class MainScreen extends React.Component {
                                     changeScreen={this.props.changeScreen}
                                     buttonText="Inventory Sheets" />
                             </Col>
+                            <Col>
+                                <ChangeScreenButton screen={<LoftScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="Loft" />
+                            </Col>
                         </Row>
-                            
+                        <Row style={marginStyle}>
+                            <Col>
+                                <ChangeScreenButton screen={<TestScreen />}
+                                    changeScreen={this.props.changeScreen}
+                                    buttonText="FETCH CALL TEST SCREEN" />
+                            </Col>
+                        </Row>
                     </CardBlock>
                 </Card>
 
