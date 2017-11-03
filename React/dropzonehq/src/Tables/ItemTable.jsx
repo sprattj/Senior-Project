@@ -18,10 +18,12 @@ export default class ItemTable extends React.Component {
         this.state = {            
             columns: [{
                 Header: 'Item Number',
-                accessor: 'number' // String-based value accessors!
+                accessor: 'number', // String-based value accessors!
+                width: 150
             }, {
                 Header: 'Item Description',
-                accessor: 'desc'
+                accessor: 'desc',
+                width: 400
             }],            
             rowID: 0
         };
@@ -53,6 +55,7 @@ export default class ItemTable extends React.Component {
                 <Row>
                     <Col>
                         <TableSheet
+                            getTrProps={this.props.getTrProps}
                             headerText={this.props.top}
                             columns={this.state.columns}
                             footer={this.props.bottom}>

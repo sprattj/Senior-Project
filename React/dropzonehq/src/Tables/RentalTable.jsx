@@ -16,6 +16,7 @@ export default class RentalTable extends React.Component {
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
+        this.OnRowClick = this.OnRowClick.bind(this);
 
         this.all=[];
         this.rigs=[];
@@ -55,6 +56,26 @@ export default class RentalTable extends React.Component {
                 this.containers.push(rowData[i]);
             }
         }
+    }
+
+    //This will render the first time and then if the new row length 
+    //is less than the current row length it breaks trying to read the index of
+    //the array that isnt there. Currently all shows 5 items, when
+    //switched to rigs that only shows 3 items, on index 3(item #4) it crashes
+    //trying to read that next index in the array that isnt there
+    OnRowClick(state, rowInfo) {
+        return {
+            onClick: (e) => {
+                this.setState({
+                    selected: rowInfo.index
+                })
+            },
+            style: {
+                background: rowInfo.index === this.state.selected ? '#00afec' : 'white',
+                color: rowInfo.index === this.state.selected ? 'white' : 'black'
+            }
+        }
+
     }
 
 
@@ -133,10 +154,10 @@ export default class RentalTable extends React.Component {
 
     render() {
         var filterDropdown = <FilterDropdown
-                                onChange={this.filterChanged}
-                                labelText="Rental Item Filters:"
-                                id="RentalFilterDropdown"
-                            />
+            onChange={this.filterChanged}
+            labelText="Rental Item Filters:"
+            id="RentalFilterDropdown"
+        />
         return (
             <div>
                 <Row>
@@ -145,6 +166,7 @@ export default class RentalTable extends React.Component {
                             rows={this.state.rows}
                             top={filterDropdown}
                             bottom={""}
+                            getTrProps={this.OnRowClick}
                         />
                     </Col>
                 </Row>
