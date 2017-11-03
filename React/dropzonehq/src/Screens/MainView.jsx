@@ -1,13 +1,9 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter, Table } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import MainScreen from './MainScreen.jsx';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 
-const marginStyle = {
-    marginTop: 25,
-    marginBottom: 25
-};
 
 /*
     MainView is the main wrapper component to decide what to render.

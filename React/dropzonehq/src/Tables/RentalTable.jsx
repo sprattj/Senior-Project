@@ -1,11 +1,8 @@
 import React from 'react';
-import TableSheet from './TableSheet.jsx';
-import RentButton from '../Buttons/RentButton.jsx';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from './ItemTable.jsx';
 import PropTypes from 'prop-types';
-import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
-import ReactTable from 'react-table';
+import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import "react-table/react-table.css";
 
