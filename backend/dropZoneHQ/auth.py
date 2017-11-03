@@ -1,5 +1,6 @@
 #
-from Crypto.Hash import SHA256, Random
+from Crypto.Hash import SHA256
+from Crypto import Random
 from backend.datastore.models import Dropzones
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import get_object_or_404
@@ -38,9 +39,15 @@ class Auth:
                 return dropzone
             else :
                 return None
-
-    def authenticateUserPin(self, request, user=None):
-        return False
+    #takes user and pin and returns user if the pin is correct
+    def authenticateEmployeePin(self, user=None, pin=None):
+        if pin or user is None :
+            return None
+        else :
+            if SHA256.new(data=bytes(pin)) == user.pin :
+                return user
+            else :
+                return None
 
     #Employee random generation of 4 digit pin exclusive to dropzone
     def randomUserPin(self, userPK = None):
