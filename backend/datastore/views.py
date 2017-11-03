@@ -124,6 +124,9 @@ class EmployeeVsSignoutViewSet(viewsets.ViewSet):
             serializer = EmployeeVsSignoutSerializer(signout, data=request.data)
             if serializer.is_valid():
                 serializer.save()
+                # GET INFO FROM SERIALIZER
+                signout_id = pk
+                signout.objects.update()
                 return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
     @csrf_exempt
@@ -135,7 +138,21 @@ class EmployeeVsSignoutViewSet(viewsets.ViewSet):
             '''
             serializer = EmployeeVsSignoutSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                emp_queryset = Employees.objects.all()
+                # serializer.save()
+                # GET INFO FROM SERIALIZER
+                load_num = serializer.data.get('load_num')
+                rig_id = serializer.data.get('rig_id')
+                signout_id = serializer.data.get('signout_id')
+                jumpmaster = serializer.data.get('jumpmaster')
+                # Split name into first/last
+                first_name, last_name = jumpmaster.split(" ")
+                emp_queryset = emp_queryset.get(first_name=first_name, last_name=last_name)[:1]
+                emp_id = emp_queryset.get('employee_id')
+                # Create a new signouts entry
+                Signouts.objects.create(signout_id=signout_id, load=load_num, rig_id=rig_id)
+                # Create a new employees_signouts_entry
+                EmployeesSignouts.objects.create(employee_id=emp_id, signout_id=signout_id)
                 return HttpResponse(status=status.HTTP_201_CREATED)
             return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

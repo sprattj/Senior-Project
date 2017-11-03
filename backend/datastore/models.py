@@ -192,6 +192,7 @@ class EmployeesServices(models.Model):
         unique_together = (('employee', 'service'),)
         app_label = 'dropZoneHQ'
 
+
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
     employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
@@ -294,7 +295,7 @@ class Rigs(models.Model):
     # PK -> Shares PK from items table
     item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
     # Unique identifier for this rig
-    rig_id = models.AutoField(primary_key=True, unique=True)
+    rig_id = models.AutoField(unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump

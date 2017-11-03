@@ -25,11 +25,12 @@ from backend.datastore.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^rigs/$', RigViewSet.specific_rig),
+    # url(r'^rigs/$', RigViewSet().specific_rig),
     url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.specific_rig),
     url(r'^rigsheets/all', EmployeeVsSignoutViewSet().all_signout_records),
     url(r'^rigsheets/(?P<pk>[0-9]+$)', EmployeeVsSignoutViewSet().specific_signout),
     url(r'^rigsheets/student', EmployeeVsSignoutViewSet().student_signout_records),
     url(r'^rigsheets/tandem', EmployeeVsSignoutViewSet().tandem_signout_records),
-    url(r'^employees/', EmployeeViewSet().all_employees)
+    url(r'^employees/', EmployeeViewSet().all_employees),
+    url(r'^employees/(?P<pk>[0-9]+$)', EmployeeViewSet().specific_employee)
 ]
