@@ -16,6 +16,7 @@ export default class ItemTable extends React.Component {
         this.URLsection = "";
 
         this.RowProps = this.RowProps.bind(this);
+        this.clickedFunction = this.clickedFunction.bind(this);
 
         this.state = {
             columns: [{
@@ -27,7 +28,8 @@ export default class ItemTable extends React.Component {
                 accessor: 'desc',
                 width: 400
             }],
-            rowID: 0
+            rowID: 0,
+            selected: null
         };
         //this.displayChoice(this.props.displayType);
     }
@@ -59,11 +61,10 @@ export default class ItemTable extends React.Component {
                 backgroundColor = "white";
             }
 
+            
             return {
                 onClick: (e) => {
-                    this.setState({
-                        selected: rowInfo.index
-                    })
+                    this.clickedFunction(rowInfo)
                 },
                 style: {
                     background: rowInfo.index === this.state.selected ? '#00afec' : backgroundColor,
@@ -76,7 +77,18 @@ export default class ItemTable extends React.Component {
 
     }
 
-    
+    clickedFunction(rowInfo) {
+        if (rowInfo) {
+            //for the color change
+            this.setState({
+                selected: rowInfo.index
+            })
+
+            //calls prop function itemSelected passing it rowInfo's index so
+            //the table knows which row its looking at
+            this.props.itemSelected(rowInfo.index);
+        }
+    }
 
 
     //filter stuff is for testing the states
