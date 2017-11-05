@@ -1,12 +1,14 @@
 import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from './ItemTable.jsx';
+import RentalItemDisplay from '../ItemDisplays/RentalItemDisplay.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import "react-table/react-table.css";
 
-
+var count = 0;
+var display = <RentalItemDisplay var1={"nothing to"} var2={"see here"} />;
 export default class RentalTable extends React.Component {
     constructor(props) {
         super(props);
@@ -16,7 +18,7 @@ export default class RentalTable extends React.Component {
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
-        this.OnRowClick = this.OnRowClick.bind(this);
+        this.itemSelected = this.itemSelected.bind(this);
 
         this.all=[];
         this.rigs=[];
@@ -42,10 +44,10 @@ export default class RentalTable extends React.Component {
             rows: rowData,
             rowID: 0
         };
-        this.GetFilteredRows(this.state.rows);
+        this.getFilteredRows(this.state.rows);
     }
 
-    GetFilteredRows(rowData) {
+    getFilteredRows(rowData) {
         this.all = rowData;                                  //save everything first
         for (var i = 0; i < rowData.length; i++) {      //if the type is rig
             if (rowData[i].type === "rig") {
@@ -57,27 +59,7 @@ export default class RentalTable extends React.Component {
             }
         }
     }
-
-    //This will render the first time and then if the new row length 
-    //is less than the current row length it breaks trying to read the index of
-    //the array that isnt there. Currently all shows 5 items, when
-    //switched to rigs that only shows 3 items, on index 3(item #4) it crashes
-    //trying to read that next index in the array that isnt there
-    OnRowClick(state, rowInfo) {
-        return {
-            onClick: (e) => {
-                this.setState({
-                    selected: rowInfo.index
-                })
-            },
-            style: {
-                background: rowInfo.index === this.state.selected ? '#00afec' : 'white',
-                color: rowInfo.index === this.state.selected ? 'white' : 'black'
-            }
-        }
-
-    }
-
+    
 
     //for the dropdown    
     filterChanged(id, selection) {
@@ -152,6 +134,18 @@ export default class RentalTable extends React.Component {
             });
     }
 
+    //calls up to the screen change the display on the right
+    itemSelected(selectedIndex) {
+        var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
+        display = <RentalItemDisplay            //set up the display component
+                        var1={row.rowID} 
+                        var2={row.desc} /> ;                      
+        this.props.displayChange(display, row.rowID);          //pass it up thru props method call
+        console.log(count);
+        count++;
+    }
+    
+
     render() {
         var filterDropdown = <FilterDropdown
             onChange={this.filterChanged}
@@ -166,7 +160,7 @@ export default class RentalTable extends React.Component {
                             rows={this.state.rows}
                             top={filterDropdown}
                             bottom={""}
-                            getTrProps={this.OnRowClick}
+                            itemSelected={this.itemSelected}
                         />
                     </Col>
                 </Row>

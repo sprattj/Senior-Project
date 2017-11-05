@@ -15,7 +15,10 @@ export default class ItemTable extends React.Component {
         //it shouldn't be part of state. Save it in a class variable.
         this.URLsection = "";
 
-        this.state = {            
+        this.RowProps = this.RowProps.bind(this);
+        this.clickedFunction = this.clickedFunction.bind(this);
+
+        this.state = {
             columns: [{
                 Header: 'Item Number',
                 accessor: 'number', // String-based value accessors!
@@ -24,11 +27,12 @@ export default class ItemTable extends React.Component {
                 Header: 'Item Description',
                 accessor: 'desc',
                 width: 400
-            }],            
-            rowID: 0
+            }],
+            rowID: 0,
+            selected: null
         };
         //this.displayChoice(this.props.displayType);
-    }    
+    }
 
     //Process the rows that are passed in to fill in the Table
     processRows(rowData) {
@@ -46,16 +50,55 @@ export default class ItemTable extends React.Component {
 
         return rowData;
     }
-    
+
+    //this allows for selection and still renders the background colors
+    RowProps(state, rowInfo) {
+        if (rowInfo) {
+            var backgroundColor;
+            if (rowInfo.index % 2 === 0) {
+                backgroundColor = "whitesmoke";
+            } else {
+                backgroundColor = "white";
+            }
+
+            
+            return {
+                onClick: (e) => {
+                    this.clickedFunction(rowInfo)
+                },
+                style: {
+                    background: rowInfo.index === this.state.selected ? '#00afec' : backgroundColor,
+                    color: rowInfo.index === this.state.selected ? 'white' : 'black'
+                }
+            }
+        } else {
+            return {};
+        }
+
+    }
+
+    clickedFunction(rowInfo) {
+        if (rowInfo) {
+            //for the color change
+            this.setState({
+                selected: rowInfo.index
+            })
+
+            //calls prop function itemSelected passing it rowInfo's index so
+            //the table knows which row its looking at
+            this.props.itemSelected(rowInfo.index);
+        }
+    }
+
 
     //filter stuff is for testing the states
-    render() {        
+    render() {
         return (
-            <div>                
+            <div>
                 <Row>
                     <Col>
                         <TableSheet
-                            getTrProps={this.props.getTrProps}
+                            getTrProps={this.RowProps}
                             headerText={this.props.top}
                             columns={this.state.columns}
                             footer={this.props.bottom}>
