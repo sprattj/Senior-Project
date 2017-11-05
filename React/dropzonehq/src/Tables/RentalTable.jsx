@@ -149,7 +149,7 @@ export default class RentalTable extends React.Component {
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
         display = <RentalItemDisplay            //set up the display component
             rowID={row.rowID}
-            number={row.numbe}r
+            number={row.number}
             desc={row.desc}
             isRented={row.isRented}
             renterName={row.renterName}

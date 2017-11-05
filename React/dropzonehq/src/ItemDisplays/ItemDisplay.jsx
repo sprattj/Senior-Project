@@ -16,9 +16,9 @@ export default class ItemDisplay extends React.Component {
                 <Row>
                     <Col>
                         <Card >
-                            <CardHeader>{this.state.headerText}</CardHeader>
+                            <CardHeader>{this.props.headerText}</CardHeader>
                             <CardBlock>
-                                {this.state.statsToDisplay}
+                                {this.props.statsToDisplay}
                             </CardBlock>
                         </Card>
                     </Col>
