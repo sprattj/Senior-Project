@@ -25,7 +25,7 @@ export default class RentalItemDisplay extends React.Component {
                                     <Row>
                                         <Col>
                                             <div>
-                                                <p>Item Number: {this.props.number}</p>
+                                                <p> The Item #: {this.props.number} </p>
                                                 <p>The Person Currently Renting This Item Is: {this.props.renterName}</p>
                                             </div>
                                         </Col>
