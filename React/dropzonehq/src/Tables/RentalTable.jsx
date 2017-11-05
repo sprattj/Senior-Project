@@ -20,17 +20,27 @@ export default class RentalTable extends React.Component {
         this.filterChanged = this.filterChanged.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
 
-        this.all=[];
-        this.rigs=[];
-        this.canopies=[];
-        this.containers=[];
+        this.all = [];
+        this.rigs = [];
+        this.canopies = [];
+        this.containers = [];
 
         //Test Data to fill the table until we connect to the DB
-        var rowData = [{ number: "04", desc: "Old Yellow in Gray and Brown Jav", isRented: true, type: "rig", rowID: 1 },
-        { number: "09", desc: "Black main in Black Jav", type: "rig", isRented: false, rowID: 2 },
-        { number: "01", desc: "Orange and Green man, Pink and Blue Jav", type: "rig", isRented: true, rowID: 3 },
-        { number: "01125", desc: "Red and Black Navigator", type: "canopy", isRented: false, rowID: 4 },
-        { number: "07663", desc: "Blue and Black Mirage", type: "container", isRented: false, rowID: 5 }];
+        var rowData = [{ rowID: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig" },
+        { rowID: 2, number: "02", desc: "unknown description", isRented: false, renterName: "", type: "rig" },
+        { rowID: 3, number: "03", desc: "unknown description", isRented: true, renterName: "Jack", type: "rig" },
+        { rowID: 4, number: "04", desc: "Old Yellow and Gray Pilot240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig" },
+        { rowID: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig" },
+        { rowID: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
+        { rowID: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
+        { rowID: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
+        { rowID: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig" },
+        { rowID: 10, number: "redJav", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig" },
+        { rowID: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig" },
+        { rowID: 12, number: "01125", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy" },
+        { rowID: 13, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container" },
+        { rowID: 14, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container" }
+        ];
 
         this.state = {
             filter: "all",
@@ -59,7 +69,7 @@ export default class RentalTable extends React.Component {
             }
         }
     }
-    
+
 
     //for the dropdown    
     filterChanged(id, selection) {
@@ -138,13 +148,17 @@ export default class RentalTable extends React.Component {
     itemSelected(selectedIndex) {
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
         display = <RentalItemDisplay            //set up the display component
-                        var1={row.rowID} 
-                        var2={row.desc} /> ;                      
+            rowID={row.rowID}
+            number={row.numbe}r
+            desc={row.desc}
+            isRented={row.isRented}
+            renterName={row.renterName}
+            type={row.type} />;
         this.props.displayChange(display, row.rowID);          //pass it up thru props method call
         console.log(count);
         count++;
     }
-    
+
 
     render() {
         var filterDropdown = <FilterDropdown

@@ -9,16 +9,40 @@ export default class RiggingItemDisplay extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/itemdisplay";
+        this.URLsection = "/rentalitemdisplay";
+
+        this.setRButton = this.setRButton.bind(this);
 
         this.state = {
-            var1: this.props.var1,
-            var2: this.props.var2
+            RButton: null
         }
+
     }
 
+    setRButton() {
+        console.log("RentalItemDisplay: setRButton: this.props.isRented");
+        console.log(this.props.isRented);
+        if (this.props.isRented) {
+            this.setState({
+                RButton: "Rented Out"
+                //RButton: <RentButton buttonText={"Return"} />
+            })
+        } else {
+            this.setState({
+                RButton: "Available"
+                //RButton: <RentButton buttonText={"Rent"} />
+            })
+        }
+        console.log(this.state.RButton);
+    }
+
+    componentDidMount() {
+        console.log("RentalItemDisplay: componentDidMount")
+        this.setRButton();
+    }
 
     render() {
+
         return (
             <div>
                 <Row>
@@ -28,15 +52,18 @@ export default class RiggingItemDisplay extends React.Component {
                                 <div>
                                     <Row>
                                         <Col>
-                                            <p>{this.state.var1}</p>
+                                            <div>
+                                                <p>The Item rowID Is: {this.props.rowID}</p>
+                                                <p>The Person Currently Renting This Item Is: {this.props.renterName}</p>
+                                            </div>
                                         </Col>
                                         <Col>
-                                            <p>{this.state.var2}</p>
+                                            <p>Item Description: {this.props.desc}</p>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col>
-                                            <RentButton buttonText="Rent" />
+                                            {this.state.RButton}
                                         </Col>
                                     </Row>
                                 </div>
