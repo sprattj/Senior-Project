@@ -2,6 +2,7 @@ import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from './ItemTable.jsx';
 import RentalItemDisplay from '../ItemDisplays/RentalItemDisplay.jsx';
+import RentButton from '../Buttons/RentButton.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
@@ -19,6 +20,8 @@ export default class RentalTable extends React.Component {
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
+        this.rentItem = this.rentItem.bind(this);
+        this.returnItem = this.returnItem.bind(this);
 
         this.all = [];
         this.rigs = [];
@@ -27,8 +30,8 @@ export default class RentalTable extends React.Component {
 
         //Test Data to fill the table until we connect to the DB
         var rowData = [{ rowID: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig" },
-        { rowID: 2, number: "02", desc: "unknown description", isRented: false, renterName: "", type: "rig" },
-        { rowID: 3, number: "03", desc: "unknown description", isRented: true, renterName: "Jack", type: "rig" },
+        { rowID: 2, number: "02", desc: "Red and Green Pilot 220. Black and Yellow Mirage", isRented: false, renterName: "", type: "rig" },
+        { rowID: 3, number: "03", desc: "Brown Navigator 190. Black and White Mirage", isRented: false, renterName: "", type: "rig" },
         { rowID: 4, number: "04", desc: "Old Yellow and Gray Pilot240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig" },
         { rowID: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig" },
         { rowID: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
@@ -147,16 +150,35 @@ export default class RentalTable extends React.Component {
     //calls up to the screen change the display on the right
     itemSelected(selectedIndex) {
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
+        var rentalButton;                           //variable Rent or Return button shows if Available or Rented 
+        
+        if (row.isRented) {
+            rentalButton=<RentButton buttonText={"Return"} return={this.returnItem} rowID={selectedIndex + 1} />;
+        } else {
+            rentalButton=<RentButton buttonText={"Rent"} rent={this.rentItem} rowID={selectedIndex + 1} />;
+        }
+
         display = <RentalItemDisplay            //set up the display component
             rowID={row.rowID}
             number={row.number}
             desc={row.desc}
             isRented={row.isRented}
             renterName={row.renterName}
-            type={row.type} />;
+            type={row.type} 
+            button={rentalButton} />
         this.props.displayChange(display, row.rowID);          //pass it up thru props method call
         console.log(count);
         count++;
+    }
+
+    rentItem(rowID) {
+        console.log("RentalTable: rentItem Function");
+        
+    }
+
+    returnItem(rowID) {
+        console.log("RentalTable: returnItem Function");
+
     }
 
 

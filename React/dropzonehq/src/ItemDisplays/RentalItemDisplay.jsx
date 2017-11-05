@@ -11,34 +11,6 @@ export default class RentalItemDisplay extends React.Component {
         //it shouldn't be part of state. Save it in a class variable.
         this.URLsection = "/rentalitemdisplay";
 
-        this.setRButton = this.setRButton.bind(this);
-
-        this.state = {
-            RButton: null
-        }
-
-    }
-
-    setRButton() {
-        console.log("RentalItemDisplay: setRButton: this.props.isRented");
-        console.log(this.props.isRented);
-        if (this.props.isRented) {
-            this.setState({
-                RButton: "Rented Out"
-                //RButton: <RentButton buttonText={"Return"} />
-            })
-        } else {
-            this.setState({
-                RButton: "Available"
-                //RButton: <RentButton buttonText={"Rent"} />
-            })
-        }
-        console.log(this.state.RButton);
-    }
-
-    componentDidMount() {
-        console.log("RentalItemDisplay: componentDidMount")
-        this.setRButton();
     }
 
     render() {
@@ -54,17 +26,19 @@ export default class RentalItemDisplay extends React.Component {
                                         <Col>
                                             <div>
                                                 <p> The Item #: {this.props.number} </p>
-                                                <p>The Item rowID Is: {this.props.rowID}</p>
                                                 <p>The Person Currently Renting This Item Is: {this.props.renterName}</p>
                                             </div>
                                         </Col>
                                         <Col>
+                                            <div>
                                             <p>Item Description: {this.props.desc}</p>
+                                            <p>Item Type: {this.props.type}</p>
+                                            </div>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col>
-                                            {this.state.RButton}
+                                            {this.props.button}
                                         </Col>
                                     </Row>
                                 </div>

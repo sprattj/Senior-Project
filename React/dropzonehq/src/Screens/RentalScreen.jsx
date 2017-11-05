@@ -18,22 +18,22 @@ class RentalScreen extends React.Component {
         this.displayChange = this.displayChange.bind(this);
 
         this.state = {
-            currentItem: null
+            currentItem: <RentalItemDisplay
+                rowID={0} />
         }
     }
 
     //changes the display of the right side of the screen by
     //taking in a RentalItemDisplay and setting it in the currentItem state
     displayChange(itemDisplay, rowID) {
-        if (itemDisplay) { 
-            console.log("Rental Screen: displayChange: rowID: " + rowID);           
+        if (itemDisplay) {
+            console.log("Rental Screen: displayChange: rowID: " + rowID);
             this.setState({
                 currentItem: itemDisplay
             })
         } else {
 
         }
-
     }
 
     render() {
