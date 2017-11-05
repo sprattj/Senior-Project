@@ -53,15 +53,20 @@ export default class ItemTable extends React.Component {
 
     //this allows for selection and still renders the background colors
     RowProps(state, rowInfo) {
-        if (rowInfo) {
-            var backgroundColor;
-            if (rowInfo.index % 2 === 0) {
+        if (rowInfo) {                                  //if the row is not undefined
+            var backgroundColor;                        //create backgroundColor variable
+            if (rowInfo.index % 2 === 0) {              //start with the grayish color
                 backgroundColor = "whitesmoke";
-            } else {
+            } else {                                    //otherwise its white
                 backgroundColor = "white";
             }
 
-            
+            //if it has a isRented that returns true it will show red background
+            //a little unclear on why its .original but thats what got it to work
+            if (rowInfo.original.isRented) {
+                backgroundColor = "lightcoral";
+            }
+
             return {
                 onClick: (e) => {
                     this.clickedFunction(rowInfo)

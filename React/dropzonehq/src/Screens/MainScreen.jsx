@@ -50,7 +50,7 @@ export default class MainScreen extends React.Component {
                             <Col>
                                 <ChangeScreenButton screen={<InventoryScreen />}
                                     changeScreen={this.props.changeScreen}
-                                    buttonText="Inventory Sheets" />
+                                    buttonText="Inventory" />
                             </Col>
                             <Col>
                                 <ChangeScreenButton screen={<LoftScreen />}
