@@ -1,0 +1,4 @@
+.loft_list{
+    max-height: calc(90vh - 200px);
+    overflow-y: scroll;
+}

@@ -10,12 +10,20 @@ import "react-table/react-table.css";
     and rows (passed via this.props.children).
 */
 export default class TableSheet extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            selected: null,
+        }
+    }
+
     render() {
         return (
             <Card>
                 <CardHeader>{this.props.headerText}</CardHeader>
                 <CardBlock>
                     <ReactTable
+                        getTrProps={this.props.getTrProps}//For selecting rows
                         data={this.props.children}
                         columns={this.props.columns}
                         defaultPageSize={5}
@@ -36,7 +44,7 @@ export default class TableSheet extends React.Component {
 }
 
 TableSheet.propTypes = {
-    headerText: PropTypes.string.isRequired,
+    headerText: PropTypes.any.isRequired,
     columns: PropTypes.array.isRequired,
     footer: PropTypes.any.isRequired
 }

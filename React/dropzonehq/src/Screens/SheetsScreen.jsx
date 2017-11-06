@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
-import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import Rigsheet from '../Tables/Rigsheet.jsx';
 import RigAlertsContainer from '../RigAlertsContainer.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -20,21 +19,16 @@ const marginStyle = {
     All related features as per the design will also be 
     covered here.
 */
-class SheetsScreen extends React.Component {
+export default class SheetsScreen extends React.Component {
     render() {
         return (
             <div>
-                <Row>
-                    <Col lg={{ size: 12 }}>
-                        <DropzoneHQNav />
-                    </Col>
-                </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
-                        <Rigsheet sheetType="Tandems" />
+                        <Rigsheet sheetType="Tandem" />
                     </Col>
                     <Col lg={{ size: 5 }}>
-                         <Rigsheet sheetType="Students"/>
+                         <Rigsheet sheetType="Student"/>
                     </Col>
                 </Row>
                 <Row style={marginStyle}>
@@ -46,5 +40,3 @@ class SheetsScreen extends React.Component {
         );
     }
 };
-
-export default SheetsScreen;
