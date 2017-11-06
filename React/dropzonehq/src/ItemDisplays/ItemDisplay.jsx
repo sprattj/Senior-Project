@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 
-export default class ItemDisplay extends React.Component {
+export default class ItemDisplay extends React.Component {    
 
     render() {
         return (
