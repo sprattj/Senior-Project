@@ -12,7 +12,7 @@ export default class DeleteEmployeeButton extends React.Component {
     }
   }
   verify() {
-    this.setState({state: this.props.id})
+    this.setState({id: this.props.id})
     this.props.onClick(this.props.id);
   }
 

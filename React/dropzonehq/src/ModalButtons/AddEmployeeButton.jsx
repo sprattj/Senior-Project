@@ -10,28 +10,35 @@ export default class AddEmployeeButton extends React.Component {
 
     this.verify = this.verify.bind(this);
 
-    this.fullNameChanged = this.fullNameChanged.bind(this);
+    this.firstNameChanged = this.firstNameChanged.bind(this);
+    this.lastNameChanged = this.lastNameChanged.bind(this);    
     this.infoChanged = this.infoChanged.bind(this);
     this.jobsChanged = this.jobsChanged.bind(this);
 
     this.state = {
-      fullName: '',
+      firstName: '',
+      lastName: '',
       info: '',
       jobs: []
     }
   }
 
   verify() {
-    this.props.authorize(this.state.fullName, this.state.info, this.state.jobs);
+    this.props.authorize(this.state.firstName, this.state.lastName, this.state.info, this.state.jobs);
     this.setState({
-      fullName: '',
+      firstName: '',
+      lastName: '',
       info: '',
-      jobs: ''
+      jobs: []
     })
   }
 
-  fullNameChanged(e) {
-    this.setState({ fullName: e.target.value });
+  firstNameChanged(e) {
+    this.setState({ firstName: e.target.value });
+  }
+
+  lastNameChanged(e) {
+    this.setState({ lastName: e.target.value });
   }
 
   infoChanged(e) {
@@ -95,8 +102,13 @@ export default class AddEmployeeButton extends React.Component {
     const checkboxes = this.getCheckBoxes();
     const modalContent = <Form>
       <InputGroup>
-        <InputGroupAddon >Full Name: </InputGroupAddon>
-        <Input id="addEmployeeFullName" type='text' value={this.state.fullName} onChange={this.fullNameChanged} />
+        <InputGroupAddon >First Name: </InputGroupAddon>
+        <Input id="addEmployeeFirstName" type='text' value={this.state.firstName} onChange={this.firstNameChanged} />
+      </InputGroup>
+      <br />
+      <InputGroup>
+        <InputGroupAddon >Last Name: </InputGroupAddon>
+        <Input id="addEmployeeLastName" type='text' value={this.state.lastName} onChange={this.lastNameChanged} />
       </InputGroup>
       <br />
       <InputGroup>

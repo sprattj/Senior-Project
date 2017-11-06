@@ -13,7 +13,7 @@ export default class EmployeeTable extends React.Component {
     super(props)
     this.URLsection = "/employeetable";
 
-    // this.editEmployee = this.editEmployee.bind(this);
+    this.editEmployee = this.editEmployee.bind(this);
     this.deleteEmployee = this.deleteEmployee.bind(this);
     this.addEmployee = this.addEmployee.bind(this);
 
@@ -25,9 +25,12 @@ export default class EmployeeTable extends React.Component {
 
     this.state = {
       columns: [{
-        Header: 'Name',
-        accessor: 'name' // String-based value accessors!
+        Header: 'First Name',
+        accessor: 'first name' // String-based value accessors!
       }, {
+        Header: 'Last Name',
+        accessor: 'last name',
+      },{
         Header: 'Info',
         accessor: 'info',
       }, {
@@ -88,7 +91,7 @@ export default class EmployeeTable extends React.Component {
 
 
 
-  addEmployee(name, info, jobs) {
+  addEmployee(firstName, lastName, info, jobs) {
     var jobsString = "";
     var actionButtons = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton id={this.state.rowID} onClick={this.deleteEmployee} /></ButtonGroup>;
     var newRowID = this.state.rowID;
@@ -105,7 +108,8 @@ export default class EmployeeTable extends React.Component {
     }
 
     var row = {
-      name: name,
+      firstName: firstName,
+      lastName: lastName,
       info: info,
       jobs: jobsString,
       actions: actionButtons,
@@ -121,6 +125,12 @@ export default class EmployeeTable extends React.Component {
       rows: newRows,
       rowID: newRowID
     })
+
+    console.log(this.state.rows);
+  }
+
+  editEmployee(id){
+
   }
 
   deleteEmployee(id) {
