@@ -173,15 +173,16 @@ export default class LoftScreen extends React.Component {
         return (
             <Row className="viewport">
                 <Col xs={{ size: 6 }} md={{ size: 3 }}>
-                    <QueueList addQueueItem={this.addQueueItem}>
-                        {this.state.queueListItems}
-                    </QueueList>
-                </Col>
-                <Col xs={{ size: 6 }} md={{ size: 3 }}>
                     <WarningList addWarning={this.addWarning}>
                         {this.state.warningListItems}
                     </WarningList>
                 </Col>
+                <Col xs={{ size: 6 }} md={{ size: 3 }}>
+                    <QueueList addQueueItem={this.addQueueItem}>
+                        {this.state.queueListItems}
+                    </QueueList>
+                </Col>
+                
                 <Col xs={{ size: 12 }} md={{ size: 6 }}>
                     <Card>
                         <CardHeader>Main View</CardHeader>

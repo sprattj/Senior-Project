@@ -21,7 +21,7 @@ export default class TestScreen extends React.Component {
 
         //CHANGE URL HERE 
         //(rootURL comes from /dropzonehq/src/restInfo.js)
-        this.URL = rootURL + "/rigsheets/thisIsntAnEndpointSoItWillBreak"
+        this.URL = rootURL + "/items/id/1"
                             //^always needs to start with a slash
 
         //dont change this

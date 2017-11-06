@@ -25,10 +25,10 @@ export default class SheetsScreen extends React.Component {
             <div>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
-                        <Rigsheet sheetType="Tandems" />
+                        <Rigsheet sheetType="Tandem" />
                     </Col>
                     <Col lg={{ size: 5 }}>
-                         <Rigsheet sheetType="Students"/>
+                         <Rigsheet sheetType="Student"/>
                     </Col>
                 </Row>
                 <Row style={marginStyle}>
