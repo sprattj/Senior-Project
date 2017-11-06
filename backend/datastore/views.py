@@ -1,11 +1,30 @@
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-# from django.db import connection
 from rest_framework import viewsets
 from rest_framework import status
-# from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework import generics
 from .serializers import *
+
+
+class EmployeeList(generics.ListCreateAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeeSerializer
+
+
+class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeeSerializer
+
+
+class ItemList(generics.ListCreateAPIView):
+    queryset = Items.objects.all()
+    serializer_class = ItemSerializer
+
+
+class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Items.objects.all()
+    serializer_class = ItemSerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
