@@ -4,7 +4,7 @@
 # This file contains the models representing the DropZoneHQ database
 #
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+#   * Remove `managed = True` lines if you wish to allow Django to create, modify, and delete the table
 #   * Don't rename db_table values or field names.
 """
 
@@ -22,7 +22,7 @@ class Actions(models.Model):
 
     class Meta:
         # Whether or not dropZoneHQ can create, modify, or delete this table
-        managed = False
+        managed = True
         # Name of table in DB
         db_table = 'actions'
         app_label = 'dropZoneHQ'
@@ -41,7 +41,7 @@ class AutomaticActivationDevices(models.Model):
     lifespan = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'automatic_activation_devices'
         app_label = 'dropZoneHQ'
 
@@ -62,7 +62,7 @@ class Canopies(models.Model):
     jump_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'canopies'
         app_label = 'dropZoneHQ'
 
@@ -75,7 +75,7 @@ class Containers(models.Model):
     serial_number = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'containers'
         app_label = 'dropZoneHQ'
 
@@ -86,7 +86,7 @@ class DjangoMigrations(models.Model):
     applied = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'django_migrations'
         app_label = 'dropZoneHQ'
 
@@ -104,7 +104,7 @@ class Dropzones(models.Model):
     location = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'dropzones'
         app_label = 'dropZoneHQ'
 
@@ -117,7 +117,7 @@ class EmployeeRoles(models.Model):
     role = models.CharField(max_length=45)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
@@ -134,7 +134,7 @@ class Employees(models.Model):
     employment_date = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees'
         app_label = 'dropZoneHQ'
 
@@ -147,7 +147,7 @@ class EmployeesActions(models.Model):
     timestamp = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees_actions'
         unique_together = (('employee', 'action'),)
         app_label = 'dropZoneHQ'
@@ -159,7 +159,7 @@ class EmployeesEmployeeRoles(models.Model):
     role = models.ForeignKey(EmployeeRoles, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees_employee_roles'
         unique_together = (('employee', 'role'),)
         app_label = 'dropZoneHQ'
@@ -171,7 +171,7 @@ class EmployeesRentals(models.Model):
     rental = models.ForeignKey('Rentals', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees_rentals'
         unique_together = (('employee', 'rental'),)
         app_label = 'dropZoneHQ'
@@ -187,7 +187,7 @@ class EmployeesServices(models.Model):
     timestamp = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees_services'
         unique_together = (('employee', 'service'),)
         app_label = 'dropZoneHQ'
@@ -203,7 +203,7 @@ class EmployeesSignouts(models.Model):
     timestamp = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees_signouts'
         unique_together = (('employee', 'signout'),)
         app_label = 'dropZoneHQ'
@@ -217,7 +217,7 @@ class ItemTypes(models.Model):
     type = models.CharField(unique=True, max_length=45, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'item_types'
         app_label = 'dropZoneHQ'
 
@@ -237,7 +237,7 @@ class Items(models.Model):
     is_rentable = models.CharField(max_length=4)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'items'
         app_label = 'dropZoneHQ'
 
@@ -248,7 +248,7 @@ class ItemsRentals(models.Model):
     rental = models.ForeignKey('Rentals', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'items_rentals'
         unique_together = (('item', 'rental'),)
         app_label = 'dropZoneHQ'
@@ -266,7 +266,7 @@ class Rentals(models.Model):
     returned_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'rentals'
         app_label = 'dropZoneHQ'
 
@@ -284,7 +284,7 @@ class ReserveCanopies(models.Model):
     ride_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'reserve_canopies'
         app_label = 'dropZoneHQ'
 
@@ -302,7 +302,7 @@ class Rigs(models.Model):
     istandem = models.CharField(db_column='isTandem', max_length=4)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'rigs'
         app_label = 'dropZoneHQ'
 
@@ -324,7 +324,7 @@ class RigsAuditTrail(models.Model):
     date_of_change = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'rigs_audit_trail'
         app_label = 'dropZoneHQ'
 
@@ -342,7 +342,7 @@ class Services(models.Model):
     description = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'services'
         app_label = 'dropZoneHQ'
 
@@ -358,7 +358,7 @@ class Signouts(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
+        managed = True
         db_table = 'signouts'
 
 
@@ -381,7 +381,7 @@ class AllCanopies(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
+        managed = True
         db_table = 'all_canopies'
 
 
@@ -411,7 +411,7 @@ class AllItems(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
+        managed = True
         db_table = 'all_items'
 
 
@@ -425,7 +425,7 @@ class EmployeesVsSignouts(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
+        managed = True
         db_table = 'all_employees_vs_signouts'
 
 
@@ -438,7 +438,7 @@ class EmployeesVsSignoutsStudent(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
+        managed = True
         db_table = 'employees_vs_signouts_student'
 
 
@@ -451,5 +451,5 @@ class EmployeesVsSignoutsTandem(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
+        managed = True
         db_table = 'employees_vs_signouts_tandem'

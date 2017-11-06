@@ -1,14 +1,11 @@
 import React from 'react';
 import { Button } from 'reactstrap';
-import { reactstrapColors, reactstrapButtonSizes } from '../reactstrapStyles.js';
+//import { reactstrapColors, reactstrapButtonSizes } from '../reactstrapStyles.js';
 
 /*
 *   ScreenChangeButton is a button that changes the currently rendered screen in MainView, 
 */
 export default class ScreenChangeButton extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return(

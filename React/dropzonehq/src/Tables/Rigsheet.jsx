@@ -15,7 +15,7 @@ export default class Rigsheet extends React.Component {
     super(props);
     //since the URL section is not directly related to rendering,
     //it shouldn't be part of state. Save it in a class variable.
-    this.URLsection = "/rigsheets";
+    this.URLsection = "/rigsheets/";
 
     //Bind all methods that are passed down so that they can
     //be called via this.methodName in child components

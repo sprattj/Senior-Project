@@ -26,7 +26,7 @@ export default class AFPInstructorStatDisplay extends React.Component {
     //on loading it will try to fetch the stats but 
     //if it fails it will show test data
     componentDidMount() {
-        this.fetchStats();        
+       // this.fetchStats();        
     }
 
     fetchStats() {

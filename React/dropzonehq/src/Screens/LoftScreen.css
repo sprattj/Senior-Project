@@ -1,0 +1,8 @@
+.viewport{
+    height: 100%;
+}
+
+.main_view{
+    height: calc(90vh - 150px);
+    overflow-y: scroll;
+}

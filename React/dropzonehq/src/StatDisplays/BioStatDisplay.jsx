@@ -28,7 +28,7 @@ export default class BioStatDisplay extends React.Component {
     //on loading it will try to fetch the bio but 
     //if it fails it will show test data
     componentDidMount() {
-        this.fetchBio();        
+        //this.fetchBio();        
     }
 
     fetchBio() {
