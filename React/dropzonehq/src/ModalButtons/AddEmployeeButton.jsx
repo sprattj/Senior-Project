@@ -11,7 +11,7 @@ export default class AddEmployeeButton extends React.Component {
     this.verify = this.verify.bind(this);
 
     this.firstNameChanged = this.firstNameChanged.bind(this);
-    this.lastNameChanged = this.lastNameChanged.bind(this);    
+    this.lastNameChanged = this.lastNameChanged.bind(this);
     this.infoChanged = this.infoChanged.bind(this);
     this.jobsChanged = this.jobsChanged.bind(this);
 
@@ -29,7 +29,7 @@ export default class AddEmployeeButton extends React.Component {
       firstName: '',
       lastName: '',
       info: '',
-      jobs: []
+      jobs: ''
     })
   }
 
@@ -110,7 +110,7 @@ export default class AddEmployeeButton extends React.Component {
         <InputGroupAddon >Last Name: </InputGroupAddon>
         <Input id="addEmployeeLastName" type='text' value={this.state.lastName} onChange={this.lastNameChanged} />
       </InputGroup>
-      <br />
+      <br />      
       <InputGroup>
         <InputGroupAddon >Info:</InputGroupAddon>
         <Input id="addEmployeeInfo" type='text' value={this.state.info} onChange={this.infoChanged} />
@@ -131,3 +131,4 @@ export default class AddEmployeeButton extends React.Component {
     );
   }
 }
+

@@ -13,24 +13,26 @@ export default class EmployeeTable extends React.Component {
     super(props)
     this.URLsection = "/employees";
 
-    this.editEmployee = this.editEmployee.bind(this);
+    // this.editEmployee = this.editEmployee.bind(this);
     this.deleteEmployee = this.deleteEmployee.bind(this);
     this.addEmployee = this.addEmployee.bind(this);
 
-    //   var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton />, rowID: 1},
-    //   { name: "Andres B", info: "Senior Program", jobs: ["Rigger", "Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>, rowID: 2 },
-    //   { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>,rowID: 3 }];
+    //   var rowData = [{ firstname: "Paul B", lastname: "Bayruns", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton />, rowID: 1},
+    //   { firstname: "Andres", lastname: "Blotta", info: "Senior Program", jobs: ["Rigger", "Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>, rowID: 2 }
+    //   ];
 
     //   this.processRows(rowData);
 
     this.state = {
       columns: [{
         Header: 'First Name',
-        accessor: 'first name' // String-based value accessors!
-      }, {
+        accessor: 'firstname' // String-based value accessors!
+      }, 
+      {
         Header: 'Last Name',
-        accessor: 'last name',
-      },{
+        accessor: 'lastname'
+      },     
+      {
         Header: 'Info',
         accessor: 'info',
       }, {
@@ -93,7 +95,7 @@ export default class EmployeeTable extends React.Component {
 
 
 
-  addEmployee(firstName, lastName, info, jobs) {
+  addEmployee(fname, lname, info, jobs) {
     var jobsString = "";
     var actionButtons = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton id={this.state.rowID} onClick={this.deleteEmployee} /></ButtonGroup>;
     var newRowID = this.state.rowID;
@@ -110,8 +112,8 @@ export default class EmployeeTable extends React.Component {
     }
 
     var row = {
-      firstName: firstName,
-      lastName: lastName,
+      firstname: fname,
+      lastname: lname,
       info: info,
       jobs: jobsString,
       actions: actionButtons,
@@ -127,12 +129,6 @@ export default class EmployeeTable extends React.Component {
       rows: newRows,
       rowID: newRowID
     })
-
-    console.log(this.state.rows);
-  }
-
-  editEmployee(id){
-
   }
 
   deleteEmployee(id) {
