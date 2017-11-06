@@ -4,7 +4,10 @@
 }
 
 body {
-    background-color: #97CCF1;
+    background: #97CCF1; /* Old browsers */
+    /*#fe813e
+    #404f54
+    #798788*/
     overflow-x: hidden;
     overflow-y: scroll;
 }

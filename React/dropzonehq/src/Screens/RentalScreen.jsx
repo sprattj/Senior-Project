@@ -43,12 +43,11 @@ class RentalScreen extends React.Component {
                     <Col lg={{ size: 5, offset: 1 }}>
                         <RentalTable displayChange={this.displayChange} />
                     </Col>
-                    <Col lg={{ size: 7, offset: 1 }}>
+                    <Col lg={{ size: 5}}>
                         <Card body>
                             {this.state.currentItem}
                         </Card>
                     </Col>
-
                 </Row>
             </div>
         );
