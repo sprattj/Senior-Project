@@ -57,7 +57,7 @@ export default class RigAlertsContainer extends React.Component {
     //When this rigsheet component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
-        this.fetchAlerts();
+       // this.fetchAlerts();
     }
 
     //Add a report to the rig.

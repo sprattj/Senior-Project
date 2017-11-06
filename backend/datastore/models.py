@@ -294,7 +294,7 @@ class Rigs(models.Model):
     # PK -> Shares PK from items table
     item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
     # Unique identifier for this rig
-    rig_id = models.AutoField(unique=True, unique=True)
+    rig_id = models.AutoField(unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump

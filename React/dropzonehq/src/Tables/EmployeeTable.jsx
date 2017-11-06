@@ -46,11 +46,13 @@ export default class EmployeeTable extends React.Component {
   //"Packed By" data with a PackButton
   processRows(rowData) {
     for (var i = 0; i < rowData.length; i++) {
-      for (var j = 0; j < rowData[i].jobs.length; j++) {
-        if (rowData[i].jobs[j] === "Administrator") {
-          rowData[i].actions = <EditEmployeeButton />; //TODO
-        } else {
-          rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>; //ALSO TODO
+      if (rowData[i.jobs]) {
+        for (var j = 0; j < rowData[i].jobs.length; j++) {
+          if (rowData[i].jobs[j] === "Administrator") {
+            rowData[i].actions = <EditEmployeeButton />; //TODO
+          } else {
+            rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>; //ALSO TODO
+          }
         }
       }
     }
@@ -116,7 +118,7 @@ export default class EmployeeTable extends React.Component {
 
     var newRows = Array.from(this.state.rows);
     newRows.push(row);
-    
+
     this.setState({
       rows: newRows,
       rowID: newRowID

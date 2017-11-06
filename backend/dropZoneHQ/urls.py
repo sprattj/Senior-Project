@@ -29,7 +29,10 @@ urlpatterns = [
     url(r'^rigs/(?P<pk>[0-9]+/$)', RigViewSet.specific_rig),
     url(r'^rigsheets/all', EmployeeVsSignoutViewSet().all_signout_records),
     url(r'^rigsheets/(?P<pk>[0-9]+$)', EmployeeVsSignoutViewSet().specific_signout),
-    url(r'^rigsheets/student', EmployeeVsSignoutViewSet().student_signout_records),
-    url(r'^rigsheets/tandem', EmployeeVsSignoutViewSet().tandem_signout_records),
-    url(r'^employees/', EmployeeViewSet().all_employees)
+    url(r'^rigsheets/[Ss]tudent', EmployeeVsSignoutViewSet().student_signout_records),
+    url(r'^rigsheets/[Tt]andem', EmployeeVsSignoutViewSet().tandem_signout_records),
+    url(r'^employees/', EmployeeViewSet().all_employees),
+    url(r'^items/id/(?P<pk>[0-9]+$)', ItemViewSet().specific_item),
+    url(r'^items/(?P<item_type>rig|aad|canopy)', ItemViewSet().items_by_type),
+    url(r'^items/', ItemViewSet().all_items)
 ]

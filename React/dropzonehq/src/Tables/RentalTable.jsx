@@ -99,7 +99,7 @@ export default class RentalTable extends React.Component {
     //When this RentalTable component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
-        this.fetchRows();
+       // this.fetchRows();
     }
 
     //Fetch the items from the database that are 
