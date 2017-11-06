@@ -82,6 +82,7 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ItemTypeSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = ItemTypes
         fields = ('item_type_id', 'type')

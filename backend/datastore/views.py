@@ -27,6 +27,16 @@ class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ItemSerializer
 
 
+class ItemTypeList(generics.ListCreateAPIView):
+    queryset = ItemTypes.objects.all()
+    serializer_class = ItemTypeSerializer
+
+
+class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ItemTypes.objects.all()
+    serializer_class = ItemTypeSerializer
+
+
 class ItemViewSet(viewsets.ModelViewSet):
     @csrf_exempt
     def all_items(self, request):

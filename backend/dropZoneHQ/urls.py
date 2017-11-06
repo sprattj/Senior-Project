@@ -31,6 +31,8 @@ urlpatterns = [
     url(r'^rigsheets/(?P<pk>[0-9]+$)', EmployeeVsSignoutViewSet().specific_signout),
     url(r'^rigsheets/student', EmployeeVsSignoutViewSet().student_signout_records),
     url(r'^rigsheets/tandem', EmployeeVsSignoutViewSet().tandem_signout_records),
+    url(r'^employees/(?P<pk>[0-9]+$)', EmployeeDetail.as_view()),
     url(r'^employees/', EmployeeList.as_view()),
-    url(r'^employees/(?P<pk>[0-9]+$)', EmployeeDetail.as_view())
+    url(r'^itemtypes/(?P<pk>[0-9]+$)', ItemTypeDetail.as_view()),
+    url(r'^itemtypes/', ItemTypeList.as_view())
 ]
