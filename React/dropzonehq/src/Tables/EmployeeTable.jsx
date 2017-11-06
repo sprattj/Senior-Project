@@ -11,7 +11,7 @@ export default class EmployeeTable extends React.Component {
 
   constructor(props) {
     super(props)
-    this.URLsection = "/employeetable";
+    this.URLsection = "/employees";
 
     // this.editEmployee = this.editEmployee.bind(this);
     this.deleteEmployee = this.deleteEmployee.bind(this);
