@@ -7,12 +7,22 @@ from rest_framework import generics
 from .serializers import *
 
 
+class EmployeeEmployeeRoleList(generics.ListCreateAPIView):
+    queryset = EmployeesEmployeeRoles.objects.all()
+    serializer_class = EmployeeEmployeeRoleSerializer
+
+
 class EmployeeList(generics.ListCreateAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
 
 class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeeSerializer
+
+
+class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
@@ -35,6 +45,16 @@ class ItemTypeList(generics.ListCreateAPIView):
 class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
+
+
+class RentalList(generics.ListCreateAPIView):
+    queryset = Rentals.objects.all()
+    serializer_class = RentalSerializer
+
+
+class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Rentals.objects.all()
+    serializer_class = RentalSerializer
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -185,7 +205,7 @@ class EmployeeVsSignoutViewSet(viewsets.ViewSet):
                 return HttpResponse(status=status.HTTP_201_CREATED)
             return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+'''
 class EmployeeViewSet(viewsets.ModelViewSet):
 
     @csrf_exempt
@@ -223,3 +243,4 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         elif request.method == 'DELETE':
             emp.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+'''
