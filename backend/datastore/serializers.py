@@ -61,10 +61,20 @@ class DropZoneSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('dropzone_id', 'name', 'password', 'location')
 
 
+class EmployeeEmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
+    role = serializers.ReadOnlyField()
+
+    class Meta:
+        model = EmployeesEmployeeRoles
+        fields = ('employee_id', 'role_id', 'role')
+
+
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    roles = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
+
     class Meta:
         model = Employees
-        fields = ('employee_id', 'first_name', 'last_name', 'pin')
+        fields = ('employee_id', 'first_name', 'last_name', 'pin', 'roles')
 
 
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
@@ -72,6 +82,12 @@ class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
         model = EmployeesVsSignouts
         fields = ('signout_id', 'jumpmaster', 'load_number',
                   'rig_id', 'packed_by')
+
+
+class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ItemsRentals
+        fields = ('item_id', 'rental_id')
 
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -82,6 +98,7 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ItemTypeSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = ItemTypes
         fields = ('item_type_id', 'type')
@@ -107,11 +124,17 @@ class RigSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('item_id', 'rig_id', 'container_id', 'aad_id', 'istandem')
 
 
-class RigAuditTrail(serializers.HyperlinkedModelSerializer):
+class RigAuditTrailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RigsAuditTrail
         fields = ('rig_audit_id', 'item_id', 'rig_id', 'container_id',
                   'aad_id', 'description', 'date_of_change')
+
+
+class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = EmployeeRoles
+        fields = ('role_id', 'role')
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):

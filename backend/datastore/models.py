@@ -121,9 +121,9 @@ class EmployeeRoles(models.Model):
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
+
 # Employees the work at the drop zone
 class Employees(models.Model):
-
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
@@ -131,7 +131,8 @@ class Employees(models.Model):
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)
     pin = models.IntegerField()
-    employment_date = models.DateTimeField()
+    employment_date = models.DateField()
+    roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
 
     class Meta:
         managed = True
@@ -155,7 +156,7 @@ class EmployeesActions(models.Model):
 
 # Bridge between Employees and Roles. Many employees can perform many roles.
 class EmployeesEmployeeRoles(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
+    employee = models.ForeignKey(Employees, models.DO_NOTHING)
     role = models.ForeignKey(EmployeeRoles, models.DO_NOTHING)
 
     class Meta:
@@ -191,6 +192,7 @@ class EmployeesServices(models.Model):
         db_table = 'employees_services'
         unique_together = (('employee', 'service'),)
         app_label = 'dropZoneHQ'
+
 
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
@@ -234,6 +236,7 @@ class Items(models.Model):
     description = models.CharField(max_length=45, blank=True, null=True)
     # Whether or not this item is rentable
     is_rentable = models.CharField(max_length=4)
+    rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
         managed = True
@@ -243,7 +246,7 @@ class Items(models.Model):
 
 # Bridge between Items and Rentals. Many items can be rented many times.
 class ItemsRentals(models.Model):
-    item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
+    item = models.ForeignKey('Items', models.DO_NOTHING)
     rental = models.ForeignKey('Rentals', models.DO_NOTHING)
 
     class Meta:
@@ -263,6 +266,8 @@ class Rentals(models.Model):
     rental_date = models.DateTimeField()
     # Date the gear was returned to the drop zone.
     returned_date = models.DateTimeField(blank=True, null=True)
+
+    items = models.ManyToManyField('Items', through='ItemsRentals')
 
     class Meta:
         managed = True
@@ -340,6 +345,8 @@ class Services(models.Model):
     # Description of the problem that needs to be serviced.
     description = models.CharField(max_length=45, blank=True, null=True)
 
+    employees = models.ManyToManyField('Employees', through='EmployeesServices')
+
     class Meta:
         managed = True
         db_table = 'services'
@@ -354,6 +361,8 @@ class Signouts(models.Model):
     load_number = models.IntegerField()
     # What rig has been packed or signed out for use.
     rig = models.ForeignKey(Rigs, models.DO_NOTHING)
+
+    employees = models.ManyToManyField('Employees', through='EmployeesSignouts')
 
     class Meta:
         app_label = 'dropZoneHQ'

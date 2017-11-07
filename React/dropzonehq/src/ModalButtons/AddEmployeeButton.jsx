@@ -26,7 +26,7 @@ export default class AddEmployeeButton extends React.Component {
     this.setState({
       fullName: '',
       info: '',
-      jobs: ''
+      jobs: []
     })
   }
 
