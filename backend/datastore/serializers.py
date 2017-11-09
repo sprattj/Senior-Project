@@ -1,6 +1,6 @@
 """
 # Author: Jonathan Spratt
-# Last Modification: 10/8/17
+# Last Modification: 11/7/17
 # Serializers for DB Models
 """
 
@@ -147,26 +147,3 @@ class SignoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Signouts
         fields = ('signout_id', 'load_number', 'rig')
-
-
-''' 
-EQUIVALENT TO A HYPERLINKM0DELSERIALIZER
-class RigSerializer(serializers.Serializer):
-    item_id = serializers.IntegerField(read_only=True)
-    rig_id = serializers.IntegerField(read_only=True)
-    container_id = serializers.IntegerField(read_only=True)
-    aad_id = serializers.IntegerField(read_only=True)
-    isTandem = serializers.CharField(read_only=True)
-    """ ^ Matching istandem in models -> Should this be a BooleanField?"""
-
-    def create(self, validated_data):
-        """Create and return a new `Rig` instance, given the validated data"""
-        return Rigs.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """Update and return an existing rig, given the validated data"""
-        instance.rig_id = validated_data.get('rig_id', instance.rig_id)
-        instance.container_id = validated_data.get('container_id', instance.container_id)
-        instance.aad_id = validated_data.get('aad_id', instance.aad_id)
-        instance.isTandem = validated_data.get('istandem', instance.isTandem)
-'''

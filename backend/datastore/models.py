@@ -1,6 +1,6 @@
 """
 # Author: Jonathan Spratt
-# Last modification: 10/8/2017
+# Last modification: 11/7/2017
 # This file contains the models representing the DropZoneHQ database
 #
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
