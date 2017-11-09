@@ -4,8 +4,8 @@ import TableSheet from './TableSheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
 import SignoutButton from '../ModalButtons/SignoutButton.jsx';
 import { rootURL } from '../restInfo.js';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+import { toast } from 'react-toastify';
+
 
 
 /* 
@@ -132,8 +132,7 @@ export default class Rigsheet extends React.Component {
         //if it failed, throw an error and stop.
         if (response.status >= 400) {
           //throw new Error("Bad response from server");
-          toast.error("Error fetching rows from " + url);
-          return;
+          throw new Error("Fetching rows failed. Bad response " + response.status + " from server");
         }
         //if it didn't fail, process the data we got back
         //into JSON format
@@ -146,6 +145,8 @@ export default class Rigsheet extends React.Component {
         self.setState({
           rows: rowData
         });
+      }).catch(function(error) {
+        toast.error(error + "\n" + url);
       });
   }
 
@@ -278,20 +279,12 @@ export default class Rigsheet extends React.Component {
       <TableSheet
         headerText={this.props.sheetType}
         columns={this.state.columns}
-        footer={<div>
-          <ToastContainer
-            position="top-center"
-            type="error"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            pauseOnHover
-          />
+        footer={
+          
           <SignoutButton
             usernameChanged={this.usernameChanged}
             passwordChanged={this.passwordChanged}
-            authorize={this.addSignout} /></div>}>
+            authorize={this.addSignout} />}>
         {this.state.rows}
       </TableSheet>);
   }

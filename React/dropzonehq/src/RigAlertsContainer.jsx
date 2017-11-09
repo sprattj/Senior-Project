@@ -3,8 +3,7 @@ import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupI
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
 import PackedWrongRigButton from './ModalButtons/PackedWrongRigButton.jsx';
 import { rootURL } from './restInfo.js';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
+import { toast } from 'react-toastify';
 
 /*
 
@@ -75,7 +74,7 @@ export default class RigAlertsContainer extends React.Component {
 
         var self = this;
         var requestVariables = {
-
+            
         };
         fetch(url, {
             method: "POST",

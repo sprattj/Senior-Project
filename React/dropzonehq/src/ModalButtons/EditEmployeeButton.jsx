@@ -5,7 +5,12 @@ import {Form, Input, InputGroup, InputGroupAddon} from 'reactstrap';
 
 export default class EditEmployeeButton extends React.Component {
    
+    constructor(props){
+        super(props);
+        this.authorize = this.authorize.bind(this);
+    }
   authorize(){
+      this.props.onClick(); //TODO keep state for the first name and last name and other info and send them here
     console.log("Authorized");
   }
  

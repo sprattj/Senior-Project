@@ -5,6 +5,7 @@ import DeleteEmployeeButton from '../ModalButtons/DeleteEmployeeButton.jsx';
 import AddEmployeeButton from '../ModalButtons/AddEmployeeButton.jsx';
 import { ButtonGroup } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
+import { toast } from 'react-toastify';
 
 
 export default class EmployeeTable extends React.Component {
@@ -17,6 +18,8 @@ export default class EmployeeTable extends React.Component {
     this.deleteEmployee = this.deleteEmployee.bind(this);
     this.addEmployee = this.addEmployee.bind(this);
 
+    this.processRows = this.processRows.bind(this);
+    
     //   var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton />, rowID: 1},
     //   { name: "Andres B", info: "Senior Program", jobs: ["Rigger", "Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>, rowID: 2 },
     //   { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>,rowID: 3 }];
@@ -28,26 +31,26 @@ export default class EmployeeTable extends React.Component {
         {
           Header: 'ID',
           accessor: 'employee_id' // String-based value accessors!
-        },{
-        Header: 'First Name',
-        accessor: 'firstname' // String-based value accessors!
-      }, {
-        Header: 'Last Name',
-        accessor: 'lastname',
-      },{
-        Header: 'Info',
-        accessor: 'info',
-      }, {
-        Header: 'Job(s)',
-        accessor: 'jobs'
-      }, {
-        Header: 'Actions',
-        accessor: 'actions'
-      },
-      {
-        Header: 'PIN',
-        accessor: 'pin'
-      }],
+        }, {
+          Header: 'First Name',
+          accessor: 'firstname' // String-based value accessors!
+        }, {
+          Header: 'Last Name',
+          accessor: 'lastname',
+        }, {
+          Header: 'Info',
+          accessor: 'info',
+        }, {
+          Header: 'Job(s)',
+          accessor: 'jobs'
+        }, {
+          Header: 'Actions',
+          accessor: 'actions'
+        },
+        {
+          Header: 'PIN',
+          accessor: 'pin'
+        }],
       rows: [],
       rowID: 0
     };
@@ -58,32 +61,22 @@ export default class EmployeeTable extends React.Component {
   processRows(rowData) {
     var newRows = [];
     for (var i = 0; i < rowData.length; i++) {
-        newRows[i] = {}
-        newRows[i].employee_id = rowData[i].employee_id;
-        newRows[i].firstname = rowData[i].first_name;
-        newRows[i].lastname = rowData[i].last_name;
-        newRows[i].pin = rowData[i].pin;
-        newRows[i].actions = <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton onClick={this.deleteEmployee}/></ButtonGroup>;
-        var jobs = "";
-      for(var j = 0; j < rowData[i].roles.length; j++){
+      newRows[i] = {}
+      newRows[i].employee_id = rowData[i].employee_id;
+      newRows[i].firstname = rowData[i].first_name;
+      newRows[i].lastname = rowData[i].last_name;
+      newRows[i].pin = rowData[i].pin;
+      newRows[i].actions = <ButtonGroup><EditEmployeeButton onClick={this.editEmployee}/><DeleteEmployeeButton onClick={this.deleteEmployee} /></ButtonGroup>;
+      var jobs = "";
+      for (var j = 0; j < rowData[i].roles.length; j++) {
         jobs = jobs + rowData[i].roles[j].role;
-        if(j < rowData[i].roles.length - 1) {
-            jobs = jobs + ", ";
+        if (j < rowData[i].roles.length - 1) {
+          jobs = jobs + ", ";
         }
       }
       newRows[i].jobs = jobs;
     }
-      return newRows;
-      /*
-      if (rowData[i.jobs]) {
-        for (var j = 0; j < rowData[i].jobs.length; j++) {
-          if (rowData[i].jobs[j] === "Administrator") {
-            rowData[i].actions = <EditEmployeeButton />; //TODO
-          } else {
-            rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>; //ALSO TODO
-          }
-        }
-      }*/
+    return newRows;
   }
 
 
@@ -104,7 +97,7 @@ export default class EmployeeTable extends React.Component {
 
     }).then(function (response) {
       if (response.status >= 400) {
-        throw new Error("Bad response from server");
+        throw new Error("Fetching rows failed. Bad response " + response.status + " from server");
       }
       return response.json();
     })
@@ -113,64 +106,158 @@ export default class EmployeeTable extends React.Component {
         self.setState({
           rows: newRows
         });
-      });
+      }).catch(function (error) {
+        toast.error(error + "\n" + url);
+      });;
   }
 
 
 
   addEmployee(firstName, lastName, info, jobs) {
-    var jobsString = "";
-    var actionButtons = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton id={this.state.rowID} onClick={this.deleteEmployee} /></ButtonGroup>;
-    var newRowID = this.state.rowID;
+    require('isomorphic-fetch');
+    require('es6-promise').polyfill();
 
-    for (var i = 0; i < jobs.length; i++) {
-      if (i === jobs.length - 1) {
-        jobsString += jobs[i];
-      } else {
-        jobsString += jobs[i] + ", ";
-      }
-      if (jobs[i] === "Administrator") {
-        actionButtons = <EditEmployeeButton />;
-      }
-    }
+    var url = rootURL + this.URLsection;
 
-    var row = {
-      firstName: firstName,
-      lastName: lastName,
-      info: info,
-      jobs: jobsString,
-      actions: actionButtons,
-      rowID: newRowID
+    var self = this;
+    var requestVariables = {
+      first_name: firstName,
+      last_name: lastName,
+      roles: jobs,
+      pin: "123123" //TODO
     };
+    fetch(url, {
+      method: "POST",
+      mode: 'CORS',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestVariables)
+    })//when we get a response back
+      .then(function (response) {
+        if (response.status >= 400) {
+          throw new Error("Adding employee failed. Bad response " + response.status + " from server.");
+        }
+        return response.json();
+      })//when the call succeeds
+      .then(function (rowData) {
+        var jobsString = "";
+        var actionButtons = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton id={this.state.rowID} onClick={this.deleteEmployee} /></ButtonGroup>;
+        var newRowID = this.state.rowID;
 
-    newRowID++;
+        for (var i = 0; i < jobs.length; i++) {
+          if (i === jobs.length - 1) {
+            jobsString += jobs[i];
+          } else {
+            jobsString += jobs[i] + ", ";
+          }
+          if (jobs[i] === "Administrator") {
+            actionButtons = <EditEmployeeButton />;
+          }
+        }
 
-    var newRows = Array.from(this.state.rows);
-    newRows.push(row);
+        var row = {
+          firstName: firstName,
+          lastName: lastName,
+          info: info,
+          jobs: jobsString,
+          actions: actionButtons,
+          rowID: newRowID
+        };
 
-    this.setState({
-      rows: newRows,
-      rowID: newRowID
-    })
+        newRowID++;
 
-    console.log(this.state.rows);
+        var newRows = Array.from(self.state.rows);
+        newRows.push(row);
+
+        self.setState({
+          rows: newRows,
+          rowID: newRowID
+        })
+      }).catch(function (error) {
+        toast.error(error + "\n" + url);
+        return false;
+      });
   }
 
-  editEmployee(id){
+  editEmployee(id) {
+    require('isomorphic-fetch');
+    require('es6-promise').polyfill();
 
+    var url = rootURL + this.URLsection + "/" + id;
+
+    var self = this;
+    var requestVariables = {
+      first_name: "test" //TODO
+    }
+    fetch(url, {
+      method: "PUT",
+      mode: 'CORS',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestVariables)
+    })//when we get a response back
+      .then(function (response) {
+        if (response.status >= 400) {
+          throw new Error("Editing employee failed. Bad response " + response.status + " from server.");
+        }
+        return response.json();
+      })//when the call succeeds
+      .then(function (rowData) {
+        var newRows = Array.from(self.state.rows);
+        for (var i = 0; i < newRows.length; i++) {
+          if (newRows[i].rowID === id) {
+            newRows.splice(i, 1);
+          }
+        }
+        self.setState({
+          rows: newRows
+        })
+      }).catch(function (error) {
+        toast.error(error + "\n" + url);
+        return false;
+      });
   }
 
   deleteEmployee(id) {
-    var newRows = Array.from(this.state.rows);
-    for (var i = 0; i < newRows.length; i++) {
-      if (newRows[i].rowID === id) {
-        newRows.splice(i, 1);
-      }
-    }
-    this.setState({
-      rows: newRows
-    })
+    require('isomorphic-fetch');
+    require('es6-promise').polyfill();
 
+    var url = rootURL + this.URLsection + "/" + id;
+
+    var self = this;
+
+    fetch(url, {
+      method: "DELETE",
+      mode: 'CORS',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      }
+    })//when we get a response back
+      .then(function (response) {
+        if (response.status >= 400) {
+          throw new Error("Deleting employee failed. Bad response " + response.status + " from server.");
+        }
+        return response.json();
+      })//when the call succeeds
+      .then(function (rowData) {
+        var newRows = Array.from(self.state.rows);
+        for (var i = 0; i < newRows.length; i++) {
+          if (newRows[i].rowID === id) {
+            newRows.splice(i, 1);
+          }
+        }
+        self.setState({
+          rows: newRows
+        })
+      }).catch(function (error) {
+        toast.error(error + "\n" + url);
+        return false;
+      });
   }
 
 
