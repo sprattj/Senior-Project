@@ -24,12 +24,25 @@ export default class EmployeeTable extends React.Component {
     //   this.processRows(rowData);
 
     this.state = {
+<<<<<<< HEAD
       columns: [{
         Header: 'First Name',
         accessor: 'first name' // String-based value accessors!
       }, {
         Header: 'Last Name',
         accessor: 'last name',
+=======
+      columns: [
+        {
+          Header: 'ID',
+          accessor: 'employee_id' // String-based value accessors!
+        },{
+        Header: 'First Name',
+        accessor: 'firstname' // String-based value accessors!
+      }, {
+        Header: 'Last Name',
+        accessor: 'lastname',
+>>>>>>> 9b5cf5620cb15a063bfd6849c5594e701d5d502b
       },{
         Header: 'Info',
         accessor: 'info',
@@ -39,16 +52,38 @@ export default class EmployeeTable extends React.Component {
       }, {
         Header: 'Actions',
         accessor: 'actions'
+      },
+      {
+        Header: 'PIN',
+        accessor: 'pin'
       }],
       rows: [],
       rowID: 0
     };
   }
 
-  //Process the rows that are passed in to fill in the missing 
+  //Process the rows that are passed in to fill in the missing
   //"Packed By" data with a PackButton
   processRows(rowData) {
+    var newRows = [];
     for (var i = 0; i < rowData.length; i++) {
+        newRows[i] = {}
+        newRows[i].employee_id = rowData[i].employee_id;
+        newRows[i].firstname = rowData[i].first_name;
+        newRows[i].lastname = rowData[i].last_name;
+        newRows[i].pin = rowData[i].pin;
+        newRows[i].actions = <ButtonGroup><EditEmployeeButton/><DeleteEmployeeButton onClick={this.deleteEmployee}/></ButtonGroup>;
+        var jobs = "";
+      for(var j = 0; j < rowData[i].roles.length; j++){
+        jobs = jobs + rowData[i].roles[j].role;
+        if(j < rowData[i].roles.length - 1) {
+            jobs = jobs + ", ";
+        }
+      }
+      newRows[i].jobs = jobs;
+    }
+      return newRows;
+      /*
       if (rowData[i.jobs]) {
         for (var j = 0; j < rowData[i].jobs.length; j++) {
           if (rowData[i].jobs[j] === "Administrator") {
@@ -57,8 +92,7 @@ export default class EmployeeTable extends React.Component {
             rowData[i].actions = <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>; //ALSO TODO
           }
         }
-      }
-    }
+      }*/
   }
 
 
@@ -84,9 +118,9 @@ export default class EmployeeTable extends React.Component {
       return response.json();
     })
       .then(function (rowData) {
-        self.processRows(rowData);
+        var newRows = self.processRows(rowData);
         self.setState({
-          rows: rowData
+          rows: newRows
         });
       });
   }
