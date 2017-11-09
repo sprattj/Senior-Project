@@ -10,7 +10,8 @@
     "react-big-calendar": "^0.17.0",
     "react-dom": "^16.0.0",
     "react-scripts": "1.0.14",
-    "react-table": "^6.6.0"
+    "react-table": "^6.6.0",
+    "react-toastify": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

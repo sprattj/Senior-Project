@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupI
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
 import PackedWrongRigButton from './ModalButtons/PackedWrongRigButton.jsx';
 import { rootURL } from './restInfo.js';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 /*
 
@@ -57,29 +59,58 @@ export default class RigAlertsContainer extends React.Component {
     //When this rigsheet component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
-       // this.fetchAlerts();
+        this.fetchAlerts();
     }
+
 
     //Add a report to the rig.
     //This is passed down to the authorize button inside
     //of the modal that the RigProblemButton creates.
     reportRigIssue(rig, severity, issue) {
 
-        //create a new alert for the list
-        var message = "Rig " + rig + ": " + issue;
-        var itemColor = this.getSeverityColor(severity) ;
-        var alert = <ListGroupItem key={this.state.alerts.length + 1}
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + this.URLsection;
+
+        var self = this;
+        var requestVariables = {
+
+        };
+        fetch(url, {
+            method: "POST",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        })//when we get a response back
+            .then(function (response) {
+                if (response.status >= 400) {
+                    throw new Error("Adding report failed. Bad response " + response.status + " from server.");
+                }
+                return response.json();
+            })//when the call succeeds
+            .then(function (rowData) {
+                //create a new alert for the list
+                var message = "Rig " + rig + ": " + issue;
+                var itemColor = self.getSeverityColor(severity);
+                var alert = <ListGroupItem key={self.state.alerts.length + 1}
                     color={itemColor}>{message}</ListGroupItem>
 
-        //grab the current alerts
-        var newAlerts = Array.from(this.state.alerts);
-        //add our new alert
-        newAlerts.push(alert);
-        //update the state with the new alerts so it rerenders
-        this.setState({
-            alerts: newAlerts
-        })
-        console.log("rig issue reported");
+                //grab the current alerts
+                var newAlerts = Array.from(self.state.alerts);
+                //add our new alert
+                newAlerts.push(alert);
+                //update the state with the new alerts so it rerenders
+                self.setState({
+                    alerts: newAlerts
+                })
+            }).catch(function (error) {
+                toast.error(error + "\n" + url);
+                return false;
+            });
     }
 
     reportPackingError() {
@@ -109,13 +140,17 @@ export default class RigAlertsContainer extends React.Component {
         //we need. Enable CORS so we can access from localhost.
         fetch(url, {
             method: "GET",
-            mode: 'CORS'
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
         })//when we get a response back
             .then(function (response) {
                 //check to see if the call we made failed
                 //if it failed, throw an error and stop.
                 if (response.status >= 400) {
-                    throw new Error("Bad response from server");
+                    throw new Error("Fetching alerts failed. Bad response " + response.status + " from server.");
                 }
                 //if it didn't fail, process the data we got back
                 //into JSON format
@@ -128,6 +163,9 @@ export default class RigAlertsContainer extends React.Component {
                 self.setState({
                     alerts: alertData
                 });
+            }).catch(function (error) {
+                toast.error(error + "\n" + url);
+                return false;
             });
     }
 
@@ -160,8 +198,8 @@ export default class RigAlertsContainer extends React.Component {
             case ("Problem Type 4"):
                 color = "danger";
                 break;
-            default: 
-                color="secondary"
+            default:
+                color = "secondary"
                 break;
         }
         return color;

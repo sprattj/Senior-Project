@@ -24,14 +24,6 @@ export default class EmployeeTable extends React.Component {
     //   this.processRows(rowData);
 
     this.state = {
-<<<<<<< HEAD
-      columns: [{
-        Header: 'First Name',
-        accessor: 'first name' // String-based value accessors!
-      }, {
-        Header: 'Last Name',
-        accessor: 'last name',
-=======
       columns: [
         {
           Header: 'ID',
@@ -42,7 +34,6 @@ export default class EmployeeTable extends React.Component {
       }, {
         Header: 'Last Name',
         accessor: 'lastname',
->>>>>>> 9b5cf5620cb15a063bfd6849c5594e701d5d502b
       },{
         Header: 'Info',
         accessor: 'info',
