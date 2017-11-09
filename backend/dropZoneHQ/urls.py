@@ -25,13 +25,13 @@ from backend.datastore.views import *
 
 urlpatterns = [
     url(r'^admin[/]', admin.site.urls),
-    url(r'^rigs/(?P<pk>[0-9]+/$)', RigDetail.as_view()),
-    url(r'^rigsheets/all', EmployeeVsSignoutList.as_view()),
-    url(r'^rigsheets/(?P<pk>[0-9]+$)', EmployeeVsSignoutDetail.as_view()),
-    url(r'^rigsheets/[Ss]tudent', EmployeeVsSignoutStudentList.as_view()),
-    url(r'^rigsheets/[Tt]andem', EmployeeVsSignoutTandemList.as_view()),
-    url(r'^employees/(?P<pk>[0-9]+$)', EmployeeDetail.as_view()),
+    url(r'^rigs/(?P<pk>[0-9]+/$)[/]', RigDetail.as_view()),
+    url(r'^rigsheets/all[/]', EmployeeVsSignoutList.as_view()),
+    url(r'^rigsheets/(?P<pk>[0-9]+$)[/]', EmployeeVsSignoutDetail.as_view()),
+    url(r'^rigsheets/[Ss]tudent[/]', EmployeeVsSignoutStudentList.as_view()),
+    url(r'^rigsheets/[Tt]andem[/]', EmployeeVsSignoutTandemList.as_view()),
+    url(r'^employees/(?P<pk>[0-9]+$)[/]', EmployeeDetail.as_view()),
     url(r'^employees[/]', EmployeeList.as_view()),
-    url(r'^itemtypes[/](?P<pk>[0-9]+$)', ItemTypeDetail.as_view()),
+    url(r'^itemtypes/(?P<pk>[0-9]+$)[/]', ItemTypeDetail.as_view()),
     url(r'^itemtypes[/]', ItemTypeList.as_view())
 ]

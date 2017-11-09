@@ -1,7 +1,7 @@
 import React from 'react';
 import ModalButton from './ModalButton.jsx';
 import Checkbox from '../CheckBox/Checkbox.js';
-import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Form, FormGroup, Alert, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export default class AddEmployeeButton extends React.Component {
 
@@ -12,25 +12,36 @@ export default class AddEmployeeButton extends React.Component {
 
     this.firstNameChanged = this.firstNameChanged.bind(this);
     this.lastNameChanged = this.lastNameChanged.bind(this);    
-    this.infoChanged = this.infoChanged.bind(this);
     this.jobsChanged = this.jobsChanged.bind(this);
+    this.PINChanged = this.PINChanged.bind(this);
 
     this.state = {
       firstName: '',
       lastName: '',
-      info: '',
+      pin: '',
+      error: '',
       jobs: []
     }
   }
 
   verify() {
-    this.props.authorize(this.state.firstName, this.state.lastName, this.state.info, this.state.jobs);
-    this.setState({
-      firstName: '',
-      lastName: '',
-      info: '',
-      jobs: []
-    })
+    if(this.state.firstName && this.state.lastName && this.state.pin && this.state.jobs.length > 0){
+      this.props.authorize(this.state.firstName, this.state.lastName, this.state.pin, this.state.jobs);
+      this.setState( {
+        firstName: '',
+        lastName: '',
+        pin: '',
+        error: '',
+        jobs: []
+      });
+      return true;
+    }else{
+      this.setState(
+        {error: 'All fields are required to add an employee.'}
+      );
+      return false;
+    }
+    
   }
 
   firstNameChanged(e) {
@@ -41,8 +52,8 @@ export default class AddEmployeeButton extends React.Component {
     this.setState({ lastName: e.target.value });
   }
 
-  infoChanged(e) {
-    this.setState({ info: e.target.value });
+  PINChanged(e) {
+    this.setState({ pin: e.target.value });
   }
 
   jobsChanged(job) {
@@ -80,7 +91,7 @@ export default class AddEmployeeButton extends React.Component {
 
     for (var i = 0; i < jobs.length; i++) {
       var nextJob = jobs[i];
-      var nextItem = <Checkbox label={nextJob} updateCheckBoxArray={this.jobsChanged} />
+      var nextItem = <Checkbox key={i} label={nextJob} updateCheckBoxArray={this.jobsChanged} />
 
       if (i % 3 === 0) {
         col1.push(nextItem);
@@ -99,8 +110,13 @@ export default class AddEmployeeButton extends React.Component {
   }
 
   render() {
+    var error = <div></div>
+    if(this.state.error){
+      error = <Alert color="danger">{this.state.error}</Alert>;
+  }
     const checkboxes = this.getCheckBoxes();
     const modalContent = <Form>
+      {error}
       <InputGroup>
         <InputGroupAddon >First Name: </InputGroupAddon>
         <Input id="addEmployeeFirstName" type='text' value={this.state.firstName} onChange={this.firstNameChanged} />
@@ -112,8 +128,8 @@ export default class AddEmployeeButton extends React.Component {
       </InputGroup>
       <br />
       <InputGroup>
-        <InputGroupAddon >Info:</InputGroupAddon>
-        <Input id="addEmployeeInfo" type='text' value={this.state.info} onChange={this.infoChanged} />
+        <InputGroupAddon >PIN </InputGroupAddon>
+        <Input id="addEmployeeLastName" type='password' pattern="[0-9]{6}" value={this.state.PIN} onChange={this.PINChanged} />
       </InputGroup>
       <br />
       <Col>

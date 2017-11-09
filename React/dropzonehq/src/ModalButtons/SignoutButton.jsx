@@ -26,8 +26,8 @@ export default class SignoutButton extends React.Component {
     //keep state for the values of the components in this modal
     this.state = {
       instructor: 'Input text here..',
-      selectedRig: 'problem',
-      planeLoad: '123'
+      selectedRig: 111,
+      planeLoad: 111
     }
   }
 

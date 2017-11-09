@@ -6,20 +6,19 @@ export default class DeleteEmployeeButton extends React.Component {
     super(props);
 
     this.verify = this.verify.bind(this);
-
-    this.state = {
-      id: null
-    }
   }
   verify() {
-    this.setState({id: this.props.id})
-    this.props.onClick(this.props.id);
+    this.props.authorize(this.props.id);
+    return true;
   }
+  
 
   render() {
+    const name = this.props.firstName + " " + this.props.lastName;
+    const title = "Delete Employee: " + name;
     return (
-      <ModalButton buttonSize="md" buttonColor={"danger"} buttonText={"Delete"} modalTitle={"Delete Employee"}
-        modalContent={<p>Are you sure you want to delete this employee?</p>}
+      <ModalButton buttonSize="md" buttonColor={"danger"} buttonText={"Delete"} modalTitle={title}
+        modalContent={<p>Are you sure you want to delete {name}?</p>}
         modalPrimaryButtonText="Delete"
         modalPrimaryClick={this.verify} />
     );
