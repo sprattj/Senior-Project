@@ -15,15 +15,19 @@ Including another URLconf
 """
 import sys
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.http import HttpRequest
 
 sys.path.append('../')
 
-from backend.datastore.views import *
+from datastore.views import *
 
 urlpatterns = [
+    url(r'^$', TemplateView.as_view(template_name='index.html')),
     url(r'^admin[/]', admin.site.urls),
     url(r'^rigs/(?P<pk>[0-9]+/$)[/]', RigDetail.as_view()),
     url(r'^rigsheets/all[/]', EmployeeVsSignoutList.as_view()),
@@ -34,4 +38,4 @@ urlpatterns = [
     url(r'^employees[/]', EmployeeList.as_view()),
     url(r'^itemtypes/(?P<pk>[0-9]+$)[/]', ItemTypeDetail.as_view()),
     url(r'^itemtypes[/]', ItemTypeList.as_view())
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
