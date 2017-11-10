@@ -93,7 +93,7 @@ class DjangoMigrations(models.Model):
 
 
 # A location that is used as a skydiving drop zone.
-class Dropzones(models.Model):
+class Dropzones(AbstractUser):
 
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
@@ -141,8 +141,11 @@ class EmployeeRoles(models.Model):
         app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone
-class Employees(AbstractUser):
+class Employees(models.Model):
 
+    first_name = models.CharField(max_length=45)
+    last_name = models.CharField(max_length=45)
+    email = models.EmailField()
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
