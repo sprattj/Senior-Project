@@ -10,6 +10,7 @@
 
 from __future__ import unicode_literals
 from django.db import models
+from django.contrib.auth.models import User , AbstractUser
 
 
 # Actions that can be performed by employees
@@ -102,9 +103,27 @@ class Dropzones(models.Model):
     password = models.CharField(max_length=45)
     # The location of the drop zone
     location = models.CharField(max_length=45)
+    # Email of dropzone
+    email = models.EmailField()
 
-    class Meta:
-        managed = False
+    # Checks if a location is in use for a dropzone.
+    def dropzoneLocationInUse(self, location=None):
+        use = Dropzones.objects.get(location)
+        return use
+
+    # Checks if a name is in use for a dropzone.
+    def dropzoneNameInUse(self, name=None):
+        use = Dropzones.objects.get(name)
+        return use
+
+    #Chcek if the email has been used in the database
+    def dropzoneEmailInUse(self, email=None):
+        use = Dropzones.objects.get(email)
+        return use
+
+
+class Meta:
+        managed = True
         db_table = 'dropzones'
         app_label = 'dropZoneHQ'
 
@@ -122,19 +141,17 @@ class EmployeeRoles(models.Model):
         app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone
-class Employees(models.Model):
+class Employees(AbstractUser):
 
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
-    first_name = models.CharField(max_length=45)
-    last_name = models.CharField(max_length=45)
-    pin = models.IntegerField()
+    pin = models.CharField(max_length=45)
     employment_date = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'employees'
         app_label = 'dropZoneHQ'
 
@@ -345,6 +362,29 @@ class Services(models.Model):
         db_table = 'services'
         app_label = 'dropZoneHQ'
 
+#Used for keeping track of sessions
+class Session(models.Model):
+    #Primary key for eah Session
+    session_id = models.AutoField(primary_key=True)
+    #Authenticated Session
+    auth = models.BooleanField()
+    class Meta:
+        managed = True
+        db_table = 'session'
+        app_label = 'dropZoneHQ'
+
+class SessionDropzone(models.Model):
+    #Session are tied to each dropzone so that Each computer needs to authenticate
+    SessionDropzone_id = models.AutoField(primary_key=True)
+    #Dropzone
+    dropzone_id = models.ForeignKey(Dropzones,models.DO_NOTHING)
+    #Sessoin
+    session_id = models.ForeignKey(Session, models.DO_NOTHING)
+    class Meta:
+        managed = False
+        db_table = 'sessionDropzone'
+        app_label = 'dropZoneHQ'
+
 
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.
 class Signouts(models.Model):
@@ -359,6 +399,7 @@ class Signouts(models.Model):
         app_label = 'dropZoneHQ'
         managed = False
         db_table = 'signouts'
+
 
 
 # Descriptive view for all canopies in the inventory

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import django
-from rest_framework.settings import api_settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,8 +26,7 @@ SECRET_KEY = '_@j1a4@c3ap8w92s+p-$_kqap%au7bl6@)$b*@$uwr+95#2^z^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#CHANGE FOR PRODUCTION
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.dropzone.com']
 
 # Application definition
 
@@ -41,11 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'datastore.apps.DropZoneHQAppConfig',
-	'corsheaders'
 ]
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,8 +52,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'dropZoneHQ.urls'
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
@@ -75,17 +69,6 @@ TEMPLATES = [
     },
 ]
 
-"""
-REST_FRAMEWORK = {
-    'ENCODING': (
-        'api_settings.STRICT_JSON'
-    ),
-    'DEFAULT_RENDERER_SETTINGS': (
-        'rest_framework.renderers.JSONRenderer'
-    )
-}
-"""
-
 WSGI_APPLICATION = 'dropZoneHQ.wsgi.application'
 
 
@@ -94,7 +77,7 @@ WSGI_APPLICATION = 'dropZoneHQ.wsgi.application'
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ['RDS_DB_NAME'],
             'USER': os.environ['RDS_USERNAME'],
             'PASSWORD': os.environ['RDS_PASSWORD'],
@@ -102,18 +85,13 @@ if 'RDS_DB_NAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }
     }
-else:
+else :
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'dropzone_hq',
-            'USER': 'root',
-            'PASSWORD': 'hpmx7575',
-            'HOST': 'localhost',
-            'PORT': 3306
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
-
+}
 
 
 # Password validation
@@ -151,4 +129,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#django.setup()
+django.setup()
