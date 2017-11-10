@@ -47,8 +47,12 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.messages.middleware.MessageM iddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+SESSION_ENGINE = [
+    'django.contrib.sessions.backends.signed_cookies'
 ]
 
 ROOT_URLCONF = 'dropZoneHQ.urls'
