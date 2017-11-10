@@ -15,3 +15,5 @@ TO MAKE CODE DEPLOY READY:
 6. MOVE ALL OTHER FILES FROM React/dropzonehq/build/
     INTO backend/
 (these files will have to be dealt with in the future to be used in production)
+7. ZIP CONTENTS OF backend/ (BUT NOT THE OUTER backend FOLDER ITSELF)
+    UPLOAD ZIP TO AWS ELASTIC BEANSTALK INSTANCE
