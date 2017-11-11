@@ -99,12 +99,8 @@ class Dropzones(AbstractUser):
     dropzone_id = models.AutoField(primary_key=True)
     # Name of drop zone
     name = models.CharField(unique=True, max_length=45)
-    # Drop zone logon password
-    password = models.CharField(max_length=45)
     # The location of the drop zone
     location = models.CharField(max_length=45)
-    # Email of dropzone
-    email = models.EmailField()
 
     # Checks if a location is in use for a dropzone.
     def dropzoneLocationInUse(self, location=None):
@@ -122,7 +118,7 @@ class Dropzones(AbstractUser):
         return use
 
 
-class Meta:
+    class Meta:
         managed = True
         db_table = 'dropzones'
         app_label = 'dropZoneHQ'
@@ -363,29 +359,6 @@ class Services(models.Model):
     class Meta:
         managed = False
         db_table = 'services'
-        app_label = 'dropZoneHQ'
-
-#Used for keeping track of sessions
-class Session(models.Model):
-    #Primary key for eah Session
-    session_id = models.AutoField(primary_key=True)
-    #Authenticated Session
-    auth = models.BooleanField()
-    class Meta:
-        managed = True
-        db_table = 'session'
-        app_label = 'dropZoneHQ'
-
-class SessionDropzone(models.Model):
-    #Session are tied to each dropzone so that Each computer needs to authenticate
-    SessionDropzone_id = models.AutoField(primary_key=True)
-    #Dropzone
-    dropzone_id = models.ForeignKey(Dropzones,models.DO_NOTHING)
-    #Sessoin
-    session_id = models.ForeignKey(Session, models.DO_NOTHING)
-    class Meta:
-        managed = False
-        db_table = 'sessionDropzone'
         app_label = 'dropZoneHQ'
 
 
