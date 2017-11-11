@@ -112,7 +112,7 @@ class Dropzones(AbstractUser):
         use = Dropzones.objects.get(name)
         return use
 
-    #Chcek if the email has been used in the database
+    # Chcek if the email has been used in the database
     def dropzoneEmailInUse(self, email=None):
         use = Dropzones.objects.get(email)
         return use
@@ -146,8 +146,18 @@ class Employees(models.Model):
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
-    pin = models.CharField(max_length=45)
-    employment_date = models.DateTimeField()
+    pin = models.CharField(max_length=45, blank=True)
+    employment_date = models.DateTimeField(auto_now_add=True)
+
+    # Checks if a location is in use for a dropzone.
+    def employeePinInUse(self, pin=None):
+        use = Employees.objects.get(pin)
+        return use
+
+    # Chcek if the email has been used in the database
+    def employeeEmailInUse(self, email=None):
+        use = Employees.objects.get(email)
+        return use
 
     class Meta:
         managed = True

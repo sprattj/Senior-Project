@@ -13,7 +13,6 @@ class Auth:
     #return None if there is no dropzone there
     def authenticateDropzone(self, request):
         check = self.authenticatePasswordDropzone(self.authenticateNameDropzone(request.POST['username']), request.POST['password'])
-
         return (JsonResponse({'dropzone',check.name},status=400) if check is not None else JsonResponse(status=401))
 
     #Session authentication
@@ -74,10 +73,17 @@ class Auth:
         return JsonResponse(status=400)
 
     def createEmployee(self, request, dropzonePK):
+        dropzone = Dropzones.objects.get(dropzonePK)
         first = request.POST['first_name']
         last = request.POST['last_name']
         email = request.POST['email']
-
+        if Employees.employeeEmailInUse(email) is not None:
+            emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
+            emp.save()
+            while Employees.employeePinInUse(emp.pin) :
+                emp.pin = util.randomUserPin(emp.employee_id)
+            return JsonResponse(status=201)
+        return JsonResponse(status=400)
 
 
 
