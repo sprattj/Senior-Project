@@ -32,6 +32,10 @@ urlpatterns = [
     url(r'^rigsheets/[Tt]andem[/]', EmployeeVsSignoutTandemList.as_view()),
     url(r'^employees/(?P<pk>[0-9]+$)[/]', EmployeeDetail.as_view()),
     url(r'^employees[/]', EmployeeList.as_view()),
+    url(r'^items/(?P<pk>[0-9]+$)[/]', AllItemDetail.as_view()),
+    url(r'^items[/]', AllItemList.as_view()),
     url(r'^itemtypes/(?P<pk>[0-9]+$)[/]', ItemTypeDetail.as_view()),
-    url(r'^itemtypes[/]', ItemTypeList.as_view())
+    url(r'^itemtypes[/]', ItemTypeList.as_view()),
+    url(r'^rentals[/]', RentableItemList.as_view()),
+    url(r'^rentals/(?P<pk>[0-9]+$)[/]', RentalDetail.as_view())
 ]
