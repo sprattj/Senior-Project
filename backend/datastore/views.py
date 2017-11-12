@@ -6,6 +6,7 @@ from rest_framework import status
 # from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from .serializers import *
+from . import util
 
 
 class ItemViewSet(viewsets.ModelViewSet):
@@ -177,3 +178,94 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         elif request.method == 'DELETE':
             emp.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+class CreateDrozoneViewSet(viewsets.ModelViewSet) :
+
+    def createDropzone(self, request):
+        try :
+            name = request.POST['name']
+            password = request.POST['password']
+            location = request.POST['location']
+            email = request.POST['email']
+            try :
+                if Dropzones.dropzoneNameInUse(name=name) is not None:
+                    if Dropzones.dropzoneLocationInUse(location=location) is not None:
+                        if Dropzones.dropzoneEmailInUse(email=email) is not None:
+                            dropzone = Dropzones(name=name, password=password, location=location, email=email)
+                            dropzone.save()
+                            serializer = DropZoneSerializer(dropzone)
+                            return JsonResponse(data= serializer.data ,status=201)
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            except :
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        except :
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+
+class CreateEmployeeViewSet(viewsets.ModelViewSet) :
+
+    def createEmployee(self, request, dropzonePK):
+        dropzone = Dropzones.objects.get(dropzonePK)
+        first = request.POST['first_name']
+        last = request.POST['last_name']
+        email = request.POST['email']
+        if Employees.employeeEmailInUse(email) is not None:
+            emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
+            emp.save()
+            while Employees.employeePinInUse(emp.pin) :
+                emp.pin = util.randomUserPin(emp.employee_id)
+            emp.save()
+            serializer = EmployeeSerializer(emp)
+            return JsonResponse(data= serializer.data ,status=201)
+        else :
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+
+class AuthenticateUserPin(viewsets.ModelViewSet) :
+
+    def authenticateUserPin(self, request):
+        # the way our pin works sets the user primary as their last 3 digits
+        emp = util.authenticateEmployeePin(
+            Employees.objects.get((request.POST['pin'] % 1000)),
+            request.POST['pin'])
+        serializer = EmployeeSerializer(emp)
+        if emp is not None:
+            return JsonResponse(data=serializer.data, status=200)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+class AuthenticateDropzone(viewsets.ModelViewSet) :
+    # authenticate a dropzone based on the name and password
+    # return None if there is no dropzone there
+    def authenticateDropzone(self, request):
+        check = self.authenticatePasswordDropzone(self.authenticateNameDropzone(request.POST['username']),
+                                                  request.POST['password'])
+        return (JsonResponse({'dropzone', check.name}, status=400) if check is not None else HttpResponse(
+            status=status.HTTP_400_BAD_REQUEST))
+
+    # Session authentication
+    def authenticateDropzone(self, request):
+        token = request.session
+        return False
+
+    # return a user object if the username is found
+    # else return None
+    def authenticateNameDropzone(self, request, name=None):
+        if request.POST[] is None:
+            return None
+        else:
+            dropzone = Dropzones.objects.get(name)
+            return dropzone
+
+    # return a dropzone if the Sha is correct
+    # else return None
+
+    def authenticatePasswordDropzone(self, request, dropzone=None, password=None):
+        if dropzone is None or password is None:
+            return None
+        else:
+            if util.checkSha(password, dropzone.password):
+                return dropzone
+            else:
+                return None
