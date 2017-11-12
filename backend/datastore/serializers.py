@@ -108,7 +108,7 @@ class RentalSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Rentals
         fields = ('rental_id', 'renter_name',
-                  'reantal_date', 'returned_date')
+                  'rental_date', 'returned_date')
 
 
 class ReserveCanopySerializer(serializers.HyperlinkedModelSerializer):
