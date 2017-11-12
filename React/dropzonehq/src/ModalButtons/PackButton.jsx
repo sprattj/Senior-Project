@@ -40,7 +40,7 @@ export default class PackButton extends React.Component {
         <Popover placement="bottom" isOpen={this.state.verifyOpen} target={buttonID} toggle={this.toggleVerifyModal}>
           <PopoverTitle>Verify Packing</PopoverTitle>
           <PopoverContent>
-            <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged} />
+            <VerifyForm pinChanged={this.props.pinChanged}/>
             <Button color="primary" onClick={() => this.props.authorize(this.props.index, this.props.instructor)}>Verify</Button>{' '}
             <Button color="secondary" onClick={this.toggleVerifyModal}>Cancel</Button>
           </PopoverContent>

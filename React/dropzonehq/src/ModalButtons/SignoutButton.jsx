@@ -77,8 +77,7 @@ export default class SignoutButton extends React.Component {
         modalContent={modalContent}
         popoverTitle="Confirm Signout"
         verify={this.verify}
-        passwordChanged={this.props.passwordChanged}
-        usernameChanged={this.props.usernameChanged}
+        pinChanged={this.props.pinChanged}
       />
     );
   }

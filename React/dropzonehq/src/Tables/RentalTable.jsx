@@ -3,7 +3,6 @@ import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from './ItemTable.jsx';
 import RentalItemDisplay from '../ItemDisplays/RentalItemDisplay.jsx';
 import RentButton from '../Buttons/RentButton.jsx';
-import PropTypes from 'prop-types';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import "react-table/react-table.css";

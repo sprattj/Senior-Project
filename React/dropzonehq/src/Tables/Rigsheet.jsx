@@ -7,7 +7,6 @@ import { rootURL } from '../restInfo.js';
 import { toast } from 'react-toastify';
 
 
-
 /* 
   A Rigsheet contains all signouts for one rig type.
 */
@@ -21,10 +20,9 @@ export default class Rigsheet extends React.Component {
 
     //Bind all methods that are passed down so that they can
     //be called via this.methodName in child components
-    this.usernameChanged = this.usernameChanged.bind(this);
-    this.passwordChanged = this.passwordChanged.bind(this);
+    this.pinChanged = this.pinChanged.bind(this);
     this.packRow = this.packRow.bind(this);
-    this.validateUsername = this.validateUsername.bind(this);
+    this.validatePIN = this.validatePIN.bind(this);
     this.addSignout = this.addSignout.bind(this);
 
     //BEGIN SAMPLE DATA. WHEN RUNNING FROM SERVER, DELETE THIS AND CHANGE THIS.STATE={...}
@@ -55,8 +53,7 @@ export default class Rigsheet extends React.Component {
         accessor: 'packed_by'
       }],
       rows: rowData,
-      username: '',
-      password: ''
+      pin: ''
     };
   }
 
@@ -69,31 +66,20 @@ export default class Rigsheet extends React.Component {
         rowData[i].packed_by = <PackButton rig={rowData[i].rig_id}
           instructor={rowData[i].jumpmaster}
           load={rowData[i].load_number}
-          usernameChanged={this.usernameChanged}
-          passwordChanged={this.passwordChanged}
+          pinChanged={this.pinChanged}
           authorize={this.packRow}
           index={i} />;
     };
   }
 
-  //This is the function passed down to the username component
-  //that's inside the PackButton's verify modal.
-  //when the username is changed, update our state
-  usernameChanged(id, username) {
-    this.setState({
-      username: username
-    })
-    console.log(this.state.username);
-  }
-
   //This is the function passed down to the password component
   //that's inside the PackButton's verify modal.
   //when the password is changed, update our state
-  passwordChanged(id, password) {
+  pinChanged(id, pin) {
     this.setState({
-      password: password
+      pin: pin
     })
-    console.log(this.state.password);
+    console.log(this.state.pin);
   }
 
   //When this rigsheet component loads on the page, fetch the rows
@@ -157,7 +143,8 @@ export default class Rigsheet extends React.Component {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    var url = rootURL + this.URLsection + this.props.sheetType;
+    console.log(signoutID);
+    var url = rootURL + this.URLsection + this.props.sheetType + "/" + signoutID;
 
     var self = this;
     var requestVariables = {
@@ -165,7 +152,7 @@ export default class Rigsheet extends React.Component {
     };
     
     fetch(url, {
-      method: "PUT",
+      method: "PATCH",
       mode: 'CORS',
       headers: {
         "Accept": "application/json",
@@ -199,11 +186,10 @@ export default class Rigsheet extends React.Component {
   //Validates the given username and password
   //Returns true if they are valid for this action,
   //and false otherwise.
-  validateUsername(username, password) {
+  validatePIN(pin) {
     //OBVIOUSLY THIS DOESN'T DO ANYTHING RIGHT NOW
     this.setState({
-      username: '',
-      password: ''
+      pin: ''
     });
     return true;
   }
@@ -251,8 +237,7 @@ export default class Rigsheet extends React.Component {
           packed_by: <PackButton rig={rig}
             instructor={instructor}
             load={planeLoad}
-            usernameChanged={self.usernameChanged}
-            passwordChanged={self.passwordChanged}
+            pinChanged={self.pinChanged}
             authorize={self.packRow}
             index={self.state.rows.length} />
         };
@@ -282,8 +267,7 @@ export default class Rigsheet extends React.Component {
         footer={
           
           <SignoutButton
-            usernameChanged={this.usernameChanged}
-            passwordChanged={this.passwordChanged}
+            pinChanged={this.pinChanged}
             authorize={this.addSignout} />}>
         {this.state.rows}
       </TableSheet>);
