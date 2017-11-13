@@ -18,6 +18,7 @@ import sys
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.http import HttpRequest
+from django.contrib.auth import views
 
 sys.path.append('../')
 
@@ -32,4 +33,6 @@ urlpatterns = [
     url(r'^rigsheets/student', EmployeeVsSignoutViewSet().student_signout_records),
     url(r'^rigsheets/tandem', EmployeeVsSignoutViewSet().tandem_signout_records),
     url(r'^employees/', EmployeeViewSet().all_employees)
+    url(r'^login/$', views.login, name='login'),
+    url(r'^logout/$', views.logout, name='logout'),
 ]
