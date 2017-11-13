@@ -27,7 +27,7 @@ export default class Dropdown extends React.Component {
   onChange(event) {
         var value = event.target.value;
         this.props.onChange(this.props.id, value);
-        console.log(value)
+        console.log(event.target.selectedIndex)
     }
 
   //indicate this.onChange as the onChange method

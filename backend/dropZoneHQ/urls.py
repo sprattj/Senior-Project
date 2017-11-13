@@ -15,27 +15,31 @@ Including another URLconf
 """
 import sys
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.http import HttpRequest
 
 sys.path.append('../')
 
-from backend.datastore.views import *
+from datastore.views import *
 
 urlpatterns = [
-    url(r'^admin[/]', admin.site.urls),
-    url(r'^rigs/(?P<pk>[0-9]+/$)[/]', RigDetail.as_view()),
-    url(r'^rigsheets/all[/]', EmployeeVsSignoutList.as_view()),
-    url(r'^rigsheets/(?P<pk>[0-9]+$)[/]', EmployeeVsSignoutDetail.as_view()),
-    url(r'^rigsheets/[Ss]tudent[/]', EmployeeVsSignoutStudentList.as_view()),
-    url(r'^rigsheets/[Tt]andem[/]', EmployeeVsSignoutTandemList.as_view()),
-    url(r'^employees/(?P<pk>[0-9]+$)[/]', EmployeeDetail.as_view()),
-    url(r'^employees[/]', EmployeeList.as_view()),
-    url(r'^items/(?P<pk>[0-9]+$)[/]', AllItemDetail.as_view()),
-    url(r'^items[/]', AllItemList.as_view()),
-    url(r'^itemtypes/(?P<pk>[0-9]+$)[/]', ItemTypeDetail.as_view()),
-    url(r'^itemtypes[/]', ItemTypeList.as_view()),
-    url(r'^rentals[/]', RentableItemList.as_view()),
-    url(r'^rentals/(?P<pk>[0-9]+$)[/]', RentalDetail.as_view())
-]
+    url(r'^$', TemplateView.as_view(template_name='index.html')),
+    url(r'^(?i)admin[/]?', admin.site.urls),
+    url(r'^(?i)rigs/(?P<pk>[0-9]+)[/]?$', RigDetail.as_view()),
+    url(r'^(?i)rigsheet[s]?/all[/]?', EmployeeVsSignoutList.as_view()),
+    url(r'^(?i)rigsheet[s]?/(?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutDetail.as_view()),
+    url(r'(?i)^rigsheet[s]?/student[s]?[/]?$', EmployeeVsSignoutStudentList.as_view()),
+    url(r'^(?i)rigsheet[s]?/tandem[s]?[/]?$', EmployeeVsSignoutTandemList.as_view()),
+    url(r'^(?i)employee[s]?/(?P<pk>[0-9]+)[/]?$', EmployeeDetail.as_view()),
+    url(r'^(?i)employee[s]?[/]?$', EmployeeList.as_view()),
+    url(r'^(?i)itemtype[s]?/(?P<pk>[0-9]+)[/]?$', ItemTypeDetail.as_view()),
+    url(r'^(?i)itemtype[s]?[/]?$', ItemTypeList.as_view()),
+    url(r'^(?i)item[s]?/(?P<pk>[0-9]+)[/]?$', ItemDetail.as_view()),
+    url(r'^(?i)item[s]?[/]?$', ItemList.as_view()),
+    url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
