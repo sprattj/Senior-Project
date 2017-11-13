@@ -17,7 +17,6 @@ export default class SignoutButton extends React.Component {
     super(props);
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
-
     this.verify = this.verify.bind(this);
     
     this.instructorChanged = this.instructorChanged.bind(this);
@@ -25,39 +24,51 @@ export default class SignoutButton extends React.Component {
     this.planeLoadChanged = this.planeLoadChanged.bind(this);
     //keep state for the values of the components in this modal
     this.state = {
-      instructor: 'Input text here..',
-      selectedRig: 111,
-      planeLoad: 111
+      instructorData: {
+        name: '',
+        employee_id: ''
+      },
+      rigData: {
+        rig_id: 111
+      },
+      planeLoadData: {
+        planeLoad: 111
+      }
     }
   }
 
   //when selected instructor is changed, update our state
-  instructorChanged(id, selectedInstr) {
+  instructorChanged(instructorData) {
     this.setState({
-      instructor: selectedInstr
+      instructorData: instructorData
     })
-    console.log(this.state);
+    console.log(this.state.instructorData);
   }
 
   //when the selected rig is changed, update our state
-  rigChanged(id, rig) {
+  rigChanged(rigData) {
     this.setState({
-      selectedRig: rig
+      rigData: rigData
     })
-    console.log(this.state.selectedRig);
+    console.log(this.state.rigData);
   }
 
   //when the selected plane load is changed, update our state
-  planeLoadChanged(id, planeLoad) {
+  planeLoadChanged(planeLoadData) {
     this.setState({
-      planeLoad: planeLoad
+      planeLoadData: planeLoadData
     })
-    console.log(this.state.planeLoad);
+    console.log(this.state.planeLoadData);
   }
 
   verify() {
     console.log("Click!");
-    this.props.authorize(this.state.instructor, this.state.planeLoad, this.state.selectedRig);
+    this.props.authorize(this.state.instructorData.employee_id, 
+      this.state.instructorData.name,
+      this.state.planeLoadData.planeLoad, 
+      this.state.rigData.rig_id,
+      this.state.rigData.rig_id
+    );
   }
 
   render() {

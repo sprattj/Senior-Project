@@ -19,31 +19,24 @@ export default class Dropdown extends React.Component {
     this.onChange = this.onChange.bind(this);
   }
 
-  //when the selected item in this dropdown is changed
-  //grab its new value from the selection event
-  //and pass it to the parent component's passed-in
-  //onChange method. This allows the value of this 
-  //dropdown to be available to parent components.
+  //when the selected item is changed, send the newly selected 
+  //index back to the component that rendered this dropdown
   onChange(event) {
-        var value = event.target.value;
-        this.props.onChange(this.props.id, value);
-        console.log(event.target.selectedIndex)
-    }
+    this.props.onChange(event.target.selectedIndex);
+  }
 
-  //indicate this.onChange as the onChange method
-  //so that values are properly updated when this
-  //dropdown has a new value selected
+  //render dropdown, get dropdown items from props.children
   render() {
     return (
-        <FormGroup>
-          <InputGroup>
+      <FormGroup>
+        <InputGroup>
           <InputGroupAddon>{this.props.labelText}</InputGroupAddon>
           <Input type="select" name="select" id={this.props.id}
-                onChange={this.onChange}>
+            onChange={this.onChange}>
             {this.props.children}
           </Input>
-          </InputGroup>
-        </FormGroup>
+        </InputGroup>
+      </FormGroup>
     );
   }
 }

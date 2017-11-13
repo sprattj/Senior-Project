@@ -28,11 +28,11 @@ export default class Rigsheet extends React.Component {
     //BEGIN SAMPLE DATA. WHEN RUNNING FROM SERVER, DELETE THIS AND CHANGE THIS.STATE={...}
     //TO HAVE rows: this.fetchRows() IN PLACE OF rows: rowData
     var rowData = [
-      { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: null },
-      { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" }
+      { jumpmaster_id: "111", jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by_id: null, packed_by: null },
+      { jumpmaster_id: "222", jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by_id: "333", packed_by: "Brian K" }
     ];
 
-    this.processRows(rowData);
+    this.addPackButtons(rowData);
     //END SAMPLE DATA.
 
     //The TandemRigsheet state keeps track of the table columns,
@@ -60,7 +60,7 @@ export default class Rigsheet extends React.Component {
 
   //Process the rows that are passed in to fill in the missing 
   //"Packed By" data with a PackButton
-  processRows(rowData) {
+  addPackButtons(rowData) {
     for (var i = 0; i < rowData.length; i++) {
       if (rowData[i].packed_by === null)
         rowData[i].packed_by = <PackButton rig={rowData[i].rig_id}
@@ -103,12 +103,11 @@ export default class Rigsheet extends React.Component {
     //(rootURL is imported from our rest info file)
     var url = rootURL + this.URLsection + this.props.sheetType;
 
-    //save 'this' so that we can call functions
-    //inside the fetch() callback
+    //save 'this' so we can reference it inside fetch() callback
     var self = this;
 
-    //fetch from the specified URL, to GET the data
-    //we need. Enable CORS so we can access from localhost.
+    //fetch from the specified URL
+    //Enable CORS so we can access from localhost.
     fetch(url, {
       method: "GET",
       mode: 'CORS'
@@ -126,12 +125,13 @@ export default class Rigsheet extends React.Component {
       })//when the call succeeds
       .then(function (rowData) {
         //process the row data we received back
-        self.processRows(rowData);
+        self.addPackButtons(rowData);
         //update our state with these rows to rerender the table
         self.setState({
           rows: rowData
         });
-      }).catch(function(error) {
+      })//catch any errors and display them as a toast
+      .catch(function (error) {
         toast.error(error + "\n" + url);
       });
   }
@@ -139,18 +139,19 @@ export default class Rigsheet extends React.Component {
   //Packs a row in the table.
   //This is the function that is called when you click a 
   //PackButton in a row. It replaces the button with a name.
-  packRow(signoutID, packerName) {
+  packRow(signout_id, packed_by_id, packed_by_name) {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    console.log(signoutID);
-    var url = rootURL + this.URLsection + this.props.sheetType + "/" + signoutID;
+    console.log(signout_id);
+    var url = rootURL + this.URLsection + this.props.sheetType + "/" + signout_id;
 
     var self = this;
     var requestVariables = {
-      packed_by: packerName
+      packed_by: packed_by_id,
+      signout_id: signout_id
     };
-    
+
     fetch(url, {
       method: "PATCH",
       mode: 'CORS',
@@ -171,14 +172,15 @@ export default class Rigsheet extends React.Component {
         var newRows = Array.from(self.state.rows);
         //replace the pack button of this signout
         //with the name of the packer who packed it
-        newRows[signoutID].packed_by = packerName;
+        newRows[signout_id].packed_by = packed_by_name;
 
         //update the state with the new rows so it rerenders
         self.setState({
           rows: newRows
         });
 
-      }).catch(function(error) {
+      })//catch any errors and display them as a toast
+      .catch(function (error) {
         toast.error(error + "\n" + url);
       });
   }
@@ -197,7 +199,7 @@ export default class Rigsheet extends React.Component {
   //Add a signout to the tandemrigsheet.
   //This is passed down to the authorize button inside
   //of the modal that the SignoutButton creates.
-  addSignout(instructor, planeLoad, rig) {
+  addSignout(jumpmaster_id, jumpmaster_name, planeLoad, rig_id, rig_name) {
 
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
@@ -206,11 +208,12 @@ export default class Rigsheet extends React.Component {
 
     var self = this;
     var requestVariables = {
-      jumpmaster: instructor,
-      rig_id: rig,
+      jumpmaster_id: jumpmaster_id,
+      rig_id: rig_id,
       load_number: planeLoad,
       packed_by: null
     };
+
     fetch(url, {
       method: "POST",
       mode: 'CORS',
@@ -222,20 +225,22 @@ export default class Rigsheet extends React.Component {
     })//when we get a response back
       .then(function (response) {
         if (response.status >= 400) {
-          throw new Error("Adding signout failed. Bad response " + response.status + " from server.");          
+          throw new Error("Adding signout failed. Bad response " + response.status + " from server.");
         }
         return response.json();
       })//when the call succeeds
       .then(function (rowData) {
         //create a new row for the table
         var row = {
-          jumpmaster: instructor,
-          rig_id: rig,
+          jumpmaster: jumpmaster_name,
+          rig_id: rig_name,
           load_number: planeLoad,
           //A new signout hasn't been packed yet,
           //so give it a PackButton instead
-          packed_by: <PackButton rig={rig}
-            instructor={instructor}
+          packed_by: <PackButton 
+            signout_id={rowData.signout_id} //make this gets the signout ID from the response back
+            rig={rig_name}
+            instructor={jumpmaster_name}
             load={planeLoad}
             pinChanged={self.pinChanged}
             authorize={self.packRow}
@@ -249,26 +254,23 @@ export default class Rigsheet extends React.Component {
         self.setState({
           rows: newRows
         })
-      }).catch(function(error) {
+      }).catch(function (error) {
         toast.error(error + "\n" + url);
-        return false;
       });
-
-
   }
 
   render() {
-
     //Return a tablesheet with a signout button footer
     return (
       <TableSheet
         headerText={this.props.sheetType}
         columns={this.state.columns}
         footer={
-          
           <SignoutButton
             pinChanged={this.pinChanged}
-            authorize={this.addSignout} />}>
+            authorize={this.addSignout} />
+        }
+      >
         {this.state.rows}
       </TableSheet>);
   }
