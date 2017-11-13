@@ -35,8 +35,8 @@ export default class ModalButton extends React.Component {
     }
 
     verify(){
-      this.props.modalPrimaryClick();
-      this.toggleModal();
+      if(this.props.modalPrimaryClick())
+        this.toggleModal();
     }
  
     //render the button and the modal inside a div using all relevant props.

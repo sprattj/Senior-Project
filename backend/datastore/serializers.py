@@ -1,6 +1,6 @@
 """
 # Author: Jonathan Spratt
-# Last Modification: 10/8/17
+# Last Modification: 11/7/17
 # Serializers for DB Models
 """
 
@@ -61,17 +61,33 @@ class DropZoneSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('dropzone_id', 'name', 'password', 'location')
 
 
+class EmployeeEmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
+    role = serializers.ReadOnlyField()
+
+    class Meta:
+        model = EmployeesEmployeeRoles
+        fields = ('employee_id', 'role_id', 'role')
+
+
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    roles = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
+
     class Meta:
         model = Employees
-        fields = ('employee_id', 'first_name', 'last_name', 'pin')
+        fields = ('employee_id', 'first_name', 'last_name', 'pin', 'roles')
 
 
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EmployeesVsSignouts
-        fields = ('signout_id', 'jumpmaster', 'load_number',
-                  'rig_id', 'packed_by')
+        fields = ('signout_id', 'jumpmaster', 'jumpmaster_id', 'load_number',
+                  'rig_id', 'packed_by', 'packer_id')
+
+
+class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ItemsRentals
+        fields = ('item_id', 'rental_id')
 
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -82,6 +98,7 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ItemTypeSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = ItemTypes
         fields = ('item_type_id', 'type')
@@ -91,7 +108,7 @@ class RentalSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Rentals
         fields = ('rental_id', 'renter_name',
-                  'reantal_date', 'returned_date')
+                  'rental_date', 'returned_date')
 
 
 class ReserveCanopySerializer(serializers.HyperlinkedModelSerializer):
@@ -107,11 +124,17 @@ class RigSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('item_id', 'rig_id', 'container_id', 'aad_id', 'istandem')
 
 
-class RigAuditTrail(serializers.HyperlinkedModelSerializer):
+class RigAuditTrailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RigsAuditTrail
         fields = ('rig_audit_id', 'item_id', 'rig_id', 'container_id',
                   'aad_id', 'description', 'date_of_change')
+
+
+class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = EmployeeRoles
+        fields = ('role_id', 'role')
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
@@ -124,26 +147,3 @@ class SignoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Signouts
         fields = ('signout_id', 'load_number', 'rig')
-
-
-''' 
-EQUIVALENT TO A HYPERLINKM0DELSERIALIZER
-class RigSerializer(serializers.Serializer):
-    item_id = serializers.IntegerField(read_only=True)
-    rig_id = serializers.IntegerField(read_only=True)
-    container_id = serializers.IntegerField(read_only=True)
-    aad_id = serializers.IntegerField(read_only=True)
-    isTandem = serializers.CharField(read_only=True)
-    """ ^ Matching istandem in models -> Should this be a BooleanField?"""
-
-    def create(self, validated_data):
-        """Create and return a new `Rig` instance, given the validated data"""
-        return Rigs.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """Update and return an existing rig, given the validated data"""
-        instance.rig_id = validated_data.get('rig_id', instance.rig_id)
-        instance.container_id = validated_data.get('container_id', instance.container_id)
-        instance.aad_id = validated_data.get('aad_id', instance.aad_id)
-        instance.isTandem = validated_data.get('istandem', instance.isTandem)
-'''

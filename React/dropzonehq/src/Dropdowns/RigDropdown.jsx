@@ -7,16 +7,16 @@ export default class RigDropdown extends React.Component {
     //method to get all of the data for rigs
     getRigs() {
 
-        var rigData = [{ name: "S1", id: "1" },
-        { name: "S2", id: "2" },
-        { name: "S3", id: "3" },
-        { name: "S4", id: "4" }];//get row data from ajax
+        var rigData = [{ rigID: 111, id: "1" },
+        { rigID: 222, id: "2" },
+        { rigID: 333, id: "3" },
+        { rigID: 444, id: "4" }];//get row data from ajax
         var options = []; //
 
         Object.keys(rigData).forEach(function (i) {
             var nextOption = <DropdownOption
                 key={i}
-                optionText={rigData[i].name} />
+                optionText={rigData[i].rigID} />
             options.push(nextOption);
         });
         return options;

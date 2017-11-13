@@ -3,7 +3,8 @@ import { Row, Col } from 'reactstrap';
 import MainScreen from './MainScreen.jsx';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 /*
     MainView is the main wrapper component to decide what to render.
@@ -32,6 +33,15 @@ export default class MainView extends React.Component {
     render() {
         return (
             <div>
+                <ToastContainer
+            position="top-center"
+            type="error"
+            autoClose={7000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+          />
                 <Row>
                     <Col lg={{ size:12 }}>
                         <DropzoneHQNav changeScreen={this.changeScreen} />

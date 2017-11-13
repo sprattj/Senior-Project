@@ -2,11 +2,15 @@ branch-defaults:
   default:
     environment: django-env
     group_suffix: null
+environment-defaults:
+  django-env:
+    branch: null
+    repository: null
 global:
   application_name: dropzonehq
   branch: null
   default_ec2_keyname: my-key-pair
-  default_platform: python2.7
+  default_platform: python3.4
   default_region: us-east-1
   include_git_submodules: true
   instance_profile: null
