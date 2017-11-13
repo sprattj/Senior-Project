@@ -74,7 +74,7 @@ export default class RentalTable extends React.Component {
 
 
     //for the dropdown    
-    filterChanged(id, selection) {
+    filterChanged(selection) {
         switch (selection) {
             case "Show All":
                 this.setState({ filter: "all", rows: this.all });
