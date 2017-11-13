@@ -80,8 +80,8 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EmployeesVsSignouts
-        fields = ('signout_id', 'jumpmaster', 'load_number',
-                  'rig_id', 'packed_by')
+        fields = ('signout_id', 'jumpmaster', 'jumpmaster_id', 'load_number',
+                  'rig_id', 'packed_by', 'packer_id')
 
 
 class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
