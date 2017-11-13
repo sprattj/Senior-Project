@@ -14,15 +14,17 @@ export default class EmployeeTable extends React.Component {
     super(props)
     this.URLsection = "/employees";
 
-    this.editEmployee = this.editEmployee.bind(this);
+    // this.editEmployee = this.editEmployee.bind(this);
     this.deleteEmployee = this.deleteEmployee.bind(this);
     this.addEmployee = this.addEmployee.bind(this);
+
 
     this.processRows = this.processRows.bind(this);
 
     //   var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton />, rowID: 1},
     //   { name: "Andres B", info: "Senior Program", jobs: ["Rigger", "Packer"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>, rowID: 2 },
     //   { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><DeleteEmployeeButton /></ButtonGroup>,rowID: 3 }];
+
 
     //   this.processRows(rowData);
 

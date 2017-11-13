@@ -25,6 +25,7 @@ export default class AddEmployeeButton extends React.Component {
   }
 
   verify() {
+
     if(this.state.firstName && this.state.lastName && this.state.pin && this.state.jobs.length > 0){
       this.props.authorize(this.state.firstName, this.state.lastName, this.state.pin, this.state.jobs);
       this.setState( {
@@ -41,7 +42,7 @@ export default class AddEmployeeButton extends React.Component {
       );
       return false;
     }
-    
+
   }
 
   firstNameChanged(e) {
@@ -126,7 +127,7 @@ export default class AddEmployeeButton extends React.Component {
         <InputGroupAddon >Last Name: </InputGroupAddon>
         <Input id="addEmployeeLastName" type='text' value={this.state.lastName} onChange={this.lastNameChanged} />
       </InputGroup>
-      <br />
+      <br />      
       <InputGroup>
         <InputGroupAddon >PIN </InputGroupAddon>
         <Input id="addEmployeeLastName" type='password' pattern="[0-9]{6}" value={this.state.PIN} onChange={this.PINChanged} />
@@ -147,3 +148,4 @@ export default class AddEmployeeButton extends React.Component {
     );
   }
 }
+
