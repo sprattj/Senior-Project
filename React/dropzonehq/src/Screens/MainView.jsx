@@ -3,7 +3,7 @@ import { Row, Col } from 'reactstrap';
 import MainScreen from './MainScreen.jsx';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 /*

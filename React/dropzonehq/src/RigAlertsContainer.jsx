@@ -18,11 +18,10 @@ export default class RigAlertsContainer extends React.Component {
 
         //Bind all methods that are passed down so that they can
         //be called via this.methodName in child components
-        this.usernameChanged = this.usernameChanged.bind(this);
-        this.passwordChanged = this.passwordChanged.bind(this);
+        this.pinChanged = this.pinChanged.bind(this);
         this.reportRigIssue = this.reportRigIssue.bind(this);
         this.reportPackingError = this.reportPackingError.bind(this);
-        this.validateUsername = this.validateUsername.bind(this);
+        this.validatePIN = this.validatePIN.bind(this);
 
         var alertData = [{ severity: "Problem Type 1", message: "Rig S9 has a tear on its container" },
         { severity: "Problem Type 2", message: "Rig S4 has a tear on its container" },
@@ -35,24 +34,16 @@ export default class RigAlertsContainer extends React.Component {
             alerts: alerts
         }
     }
-    //This is the function passed down to the username component
-    //that's inside the PackButton's verify modal.
-    //when the username is changed, update our state
-    usernameChanged(id, username) {
-        this.setState({
-            username: username
-        })
-        console.log(this.state.username);
-    }
+
 
     //This is the function passed down to the password component
     //that's inside the PackButton's verify modal.
-    //when the password is changed, update our state
-    passwordChanged(id, password) {
+    //when the pin is changed, update our state
+    pinChanged(id, pin) {
         this.setState({
-            password: password
+            pin: pin
         })
-        console.log(this.state.password);
+        console.log(this.state.pin);
     }
 
     //When this rigsheet component loads on the page, fetch the rows
@@ -204,14 +195,13 @@ export default class RigAlertsContainer extends React.Component {
         return color;
     }
 
-    //Validates the given username and password
+    //Validates the given PIN
     //Returns true if they are valid for this action,
     //and false otherwise.
-    validateUsername(username, password) {
+    validatePIN(PIN) {
         //OBVIOUSLY THIS DOESN'T DO ANYTHING RIGHT NOW
         this.setState({
-            username: '',
-            password: ''
+            pin: ''
         });
         return true;
     }
@@ -231,13 +221,11 @@ export default class RigAlertsContainer extends React.Component {
                             <Col lg={{ size: 6 }}>
 
                                 <RigProblemButton
-                                    passwordChanged={this.passwordChanged}
-                                    usernameChanged={this.usernameChanged}
+                                    pinChanged={this.pinChanged}
                                     verify={this.reportRigIssue} />
                                 <br />
                                 <PackedWrongRigButton
-                                    passwordChanged={this.passwordChanged}
-                                    usernameChanged={this.usernameChanged}
+                                    pinChanged={this.pinChanged}
                                     verify={this.reportPackingError} />
                             </Col>
                         </Row>

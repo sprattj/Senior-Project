@@ -66,7 +66,7 @@ ROOT_URLCONF = 'dropZoneHQ.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['backend/templates'],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,7 +93,9 @@ if 'RDS_DB_NAME' in os.environ:
             'PASSWORD': os.environ['RDS_PASSWORD'],
             'HOST': os.environ['RDS_HOSTNAME'],
             'PORT': os.environ['RDS_PORT'],
-        }
+        }, 'OPTIONS': {
+            'skip-ssl',
+       }
     }
 else :
     DATABASES = {
@@ -144,15 +146,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-# STATIC_ROOT = 'static'
-# STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
+STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-STATIC_URL = '/static/'  
-STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
+#STATIC_URL = '/static/'  
+#STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
 STATICFILES_DIRS = ()  
 
 django.setup()

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Form } from 'reactstrap';
-import PasswordField from './PasswordField.jsx';
-import UsernameField from './UsernameField.jsx';
+import { Form, FormGroup, Input, InputGroup, InputGroupAddon } from 'reactstrap';
+
 
 /*
     A VerifyForm is a form that contains a username 
@@ -9,14 +8,28 @@ import UsernameField from './UsernameField.jsx';
 */
 export default class VerifyForm extends React.Component {
     
+
+    constructor(props){
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(e){
+        this.props.pinChanged(this.props.id, e.target.value);
+    }
     //pass the corresponding onchange methods down to the child components so 
     //we can get their values back here when they are changed
     render() {
         return (
             <Form>
-                <UsernameField onChange={this.props.usernameChanged} id="usernameEntryField" labelText="Username:" />
-                <PasswordField onChange={this.props.passwordChanged} id="passwordEntryField" labelText="Password:" />
-            </Form>
+            <FormGroup>
+            <InputGroup>
+              <InputGroupAddon>PIN:</InputGroupAddon>
+              <Input autoFocus onChange={this.handleChange} type="password" name="password" id="pinEntryField"
+               placeholder={this.props.placeholder} />
+            </InputGroup>
+          </FormGroup>
+          </Form>           
         );
     }
 }

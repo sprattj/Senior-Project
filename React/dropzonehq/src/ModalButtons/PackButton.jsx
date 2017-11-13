@@ -15,6 +15,7 @@ export default class PackButton extends React.Component {
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
     this.toggleVerifyModal = this.toggleVerifyModal.bind(this);
+    this.packButton = this.packButton.bind(this);
 
     //keep state for the values of the components in this modal
     this.state = {
@@ -29,6 +30,11 @@ export default class PackButton extends React.Component {
     });
   }
 
+  packButton(){
+    //TODO make this use the stuff from verify in rigsheet instead of signout id and instructor
+    this.props.authorize(this.props.signout_id, this.props.signout_id, this.props.instructor);
+  }
+  
   render() {
     console.log(this.props.index);
     var buttonID = "PackButton" + this.props.index;
@@ -40,8 +46,8 @@ export default class PackButton extends React.Component {
         <Popover placement="bottom" isOpen={this.state.verifyOpen} target={buttonID} toggle={this.toggleVerifyModal}>
           <PopoverTitle>Verify Packing</PopoverTitle>
           <PopoverContent>
-            <VerifyForm passwordChanged={this.props.passwordChanged} usernameChanged={this.props.usernameChanged} />
-            <Button color="primary" onClick={() => this.props.authorize(this.props.index, this.props.instructor)}>Verify</Button>{' '}
+            <VerifyForm pinChanged={this.props.pinChanged}/>
+            <Button color="primary" onClick={this.packButton}>Verify</Button>{' '}
             <Button color="secondary" onClick={this.toggleVerifyModal}>Cancel</Button>
           </PopoverContent>
         </Popover>

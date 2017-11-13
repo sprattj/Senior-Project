@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^(?i)rigs/(?P<pk>[0-9]+)[/]?$', RigDetail.as_view()),
     url(r'^(?i)rigsheet[s]?/all[/]?', EmployeeVsSignoutList.as_view()),
     url(r'^(?i)rigsheet[s]?/(?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutDetail.as_view()),
-    url(r'(?i)^rigsheet[s]?/student[s]?[/]?$', EmployeeVsSignoutStudentList.as_view()),
+    url(r'^(?i)rigsheet[s]?/student[s]?[/]?$', EmployeeVsSignoutStudentList.as_view()),
     url(r'^(?i)rigsheet[s]?/tandem[s]?[/]?$', EmployeeVsSignoutTandemList.as_view()),
     url(r'^(?i)employee[s]?/(?P<pk>[0-9]+)[/]?$', EmployeeDetail.as_view()),
     url(r'^(?i)employee[s]?[/]?$', EmployeeList.as_view()),

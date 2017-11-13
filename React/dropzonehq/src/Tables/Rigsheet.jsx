@@ -7,7 +7,6 @@ import { rootURL } from '../restInfo.js';
 import { toast } from 'react-toastify';
 
 
-
 /* 
   A Rigsheet contains all signouts for one rig type.
 */
@@ -21,20 +20,18 @@ export default class Rigsheet extends React.Component {
 
     //Bind all methods that are passed down so that they can
     //be called via this.methodName in child components
-    this.usernameChanged = this.usernameChanged.bind(this);
-    this.passwordChanged = this.passwordChanged.bind(this);
+    this.pinChanged = this.pinChanged.bind(this);
     this.packRow = this.packRow.bind(this);
-    this.validateUsername = this.validateUsername.bind(this);
     this.addSignout = this.addSignout.bind(this);
 
     //BEGIN SAMPLE DATA. WHEN RUNNING FROM SERVER, DELETE THIS AND CHANGE THIS.STATE={...}
     //TO HAVE rows: this.fetchRows() IN PLACE OF rows: rowData
     var rowData = [
-      { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: null },
-      { jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by: "Brian K" }
+      { jumpmaster_id: "111", jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by_id: null, packed_by: null },
+      { jumpmaster_id: "222", jumpmaster: "Paul B", rig_id: "S9", load_number: "111", packed_by_id: "333", packed_by: "Brian K" }
     ];
 
-    this.processRows(rowData);
+    this.addPackButtons(rowData);
     //END SAMPLE DATA.
 
     //The TandemRigsheet state keeps track of the table columns,
@@ -55,45 +52,35 @@ export default class Rigsheet extends React.Component {
         accessor: 'packed_by'
       }],
       rows: rowData,
-      username: '',
-      password: ''
+      pin: ''
     };
   }
 
 
   //Process the rows that are passed in to fill in the missing 
   //"Packed By" data with a PackButton
-  processRows(rowData) {
+  addPackButtons(rowData) {
     for (var i = 0; i < rowData.length; i++) {
       if (rowData[i].packed_by === null)
-        rowData[i].packed_by = <PackButton rig={rowData[i].rig_id}
+        rowData[i].packed_by = <PackButton 
+          signout_id={rowData[i].signout_id}
+          rig={rowData[i].rig_id}
           instructor={rowData[i].jumpmaster}
           load={rowData[i].load_number}
-          usernameChanged={this.usernameChanged}
-          passwordChanged={this.passwordChanged}
+          pinChanged={this.pinChanged}
           authorize={this.packRow}
           index={i} />;
     };
   }
 
-  //This is the function passed down to the username component
-  //that's inside the PackButton's verify modal.
-  //when the username is changed, update our state
-  usernameChanged(id, username) {
-    this.setState({
-      username: username
-    })
-    console.log(this.state.username);
-  }
-
   //This is the function passed down to the password component
   //that's inside the PackButton's verify modal.
   //when the password is changed, update our state
-  passwordChanged(id, password) {
+  pinChanged(id, pin) {
     this.setState({
-      password: password
+      pin: pin
     })
-    console.log(this.state.password);
+    console.log(this.state.pin);
   }
 
   //When this rigsheet component loads on the page, fetch the rows
@@ -117,12 +104,11 @@ export default class Rigsheet extends React.Component {
     //(rootURL is imported from our rest info file)
     var url = rootURL + this.URLsection + this.props.sheetType;
 
-    //save 'this' so that we can call functions
-    //inside the fetch() callback
+    //save 'this' so we can reference it inside fetch() callback
     var self = this;
 
-    //fetch from the specified URL, to GET the data
-    //we need. Enable CORS so we can access from localhost.
+    //fetch from the specified URL
+    //Enable CORS so we can access from localhost.
     fetch(url, {
       method: "GET",
       mode: 'CORS'
@@ -138,14 +124,15 @@ export default class Rigsheet extends React.Component {
         //into JSON format
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (responseData) {
         //process the row data we received back
-        self.processRows(rowData);
+        self.addPackButtons(responseData);
         //update our state with these rows to rerender the table
         self.setState({
-          rows: rowData
+          rows: responseData
         });
-      }).catch(function(error) {
+      })//catch any errors and display them as a toast
+      .catch(function (error) {
         toast.error(error + "\n" + url);
       });
   }
@@ -153,19 +140,20 @@ export default class Rigsheet extends React.Component {
   //Packs a row in the table.
   //This is the function that is called when you click a 
   //PackButton in a row. It replaces the button with a name.
-  packRow(signoutID, packerName) {
+  packRow(signout_id) {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    var url = rootURL + this.URLsection + this.props.sheetType;
+    console.log(signout_id);
+    var url = rootURL + this.URLsection + this.props.sheetType + "/" + signout_id;
 
     var self = this;
     var requestVariables = {
-      packed_by: packerName
+      pin: this.state.pin
     };
-    
+
     fetch(url, {
-      method: "PUT",
+      method: "PATCH",
       mode: 'CORS',
       headers: {
         "Accept": "application/json",
@@ -179,39 +167,29 @@ export default class Rigsheet extends React.Component {
         }
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (responseData) {
         //grab the current rows
         var newRows = Array.from(self.state.rows);
         //replace the pack button of this signout
         //with the name of the packer who packed it
-        newRows[signoutID].packed_by = packerName;
+        newRows[signout_id].packed_by = responseData.packed_by;
 
         //update the state with the new rows so it rerenders
         self.setState({
-          rows: newRows
+          rows: newRows,
+          pin: ''
         });
 
-      }).catch(function(error) {
+      })//catch any errors and display them as a toast
+      .catch(function (error) {
         toast.error(error + "\n" + url);
       });
-  }
-
-  //Validates the given username and password
-  //Returns true if they are valid for this action,
-  //and false otherwise.
-  validateUsername(username, password) {
-    //OBVIOUSLY THIS DOESN'T DO ANYTHING RIGHT NOW
-    this.setState({
-      username: '',
-      password: ''
-    });
-    return true;
   }
 
   //Add a signout to the tandemrigsheet.
   //This is passed down to the authorize button inside
   //of the modal that the SignoutButton creates.
-  addSignout(instructor, planeLoad, rig) {
+  addSignout(planeLoad, rig_id) {
 
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
@@ -220,11 +198,12 @@ export default class Rigsheet extends React.Component {
 
     var self = this;
     var requestVariables = {
-      jumpmaster: instructor,
-      rig_id: rig,
+      pin: this.state.pin,
+      rig_id: rig_id,
       load_number: planeLoad,
       packed_by: null
     };
+
     fetch(url, {
       method: "POST",
       mode: 'CORS',
@@ -236,23 +215,24 @@ export default class Rigsheet extends React.Component {
     })//when we get a response back
       .then(function (response) {
         if (response.status >= 400) {
-          throw new Error("Adding signout failed. Bad response " + response.status + " from server.");          
+          throw new Error("Adding signout failed. Bad response " + response.status + " from server.");
         }
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (responseData) {
         //create a new row for the table
         var row = {
-          jumpmaster: instructor,
-          rig_id: rig,
-          load_number: planeLoad,
+          jumpmaster: responseData.jumpmaster,
+          rig_id: responseData.rig_id,
+          load_number: responseData.load_number,
           //A new signout hasn't been packed yet,
           //so give it a PackButton instead
-          packed_by: <PackButton rig={rig}
-            instructor={instructor}
-            load={planeLoad}
-            usernameChanged={self.usernameChanged}
-            passwordChanged={self.passwordChanged}
+          packed_by: <PackButton 
+            signout_id={responseData.signout_id} //make this get the signout ID from the response back
+            rig={responseData.rig_id}
+            instructor={responseData.jumpmaster}
+            load={responseData.load_number}
+            pinChanged={self.pinChanged}
             authorize={self.packRow}
             index={self.state.rows.length} />
         };
@@ -264,27 +244,23 @@ export default class Rigsheet extends React.Component {
         self.setState({
           rows: newRows
         })
-      }).catch(function(error) {
+      }).catch(function (error) {
         toast.error(error + "\n" + url);
-        return false;
       });
-
-
   }
 
   render() {
-
     //Return a tablesheet with a signout button footer
     return (
       <TableSheet
         headerText={this.props.sheetType}
         columns={this.state.columns}
         footer={
-          
           <SignoutButton
-            usernameChanged={this.usernameChanged}
-            passwordChanged={this.passwordChanged}
-            authorize={this.addSignout} />}>
+            pinChanged={this.pinChanged}
+            authorize={this.addSignout} />
+        }
+      >
         {this.state.rows}
       </TableSheet>);
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'reactstrap';
+import { Form, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import ModalWithVerify from '../ModalWithVerify.jsx';
 import RigDropdown from '../Dropdowns/RigDropdown.jsx';
 import PlaneLoadDropdown from '../Dropdowns/PlaneLoadDropdown.jsx';
@@ -17,55 +17,49 @@ export default class SignoutButton extends React.Component {
     super(props);
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
+    this.verify = this.addSignout.bind(this);
 
-    this.verify = this.verify.bind(this);
-    
-    this.instructorChanged = this.instructorChanged.bind(this);
     this.rigChanged = this.rigChanged.bind(this);
     this.planeLoadChanged = this.planeLoadChanged.bind(this);
     //keep state for the values of the components in this modal
     this.state = {
-      instructor: 'Input text here..',
-      selectedRig: 111,
+      rig_id: 111,
       planeLoad: 111
     }
   }
 
-  //when selected instructor is changed, update our state
-  instructorChanged(id, selectedInstr) {
-    this.setState({
-      instructor: selectedInstr
-    })
-    console.log(this.state);
-  }
-
   //when the selected rig is changed, update our state
-  rigChanged(id, rig) {
+  rigChanged(rigData) {
     this.setState({
-      selectedRig: rig
+      rig_id: rigData.rig_id
     })
-    console.log(this.state.selectedRig);
+    console.log(this.state.rigData);
   }
 
   //when the selected plane load is changed, update our state
-  planeLoadChanged(id, planeLoad) {
+  planeLoadChanged(event) {
     this.setState({
-      planeLoad: planeLoad
+      planeLoad: event.target.value
     })
     console.log(this.state.planeLoad);
   }
 
-  verify() {
+  addSignout() {
     console.log("Click!");
-    this.props.authorize(this.state.instructor, this.state.planeLoad, this.state.selectedRig);
+    this.props.authorize(
+      this.state.planeLoad,
+      this.state.rig_id
+    );
   }
 
   render() {
     const modalContent =
       <Form>
-        <InstructorDropdown onChange={this.instructorChanged} />
         <RigDropdown onChange={this.rigChanged} />
-        <PlaneLoadDropdown onChange={this.planeLoadChanged} />
+        <InputGroup>
+          <InputGroupAddon >Plane Load </InputGroupAddon>
+          <Input id="addPlaneLoad" type="number" pattern="[0-9]*" onChange={this.planeLoadChanged} />
+        </InputGroup>
       </Form>;
     return (
       <ModalWithVerify
@@ -76,9 +70,8 @@ export default class SignoutButton extends React.Component {
         ID="Signout"
         modalContent={modalContent}
         popoverTitle="Confirm Signout"
-        verify={this.verify}
-        passwordChanged={this.props.passwordChanged}
-        usernameChanged={this.props.usernameChanged}
+        verify={this.addSignout}
+        pinChanged={this.props.pinChanged}
       />
     );
   }

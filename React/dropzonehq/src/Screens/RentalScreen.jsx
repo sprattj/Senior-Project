@@ -1,6 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardBlock, CardHeader } from 'reactstrap';
-import RentButton from '../Buttons/RentButton.jsx';
+import { Row, Col, Card } from 'reactstrap';
 import RentalTable from '../Tables/RentalTable.jsx';
 import RentalItemDisplay from '../ItemDisplays/RentalItemDisplay.jsx';
 import 'bootstrap/dist/css/bootstrap.css';

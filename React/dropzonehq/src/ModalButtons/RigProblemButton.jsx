@@ -70,8 +70,7 @@ export default class RigProblemButton extends React.Component {
         modalContent={modalContent}
         popoverTitle="Confirm Report"
         verify={this.verify}
-        passwordChanged={this.props.passwordChanged}
-        usernameChanged={this.props.usernameChanged}
+        pinChanged={this.props.pinChanged}
       />
     );
   }
