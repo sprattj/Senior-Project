@@ -10,8 +10,8 @@
 
 from __future__ import unicode_literals
 from django.db import models
-from django.contrib.auth.models import User , AbstractUser
-
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -93,29 +93,39 @@ class DjangoMigrations(models.Model):
 
 
 # A location that is used as a skydiving drop zone.
-class Dropzones(AbstractUser):
+class Dropzones(User):
 
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
-    # Name of drop zone
-    name = models.CharField(unique=True, max_length=45)
     # The location of the drop zone
-    location = models.CharField(max_length=45)
+    location = models.CharField(unique=True,max_length=45)
+
+    def get_dropzone(self, pk=None):
+        try :
+            return Dropzones.objects.get(pk)
+        except:
+            return None
 
     # Checks if a location is in use for a dropzone.
-    def dropzoneLocationInUse(self, location=None):
-        use = Dropzones.objects.get(location)
-        return use
+    def dropzoneLocationInUse(location=None):
+        try :
+            return Dropzones.objects.filter(location)
+        except :
+            return None
 
     # Checks if a name is in use for a dropzone.
-    def dropzoneNameInUse(self, name=None):
-        use = Dropzones.objects.get(name)
-        return use
+    def dropzoneUsernameInUse(username=None):
+        try :
+            return Dropzones.objects.filter(username)
+        except :
+            return None
 
     # Chcek if the email has been used in the database
-    def dropzoneEmailInUse(self, email=None):
-        use = Dropzones.objects.get(email)
-        return use
+    def dropzoneEmailInUse(email=None):
+        try :
+            return Dropzones.objects.filter(email)
+        except :
+            return None
 
 
     class Meta:
@@ -146,17 +156,42 @@ class Employees(models.Model):
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
+    #pin Sha hash
     pin = models.CharField(max_length=45, blank=True)
     employment_date = models.DateTimeField(auto_now_add=True)
 
-    # Checks if a location is in use for a dropzone.
+    #check is the pin of an employee matches the pin given
+    def checkEmployeePin(pin, employee):
+        if pin or employee is None:
+            return None
+        else:
+            salt = int(pin[:3])
+            if BCryptSHA256PasswordHasher.encode(password=pin, salt=salt) == employee.pin:
+                return True
+            else:
+                return False
+
+    #hash a pin to a given value
+    def pinToHash(pin):
+        if pin is None:
+            return None
+        else:
+            salt = int(pin[:3])
+            return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
+
+    # Checks if a pin is in use for an Employee.
+    #returns true if the pin is in use and false if the pin is not being used
     def employeePinInUse(self, pin=None):
-        use = Employees.objects.get(pin)
-        return use
+        emp = Employees.objects.get()
+        for e in emp :
+            if self.checkEmployeePin(pin,e) :
+                return True
+            else :
+                return False
 
     # Chcek if the email has been used in the database
     def employeeEmailInUse(self, email=None):
-        use = Employees.objects.get(email)
+        use = Employees.objects.filter(email)
         return use
 
     class Meta:
