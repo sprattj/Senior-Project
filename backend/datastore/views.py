@@ -6,10 +6,11 @@ from rest_framework.parsers import JSONParser
 from rest_framework import generics
 from .serializers import *
 from . import util
-from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model, login, logout, authenticate
 
 
-
+@login_required()
 class ActionList(generics.ListCreateAPIView):
     queryset = Actions.objects.all()
     serializer_class = ActionSerializer
@@ -411,133 +412,103 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 '''
 """
 
-class CreateDrozoneViewSet(viewsets.ModelViewSet) :
+def createDropzone(request):
 
-    def createDropzone(self, request):
-
-        try :
-            username = request.POST['username']
-            password = request.POST['password']
-            location = request.POST['location']
-            email = request.POST['email']
-            if email or password or location or username is None :
-                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-            else :
+    try :
+        username = request.POST['username']
+        password = request.POST['password']
+        location = request.POST['location']
+        email = request.POST['email']
+        if email or password or location or username is None :
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        else :
+            dropzone = None
+            try :
                 dropzone = get_user_model().objects.create_user(username=username, password=password, email=email, location=location)
-                serializer = DropZoneSerializer(data= dropzone)
-                return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
-        except :
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-
-class LoginDropzoneViewSet(viewsets.ModelViewSet) :
-
-    def loginDropzone(self, request):
-        try :
-            email = request.POST['email']
-            dropzone = Dropzones.dropzoneEmailInUse(email)
-
-            if dropzone is None :
-                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-            else :
-                #todo
-
-
-
-class CreateEmployeeViewSet(viewsets.ModelViewSet) :
-
-    def createEmployee(self, request, dropzonePK):
-        try :
-            dropzone = Dropzones.objects.get(dropzonePK)
-            first = request.POST['first_name']
-            last = request.POST['last_name']
-            email = request.POST['email']
-            if Employees.employeeEmailInUse(email) is not None:
-                emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
-                emp.save()
-                while Employees.employeePinInUse(emp.pin) :
-                    emp.pin = util.randomUserPin(emp.employee_id)
-                emp.save()
-                serializer = EmployeeSerializer(emp)
-                return JsonResponse(data= serializer.data ,status=201)
-            else :
+            except :
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        except :
+            serializer = DropZoneSerializer(data= dropzone)
+            return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
+    except :
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+def loginDropzone(request):
+    try :
+        username = request.POST['username']
+        password = request.POST['password']
+        dropzone = authenticate(request=request,username=username,password=password)
+        if dropzone is None :
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        else :
+            login(request, user=dropzone)
+    except :
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+def logoutDropzone(request):
+    logout(request)
+    return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+def createEmployee(request, dropzonePK):
+    try :
+        dropzone = Dropzones.objects.get(dropzonePK)
+        first = request.POST['first_name']
+        last = request.POST['last_name']
+        email = request.POST['email']
+        if Employees.employeeEmailInUse(email) is not None:
+            emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
+            emp.save()
+            while Employees.employeePinInUse(emp.pin) :
+                emp.pin = util.randomUserPin(emp.employee_id)
+            emp.save()
+            serializer = EmployeeSerializer(emp)
+            return JsonResponse(data= serializer.data ,status=201)
+        else :
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+    except :
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+#authenticate an employee based on their pin and return an http status if the user is authentic
+def authenticateUserPin(request):
+    # the way our pin works sets the user primary as their last 3 digits
+    try :
+        pin = request.POST['pin']
+
+        if pin is None :
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-class AuthenticateUser(viewsets.ModelViewSet) :
-
-    #authenticate an employee based on their pin and return an http status if the user is authentic
-    def authenticateUserPin(self, request):
-        # the way our pin works sets the user primary as their last 3 digits
-        try :
-            pin = request.POST['pin']
-
-            if pin is None :
-                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-            else :
-                try :
-                    pk = int(pin[4:])
-                    employee = Employees.objects.get(pk)
-                    if employee is None :
-                        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-                    else :
-                        if Employees.checkEmployeePin(pin,employee) :
-                            return HttpResponse(status=status.HTTP_202_ACCEPTED)
-                        else :
-                            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-                except :
+        else :
+            try :
+                pk = int(pin[4:])
+                employee = Employees.objects.get(pk)
+                if employee is None :
                     return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        except :
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-
-class AuthenticateDropzone(viewsets.ModelViewSet) :
-
-    # authenticate a dropzone based on the username and password and location
-    # return None if there is no dropzone there
-    def authenticateDropzone(self, request):
-        try :
-            dropzone = Dropzones.dropzoneEmailInUse(request.POST['email'])
-
-            if dropzone is not None :
-                try :
-                    username = request.POST['username']
-                    location = request.POST['location']
-
-                    if Dropzones.dropzoneNameInUse(username) == dropzone :
-                        if Dropzones.dropzoneLocationInUse(location) == dropzone :
-                            #todo
-                            if Dropzones.check_password(dropzone,request.POST['password']) :
-
-
-                        else :
-                            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+                else :
+                    if Employees.checkEmployeePin(pin,employee) :
+                        return HttpResponse(status=status.HTTP_202_ACCEPTED)
                     else :
                         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            except :
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+    except :
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
-            else :
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-        except:
+# Session authentication
+def authenticateDropzone(request):
+    #todo
+    token = request.session
+    return False
+
+# return a user object if the username is found
+# else return None
+def authenticateNameDropzone(request):
+    name = request.POST['name']
+    if name is None:
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        dropzone = Dropzones.dropzoneNameInUse(name)
+        if dropzone is None :
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-    # Session authentication
-    def authenticateDropzone(self, request):
-        #todo
-        token = request.session
-        return False
-
-    # return a user object if the username is found
-    # else return None
-    def authenticateNameDropzone(self, request):
-        name = request.POST['name']
-        if name is None:
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        else:
-            dropzone = Dropzones.dropzoneNameInUse(name)
-            if dropzone is None :
-                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-            else :
-                serializer = DropZoneSerializer(dropzone)
-                return JsonResponse(data=serializer.data, status=200)
+        else :
+            serializer = DropZoneSerializer(dropzone)
+            return JsonResponse(data=serializer.data, status=200)

@@ -14,9 +14,6 @@ import os
 import sys
 #uncomment when deploying
 #sys.path.insert(0, '/opt/python/current/app')
-
-import django
-<<<<<<< HEAD
 from rest_framework.settings import api_settings
 from os.path import abspath, basename, dirname, join, normpath
 
@@ -129,6 +126,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+#Login URL
+LOGIN_URL = 'dropzonehq.com/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

@@ -44,6 +44,6 @@ urlpatterns = [
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
-    url(r'^login/$', views.login, name='login'),
-    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^login/$', views.LoginView.as_view(), name='login'),
+    url(r'^logout/$', views.LogoutView.as_view(), name='logout'),
 ]
