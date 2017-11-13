@@ -102,7 +102,11 @@ class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
+
 # ITEMS BRIDGING TABLES? TODO
+class RentableItemList(generics.ListCreateAPIView):
+    queryset = Items.objects.all().filter(is_rentable=1)
+    serializer_class = ItemSerializer
 
 
 class RentalList(generics.ListCreateAPIView):
@@ -196,22 +200,22 @@ class EmployeeVsSignoutDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
-    queryset = EmployeesVsSignouts.objects.all()
+    queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EmployeesVsSignouts.objects.all()
+    queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
 class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
-    queryset = EmployeesVsSignouts.objects.all()
+    queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
 class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EmployeesVsSignouts.objects.all()
+    queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 

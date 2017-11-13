@@ -427,9 +427,11 @@ class AllItems(models.Model):
 class EmployeesVsSignouts(models.Model):
     signout_id = models.AutoField(primary_key=True)
     jumpmaster = models.CharField(max_length=90)
+    jumpmaster_id = models.IntegerField()
     load_number = models.IntegerField()
     rig_id = models.IntegerField()
     packed_by = models.CharField(max_length=90, blank=True, null=True)
+    packer_id = models.IntegerField()
 
     class Meta:
         app_label = 'dropZoneHQ'
@@ -440,9 +442,11 @@ class EmployeesVsSignouts(models.Model):
 class EmployeesVsSignoutsStudent(models.Model):
     signout_id = models.AutoField(primary_key=True)
     jumpmaster = models.CharField(max_length=90)
+    jumpmaster_id = models.IntegerField()
     load_number = models.IntegerField()
     rig_id = models.IntegerField()
     packed_by = models.CharField(max_length=90, blank=True, null=True)
+    packer_id = models.IntegerField()
 
     class Meta:
         app_label = 'dropZoneHQ'
@@ -453,9 +457,11 @@ class EmployeesVsSignoutsStudent(models.Model):
 class EmployeesVsSignoutsTandem(models.Model):
     signout_id = models.AutoField(primary_key=True)
     jumpmaster = models.CharField(max_length=90)
+    jumpmaster_id = models.IntegerField()
     load_number = models.IntegerField()
     rig_id = models.IntegerField()
     packed_by = models.CharField(max_length=90, blank=True, null=True)
+    packer_id = models.IntegerField()
 
     class Meta:
         app_label = 'dropZoneHQ'
