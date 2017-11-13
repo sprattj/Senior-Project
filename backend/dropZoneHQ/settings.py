@@ -68,7 +68,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['backend/templates'],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -157,15 +157,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-# STATIC_ROOT = 'static'
-# STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
+STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-STATIC_URL = '/static/'  
-STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
+#STATIC_URL = '/static/'  
+#STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
 STATICFILES_DIRS = ()  
 
 #django.setup()

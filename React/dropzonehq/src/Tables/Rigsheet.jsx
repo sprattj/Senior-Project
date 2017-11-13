@@ -22,7 +22,6 @@ export default class Rigsheet extends React.Component {
     //be called via this.methodName in child components
     this.pinChanged = this.pinChanged.bind(this);
     this.packRow = this.packRow.bind(this);
-    this.validatePIN = this.validatePIN.bind(this);
     this.addSignout = this.addSignout.bind(this);
 
     //BEGIN SAMPLE DATA. WHEN RUNNING FROM SERVER, DELETE THIS AND CHANGE THIS.STATE={...}
@@ -63,7 +62,9 @@ export default class Rigsheet extends React.Component {
   addPackButtons(rowData) {
     for (var i = 0; i < rowData.length; i++) {
       if (rowData[i].packed_by === null)
-        rowData[i].packed_by = <PackButton rig={rowData[i].rig_id}
+        rowData[i].packed_by = <PackButton 
+          signout_id={rowData[i].signout_id}
+          rig={rowData[i].rig_id}
           instructor={rowData[i].jumpmaster}
           load={rowData[i].load_number}
           pinChanged={this.pinChanged}
@@ -123,12 +124,12 @@ export default class Rigsheet extends React.Component {
         //into JSON format
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (responseData) {
         //process the row data we received back
-        self.addPackButtons(rowData);
+        self.addPackButtons(responseData);
         //update our state with these rows to rerender the table
         self.setState({
-          rows: rowData
+          rows: responseData
         });
       })//catch any errors and display them as a toast
       .catch(function (error) {
@@ -139,7 +140,7 @@ export default class Rigsheet extends React.Component {
   //Packs a row in the table.
   //This is the function that is called when you click a 
   //PackButton in a row. It replaces the button with a name.
-  packRow(signout_id, packed_by_id, packed_by_name) {
+  packRow(signout_id) {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
@@ -148,8 +149,7 @@ export default class Rigsheet extends React.Component {
 
     var self = this;
     var requestVariables = {
-      packed_by: packed_by_id,
-      signout_id: signout_id
+      pin: this.state.pin
     };
 
     fetch(url, {
@@ -167,16 +167,17 @@ export default class Rigsheet extends React.Component {
         }
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (responseData) {
         //grab the current rows
         var newRows = Array.from(self.state.rows);
         //replace the pack button of this signout
         //with the name of the packer who packed it
-        newRows[signout_id].packed_by = packed_by_name;
+        newRows[signout_id].packed_by = responseData.packed_by;
 
         //update the state with the new rows so it rerenders
         self.setState({
-          rows: newRows
+          rows: newRows,
+          pin: ''
         });
 
       })//catch any errors and display them as a toast
@@ -185,21 +186,10 @@ export default class Rigsheet extends React.Component {
       });
   }
 
-  //Validates the given username and password
-  //Returns true if they are valid for this action,
-  //and false otherwise.
-  validatePIN(pin) {
-    //OBVIOUSLY THIS DOESN'T DO ANYTHING RIGHT NOW
-    this.setState({
-      pin: ''
-    });
-    return true;
-  }
-
   //Add a signout to the tandemrigsheet.
   //This is passed down to the authorize button inside
   //of the modal that the SignoutButton creates.
-  addSignout(jumpmaster_id, jumpmaster_name, planeLoad, rig_id, rig_name) {
+  addSignout(planeLoad, rig_id) {
 
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
@@ -208,7 +198,7 @@ export default class Rigsheet extends React.Component {
 
     var self = this;
     var requestVariables = {
-      jumpmaster_id: jumpmaster_id,
+      pin: this.state.pin,
       rig_id: rig_id,
       load_number: planeLoad,
       packed_by: null
@@ -229,19 +219,19 @@ export default class Rigsheet extends React.Component {
         }
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (responseData) {
         //create a new row for the table
         var row = {
-          jumpmaster: jumpmaster_name,
-          rig_id: rig_name,
-          load_number: planeLoad,
+          jumpmaster: responseData.jumpmaster,
+          rig_id: responseData.rig_id,
+          load_number: responseData.load_number,
           //A new signout hasn't been packed yet,
           //so give it a PackButton instead
           packed_by: <PackButton 
-            signout_id={rowData.signout_id} //make this gets the signout ID from the response back
-            rig={rig_name}
-            instructor={jumpmaster_name}
-            load={planeLoad}
+            signout_id={responseData.signout_id} //make this get the signout ID from the response back
+            rig={responseData.rig_id}
+            instructor={responseData.jumpmaster}
+            load={responseData.load_number}
             pinChanged={self.pinChanged}
             authorize={self.packRow}
             index={self.state.rows.length} />

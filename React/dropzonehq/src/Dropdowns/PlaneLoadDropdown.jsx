@@ -48,7 +48,7 @@ export default class PlaneLoadDropdown extends React.Component {
     //render a dropdown and pass it our data converted into dropdownoptions
     render() {
         return (
-            <Dropdown onChange={this.handleChange} id={"rigDropdown"} labelText="Rig:">
+            <Dropdown onChange={this.handleChange} id={"rigDropdown"} labelText="Plane Load:">
                 {this.createDropdownOptions(this.state.planeLoadData)}
             </Dropdown>
         );
