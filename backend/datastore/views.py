@@ -1,5 +1,7 @@
 from rest_framework import generics
+from django.http import JsonResponse
 from .serializers import *
+import datetime
 
 
 class ActionList(generics.ListCreateAPIView):
@@ -190,6 +192,17 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
+
+    def patch(self, request, *args, **kwargs):
+        employee_id = request.data.get('packer_id')
+        signout_id = request.data.get('signout_id')
+        EmployeesSignouts.objects.create(signout_id=signout_id,
+                                         employee_id=employee_id,
+                                         packed_signout='packed',
+                                         timestamp=datetime.datetime.now())
+        packed_by = Employees.objects.get(employee_id=employee_id).first_name + ' ' + \
+            Employees.objects.get(employee_id=employee_id).last_name
+        return JsonResponse(data={'packer_id': employee_id, 'packed_by': packed_by})
 
 
 class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):

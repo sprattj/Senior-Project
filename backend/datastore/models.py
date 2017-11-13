@@ -196,10 +196,16 @@ class EmployeesServices(models.Model):
 
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
+    PACKED_SIGNOUT_CHOICES = (
+        ('PACKED', 'packed'),
+        ('SIGNOUT', 'signout')
+    )
     employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
     signout = models.ForeignKey('Signouts', models.DO_NOTHING)
     # What type of sign off occurred
-    packed_signout = models.CharField(db_column='packed_or_signout', max_length=7)
+    packed_signout = models.CharField(db_column='packed_or_signout',
+                                      max_length=7,
+                                      choices=PACKED_SIGNOUT_CHOICES)
     # When this sign off occurred
     timestamp = models.DateTimeField()
 

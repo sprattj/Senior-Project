@@ -69,6 +69,12 @@ class EmployeeEmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('employee_id', 'role_id', 'role')
 
 
+class EmployeeSignoutSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = EmployeesSignouts
+        fields = ('employee_id', 'signout_id', 'packed_or_signout', 'timestamp')
+
+
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
     roles = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
 
