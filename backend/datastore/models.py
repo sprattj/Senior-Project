@@ -12,6 +12,8 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
+from . import util
+from random import random
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -197,7 +199,7 @@ class Employees(models.Model):
         return None
 
     # Chcek if the email has been used in the database
-    def employeeEmailInUse(self, email=None):
+    def employeeEmailInUse(email=None):
         use = Employees.objects.filter(email)
         return use
 
