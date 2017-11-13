@@ -34,8 +34,8 @@ class AllCanopySerializer(serializers.HyperlinkedModelSerializer):
 class AllItemSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AllItems
-        fields = ('item_id', 'item_type', 'rig_number', 'aad'
-                  'conatainer', 'isTandem', 'canopy_on_rig', 'canopy_sn',
+        fields = ('item_id', 'item_type', 'rig_number', 'aad',
+                  'container', 'isTandem', 'canopy_on_rig', 'canopy_sn',
                   'container_sn', 'aad_sn', 'lifespan', 'is_rentable',
                   'manufacturer', 'brand', 'description', 'date_of_manufacture',
                   'size', 'next_repack_date', 'jump_count', 'ride_count',
@@ -46,7 +46,7 @@ class CanopySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Canopies
         fields = ('item_id', 'rig_id', 'serial_number', 'size',
-                  'dadte_of_manufacture', 'jump_count')
+                  'date_of_manufacture', 'jump_count')
 
 
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):

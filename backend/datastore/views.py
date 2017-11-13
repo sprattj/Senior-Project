@@ -105,8 +105,8 @@ class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
 
 # ITEMS BRIDGING TABLES? TODO
 class RentableItemList(generics.ListCreateAPIView):
-    queryset = Items.objects.all().filter(is_rentable=1)
-    serializer_class = ItemSerializer
+    queryset = AllItems.objects.all().filter(is_rentable=1)
+    serializer_class = AllItemSerializer
 
 
 class RentalList(generics.ListCreateAPIView):
