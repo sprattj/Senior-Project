@@ -470,26 +470,31 @@ def createEmployee(request, dropzonePK):
 
 #authenticate an employee based on their pin and return an http status if the user is authentic
 def authenticateUserPin(request):
-    # the way our pin works sets the user primary as their last 3 digits
-    try :
-        pin = request.POST['pin']
+    if request.method == 'POST' :
 
-        if pin is None :
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else :
-            try :
-                pk = int(pin[4:])
-                employee = Employees.objects.get(pk)
-                if employee is None :
-                    return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-                else :
-                    if Employees.checkEmployeePin(pin,employee) :
-                        return HttpResponse(status=status.HTTP_202_ACCEPTED)
-                    else :
+        # the way our pin works sets the user primary as their last 3 digits
+        try :
+            pin = request.POST['pin']
+
+            if pin is None :
+                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            else :
+                try :
+                    pk = int(pin[4:])
+                    employee = Employees.objects.get(pk)
+                    if employee is None :
                         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-            except :
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-    except :
+                    else :
+                        if Employees.checkEmployeePin(pin,employee) :
+                            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+                        else :
+                            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+                except :
+                    return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        except :
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    else :
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
 
