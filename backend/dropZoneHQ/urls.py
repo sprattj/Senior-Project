@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^rigsheets/(?P<pk>[0-9]+$)', EmployeeVsSignoutViewSet().specific_signout),
     url(r'^rigsheets/student', EmployeeVsSignoutViewSet().student_signout_records),
     url(r'^rigsheets/tandem', EmployeeVsSignoutViewSet().tandem_signout_records),
-    url(r'^employees/', EmployeeViewSet().all_employees)
+    url(r'^employees/', EmployeeViewSet().all_employees),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
 ]
