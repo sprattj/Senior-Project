@@ -279,7 +279,7 @@ class AuthenticateDropzone(viewsets.ModelViewSet) :
                         if Dropzones.dropzoneLocationInUse(location) == dropzone :
                             #todo
                             if Dropzones.check_password(dropzone,request.POST['password']) :
-                                
+
 
                         else :
                             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)

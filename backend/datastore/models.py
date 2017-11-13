@@ -179,15 +179,22 @@ class Employees(models.Model):
             salt = int(pin[:3])
             return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
 
+    def createRandomUserPin(userPK=None):
+        if userPK is None:
+            return None
+        else:
+            salt = random.randint(0, 1000)
+            key = util.stringToThree(str(salt)) + str(userPK % 1000)
+            return BCryptSHA256PasswordHasher.encode(key, salt)
+
     # Checks if a pin is in use for an Employee.
     #returns true if the pin is in use and false if the pin is not being used
     def employeePinInUse(self, pin=None):
         emp = Employees.objects.get()
         for e in emp :
             if self.checkEmployeePin(pin,e) :
-                return True
-            else :
-                return False
+                return e
+        return None
 
     # Chcek if the email has been used in the database
     def employeeEmailInUse(self, email=None):
