@@ -23,7 +23,7 @@ const defaultFiltersData = rentalFiltersData
 export default class FilterDropdown extends React.Component {
     constructor(props) {
         super(props);
-        this.onChange = this.props.onChange.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state = {
         }
     }
@@ -52,13 +52,16 @@ export default class FilterDropdown extends React.Component {
         return options;
     }
 
+    onChange(index) {
+        this.props.onChange(rentalFiltersData[index].name.toString());
+    }
 
     render() {
         var Filtered = this.getFilterOptions();
         return (
             <div>
                 <Dropdown
-                    onChange={this.props.onChange}
+                    onChange={this.onChange}
                     labelText={this.props.labelText}
                     id={this.props.id}>
                     {Filtered}
