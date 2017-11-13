@@ -1,6 +1,6 @@
 """
 # Author: Jonathan Spratt
-# Last modification: 10/8/2017
+# Last modification: 11/7/2017
 # This file contains the models representing the DropZoneHQ database
 #
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
@@ -10,7 +10,10 @@
 
 from __future__ import unicode_literals
 from django.db import models
-
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
+from . import util
+from random import random
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -92,16 +95,40 @@ class DjangoMigrations(models.Model):
 
 
 # A location that is used as a skydiving drop zone.
-class Dropzones(models.Model):
+class Dropzones(User):
 
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
-    # Name of drop zone
-    name = models.CharField(unique=True, max_length=45)
-    # Drop zone logon password
-    password = models.CharField(max_length=45)
     # The location of the drop zone
-    location = models.CharField(max_length=45)
+    location = models.CharField(unique=True,max_length=45)
+
+    def get_dropzone(self, pk=None):
+        try :
+            return Dropzones.objects.get(pk)
+        except:
+            return None
+
+    # Checks if a location is in use for a dropzone.
+    def dropzoneLocationInUse(location=None):
+        try :
+            return Dropzones.objects.filter(location)
+        except :
+            return None
+
+    # Checks if a name is in use for a dropzone.
+    def dropzoneUsernameInUse(username=None):
+        try :
+            return Dropzones.objects.filter(username)
+        except :
+            return None
+
+    # Chcek if the email has been used in the database
+    def dropzoneEmailInUse(email=None):
+        try :
+            return Dropzones.objects.filter(email)
+        except :
+            return None
+
 
     class Meta:
         managed = True
@@ -121,17 +148,61 @@ class EmployeeRoles(models.Model):
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
+
 # Employees the work at the drop zone
 class Employees(models.Model):
-
+    first_name = models.CharField(max_length=45)
+    last_name = models.CharField(max_length=45)
+    email = models.EmailField()
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
-    first_name = models.CharField(max_length=45)
-    last_name = models.CharField(max_length=45)
-    pin = models.IntegerField()
-    employment_date = models.DateTimeField()
+    roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
+    #pin Sha hash
+    pin = models.CharField(max_length=45, blank=True)
+    employment_date = models.DateTimeField(auto_now_add=True)
+
+    #check is the pin of an employee matches the pin given
+    def checkEmployeePin(pin, employee):
+        if pin or employee is None:
+            return None
+        else:
+            salt = int(pin[:3])
+            if BCryptSHA256PasswordHasher.encode(password=pin, salt=salt) == employee.pin:
+                return True
+            else:
+                return False
+
+    #hash a pin to a given value
+    def pinToHash(pin):
+        if pin is None:
+            return None
+        else:
+            salt = int(pin[:3])
+            return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
+
+    def createRandomUserPin(userPK=None):
+        if userPK is None:
+            return None
+        else:
+            salt = random.randint(0, 1000)
+            key = util.stringToThree(str(salt)) + str(userPK % 1000)
+            return BCryptSHA256PasswordHasher.encode(key, salt)
+
+    # Checks if a pin is in use for an Employee.
+    #returns true if the pin is in use and false if the pin is not being used
+    def employeePinInUse(self, pin=None):
+        emp = Employees.objects.get()
+        for e in emp :
+            if self.checkEmployeePin(pin,e) :
+                return e
+        return None
+
+    # Chcek if the email has been used in the database
+    def employeeEmailInUse(email=None):
+        use = Employees.objects.filter(email)
+        return use
 
     class Meta:
         managed = True
@@ -155,7 +226,7 @@ class EmployeesActions(models.Model):
 
 # Bridge between Employees and Roles. Many employees can perform many roles.
 class EmployeesEmployeeRoles(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
+    employee = models.ForeignKey(Employees, models.DO_NOTHING)
     role = models.ForeignKey(EmployeeRoles, models.DO_NOTHING)
 
     class Meta:
@@ -191,6 +262,7 @@ class EmployeesServices(models.Model):
         db_table = 'employees_services'
         unique_together = (('employee', 'service'),)
         app_label = 'dropZoneHQ'
+
 
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
@@ -234,6 +306,7 @@ class Items(models.Model):
     description = models.CharField(max_length=45, blank=True, null=True)
     # Whether or not this item is rentable
     is_rentable = models.CharField(max_length=4)
+    rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
         managed = True
@@ -243,7 +316,7 @@ class Items(models.Model):
 
 # Bridge between Items and Rentals. Many items can be rented many times.
 class ItemsRentals(models.Model):
-    item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
+    item = models.ForeignKey('Items', models.DO_NOTHING)
     rental = models.ForeignKey('Rentals', models.DO_NOTHING)
 
     class Meta:
@@ -263,6 +336,8 @@ class Rentals(models.Model):
     rental_date = models.DateTimeField()
     # Date the gear was returned to the drop zone.
     returned_date = models.DateTimeField(blank=True, null=True)
+
+    items = models.ManyToManyField('Items', through='ItemsRentals')
 
     class Meta:
         managed = True
@@ -340,6 +415,8 @@ class Services(models.Model):
     # Description of the problem that needs to be serviced.
     description = models.CharField(max_length=45, blank=True, null=True)
 
+    employees = models.ManyToManyField('Employees', through='EmployeesServices')
+
     class Meta:
         managed = True
         db_table = 'services'
@@ -355,10 +432,13 @@ class Signouts(models.Model):
     # What rig has been packed or signed out for use.
     rig = models.ForeignKey(Rigs, models.DO_NOTHING)
 
+    employees = models.ManyToManyField('Employees', through='EmployeesSignouts')
+
     class Meta:
         app_label = 'dropZoneHQ'
         managed = True
         db_table = 'signouts'
+
 
 
 # Descriptive view for all canopies in the inventory
@@ -418,9 +498,11 @@ class AllItems(models.Model):
 class EmployeesVsSignouts(models.Model):
     signout_id = models.AutoField(primary_key=True)
     jumpmaster = models.CharField(max_length=90)
+    jumpmaster_id = models.IntegerField()
     load_number = models.IntegerField()
     rig_id = models.IntegerField()
-    packed_by = models.CharField(max_length=90)
+    packed_by = models.CharField(max_length=90, blank=True, null=True)
+    packer_id = models.IntegerField()
 
     class Meta:
         app_label = 'dropZoneHQ'
@@ -431,9 +513,11 @@ class EmployeesVsSignouts(models.Model):
 class EmployeesVsSignoutsStudent(models.Model):
     signout_id = models.AutoField(primary_key=True)
     jumpmaster = models.CharField(max_length=90)
+    jumpmaster_id = models.IntegerField()
     load_number = models.IntegerField()
     rig_id = models.IntegerField()
-    packed_by = models.CharField(max_length=90)
+    packed_by = models.CharField(max_length=90, blank=True, null=True)
+    packer_id = models.IntegerField()
 
     class Meta:
         app_label = 'dropZoneHQ'
@@ -444,9 +528,11 @@ class EmployeesVsSignoutsStudent(models.Model):
 class EmployeesVsSignoutsTandem(models.Model):
     signout_id = models.AutoField(primary_key=True)
     jumpmaster = models.CharField(max_length=90)
+    jumpmaster_id = models.IntegerField()
     load_number = models.IntegerField()
     rig_id = models.IntegerField()
-    packed_by = models.CharField(max_length=90)
+    packed_by = models.CharField(max_length=90, blank=True, null=True)
+    packer_id = models.IntegerField()
 
     class Meta:
         app_label = 'dropZoneHQ'

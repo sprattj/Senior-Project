@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupI
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
 import PackedWrongRigButton from './ModalButtons/PackedWrongRigButton.jsx';
 import { rootURL } from './restInfo.js';
+import { toast } from 'react-toastify';
 
 /*
 
@@ -17,11 +18,10 @@ export default class RigAlertsContainer extends React.Component {
 
         //Bind all methods that are passed down so that they can
         //be called via this.methodName in child components
-        this.usernameChanged = this.usernameChanged.bind(this);
-        this.passwordChanged = this.passwordChanged.bind(this);
+        this.pinChanged = this.pinChanged.bind(this);
         this.reportRigIssue = this.reportRigIssue.bind(this);
         this.reportPackingError = this.reportPackingError.bind(this);
-        this.validateUsername = this.validateUsername.bind(this);
+        this.validatePIN = this.validatePIN.bind(this);
 
         var alertData = [{ severity: "Problem Type 1", message: "Rig S9 has a tear on its container" },
         { severity: "Problem Type 2", message: "Rig S4 has a tear on its container" },
@@ -34,52 +34,73 @@ export default class RigAlertsContainer extends React.Component {
             alerts: alerts
         }
     }
-    //This is the function passed down to the username component
-    //that's inside the PackButton's verify modal.
-    //when the username is changed, update our state
-    usernameChanged(id, username) {
-        this.setState({
-            username: username
-        })
-        console.log(this.state.username);
-    }
+
 
     //This is the function passed down to the password component
     //that's inside the PackButton's verify modal.
-    //when the password is changed, update our state
-    passwordChanged(id, password) {
+    //when the pin is changed, update our state
+    pinChanged(id, pin) {
         this.setState({
-            password: password
+            pin: pin
         })
-        console.log(this.state.password);
+        console.log(this.state.pin);
     }
 
     //When this rigsheet component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
-       // this.fetchAlerts();
+        this.fetchAlerts();
     }
+
 
     //Add a report to the rig.
     //This is passed down to the authorize button inside
     //of the modal that the RigProblemButton creates.
     reportRigIssue(rig, severity, issue) {
 
-        //create a new alert for the list
-        var message = "Rig " + rig + ": " + issue;
-        var itemColor = this.getSeverityColor(severity) ;
-        var alert = <ListGroupItem key={this.state.alerts.length + 1}
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + this.URLsection;
+
+        var self = this;
+        var requestVariables = {
+            
+        };
+        fetch(url, {
+            method: "POST",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        })//when we get a response back
+            .then(function (response) {
+                if (response.status >= 400) {
+                    throw new Error("Adding report failed. Bad response " + response.status + " from server.");
+                }
+                return response.json();
+            })//when the call succeeds
+            .then(function (rowData) {
+                //create a new alert for the list
+                var message = "Rig " + rig + ": " + issue;
+                var itemColor = self.getSeverityColor(severity);
+                var alert = <ListGroupItem key={self.state.alerts.length + 1}
                     color={itemColor}>{message}</ListGroupItem>
 
-        //grab the current alerts
-        var newAlerts = Array.from(this.state.alerts);
-        //add our new alert
-        newAlerts.push(alert);
-        //update the state with the new alerts so it rerenders
-        this.setState({
-            alerts: newAlerts
-        })
-        console.log("rig issue reported");
+                //grab the current alerts
+                var newAlerts = Array.from(self.state.alerts);
+                //add our new alert
+                newAlerts.push(alert);
+                //update the state with the new alerts so it rerenders
+                self.setState({
+                    alerts: newAlerts
+                })
+            }).catch(function (error) {
+                toast.error(error + "\n" + url);
+                return false;
+            });
     }
 
     reportPackingError() {
@@ -109,13 +130,17 @@ export default class RigAlertsContainer extends React.Component {
         //we need. Enable CORS so we can access from localhost.
         fetch(url, {
             method: "GET",
-            mode: 'CORS'
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
         })//when we get a response back
             .then(function (response) {
                 //check to see if the call we made failed
                 //if it failed, throw an error and stop.
                 if (response.status >= 400) {
-                    throw new Error("Bad response from server");
+                    throw new Error("Fetching alerts failed. Bad response " + response.status + " from server.");
                 }
                 //if it didn't fail, process the data we got back
                 //into JSON format
@@ -128,6 +153,9 @@ export default class RigAlertsContainer extends React.Component {
                 self.setState({
                     alerts: alertData
                 });
+            }).catch(function (error) {
+                toast.error(error + "\n" + url);
+                return false;
             });
     }
 
@@ -160,21 +188,20 @@ export default class RigAlertsContainer extends React.Component {
             case ("Problem Type 4"):
                 color = "danger";
                 break;
-            default: 
-                color="secondary"
+            default:
+                color = "secondary"
                 break;
         }
         return color;
     }
 
-    //Validates the given username and password
+    //Validates the given PIN
     //Returns true if they are valid for this action,
     //and false otherwise.
-    validateUsername(username, password) {
+    validatePIN(PIN) {
         //OBVIOUSLY THIS DOESN'T DO ANYTHING RIGHT NOW
         this.setState({
-            username: '',
-            password: ''
+            pin: ''
         });
         return true;
     }
@@ -194,13 +221,11 @@ export default class RigAlertsContainer extends React.Component {
                             <Col lg={{ size: 6 }}>
 
                                 <RigProblemButton
-                                    passwordChanged={this.passwordChanged}
-                                    usernameChanged={this.usernameChanged}
+                                    pinChanged={this.pinChanged}
                                     verify={this.reportRigIssue} />
                                 <br />
                                 <PackedWrongRigButton
-                                    passwordChanged={this.passwordChanged}
-                                    usernameChanged={this.usernameChanged}
+                                    pinChanged={this.pinChanged}
                                     verify={this.reportPackingError} />
                             </Col>
                         </Row>

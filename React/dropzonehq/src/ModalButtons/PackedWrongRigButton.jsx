@@ -66,8 +66,7 @@ export default class PackedWrongRigButton extends React.Component {
         modalContent={modalContent}
         popoverTitle="Confirm Report"
         verify={this.props.verify}
-        passwordChanged={this.props.passwordChanged}
-        usernameChanged={this.props.usernameChanged}
+        pinChanged={this.props.pinChanged}
       />
     );
   }

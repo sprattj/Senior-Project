@@ -14,8 +14,7 @@ export default class VerifyPopover extends React.Component {
             >
                 <PopoverTitle>{this.props.title}</PopoverTitle>
                 <PopoverContent>
-                    <VerifyForm passwordChanged={this.props.passwordChanged} 
-                                usernameChanged={this.props.usernameChanged} />
+                    <VerifyForm pinChanged={this.props.pinChanged} />
                     <Button color="primary" onClick={this.props.verify}>Verify</Button>{' '}
                     <Button color="secondary" onClick={this.props.toggle}>Cancel</Button>
                 </PopoverContent>
@@ -30,6 +29,5 @@ VerifyPopover.propTypes = {
     buttonID: PropTypes.string.isRequired,
     toggle: PropTypes.func.isRequired, //the function to perform when the cancel button is clicked
     verify: PropTypes.func.isRequired,
-    passwordChanged: PropTypes.func.isRequired,
-    usernameChanged: PropTypes.func.isRequired
+    pinChanged: PropTypes.func.isRequired
   }

@@ -71,8 +71,7 @@ export default class ModalWithVerify extends React.Component {
                     buttonID={this.props.ID}
                     toggle={this.togglePopover}
                     verify={this.verify}
-                    passwordChanged={this.props.passwordChanged}
-                    usernameChanged={this.props.usernameChanged} />
+                    pinChanged={this.props.pinChanged} />
             </div>
         );
     }

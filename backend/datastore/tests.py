@@ -4,14 +4,17 @@ import django
 django.setup()
 sys.path.append('../')
 from backend.datastore.views import *
+from backend.datastore.models import *
+import requests
 
 
-print(EmployeeVsSignoutViewSet.all_signout_records)
+class RigsTestCase(TestCase):
 
-
-class EmployeeVsSignoutViewSetTestCase(TestCase):
-
-    def test_signouts_get(self):
-        signouts = EmployeesVsSignouts.objects.get(3)
+    def test_rigs_get(self):
+        self.assertEqual(requests.get('127.0.0.1:8000/rigsheets/3'), HttpResponse(status=200))
+        """
+        signout = Signouts.objects.create()
         self.assertEqual(signouts.field(name='signout_id'), 3)
         self.assertContains(HttpResponse, status_code=200)
+        self.assertEqual(EmployeeVsSignoutViewSet().new_signout)
+        """

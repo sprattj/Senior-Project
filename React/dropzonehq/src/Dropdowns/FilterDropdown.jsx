@@ -3,18 +3,18 @@ import Dropdown from './Dropdown.jsx';
 import DropdownOption from './DropdownOption.jsx';
 
 
-const rentalFiltersData = 
-[{ name: "Show All",  id: "1" },
-{ name: "Rigs Only", id: "2" },
-{ name: "Canopies Only", id: "3" },
-{ name: "Containers Only", id: "4" },];
+const rentalFiltersData =
+    [{ name: "Show All", id: "1" },
+    { name: "Rigs Only", id: "2" },
+    { name: "Canopies Only", id: "3" },
+    { name: "Containers Only", id: "4" },];
 //the filters will probably end up different
-const itemFiltersData =             
-[{ name: "Show All",  id: "1" },
-{ name: "Rigs Only", id: "2" },
-{ name: "Canopies Only", id: "3" },
-{ name: "Containers Only", id: "4" },
-{ name: "AADs Only", id: "5"}];
+const itemFiltersData =
+    [{ name: "Show All", id: "1" },
+    { name: "Rigs Only", id: "2" },
+    { name: "Canopies Only", id: "3" },
+    { name: "Containers Only", id: "4" },
+    { name: "AADs Only", id: "5" }];
 
 const defaultFiltersData = rentalFiltersData
 
@@ -33,15 +33,15 @@ export default class FilterDropdown extends React.Component {
         var choice;
         switch (this.props.id) {
             case "RentalFilterDropdown":
-            choice = rentalFiltersData;
-            break;
+                choice = rentalFiltersData;
+                break;
             case "InventoryFilterDropdown":
-            choice = itemFiltersData;
-            break;
+                choice = itemFiltersData;
+                break;
             default:
-            choice = defaultFiltersData;
-            break;
-        }        
+                choice = defaultFiltersData;
+                break;
+        }
 
         Object.keys(choice).forEach(function (i) {
             var nextOption = <DropdownOption
@@ -52,17 +52,17 @@ export default class FilterDropdown extends React.Component {
         return options;
     }
 
-    
+
     render() {
         var Filtered = this.getFilterOptions();
         return (
-            <div>                
-                <Dropdown 
-                onChange={this.props.onChange}  
-                labelText={this.props.labelText} 
-                id={this.props.id}>
+            <div>
+                <Dropdown
+                    onChange={this.props.onChange}
+                    labelText={this.props.labelText}
+                    id={this.props.id}>
                     {Filtered}
-                </Dropdown>                
+                </Dropdown>
             </div>
         );
     }
