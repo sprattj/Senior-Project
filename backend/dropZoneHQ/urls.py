@@ -21,6 +21,7 @@ from django.views.generic import TemplateView
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.http import HttpRequest
+from django.contrib.auth import views
 
 sys.path.append('../')
 
@@ -42,4 +43,7 @@ urlpatterns = [
     url(r'^(?i)item[s]?[/]?$', ItemList.as_view()),
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+ + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    url(r'^login/$', views.login, name='login'),
+    url(r'^logout/$', views.logout, name='logout'),
+]

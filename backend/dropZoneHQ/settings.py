@@ -16,8 +16,10 @@ import sys
 #sys.path.insert(0, '/opt/python/current/app')
 
 import django
+<<<<<<< HEAD
 from rest_framework.settings import api_settings
 from os.path import abspath, basename, dirname, join, normpath
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))  
@@ -33,8 +35,7 @@ SECRET_KEY = '_@j1a4@c3ap8w92s+p-$_kqap%au7bl6@)$b*@$uwr+95#2^z^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#CHANGE FOR PRODUCTION
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.dropzone.com']
 
 # Application definition
 
@@ -47,23 +48,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'datastore.apps.DropZoneHQAppConfig',
-	'corsheaders'
 ]
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.messages.middleware.MessageM iddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'dropZoneHQ.urls'
+SESSION_ENGINE = [
+    'django.contrib.sessions.backends.signed_cookies'
+]
 
-CORS_ORIGIN_ALLOW_ALL = True
+ROOT_URLCONF = 'dropZoneHQ.urls'
 
 TEMPLATES = [
     {
@@ -81,17 +82,6 @@ TEMPLATES = [
     },
 ]
 
-"""
-REST_FRAMEWORK = {
-    'ENCODING': (
-        'api_settings.STRICT_JSON'
-    ),
-    'DEFAULT_RENDERER_SETTINGS': (
-        'rest_framework.renderers.JSONRenderer'
-    )
-}
-"""
-
 WSGI_APPLICATION = 'dropZoneHQ.wsgi.application'
 
 
@@ -100,7 +90,7 @@ WSGI_APPLICATION = 'dropZoneHQ.wsgi.application'
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql',
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ['RDS_DB_NAME'],
             'USER': os.environ['RDS_USERNAME'],
             'PASSWORD': os.environ['RDS_PASSWORD'],
@@ -108,7 +98,7 @@ if 'RDS_DB_NAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }
     }
-else:
+else :
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -119,7 +109,6 @@ else:
             'PORT': 3306
         }
     }
-
 
 
 # Password validation
@@ -166,4 +155,4 @@ STATIC_URL = '/static/'
 STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
 STATICFILES_DIRS = ()  
 
-#django.setup()
+django.setup()

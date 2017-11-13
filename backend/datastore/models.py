@@ -10,7 +10,10 @@
 
 from __future__ import unicode_literals
 from django.db import models
-
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
+from . import util
+from random import random
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -92,16 +95,40 @@ class DjangoMigrations(models.Model):
 
 
 # A location that is used as a skydiving drop zone.
-class Dropzones(models.Model):
+class Dropzones(User):
 
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
-    # Name of drop zone
-    name = models.CharField(unique=True, max_length=45)
-    # Drop zone logon password
-    password = models.CharField(max_length=45)
     # The location of the drop zone
-    location = models.CharField(max_length=45)
+    location = models.CharField(unique=True,max_length=45)
+
+    def get_dropzone(self, pk=None):
+        try :
+            return Dropzones.objects.get(pk)
+        except:
+            return None
+
+    # Checks if a location is in use for a dropzone.
+    def dropzoneLocationInUse(location=None):
+        try :
+            return Dropzones.objects.filter(location)
+        except :
+            return None
+
+    # Checks if a name is in use for a dropzone.
+    def dropzoneUsernameInUse(username=None):
+        try :
+            return Dropzones.objects.filter(username)
+        except :
+            return None
+
+    # Chcek if the email has been used in the database
+    def dropzoneEmailInUse(email=None):
+        try :
+            return Dropzones.objects.filter(email)
+        except :
+            return None
+
 
     class Meta:
         managed = True
@@ -124,15 +151,58 @@ class EmployeeRoles(models.Model):
 
 # Employees the work at the drop zone
 class Employees(models.Model):
+    first_name = models.CharField(max_length=45)
+    last_name = models.CharField(max_length=45)
+    email = models.EmailField()
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
-    first_name = models.CharField(max_length=45)
-    last_name = models.CharField(max_length=45)
-    pin = models.IntegerField()
-    employment_date = models.DateField()
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
+    #pin Sha hash
+    pin = models.CharField(max_length=45, blank=True)
+    employment_date = models.DateTimeField(auto_now_add=True)
+
+    #check is the pin of an employee matches the pin given
+    def checkEmployeePin(pin, employee):
+        if pin or employee is None:
+            return None
+        else:
+            salt = int(pin[:3])
+            if BCryptSHA256PasswordHasher.encode(password=pin, salt=salt) == employee.pin:
+                return True
+            else:
+                return False
+
+    #hash a pin to a given value
+    def pinToHash(pin):
+        if pin is None:
+            return None
+        else:
+            salt = int(pin[:3])
+            return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
+
+    def createRandomUserPin(userPK=None):
+        if userPK is None:
+            return None
+        else:
+            salt = random.randint(0, 1000)
+            key = util.stringToThree(str(salt)) + str(userPK % 1000)
+            return BCryptSHA256PasswordHasher.encode(key, salt)
+
+    # Checks if a pin is in use for an Employee.
+    #returns true if the pin is in use and false if the pin is not being used
+    def employeePinInUse(self, pin=None):
+        emp = Employees.objects.get()
+        for e in emp :
+            if self.checkEmployeePin(pin,e) :
+                return e
+        return None
+
+    # Chcek if the email has been used in the database
+    def employeeEmailInUse(email=None):
+        use = Employees.objects.filter(email)
+        return use
 
     class Meta:
         managed = True
@@ -368,6 +438,7 @@ class Signouts(models.Model):
         app_label = 'dropZoneHQ'
         managed = True
         db_table = 'signouts'
+
 
 
 # Descriptive view for all canopies in the inventory
