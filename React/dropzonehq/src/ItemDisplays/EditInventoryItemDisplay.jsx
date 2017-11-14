@@ -5,6 +5,8 @@ import RentButton from '../Buttons/RentButton.jsx';
 // import PropTypes from 'prop-types';
 import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
+import UncontrolledTextInput from '../UnControlledTextInput.jsx';
+import SaveItemDetailsBtn from '../Buttons/SaveItemDetailsBtn.jsx';
 // import InlineEdit from 'react-edit-inline';
 
 
@@ -20,26 +22,33 @@ export default class EditInventoryItemDisplay extends React.Component
 
         this.inventoryItemNumChanged = this.inventoryItemNumChanged.bind(this);
         this.state = {
-            itemNum:  this.props.number //'' // initially is number that's passed
+            itemNum:  this.props.number // initially is number that's passed
         }
     }
 
     inventoryItemNumChanged(e) {
-        this.setState({ itemNum: this.props.number // saved into state var, so it rerenders
-            // itemNum: e.target.value,
+        console.log("in inventoryItemNumChanged ");
+        this.setState({ itemNum: e.target.value
         });
         
         // var editInvItem = document.getElementById('editInventoryItem');
         // editInvItem.value = this.state.itemNum;
       }
 
-    saveToState()
-    {
-        this.setState({ itemNum: this.props.number // saved into state var, so it rerenders
-            // itemNum: e.target.value,
-        });
-       // return this.state.itemNum;
-    }
+      // TODO for each Item Detail field: 
+      //    onBlur: inventoryItemNumChanged(e)
+      // inventoryItemNumChanged()
+      // {
+            // this.setState itemNum 
+      // }
+
+      // CONTINUE TODO: 
+      // save(){
+      //    this.props.saveFunction(this.state.itemNum, this.state.itemDesc, .... this.state.itemType);
+      // }
+
+      // IN INVENTORYSCREEN:
+      // <EditInventoryItemDisplay saveFunction={this.addItem}
 
     render() {
 
@@ -55,7 +64,15 @@ export default class EditInventoryItemDisplay extends React.Component
                                             <div>
                                                 <InputGroup>
                                                     <InputGroupAddon >Item #: </InputGroupAddon>
-                                                    <Input id="editInventoryItem" type='text' value={this.props.number} onChange={this.inventoryItemNumChanged}  />
+                                                    {/* <Input id="editInventoryItem" type='text' value={this.props.number} onChange={this.inventoryItemNumChanged}  /> */}
+                                                    <UncontrolledTextInput
+                                                        // inputProps      = {{className: 'inputTxtBoxes'}}
+                                                        onBlur          = {this.inventoryItemNumChanged}
+                                                        id              = "myID"
+                                                        defaultText     = {this.props.number}
+                                                       // newTextValue        = {this.inventoryItemNumChanged}
+                                                       // changeIndicator = {this.props.number}
+                                                    />
                                                 </InputGroup>
                                                 <br />
                                                 <InputGroup>
@@ -81,11 +98,15 @@ export default class EditInventoryItemDisplay extends React.Component
                                     </Row>
                                     <Row>
                                         <Col>
-                                            {this.props.button}
+                                            
                                         </Col>
                                     </Row>
                                 </div>
-                            } />
+                            } 
+                            footerText = {
+                                <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} newFieldsValue={<UncontrolledTextInput />} />
+                            }
+                            />
                     </Col>
                 </Row>
             </div>
