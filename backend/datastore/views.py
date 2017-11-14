@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from django.http import JsonResponse
 from .serializers import *
 import datetime
@@ -188,6 +188,16 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
+    def post(self, request, *args, **kwargs):
+
+        employee_id = request.data.get('jumpmaster_id')
+        jumpmaster = get_emp_full_name(employee_id)
+
+        post_signout(request)
+        post_emp_signout(employee_id)
+        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+
 
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
@@ -196,20 +206,73 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     def patch(self, request, *args, **kwargs):
         employee_id = request.data.get('packer_id')
         signout_id = request.data.get('signout_id')
-        EmployeesSignouts.objects.create(signout_id=signout_id,
-                                         employee_id=employee_id,
-                                         packed_signout='packed',
-                                         timestamp=datetime.datetime.now())
-        packed_by = Employees.objects.get(employee_id=employee_id).first_name + ' ' + \
-            Employees.objects.get(employee_id=employee_id).last_name
-        return JsonResponse(data={'packer_id': employee_id, 'packed_by': packed_by})
+        patch_emp_signout(employee_id, signout_id)
+
+        packed_by = get_emp_full_name(employee_id)
+        data = {'packer_id': employee_id, 'packed_by': packed_by}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
 class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
+    def post(self, request, *args, **kwargs):
+
+        employee_id = request.data.get('jumpmaster_id')
+        jumpmaster = get_emp_full_name(employee_id)
+
+        post_signout(request)
+        post_emp_signout(employee_id)
+        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+
 
 class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
+
+    def patch(self, request, *args, **kwargs):
+        employee_id = request.data.get('packer_id')
+        signout_id = request.data.get('signout_id')
+
+        patch_emp_signout(employee_id, signout_id)
+
+        packed_by = get_emp_full_name(employee_id)
+        data = {'packer_id': employee_id, 'packed_by': packed_by}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
+
+def post_signout(request):
+    rig_id = request.data.get('rig_id')
+    load_number = request.data.get('load_number')
+
+    Signouts.objects.create(rig_id=rig_id, load_number=load_number)
+    return
+
+
+def post_emp_signout(employee_id):
+    signout_id_dict = Signouts.objects.values().get(signout_id=
+                                                    Signouts.objects.latest('signout_id')
+                                                    .serializable_value('signout_id'))
+    signout_id = signout_id_dict.get("signout_id", "")
+
+    EmployeesSignouts.objects.create(signout_id=signout_id,
+                                     employee_id=employee_id,
+                                     packed_signout='signout',
+                                     timestamp=datetime.datetime.now())
+    return
+
+
+def patch_emp_signout(employee_id, signout_id):
+    EmployeesSignouts.objects.create(signout_id=signout_id,
+                                     employee_id=employee_id,
+                                     packed_signout='packed',
+                                     timestamp=datetime.datetime.now())
+    return
+
+
+def get_emp_full_name(employee_id):
+    emp_name = Employees.objects.get(employee_id=employee_id).first_name + ' ' + \
+        Employees.objects.get(employee_id=employee_id).last_name
+    return emp_name
