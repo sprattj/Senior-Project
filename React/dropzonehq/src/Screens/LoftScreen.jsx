@@ -48,7 +48,6 @@ export default class LoftScreen extends React.Component {
         this.dismiss = this.dismiss.bind(this);
         this.removeClaim = this.removeClaim.bind(this);
 
-
         var queueItems = [];
         var warningItems = [];
 
