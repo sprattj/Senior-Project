@@ -25,18 +25,29 @@ export default class LoftScreen extends React.Component {
         super(props);
 
         this.URLsection = "/claims";
+        
+        
+        this.getClaims = this.getClaims.bind(this);
+        
+        this.getQueueItems = this.getQueueItems.bind(this);
+        this.populateQueue = this.populateQueue.bind(this);
         this.addQueueItem = this.addQueueItem.bind(this);
         this.selectQueueItem = this.selectQueueItem.bind(this);
         this.dismissQueueItem = this.dismissQueueItem.bind(this);
         this.completeQueueItem = this.completeQueueItem.bind(this);
+        this.addItemToQueueFromJSON = this.addItemToQueueFromJSON.bind(this);
 
+        this.getWarnings = this.getWarnings.bind(this);
+        this.populateWarnings = this.populateWarnings.bind(this);
         this.addWarning = this.addWarning.bind(this);
         this.selectWarning = this.selectWarning.bind(this);
         this.dismissClaim = this.dismissClaim.bind(this);
         this.moveClaimToQueue = this.moveClaimToQueue.bind(this);
+        this.addClaimToListFromJSON = this.addClaimToListFromJSON.bind(this);
 
         this.dismiss = this.dismiss.bind(this);
         this.removeClaim = this.removeClaim.bind(this);
+
 
         var queueItems = [];
         var warningItems = [];
@@ -77,7 +88,7 @@ export default class LoftScreen extends React.Component {
             </div>
         }
 
-        for (var i = 0; i < 20; i++) {
+        for (var i = 0; i < 10; i++) {
             queueItems.push(<QueueListItem
                 key={i}
                 qID={i}
@@ -104,6 +115,109 @@ export default class LoftScreen extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.getQueueItems();
+        this.getWarnings();
+    }
+
+    //Fetch claims from database
+//////////////////////////////////////////////////////////
+    getQueueItems() {
+        var isQueue = true;
+        this.getClaims(isQueue);
+    }
+
+    getWarnings() {
+        var isQueue = false;
+        this.getClaims(isQueue);
+    }
+
+    getClaims(isQueue) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var endpoint = "warnings";
+        if (isQueue) {
+            endpoint = "queue";
+        }
+        var url = rootURL + this.URLsection + "/" + endpoint;
+        var self = this;
+
+        fetch(url, {
+            method: "GET",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Getting " + endpoint + " failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            if (isQueue) {
+                self.populateQueue(responseData);
+            } else {
+                self.populateWarnings(responseData);
+            }
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+    //Populate frontend from json data
+//////////////////////////////////////////////////////////
+    populateQueue(queueData) {
+        var queueItems = [];
+        for (var i = 0; i < queueData.length; i++) {
+            var nextQItem =
+                <QueueListItem
+                    key={i}
+                    qID={i}
+                    selected={false}
+                    onClick={this.selectQueueItem}
+                    dismiss={this.dismissQueueItem}
+                    complete={this.completeQueueItem}
+                    severity={queueData[i].severity}
+                    rig_id={queueData[i].rig_id}
+                    description={queueData[i].description}
+                    submit_date={queueData[i].submit_date}
+                    due_date={queueData[i].due_date}
+                />;
+            queueItems.push(nextQItem);
+        }
+        this.setState({
+            queueListItems: queueItems
+        });
+    }
+
+    populateWarnings(warningData) {
+        var warnings = [];
+        for (var i = 0; i < warningData.length; i++) {
+            var nextWarning = 
+            <WarningListItem
+                key={this.state.warningListItems.length}
+                warnID={this.state.warningListItems.length}
+                selected={false}
+                onClick={this.selectWarning}
+                addToQueue={this.moveClaimToQueue}
+                dismiss={this.dismissClaim}
+                severity={warningData[i].severity}
+                rig_id={warningData[i].rig_id}
+                description={warningData[i].description}
+                submit_date={warningData[i].submit_date}
+                due_date={warningData[i].due_date} 
+            />
+            warnings.push(nextWarning);
+        }
+        this.setState({
+            warningListItems: warnings
+        });
+    }
+
+    
+    //Selecting
+//////////////////////////////////////////////////////////
     selectQueueItem(newIndex) {
         //grab the current qItems
         var newQItems = Array.from(this.state.queueListItems);
@@ -153,8 +267,8 @@ export default class LoftScreen extends React.Component {
         });
     }
 
-
-
+    //Changing status of claims
+//////////////////////////////////////////////////////////
     moveClaimToQueue(claim_id, warnID) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
@@ -265,25 +379,120 @@ export default class LoftScreen extends React.Component {
         this.removeClaim(claim_id, qID, isInQueue, "COMPLETE");
     }
 
-    addQueueItem() {
+    //Adding new claims to database and frontend
+//////////////////////////////////////////////////////////
+    //add a claim to the database and the view
+    addClaim(rig_id, severity, description, isQueueItem) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + this.URLsection + "/";
+
+        var status = "";
+        if (isQueueItem) {
+            status = "IN PROGRESS"
+        } else {
+            status = "PENDING"
+        }
+
+        var self = this;
+        var requestVariables = {
+            rig_id: rig_id,
+            severity: severity,
+            status: status,
+            description: description
+        };
+
+        fetch(url, {
+            method: "POST",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Adding item failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            if (isQueueItem) {
+                self.addItemToQueueFromJSON(responseData);
+            } else {
+                self.addClaimToListFromJSON(responseData);
+            }
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
         console.log("clicked add queue item")
     }
 
-    addWarning() {
-        console.log("clicked add warning")
+    //add a queue item to the database and the view
+    addQueueItem(rig_id, severity, description) {
+        var isQueueItem = true;
+        this.addClaim(rig_id, severity, description, isQueueItem);
     }
 
+    //add a warning to the database and the view
+    addWarning(rig_id, severity, description) {
+        var isQueueItem = false;
+        this.addClaim(rig_id, severity, description, isQueueItem);
+    }
 
+    //take a JSON for a claim and add a queuelistitem to the queue
+    addItemToQueueFromJSON(qItemData) {
+        var newQItem =
+            <QueueListItem
+                key={this.state.queueListItems.length}
+                qID={this.state.queueListItems.length}
+                selected={false}
+                onClick={this.selectQueueItem}
+                dismiss={this.dismissQueueItem}
+                complete={this.completeQueueItem}
+                severity={qItemData.severity}
+                rig_id={qItemData.rig_id}
+                description={qItemData.description}
+                submit_date={qItemData.submit_date}
+                due_date={qItemData.due_date}
+            />;
+
+        var newQItems = Array.from(this.state.queueListItems);
+        newQItems.push(newQItem);
+        this.setState({
+            queueListItems: newQItems
+        });
+    }
+    //take a JSON for a claim and add a warning to the warninglist
+    addClaimToListFromJSON(claimData) {
+        var newClaim =
+            <WarningListItem
+                key={this.state.warningListItems.length}
+                warnID={this.state.warningListItems.length}
+                selected={false}
+                onClick={this.selectWarning}
+                addToQueue={this.moveClaimToQueue}
+                dismiss={this.dismissClaim}
+                severity={claimData.severity}
+                rig_id={claimData.rig_id}
+                description={claimData.description}
+                submit_date={claimData.submit_date}
+                due_date={claimData.due_date} 
+            />
+        var newClaims = Array.from(this.state.warningListItems);
+        newClaims.push(newClaim);
+        this.setState({
+            warningListItems: newClaims
+        });
+    }
+
+    //Rendering
+//////////////////////////////////////////////////////////
     render() {
         var tabHeaders = ['Schedule', 'Queue', 'Warnings'];
         var tabContents = [this.state.scheduleDisplay,
         this.state.queueDisplay,
         this.state.warningDisplay];
-        var columns = [{
-            Header: 'Queue Item',
-            accessor: 'name', // String-based value accessors!
-            width: 150
-        }];
         return (
             <Row className="viewport">
                 <Col xs={{ size: 6 }} md={{ size: 3 }}>
