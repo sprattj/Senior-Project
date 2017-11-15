@@ -42,8 +42,7 @@ urlpatterns = [
     url(r'^(?i)item[s]?/(?P<pk>[0-9]+)[/]?$', ItemDetail.as_view()),
     url(r'^(?i)item[s]?[/]?$', ItemList.as_view()),
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
-    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
- + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^login/$', views.LoginView.as_view(), name='login'),
     url(r'^logout/$', views.LogoutView.as_view(), name='logout'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
