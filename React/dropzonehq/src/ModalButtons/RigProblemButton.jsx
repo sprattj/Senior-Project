@@ -21,14 +21,14 @@ export default class RigProblemButton extends React.Component {
     
     //keep state for the values of the components in this modal
     this.state = {
-      noteText: 'Input text here..',
-      selectedRig: 'rig',
-      selectedProblem: 'problem'
+      description: 'Input text here..',
+      rig_id: 0,
+      severity: 'CRITICAL'
     }
   }
 
   verify(){
-    this.props.verify(this.state.selectedRig, this.state.selectedProblem, this.state.noteText)
+    this.props.verify(this.state.rig_id, this.state.severity, this.state.description)
   }
 
   //when the text area text is changed, update our state
@@ -36,21 +36,18 @@ export default class RigProblemButton extends React.Component {
     this.setState({
       noteText: text
     })
-    console.log(this.state.noteText);
   }
   //when the selected rig is changed, update our state
   rigChanged(id, rig) {
     this.setState({
       selectedRig: rig
     })
-    console.log(this.state.selectedRig);
   }
   //when the selected problem type is changed, update our state
   problemChanged(id, problem) {
     this.setState({
       selectedProblem: problem
     })
-    console.log(this.state.selectedProblem);
   }
 
   //pass the corresponding onchange methods down to the child components so 

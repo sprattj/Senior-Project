@@ -12,6 +12,8 @@ import './LoftScreen.css';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
+import { rootURL } from '../restInfo.js';
+import { toast } from 'react-toastify';
 
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
@@ -22,13 +24,20 @@ export default class LoftScreen extends React.Component {
     constructor(props) {
         super(props);
 
+        this.URLsection = "/claims";
         this.addQueueItem = this.addQueueItem.bind(this);
-        this.addWarning = this.addWarning.bind(this);
-        this.dismissQueueItem = this.dismissQueueItem.bind(this);
-        this.dismissWarning = this.dismissWarning.bind(this);
         this.selectQueueItem = this.selectQueueItem.bind(this);
+        this.dismissQueueItem = this.dismissQueueItem.bind(this);
+        this.completeQueueItem = this.completeQueueItem.bind(this);
+
+        this.addWarning = this.addWarning.bind(this);
         this.selectWarning = this.selectWarning.bind(this);
-        
+        this.dismissClaim = this.dismissClaim.bind(this);
+        this.moveClaimToQueue = this.moveClaimToQueue.bind(this);
+
+        this.dismiss = this.dismiss.bind(this);
+        this.removeClaim = this.removeClaim.bind(this);
+
         var queueItems = [];
         var warningItems = [];
 
@@ -69,40 +78,48 @@ export default class LoftScreen extends React.Component {
         }
 
         for (var i = 0; i < 20; i++) {
-            queueItems.push(<QueueListItem key={i} qID={i} selected={false}
-                            onClick={this.selectQueueItem} priority="Urgent" 
-                            name="Name of Thing" service="Service Thing" />);
-            warningItems.push(<WarningListItem key={i} warnID={i} selected={false} 
-                                onClick={this.selectWarning} rig="S9" problem="Minor tear" />);
+            queueItems.push(<QueueListItem
+                key={i}
+                qID={i}
+                selected={false}
+                onClick={this.selectQueueItem}
+                dismiss={this.dismissQueueItem}
+                complete={this.completeQueueItem}
+                severity={"COSMETIC"}
+                rig_id={1}
+                description={"there's a problemo"}
+                submit_date={""}
+                due_date={""} />);
+            warningItems.push(<WarningListItem
+                key={i} warnID={i}
+                selected={false}
+                onClick={this.selectWarning}
+                addToQueue={this.moveClaimToQueue}
+                dismiss={this.dismissClaim}
+                severity={"COSMETIC"}
+                rig_id={1}
+                description={"there's a problemo"}
+                submit_date={""}
+                due_date={""} />);
         }
     }
 
     selectQueueItem(newIndex) {
+        //grab the current qItems
         var newQItems = Array.from(this.state.queueListItems);
         var oldQItem = newQItems[this.state.selectedQNdx];
 
-        var updatedOldItem = <QueueListItem 
-                                key={oldQItem.props.qID} 
-                                qID={oldQItem.props.qID} 
-                                selected={false}
-                                onClick={oldQItem.props.onClick}
-                                priority={oldQItem.props.priority} 
-                                name={oldQItem.props.name}
-                                service={oldQItem.props.service}
-                            />
-        newQItems[this.state.selectedQNdx] = updatedOldItem;
+        //grab the qItem that is currently selected and deselect it
+        var deselectedOldItem = <QueueListItem {...oldQItem.props} selected={false} />
+        //put the deselected version back
+        newQItems[this.state.selectedQNdx] = deselectedOldItem;
 
+        //take the new selected qItem and select it
         var newItem = newQItems[newIndex];
-        var updatedNewItem = <QueueListItem 
-                                key={newItem.props.qID}
-                                qID={newItem.props.qID} 
-                                selected={true}
-                                onClick={newItem.props.onClick} 
-                                priority={newItem.props.priority} 
-                                name={newItem.props.name}
-                                service={newItem.props.service} 
-                            />
-        newQItems[newIndex] = updatedNewItem;
+        var selectedNewItem = <QueueListItem {...newItem.props} selected={true} />
+        //put the deselected version back
+        newQItems[newIndex] = selectedNewItem;
+
         //update the state with the new rows so it rerenders
         this.setState({
             queueListItems: newQItems,
@@ -111,53 +128,151 @@ export default class LoftScreen extends React.Component {
         });
     }
 
-    selectWarning(newIndex){
-        var newWarnings = Array.from(this.state.warningListItems);
-        var oldWarn = newWarnings[this.state.selectedWarnNdx];
+    selectWarning(newIndex) {
+        //grab the current claims
+        var newClaims = Array.from(this.state.warningListItems);
+        //grab the claim that is currently selected
+        var oldClaim = newClaims[this.state.selectedWarnNdx];
 
-        var updatedOldWarn = <WarningListItem 
-                                key={oldWarn.props.warnID} 
-                                warnID={oldWarn.props.warnID} selected={false}
-                                onClick={oldWarn.props.onClick} 
-                                rig={oldWarn.props.rig} 
-                                problem={oldWarn.props.problem}
-                            />
-        newWarnings[this.state.selectedWarnNdx] = updatedOldWarn;
+        //take the claim that is currently selected and deselect it
+        var deselectedClaim = <WarningListItem {...oldClaim.props} selected={false} />
+        //put the deselected version back
+        newClaims[this.state.selectedWarnNdx] = deselectedClaim;
 
-        var newWarn = newWarnings[newIndex];
-        var updatedNewWarn = <WarningListItem 
-                                key={newWarn.props.warnID} 
-                                warnID={newWarn.props.warnID} 
-                                selected={true}
-                                onClick={newWarn.props.onClick} 
-                                rig={newWarn.props.rig} 
-                                problem={newWarn.props.problem} 
-                            />
-        newWarnings[newIndex] = updatedNewWarn;
-        //update the state with the new rows so it rerenders
+        //take the new selected claim and select it
+        var newClaim = newClaims[newIndex];
+        var selectedNewClaim = <WarningListItem {...newClaim.props} selected={true} />
+        //put the selected version back
+        newClaims[newIndex] = selectedNewClaim;
+
+        //update the state with the new claims so it rerenders
         this.setState({
-            warningListItems: newWarnings,
+            warningListItems: newClaims,
             selectedWarnNdx: newIndex,
             activeTab: 2
         });
+    }
+
+
+
+    moveClaimToQueue(claim_id, warnID) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + this.URLsection + "/" + claim_id;
+
+        var self = this;
+        var requestVariables = {
+            status: "IN PROGRESS"
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Queueing claim failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var oldClaim = self.state.warningListItems[warnID];
+            var newNdx = self.state.queueListItems.length;
+            var newQItem = <QueueListItem
+                {...oldClaim.props}
+                key={newNdx}
+                qID={newNdx}
+                selected={false}
+                onClick={self.selectQueueItem}
+                complete={this.completeQueueItem}
+                dismiss={this.dismissQueueItem}
+            />
+            var newClaims = Array.from(this.state.warningListItems);
+            newClaims.splice(warnID, 1);
+            var newQItems = Array.from(this.state.queueListItems);
+            newQItems.push(newQItem);
+            self.setState({
+                warningListItems: newClaims,
+                queueListItems: newQItems
+            });
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    removeClaim(claim_id, index, isInQueue, endStatus) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + this.URLsection + "/" + claim_id;
+
+        var self = this;
+        var requestVariables = {
+            status: endStatus
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Dismissing item failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            if (isInQueue) {
+                var newQItems = Array.from(this.state.queueListItems);
+                newQItems.splice(index, 1);
+                self.setState({
+                    queueListItems: newQItems
+                });
+            } else {
+                var newClaims = Array.from(this.state.warningListItems);
+                newClaims.splice(index, 1);
+                self.setState({
+                    warningListItems: newClaims
+                });
+            }
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+    dismiss(claim_id, index, isInQueue) {
+        this.removeClaim(claim_id, index, isInQueue, "DISMISSED");
+    }
+
+    dismissClaim(claim_id, warnID) {
+        var isInQueue = false;
+        this.dismiss(claim_id, warnID, isInQueue);
+    }
+
+    dismissQueueItem(claim_id, qID) {
+        var isInQueue = true;
+        this.dismiss(claim_id, qID, isInQueue);
+    }
+
+    completeQueueItem(claim_id, qID) {
+        var isInQueue = true;
+        this.removeClaim(claim_id, qID, isInQueue, "COMPLETE");
     }
 
     addQueueItem() {
         console.log("clicked add queue item")
     }
 
-    dismissQueueItem() {
-
-    }
-
     addWarning() {
         console.log("clicked add warning")
     }
 
-    dismissWarning() {
-
-    }
-  
 
     render() {
         var tabHeaders = ['Schedule', 'Queue', 'Warnings'];
@@ -181,7 +296,7 @@ export default class LoftScreen extends React.Component {
                         {this.state.queueListItems}
                     </QueueList>
                 </Col>
-                
+
                 <Col xs={{ size: 12 }} md={{ size: 6 }}>
                     <Card>
                         <CardHeader>Main View</CardHeader>
