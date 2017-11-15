@@ -134,14 +134,14 @@ class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RigAuditTrailSerializer
 
 
-class ServiceList(generics.ListCreateAPIView):
-    queryset = Services.objects.all()
-    serializer_class = ServiceSerializer
+class ClaimList(generics.ListCreateAPIView):
+    queryset = Claims.objects.all()
+    serializer_class = ClaimSerializer
 
 
-class ServiceDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Services.objects.all()
-    serializer_class = ServiceSerializer
+class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Claims.objects.all()
+    serializer_class = ClaimSerializer
 
 
 class SignoutList(generics.ListCreateAPIView):
@@ -174,12 +174,12 @@ class AllItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AllItemSerializer
 
 
-class EmployeeVsSignoutList(generics.ListCreateAPIView):
+class EmployeeVsSignoutList(generics.ListAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-class EmployeeVsSignoutDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeVsSignoutDetail(generics.RetrieveAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -259,7 +259,7 @@ def post_emp_signout(employee_id):
 
     EmployeesSignouts.objects.create(signout_id=signout_id,
                                      employee_id=employee_id,
-                                     packed_signout='signout',
+                                     packed_signout=EmployeesSignouts.SIGNOUT,
                                      timestamp=datetime.datetime.now())
     return
 
@@ -267,7 +267,7 @@ def post_emp_signout(employee_id):
 def patch_emp_signout(employee_id, signout_id):
     EmployeesSignouts.objects.create(signout_id=signout_id,
                                      employee_id=employee_id,
-                                     packed_signout='packed',
+                                     packed_signout=EmployeesSignouts.PACKED,
                                      timestamp=datetime.datetime.now())
     return
 

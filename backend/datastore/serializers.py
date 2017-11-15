@@ -143,10 +143,11 @@ class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('role_id', 'role')
 
 
-class ServiceSerializer(serializers.HyperlinkedModelSerializer):
+class ClaimSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Services
-        fields = ('service_id', 'severity', 'service_type', 'description')
+        model = Claims
+        fields = ('claim_id', 'severity', 'status', 'description',
+                  'submitter_id', 'handler_id', 'submit_date', 'due_date', 'complete_date')
 
 
 class SignoutSerializer(serializers.HyperlinkedModelSerializer):

@@ -42,5 +42,6 @@ urlpatterns = [
     url(r'^(?i)item[s]?/(?P<pk>[0-9]+)[/]?$', ItemDetail.as_view()),
     url(r'^(?i)item[s]?[/]?$', ItemList.as_view()),
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
-    url(r'^(?i)rental[s]?[/]?$', RentableItemList.as_view())
+    url(r'^(?i)rental[s]?[/]?$', RentableItemList.as_view()),
+    url(r'^(?i)claim[s]?[/]?$', ClaimList.as_view())
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

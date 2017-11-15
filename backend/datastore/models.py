@@ -67,6 +67,42 @@ class Canopies(models.Model):
         app_label = 'dropZoneHQ'
 
 
+# Claims employees make and service
+class Claims(models.Model):
+    CRITICAL = 'CRITICAL'
+    NON_CRITICAL = 'NON-CRITICAL'
+    COSMETIC = 'COSMETIC'
+    SEVERITY_CHOICES = ((CRITICAL, 'Critical'), (NON_CRITICAL, 'Non-critical'), (COSMETIC, 'Cosmetic'))
+    PENDING = 'PENDING'
+    IN_PROGRESS = 'IN-PROGRESS'
+    COMPLETE = 'COMPLETE'
+    DISMISSED = 'DISMISSED'
+    STATUS_CHOICES = ('Pending', 'In-Progress', 'Complete', 'Dismissed')
+
+    # Autoincrement integer PK
+    claim_id = models.AutoField(primary_key=True)
+    # How critical is this claim
+    severity = models.CharField(max_length=12, choices=SEVERITY_CHOICES)
+    # Status of the claim
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES)
+    # Description of the problem that needs to be serviced.
+    description = models.CharField(max_length=45, blank=True, null=True)
+    submitter = models.OneToOneField('Employees', models.DO_NOTHING)
+    handler = models.OneToOneField('Employees', models.DO_NOTHING)
+
+    # Date the claim was submitted
+    submit_date = models.DateField()
+    # Date the claim is due
+    due_date = models.DateField()
+    # Date the claim was completed
+    complete_date = models.DateField()
+
+    class Meta:
+        managed = True
+        db_table = 'claims'
+        app_label = 'dropZoneHQ'
+
+
 # An item that holds a canopy
 class Containers(models.Model):
 
@@ -132,6 +168,7 @@ class Employees(models.Model):
     last_name = models.CharField(max_length=45)
     pin = models.IntegerField()
     employment_date = models.DateField()
+    is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
 
     class Meta:
@@ -178,6 +215,7 @@ class EmployeesRentals(models.Model):
         app_label = 'dropZoneHQ'
 
 
+'''
 # Bridge between Employees and Services. Many employees can perform many services.
 class EmployeesServices(models.Model):
     employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
@@ -192,13 +230,16 @@ class EmployeesServices(models.Model):
         db_table = 'employees_services'
         unique_together = (('employee', 'service'),)
         app_label = 'dropZoneHQ'
+'''
 
 
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
+    PACKED = 'PACKED'
+    SIGNOUT = 'SIGNOUT'
     PACKED_SIGNOUT_CHOICES = (
-        ('PACKED', 'packed'),
-        ('SIGNOUT', 'signout')
+        (PACKED, 'packed'),
+        (SIGNOUT, 'signout')
     )
     employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
     signout = models.ForeignKey('Signouts', models.DO_NOTHING)
@@ -241,7 +282,8 @@ class Items(models.Model):
     brand = models.CharField(max_length=45, blank=True, null=True)
     description = models.CharField(max_length=45, blank=True, null=True)
     # Whether or not this item is rentable
-    is_rentable = models.CharField(max_length=4)
+    # is_rentable = models.CharField(max_length=4)
+    is_rentable = models.BooleanField(max_length=4)
     rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
@@ -339,26 +381,6 @@ class RigsAuditTrail(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Services that employees need to perform
-class Services(models.Model):
-
-    # Autoincrement integer PK
-    service_id = models.AutoField(primary_key=True)
-    # How critical is this service
-    severity = models.CharField(max_length=12)
-    # What thype of service is being performed.
-    service_type = models.CharField(max_length=11)
-    # Description of the problem that needs to be serviced.
-    description = models.CharField(max_length=45, blank=True, null=True)
-
-    employees = models.ManyToManyField('Employees', through='EmployeesServices')
-
-    class Meta:
-        managed = True
-        db_table = 'services'
-        app_label = 'dropZoneHQ'
-
-
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.
 class Signouts(models.Model):
     # Autoincrement integer PK
@@ -382,7 +404,7 @@ class AllCanopies(models.Model):
     type = models.CharField(max_length=45)
     serial_number = models.CharField(max_length=45)
     rig = models.ForeignKey(Rigs, models.DO_NOTHING)
-    is_rentable = models.CharField(max_length=45)
+    is_rentable = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
@@ -412,7 +434,7 @@ class AllItems(models.Model):
     container_sn = models.CharField(max_length=45)
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
-    is_rentable = models.CharField(max_length=45)
+    is_rentable = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
