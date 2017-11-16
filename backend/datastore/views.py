@@ -4,16 +4,6 @@ from .serializers import *
 import datetime
 
 
-class ActionList(generics.ListCreateAPIView):
-    queryset = Actions.objects.all()
-    serializer_class = ActionSerializer
-
-
-class ActionDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Actions.objects.all()
-    serializer_class = ActionSerializer
-
-
 class AADList(generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer

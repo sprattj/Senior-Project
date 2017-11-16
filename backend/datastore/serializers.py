@@ -9,12 +9,6 @@ from rest_framework import serializers
 from .models import *
 
 
-class ActionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Actions
-        fields = ('action_id', 'type')
-
-
 class AADSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AutomaticActivationDevices

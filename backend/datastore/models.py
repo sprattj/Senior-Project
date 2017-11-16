@@ -12,22 +12,6 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-# Actions that can be performed by employees
-class Actions(models.Model):
-
-    # Autoincrement integer PK
-    action_id = models.AutoField(primary_key=True)
-    # Type of action being performed
-    type = models.CharField(max_length=45)
-
-    class Meta:
-        # Whether or not dropZoneHQ can create, modify, or delete this table
-        managed = True
-        # Name of table in DB
-        db_table = 'actions'
-        app_label = 'dropZoneHQ'
-
-
 # An item used on a rig that automatically deploys a parachute at a certain altitude
 class AutomaticActivationDevices(models.Model):
 
@@ -174,20 +158,6 @@ class Employees(models.Model):
     class Meta:
         managed = True
         db_table = 'employees'
-        app_label = 'dropZoneHQ'
-
-
-# Bridge between Employees and Actions. Many employees can perform many actions.
-class EmployeesActions(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
-    action = models.ForeignKey(Actions, models.DO_NOTHING)
-    # Timestamp for when this action was performed
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'employees_actions'
-        unique_together = (('employee', 'action'),)
         app_label = 'dropZoneHQ'
 
 
