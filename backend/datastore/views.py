@@ -212,13 +212,21 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
         data = {'packer_id': employee_id, 'packed_by': packed_by}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
+    def destroy(self, request, *args, **kwargs):
+        signout_id = self.kwargs.get('pk')
+        # Destroy all EmployeeSignout records related to signout_id
+        EmployeesSignouts.objects.filter(signout_id=signout_id).delete()
+        # Destroy Signout record
+        Signouts.objects.filter(signout_id=signout_id).delete()
+        data = {'signout_id': signout_id}
+        return JsonResponse(data=data, status=status.HTTP_204_NO_CONTENT)
+
 
 class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
     def post(self, request, *args, **kwargs):
-
         employee_id = request.data.get('jumpmaster_id')
         jumpmaster = get_emp_full_name(employee_id)
 
@@ -241,6 +249,10 @@ class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
         packed_by = get_emp_full_name(employee_id)
         data = {'packer_id': employee_id, 'packed_by': packed_by}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
+    def put(self, request, *args, **kwargs):
+        EmployeeVsSignoutTandemDetail.patch(request, *args, **kwargs)
+        return
 
 
 def post_signout(request):
