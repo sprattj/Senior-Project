@@ -565,7 +565,8 @@ def password_reset_employee(request):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     else:
         employee = Employees.employee_email_in_use(email)
-        employee.pin = Employees.create_random_user_pin(employee)
+        pin = Employees.create_random_user_pin(employee)
+        employee.pin = Employees.pin_to_hash(pin)
         util.createPinResetMessage(employee.pin)
         send_mail(
             subject='DropzoneHQ Employee Pin [NO REPLY]',

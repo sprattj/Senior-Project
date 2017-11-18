@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
-from random import random
+import random
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -191,6 +191,7 @@ class Employees(models.Model):
         if userPK is None:
             return None
         else:
+            salt = util.stringToThree(random.randint(0,1000))
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
             return key
 
