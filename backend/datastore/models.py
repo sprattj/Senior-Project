@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
-from random import random
+import random
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -143,6 +143,13 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
+    auth_level_choice = (
+        (0,'Packer'),
+        (1,'Intructor'),
+        (2,'Rigger'),
+        (3,'Admin')
+    )
+    auth_level = models.IntegerField(choices=auth_level_choice)
 
     class Meta:
         managed = True
@@ -191,6 +198,7 @@ class Employees(models.Model):
         if userPK is None:
             return None
         else:
+            salt = util.stringToThree(random.randint(0,1000))
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
             return key
 
@@ -451,6 +459,11 @@ class TempUrl(models.Model):
 
     def get_url_hash(self):
         return self.url_hash
+
+    class Meta:
+        app_label = 'dropZoneHQ'
+        managed = False
+        db_table = 'Temp_Url'
 
 # Descriptive view for all canopies in the inventory
 class AllCanopies(models.Model):
