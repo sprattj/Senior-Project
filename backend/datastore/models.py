@@ -151,6 +151,14 @@ class EmployeeRoles(models.Model):
     )
     auth_level = models.IntegerField(choices=auth_level_choice)
 
+    #hard coded return 0 for the failure.  If no role is found get rid
+    def find_role_auth_level(role):
+        roles = EmployeeRoles.objects.all()
+        for trole in roles:
+            if trole == role:
+                return trole.auth_level
+        return 0
+
     class Meta:
         managed = True
         db_table = 'employee_roles'
@@ -206,7 +214,7 @@ class Employees(models.Model):
     #returns true if the pin is in use and false if the pin is not being used
     @staticmethod
     def employee_pin_in_use(pin=None):
-        emp = Employees.objects.get()
+        emp = Employees.objects.all()
         for e in emp :
             if Employees.checkEmployeePin(pin=pin, employee=e) is True:
                 return e

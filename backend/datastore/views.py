@@ -459,12 +459,15 @@ def createEmployee(request, dropzonePK):
         first = request.POST['first_name']
         last = request.POST['last_name']
         email = request.POST['email']
+        role = request.POST['role']
         if Employees.employee_email_in_use(email) is not None:
             emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
             emp.save()
             while Employees.employee_pin_in_use(emp.pin) :
                 pin = Employees.create_random_user_pin(emp.employee_id)
                 emp.pin = Employees.pin_to_hash(pin)
+            trole = EmployeeRoles.find_role_auth_level(role)
+            emp.roles = trole
             emp.save()
             serializer = EmployeeSerializer(emp)
             send_mail(
