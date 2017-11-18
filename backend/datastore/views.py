@@ -470,7 +470,6 @@ def createEmployee(request, dropzonePK):
                 recipient_list=[emp.email],
                 fail_silently=False
             )
-            )
             return JsonResponse(data= serializer.data ,status=201)
         else :
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
