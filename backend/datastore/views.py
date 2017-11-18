@@ -447,6 +447,7 @@ def loginDropzone(request):
     except :
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
+@login_required()
 def logoutDropzone(request):
     logout(request)
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
@@ -458,11 +459,11 @@ def createEmployee(request, dropzonePK):
         first = request.POST['first_name']
         last = request.POST['last_name']
         email = request.POST['email']
-        if Employees.employeeEmailInUse(email) is not None:
+        if Employees.employee_email_in_use(email) is not None:
             emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
             emp.save()
-            while Employees.employeePinInUse(emp.pin) :
-                pin = util.randomUserPin(emp.employee_id)
+            while Employees.employee_pin_in_use(emp.pin) :
+                pin = Employees.create_random_user_pin(emp.employee_id)
                 emp.pin = Employees.pin_to_hash(pin)
             emp.save()
             serializer = EmployeeSerializer(emp)
