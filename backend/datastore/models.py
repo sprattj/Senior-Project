@@ -16,6 +16,7 @@ from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
 import random
 
+
 # An item used on a rig that automatically deploys a parachute at a certain altitude
 class AutomaticActivationDevices(models.Model):
 
@@ -130,26 +131,25 @@ class Dropzones(User):
             return None
 
     # Checks if a location is in use for a dropzone.
-    def dropzoneLocationInUse(location=None):
+    def dropzoneLocationInUse(self, location=None):
         try :
             return Dropzones.objects.filter(location)
         except :
             return None
 
     # Checks if a name is in use for a dropzone.
-    def dropzoneUsernameInUse(username=None):
-        try :
+    def dropzoneUsernameInUse(self, username=None):
+        try:
             return Dropzones.objects.filter(username)
-        except :
+        except:
             return None
 
     # Chcek if the email has been used in the database
-    def dropzoneEmailInUse(email=None):
-        try :
+    def dropzoneEmailInUse(self, email=None):
+        try:
             return Dropzones.objects.filter(email)
-        except :
+        except:
             return None
-
 
     class Meta:
         managed = True
@@ -164,10 +164,10 @@ class EmployeeRoles(models.Model):
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
     auth_level_choice = (
-        (0,'Packer'),
-        (1,'Intructor'),
-        (2,'Rigger'),
-        (3,'Admin')
+        (0, 'Packer'),
+        (1, 'Intructor'),
+        (2, 'Rigger'),
+        (3, 'Admin')
     )
     auth_level = models.IntegerField(choices=auth_level_choice)
 
@@ -188,47 +188,47 @@ class Employees(models.Model):
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
     is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
-    #pin Sha hash
+    # pin Sha hash
     pin = models.CharField(max_length=45, blank=True)
     employment_date = models.DateTimeField(auto_now_add=True)
 
-    #check is the pin of an employee matches the pin given
+    # check is the pin of an employee matches the pin given
     @staticmethod
     def check_employee_pin(pin, employee):
         if pin or employee is None:
             return None
         else:
             salt = int(pin[:3])
-            if BCryptSHA256PasswordHasher.encode(password=pin, salt=salt) == employee.pin:
+            if BCryptSHA256PasswordHasher().encode(password=pin, salt=salt) == employee.pin:
                 return True
             else:
                 return False
 
-    #hash a pin to a value
+    # hash a pin to a value
     @staticmethod
     def pin_to_hash(pin):
         if pin is None:
             return None
         else:
             salt = int(pin[:3])
-            return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
+            return BCryptSHA256PasswordHasher().encode(password=pin, salt=salt)
 
-    #Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
+    # Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
     @staticmethod
     def create_random_user_pin(userPK=None):
         if userPK is None:
             return None
         else:
-            salt = util.stringToThree(random.randint(0,1000))
+            salt = util.stringToThree(random.randint(0, 1000))
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
             return key
 
     # Checks if a pin is in use for an Employee.
-    #returns true if the pin is in use and false if the pin is not being used
+    # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
     def employee_pin_in_use(pin=None):
         emp = Employees.objects.get()
-        for e in emp :
+        for e in emp:
             if Employees.checkEmployeePin(pin=pin, employee=e) is True:
                 return e
         return None
@@ -433,6 +433,7 @@ class Signouts(models.Model):
         managed = True
         db_table = 'signouts'
 
+
 class TempUrl(models.Model):
     url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True)
     expires = models.DateTimeField(name="Expries")
@@ -444,6 +445,7 @@ class TempUrl(models.Model):
         app_label = 'dropZoneHQ'
         managed = False
         db_table = 'Temp_Url'
+
 
 # Descriptive view for all canopies in the inventory
 class AllCanopies(models.Model):
