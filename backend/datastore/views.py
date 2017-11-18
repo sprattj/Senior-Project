@@ -460,12 +460,13 @@ def createEmployee(request, dropzonePK):
             emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
             emp.save()
             while Employees.employeePinInUse(emp.pin) :
-                emp.pin = util.randomUserPin(emp.employee_id)
+                pin = util.randomUserPin(emp.employee_id)
+                emp.pin = Employees.pin_to_hash(pin)
             emp.save()
             serializer = EmployeeSerializer(emp)
             send_mail(
                 subject='DropzoneHQ Employee Pin [NO REPLY]',
-                message='Your new employee pin is ' + emp.pin,
+                message='Your new employee pin is ' + pin,
                 from_email='dropzonehqNO-REPLY@dropzonehq.com',
                 recipient_list=[emp.email],
                 fail_silently=False
