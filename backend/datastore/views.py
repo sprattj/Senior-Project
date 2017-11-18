@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth import views as auth_views
 import datetime
+from django.core.mail import send_mail
 
 
 @login_required()
@@ -539,8 +540,31 @@ def password_reset(request):
                              "DropzoneHQ Password Reset [NO REPLY]",
                              message=message,
                              from_email='dropzonehqNO-REPLY@dropzonehq.com')
+        return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 
 def reset_url(request, hash):
     #todo make reset
     return False
+
+def password_reset_employee(request):
+    email = None
+    try :
+        email = request.POST['email']
+    except:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    if email is None:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+    else:
+        employee = Employees.employee_email_in_use(email)
+        employee.pin = Employees.create_random_user_pin(employee)
+        util.createPinResetMessage(employee.pin)
+        send_mail(
+            subject='DropzoneHQ Employee Pin [NO REPLY]',
+            message='Your new employee pin is ' + employee.pin,
+            from_email='dropzonehqNO-REPLY@dropzonehq.com',
+            recipient_list=[employee.email],
+            fail_silently=False
+        )
+        return HttpResponse(status=status.HTTP_202_ACCEPTED)
