@@ -424,9 +424,9 @@ def createDropzone(request):
         if email or password or location or username is None :
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         else :
-            dropzone = None
             try :
-                dropzone = get_user_model().objects.create_user(username=username, password=password, email=email, location=location)
+                dropzone = Dropzones.objects.create_user(username=username, password=password, email=email, location=location)
+                dropzone.save()
             except :
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
             serializer = DropZoneSerializer(data= dropzone)
@@ -550,11 +550,6 @@ def password_reset(request):
                              from_email='dropzonehqNO-REPLY@dropzonehq.com')
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-
-def reset_url(request, hash):
-    #todo make reset
-    return False
-
 def password_reset_employee(request):
     email = None
     try :
@@ -576,3 +571,15 @@ def password_reset_employee(request):
             fail_silently=False
         )
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+def reset_url(request, hash=None):
+    try:
+        reset = TempUrl.objects.get(hash)
+        if reset is None :
+            dropzone = reset.dropzone
+            Dropzones.set_password(dropzone, request.POST['password'])
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        else :
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+    except:
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
