@@ -122,19 +122,19 @@ class Dropzones(User):
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
-    location = models.CharField(unique=True,max_length=45)
+    location = models.CharField(unique=True, max_length=45)
 
     def get_dropzone(self, pk=None):
-        try :
+        try:
             return Dropzones.objects.get(pk)
         except:
             return None
 
     # Checks if a location is in use for a dropzone.
     def dropzoneLocationInUse(self, location=None):
-        try :
+        try:
             return Dropzones.objects.filter(location)
-        except :
+        except:
             return None
 
     # Checks if a name is in use for a dropzone.
