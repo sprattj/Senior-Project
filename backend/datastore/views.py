@@ -240,10 +240,6 @@ class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
         data = {'packer_id': employee_id, 'packed_by': packed_by}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
-    def put(self, request, *args, **kwargs):
-        EmployeeVsSignoutTandemDetail.patch(request, *args, **kwargs)
-        return
-
 
 def post_signout(request):
     rig_id = request.data.get('rig_id')
@@ -271,6 +267,20 @@ def patch_emp_signout(employee_id, signout_id):
                                      employee_id=employee_id,
                                      packed_signout=EmployeesSignouts.PACKED,
                                      timestamp=datetime.datetime.now())
+
+    '''
+    data = {'employee_id': employee_id, 'signout_id': signout_id, 'packed_signout': EmployeesSignouts.PACKED,
+            'timestamp': datetime.datetime.now()}
+    print(data)
+
+    serializer = EmployeeSignoutSerializer(data=data)
+    print(serializer.get_fields())
+    if serializer.is_valid():
+        print(serializer.validated_data)
+        # serializer.save()
+        return
+    print(serializer.is_valid())
+    '''
     return
 
 

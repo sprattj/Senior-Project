@@ -185,24 +185,6 @@ class EmployeesRentals(models.Model):
         app_label = 'dropZoneHQ'
 
 
-'''
-# Bridge between Employees and Services. Many employees can perform many services.
-class EmployeesServices(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
-    service = models.ForeignKey('Services', models.DO_NOTHING)
-    # What type of service was performed
-    action = models.ForeignKey(Actions, models.DO_NOTHING)
-    # Timestamp of when this service was performed
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'employees_services'
-        unique_together = (('employee', 'service'),)
-        app_label = 'dropZoneHQ'
-'''
-
-
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
     PACKED = 'PACKED'
@@ -211,7 +193,7 @@ class EmployeesSignouts(models.Model):
         (PACKED, 'packed'),
         (SIGNOUT, 'signout')
     )
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
+    employee = models.ForeignKey('Employees', models.DO_NOTHING)
     signout = models.ForeignKey('Signouts', models.DO_NOTHING)
     # What type of sign off occurred
     packed_signout = models.CharField(db_column='packed_or_signout',
