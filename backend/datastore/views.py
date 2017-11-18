@@ -8,6 +8,9 @@ from .serializers import *
 from . import util
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, login, logout, authenticate
+from django.contrib.auth import views as auth_views
+import datetime
+from django.core.mail import send_mail
 
 
 @login_required()
@@ -411,7 +414,6 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 '''
 """
-
 def createDropzone(request):
 
     try :
@@ -422,9 +424,9 @@ def createDropzone(request):
         if email or password or location or username is None :
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         else :
-            dropzone = None
             try :
-                dropzone = get_user_model().objects.create_user(username=username, password=password, email=email, location=location)
+                dropzone = Dropzones.objects.create_user(username=username, password=password, email=email, location=location)
+                dropzone.save()
             except :
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
             serializer = DropZoneSerializer(data= dropzone)
@@ -449,7 +451,7 @@ def logoutDropzone(request):
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 def createEmployee(request, dropzonePK):
-    try :
+    try:
         dropzone = Dropzones.objects.get(dropzonePK)
         first = request.POST['first_name']
         last = request.POST['last_name']
@@ -461,35 +463,47 @@ def createEmployee(request, dropzonePK):
                 emp.pin = util.randomUserPin(emp.employee_id)
             emp.save()
             serializer = EmployeeSerializer(emp)
+            send_mail(
+                subject='DropzoneHQ Employee Pin [NO REPLY]',
+                message='Your new employee pin is ' + emp.pin,
+                from_email='dropzonehqNO-REPLY@dropzonehq.com',
+                recipient_list=[emp.email],
+                fail_silently=False
+            )
             return JsonResponse(data= serializer.data ,status=201)
         else :
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-    except :
+    except:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 #authenticate an employee based on their pin and return an http status if the user is authentic
 def authenticateUserPin(request):
-    # the way our pin works sets the user primary as their last 3 digits
-    try :
-        pin = request.POST['pin']
+    if request.method == 'POST' :
 
-        if pin is None :
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else :
-            try :
-                pk = int(pin[4:])
-                employee = Employees.objects.get(pk)
-                if employee is None :
-                    return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-                else :
-                    if Employees.checkEmployeePin(pin,employee) :
-                        return HttpResponse(status=status.HTTP_202_ACCEPTED)
-                    else :
+        # the way our pin works sets the user primary as their last 3 digits
+        try :
+            pin = request.POST['pin']
+
+            if pin is None :
+                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            else :
+                try :
+                    pk = int(pin[4:])
+                    employee = Employees.objects.get(pk)
+                    if employee is None :
                         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-            except :
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-    except :
+                    else :
+                        if Employees.check_employee_pin(pin,employee) :
+                            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+                        else :
+                            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+                except :
+                    return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        except :
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    else :
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -512,3 +526,59 @@ def authenticateNameDropzone(request):
         else :
             serializer = DropZoneSerializer(dropzone)
             return JsonResponse(data=serializer.data, status=200)
+
+
+
+def password_reset(request):
+    email = None
+    try:
+        email = request.POST['email']
+    except:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    if email is None :
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+    else:
+        dropzone = Dropzones.dropzoneEmailInUse(email)
+        hashs = util.createHash(email)
+        temp = TempUrl.objects.create(hashs,datetime.date.today() + datetime.timedelta(days=1))
+        message = util.createPasswordResetMessage(temp.get_url_hash())
+        Dropzones.email_user(dropzone,
+                             "DropzoneHQ Password Reset [NO REPLY]",
+                             message=message,
+                             from_email='dropzonehqNO-REPLY@dropzonehq.com')
+        return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+def password_reset_employee(request):
+    email = None
+    try :
+        email = request.POST['email']
+    except:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    if email is None:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+    else:
+        employee = Employees.employee_email_in_use(email)
+        employee.pin = Employees.create_random_user_pin(employee)
+        util.createPinResetMessage(employee.pin)
+        send_mail(
+            subject='DropzoneHQ Employee Pin [NO REPLY]',
+            message='Your new employee pin is ' + employee.pin,
+            from_email='dropzonehqNO-REPLY@dropzonehq.com',
+            recipient_list=[employee.email],
+            fail_silently=False
+        )
+        return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+def reset_url(request, hash=None):
+    try:
+        reset = TempUrl.objects.get(hash)
+        if reset is None :
+            dropzone = reset.dropzone
+            Dropzones.set_password(dropzone, request.POST['password'])
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        else :
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+    except:
+        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)

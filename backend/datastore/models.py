@@ -1,5 +1,6 @@
 """
 # Author: Jonathan Spratt
+# Author: Paul Turner - Dropzone and Employee
 # Last modification: 11/7/2017
 # This file contains the models representing the DropZoneHQ database
 #
@@ -164,7 +165,8 @@ class Employees(models.Model):
     employment_date = models.DateTimeField(auto_now_add=True)
 
     #check is the pin of an employee matches the pin given
-    def checkEmployeePin(pin, employee):
+    @staticmethod
+    def check_employee_pin(pin, employee):
         if pin or employee is None:
             return None
         else:
@@ -174,33 +176,37 @@ class Employees(models.Model):
             else:
                 return False
 
-    #hash a pin to a given value
-    def pinToHash(pin):
+    #hash a pin to a value
+    @staticmethod
+    def pin_to_hash(pin):
         if pin is None:
             return None
         else:
             salt = int(pin[:3])
             return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
 
-    def createRandomUserPin(userPK=None):
+    #Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
+    @staticmethod
+    def create_random_user_pin(userPK=None):
         if userPK is None:
             return None
         else:
-            salt = random.randint(0, 1000)
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
-            return BCryptSHA256PasswordHasher.encode(key, salt)
+            return key
 
     # Checks if a pin is in use for an Employee.
     #returns true if the pin is in use and false if the pin is not being used
-    def employeePinInUse(self, pin=None):
+    @staticmethod
+    def employee_pin_in_use(pin=None):
         emp = Employees.objects.get()
         for e in emp :
-            if self.checkEmployeePin(pin,e) :
+            if Employees.checkEmployeePin(pin=pin, employee=e) is True:
                 return e
         return None
 
     # Chcek if the email has been used in the database
-    def employeeEmailInUse(email=None):
+    @staticmethod
+    def employee_email_in_use(email=None):
         use = Employees.objects.filter(email)
         return use
 
@@ -439,7 +445,12 @@ class Signouts(models.Model):
         managed = True
         db_table = 'signouts'
 
+class TempUrl(models.Model):
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True)
+    expires = models.DateTimeField(name="Expries")
 
+    def get_url_hash(self):
+        return self.url_hash
 
 # Descriptive view for all canopies in the inventory
 class AllCanopies(models.Model):
