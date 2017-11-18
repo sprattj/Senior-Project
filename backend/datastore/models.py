@@ -165,6 +165,7 @@ class Employees(models.Model):
     employment_date = models.DateTimeField(auto_now_add=True)
 
     #check is the pin of an employee matches the pin given
+    @staticmethod
     def check_employee_pin(pin, employee):
         if pin or employee is None:
             return None
@@ -190,9 +191,8 @@ class Employees(models.Model):
         if userPK is None:
             return None
         else:
-            salt = random.randint(0, 1000)
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
-            return BCryptSHA256PasswordHasher.encode(key, salt)
+            return key
 
     # Checks if a pin is in use for an Employee.
     #returns true if the pin is in use and false if the pin is not being used

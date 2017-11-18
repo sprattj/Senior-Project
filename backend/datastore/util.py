@@ -25,3 +25,6 @@ def createHash():
 
 def createPasswordResetMessage(hash=None):
     return "Please visit dropzonehq.com/temp/" + hash + " to reset your password"
+
+def createPinResetMessage(pin=None):
+    return "Your new pin is " + pin + ".  Please use this when you do any actions on dropzonehq.com"
