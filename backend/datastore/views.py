@@ -1,9 +1,5 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.parsers import JSONParser
-from rest_framework import generics
+from rest_framework import generics, status
+from django.http import JsonResponse
 from .serializers import *
 from . import util
 from django.contrib.auth.decorators import login_required
@@ -13,15 +9,6 @@ import datetime
 from django.core.mail import send_mail
 
 
-@login_required()
-class ActionList(generics.ListCreateAPIView):
-    queryset = Actions.objects.all()
-    serializer_class = ActionSerializer
-
-@login_required()
-class ActionDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Actions.objects.all()
-    serializer_class = ActionSerializer
 
 @login_required()
 class AADList(generics.ListCreateAPIView):
@@ -79,17 +66,6 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EmployeeSerializer
 
 
-# class EmployeesActionsList(generics.ListCreateAPIView):
-    # TODO ?
-
-
-# class EmployeesActionsDetail(generics.RetrieveUpdateDestroyAPIView):
-    # TODO ?
-
-
-# OTHER EMPLOYEE BRIDGING TABLES? TODO
-
-@login_required()
 class ItemList(generics.ListCreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
@@ -109,12 +85,10 @@ class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
-
-# ITEMS BRIDGING TABLES? TODO
 @login_required()
 class RentableItemList(generics.ListCreateAPIView):
-    queryset = Items.objects.all().filter(is_rentable=1)
-    serializer_class = ItemSerializer
+    queryset = AllItems.objects.all().filter(is_rentable=1)
+    serializer_class = AllItemSerializer
 
 @login_required()
 class RentalList(generics.ListCreateAPIView):
@@ -157,14 +131,14 @@ class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RigAuditTrailSerializer
 
 @login_required()
-class ServiceList(generics.ListCreateAPIView):
-    queryset = Services.objects.all()
-    serializer_class = ServiceSerializer
+class ClaimList(generics.ListCreateAPIView):
+    queryset = Claims.objects.all()
+    serializer_class = ClaimSerializer
 
 @login_required()
-class ServiceDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Services.objects.all()
-    serializer_class = ServiceSerializer
+class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Claims.objects.all()
+    serializer_class = ClaimSerializer
 
 @login_required()
 class SignoutList(generics.ListCreateAPIView):
@@ -197,7 +171,7 @@ class AllItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AllItemSerializer
 
 @login_required()
-class EmployeeVsSignoutList(generics.ListCreateAPIView):
+class EmployeeVsSignoutList(generics.ListAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -216,205 +190,113 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
-@login_required()
+    def patch(self, request, *args, **kwargs):
+        employee_id = request.data.get('packer_id')
+        signout_id = request.data.get('signout_id')
+        patch_emp_signout(employee_id, signout_id)
+
+        packed_by = get_emp_full_name(employee_id)
+        data = {'packer_id': employee_id, 'packed_by': packed_by}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
+    def destroy(self, request, *args, **kwargs):
+        signout_id = self.kwargs.get('pk')
+        # Destroy all EmployeeSignout records related to signout_id
+        EmployeesSignouts.objects.filter(signout_id=signout_id).delete()
+        # Destroy Signout record
+        Signouts.objects.filter(signout_id=signout_id).delete()
+        data = {'signout_id': signout_id}
+        return JsonResponse(data=data, status=status.HTTP_204_NO_CONTENT)
+
+
 class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
-@login_required()
+    def post(self, request, *args, **kwargs):
+
+        employee_id = request.data.get('jumpmaster_id')
+        jumpmaster = get_emp_full_name(employee_id)
+
+        post_signout(request)
+        post_emp_signout(employee_id)
+        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+
+
+    def post(self, request, *args, **kwargs):
+        employee_id = request.data.get('jumpmaster_id')
+        jumpmaster = get_emp_full_name(employee_id)
+
+        post_signout(request)
+        post_emp_signout(employee_id)
+        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+
+
 class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
+    def patch(self, request, *args, **kwargs):
+        employee_id = request.data.get('packer_id')
+        signout_id = request.data.get('signout_id')
 
-"""
-class ItemViewSet(viewsets.ModelViewSet):
-    @csrf_exempt
-    def all_items(self, request):
-        if request.method == 'GET':
-            items = AllItems.objects.all()
-            serializer = AllItemSerializer(items, many=True)
-            return JsonResponse(serializer.data, safe=False)
+        patch_emp_signout(employee_id, signout_id)
 
-    @csrf_exempt
-    def specific_item(self, request, pk):
-        if request.method == 'GET':
-            item = AllItems.objects.get(pk)
-            serializer = AllItemSerializer(item)
-            return JsonResponse(serializer.data, safe=False)
-
-    @csrf_exempt
-    def items_by_type(self, request, item_type):
-        if request.method == 'GET':
-            items = AllItems.objects.all().filter(item_type=item_type)
-            serializer = AllItemSerializer(items, many=True)
-            return JsonResponse(serializer.data, safe=False)
+        packed_by = get_emp_full_name(employee_id)
+        data = {'packer_id': employee_id, 'packed_by': packed_by}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
-class RigViewSet(viewsets.ModelViewSet):
-    
-    # API endpoint that allows rigs to be viewed or edited.
-    
-    def specific_rig(self, request, pk):
-        try:
-            rig = Rigs.objects.get(pk)
-        except Rigs.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        if request.method == 'GET':
-            serializer = RigSerializer(rig)
-            return JsonResponse(serializer.data, safe=False)
+def post_signout(request):
+    rig_id = request.data.get('rig_id')
+    load_number = request.data.get('load_number')
 
-        elif request.method == 'POST':
-            data = JSONParser().parse(request)
-            serializer = RigSerializer(data=data)
-
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @csrf_exempt
-    def rig_detail(self, request, pk):
-        try:
-            rig = RigViewSet.queryset.get(pk=pk)
-        except Rigs.DoesNotExist:
-            return HttpResponse(status=404)
-        if request.method == 'GET':
-            serializer = RigSerializer(rig)
-            return JsonResponse(serializer.data)
-
-        elif request.method == 'PUT':
-            data = JSONParser().parse(request)
-            serializer = RigSerializer(rig, data=data)
-
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse(serializer.data)
-            return JsonResponse(serializer.errors, status=400)
-
-        elif request.method == 'DELETE':
-            rig.delete()
-            return HttpResponse(status=204)
+    Signouts.objects.create(rig_id=rig_id, load_number=load_number)
+    return
 
 
-class EmployeeVsSignoutViewSet(viewsets.ViewSet):
-    @csrf_exempt
-    def all_signout_records(self, request):
-        queryset = EmployeesVsSignouts.objects.all()
-        if request.method == 'GET':
-            serializer = EmployeeVsSignoutSerializer(queryset, many=True)
-            return JsonResponse(serializer.data, safe=False)
+def post_emp_signout(employee_id):
+    signout_id_dict = Signouts.objects.values().get(signout_id=
+                                                    Signouts.objects.latest('signout_id')
+                                                    .serializable_value('signout_id'))
+    signout_id = signout_id_dict.get("signout_id", "")
 
-    @csrf_exempt
-    def student_signout_records(self, request):
-        queryset = EmployeesVsSignoutsStudent.objects.all()
-        serializer_class = EmployeeVsSignoutSerializer
-        if request.method == 'GET':
-            serializer = serializer_class(queryset, many=True)
-            return JsonResponse(serializer.data, safe=False)
+    EmployeesSignouts.objects.create(signout_id=signout_id,
+                                     employee_id=employee_id,
+                                     packed_signout=EmployeesSignouts.SIGNOUT,
+                                     timestamp=datetime.datetime.now())
+    return
 
-        elif request.method == 'POST':
-            serializer = EmployeeVsSignoutSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return HttpResponse(status=status.HTTP_201_CREATED)
-            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @csrf_exempt
-    def tandem_signout_records(self, request):
-        queryset = EmployeesVsSignoutsTandem.objects.all()
-        if request.method == 'GET':
-            serializer = EmployeeVsSignoutSerializer(queryset, many=True)
-            return JsonResponse(serializer.data, safe=False)
+def patch_emp_signout(employee_id, signout_id):
+    EmployeesSignouts.objects.create(signout_id=signout_id,
+                                     employee_id=employee_id,
+                                     packed_signout=EmployeesSignouts.PACKED,
+                                     timestamp=datetime.datetime.now())
 
-    @csrf_exempt
-    def specific_signout(self, request, pk):
-        queryset = EmployeesVsSignouts.objects.all()
-        try:
-            signout = queryset.get(pk=pk)
-        except EmployeesVsSignouts.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    '''
+    data = {'employee_id': employee_id, 'signout_id': signout_id, 'packed_signout': EmployeesSignouts.PACKED,
+            'timestamp': datetime.datetime.now()}
+    print(data)
 
-        if request.method == 'GET':
-            serializer = EmployeeVsSignoutSerializer(signout)
-            return JsonResponse(serializer.data)
+    serializer = EmployeeSignoutSerializer(data=data)
+    print(serializer.get_fields())
+    if serializer.is_valid():
+        print(serializer.validated_data)
+        # serializer.save()
+        return
+    print(serializer.is_valid())
+    '''
+    return
 
-        elif request.method == 'PUT':
-            serializer = EmployeeVsSignoutSerializer(signout, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                # GET INFO FROM SERIALIZER
-                signout_id = pk
-                signout.objects.update()
-                return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-    @csrf_exempt
-    def new_signout(self, request):
-        if request.method == 'POST':
-            '''
-            cursor = connection.cursor()
-            ret = cursor.callproc("new_signout")
-            '''
-            serializer = EmployeeVsSignoutSerializer(data=request.data)
-            if serializer.is_valid():
-                emp_queryset = Employees.objects.all()
-                # serializer.save()
-                # GET INFO FROM SERIALIZER
-                load_num = serializer.data.get('load_num')
-                rig_id = serializer.data.get('rig_id')
-                signout_id = serializer.data.get('signout_id')
-                jumpmaster = serializer.data.get('jumpmaster')
-                # Split name into first/last
-                first_name, last_name = jumpmaster.split(" ")
-                emp_queryset = emp_queryset.get(first_name=first_name, last_name=last_name)[:1]
-                emp_id = emp_queryset.get('employee_id')
-                # Create a new signouts entry
-                Signouts.objects.create(signout_id=signout_id, load=load_num, rig_id=rig_id)
-                # Create a new employees_signouts_entry
-                EmployeesSignouts.objects.create(employee_id=emp_id, signout_id=signout_id)
-                return HttpResponse(status=status.HTTP_201_CREATED)
-            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def get_emp_full_name(employee_id):
+    emp_name = Employees.objects.get(employee_id=employee_id).first_name + ' ' + \
+        Employees.objects.get(employee_id=employee_id).last_name
+    return emp_name
 
-'''
-class EmployeeViewSet(viewsets.ModelViewSet):
-
-    @csrf_exempt
-    def all_employees(self, request):
-        if request.method == 'GET':
-            emps = Employees.objects.all()
-            serializer = EmployeeSerializer(emps, many=True)
-            return JsonResponse(serializer.data, safe=False)
-
-        elif request.method == 'POST':
-            serializer = EmployeeSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return HttpResponse(status=status.HTTP_201_CREATED)
-        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-
-    @csrf_exempt
-    def specific_employee(self, request, pk):
-        try:
-            emp = Employees.objects.get(pk)
-        except Employees.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-        if request.method == 'GET':
-            serializer = EmployeeSerializer(emp)
-            return JsonResponse(serializer.data)
-
-        elif request.method == 'PUT':
-            serializer = EmployeeSerializer(request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return HttpResponse(status=status.HTTP_202_ACCEPTED)
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-
-        elif request.method == 'DELETE':
-            emp.delete()
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-'''
-"""
 def createDropzone(request):
 
     try :

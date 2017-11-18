@@ -16,22 +16,6 @@ from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
 import random
 
-# Actions that can be performed by employees
-class Actions(models.Model):
-
-    # Autoincrement integer PK
-    action_id = models.AutoField(primary_key=True)
-    # Type of action being performed
-    type = models.CharField(max_length=45)
-
-    class Meta:
-        # Whether or not dropZoneHQ can create, modify, or delete this table
-        managed = True
-        # Name of table in DB
-        db_table = 'actions'
-        app_label = 'dropZoneHQ'
-
-
 # An item used on a rig that automatically deploys a parachute at a certain altitude
 class AutomaticActivationDevices(models.Model):
 
@@ -68,6 +52,42 @@ class Canopies(models.Model):
     class Meta:
         managed = True
         db_table = 'canopies'
+        app_label = 'dropZoneHQ'
+
+
+# Claims employees make and service
+class Claims(models.Model):
+    CRITICAL = 'CRITICAL'
+    NON_CRITICAL = 'NON-CRITICAL'
+    COSMETIC = 'COSMETIC'
+    SEVERITY_CHOICES = ((CRITICAL, 'Critical'), (NON_CRITICAL, 'Non-critical'), (COSMETIC, 'Cosmetic'))
+    PENDING = 'PENDING'
+    IN_PROGRESS = 'IN-PROGRESS'
+    COMPLETE = 'COMPLETE'
+    DISMISSED = 'DISMISSED'
+    STATUS_CHOICES = ('Pending', 'In-Progress', 'Complete', 'Dismissed')
+
+    # Autoincrement integer PK
+    claim_id = models.AutoField(primary_key=True)
+    # How critical is this claim
+    severity = models.CharField(max_length=12, choices=SEVERITY_CHOICES)
+    # Status of the claim
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES)
+    # Description of the problem that needs to be serviced.
+    description = models.CharField(max_length=45, blank=True, null=True)
+    submitter = models.OneToOneField('Employees', models.DO_NOTHING)
+    handler = models.OneToOneField('Employees', models.DO_NOTHING)
+
+    # Date the claim was submitted
+    submit_date = models.DateField()
+    # Date the claim is due
+    due_date = models.DateField()
+    # Date the claim was completed
+    complete_date = models.DateField()
+
+    class Meta:
+        managed = True
+        db_table = 'claims'
         app_label = 'dropZoneHQ'
 
 
@@ -166,6 +186,7 @@ class Employees(models.Model):
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
+    is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
     #pin Sha hash
     pin = models.CharField(max_length=45, blank=True)
@@ -224,20 +245,6 @@ class Employees(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Bridge between Employees and Actions. Many employees can perform many actions.
-class EmployeesActions(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
-    action = models.ForeignKey(Actions, models.DO_NOTHING)
-    # Timestamp for when this action was performed
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'employees_actions'
-        unique_together = (('employee', 'action'),)
-        app_label = 'dropZoneHQ'
-
-
 # Bridge between Employees and Roles. Many employees can perform many roles.
 class EmployeesEmployeeRoles(models.Model):
     employee = models.ForeignKey(Employees, models.DO_NOTHING)
@@ -262,28 +269,20 @@ class EmployeesRentals(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Bridge between Employees and Services. Many employees can perform many services.
-class EmployeesServices(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
-    service = models.ForeignKey('Services', models.DO_NOTHING)
-    # What type of service was performed
-    action = models.ForeignKey(Actions, models.DO_NOTHING)
-    # Timestamp of when this service was performed
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'employees_services'
-        unique_together = (('employee', 'service'),)
-        app_label = 'dropZoneHQ'
-
-
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
+    PACKED = 'PACKED'
+    SIGNOUT = 'SIGNOUT'
+    PACKED_SIGNOUT_CHOICES = (
+        (PACKED, 'packed'),
+        (SIGNOUT, 'signout')
+    )
+    employee = models.ForeignKey('Employees', models.DO_NOTHING)
     signout = models.ForeignKey('Signouts', models.DO_NOTHING)
     # What type of sign off occurred
-    packed_signout = models.CharField(db_column='packed_or_signout', max_length=7)
+    packed_signout = models.CharField(db_column='packed_or_signout',
+                                      max_length=7,
+                                      choices=PACKED_SIGNOUT_CHOICES)
     # When this sign off occurred
     timestamp = models.DateTimeField()
 
@@ -319,7 +318,8 @@ class Items(models.Model):
     brand = models.CharField(max_length=45, blank=True, null=True)
     description = models.CharField(max_length=45, blank=True, null=True)
     # Whether or not this item is rentable
-    is_rentable = models.CharField(max_length=4)
+    # is_rentable = models.CharField(max_length=4)
+    is_rentable = models.BooleanField(max_length=4)
     rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
@@ -417,26 +417,6 @@ class RigsAuditTrail(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Services that employees need to perform
-class Services(models.Model):
-
-    # Autoincrement integer PK
-    service_id = models.AutoField(primary_key=True)
-    # How critical is this service
-    severity = models.CharField(max_length=12)
-    # What thype of service is being performed.
-    service_type = models.CharField(max_length=11)
-    # Description of the problem that needs to be serviced.
-    description = models.CharField(max_length=45, blank=True, null=True)
-
-    employees = models.ManyToManyField('Employees', through='EmployeesServices')
-
-    class Meta:
-        managed = True
-        db_table = 'services'
-        app_label = 'dropZoneHQ'
-
-
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.
 class Signouts(models.Model):
     # Autoincrement integer PK
@@ -471,7 +451,7 @@ class AllCanopies(models.Model):
     type = models.CharField(max_length=45)
     serial_number = models.CharField(max_length=45)
     rig = models.ForeignKey(Rigs, models.DO_NOTHING)
-    is_rentable = models.CharField(max_length=45)
+    is_rentable = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
@@ -501,7 +481,7 @@ class AllItems(models.Model):
     container_sn = models.CharField(max_length=45)
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
-    is_rentable = models.CharField(max_length=45)
+    is_rentable = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
