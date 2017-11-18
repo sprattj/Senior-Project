@@ -52,5 +52,5 @@ urlpatterns = [
     url(r'^create_dropzone/$',createDropzone,name='create_dropzone'),
     url(r'^dropzone/(?P<pk>[0-9]+)/create_employee/$',createEmployee,name='create_employee'),
     url(r'^auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
-    url(r'^auth_name_dropzone', authenticateNameDropzone, name='authenticate_name_dropzone')
+    url(r'^auth_name_dropzone/', authenticateNameDropzone, name='authenticate_name_dropzone')
 ]
