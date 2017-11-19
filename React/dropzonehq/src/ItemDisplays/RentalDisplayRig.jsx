@@ -32,7 +32,7 @@ export default class RentalDisplayRig extends React.Component {
                                         </Col>
                                         <Col>
                                             <p>Reserve Canopy: {this.props.reserveBrand} {this.props.reserveSize}</p>
-                                            <p>AAD expiration date: {this.props.aadExp}</p>
+                                            <p>AAD Lifespan: {this.props.aadExp}</p>
                                         </Col>
                                     </Row>
                                     <Row>
