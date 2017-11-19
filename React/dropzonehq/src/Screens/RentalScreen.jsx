@@ -15,10 +15,10 @@ class RentalScreen extends React.Component {
         super(props);
 
         this.displayChange = this.displayChange.bind(this);
+        this.resetDisplay = this.resetDisplay.bind(this);
 
         this.state = {
-            currentItem: <RentalItemDisplay
-                rowID={0} />
+            currentItem: <RentalItemDisplay />
         }
     }
 
@@ -26,7 +26,6 @@ class RentalScreen extends React.Component {
     //taking in a RentalItemDisplay and setting it in the currentItem state
     displayChange(itemDisplay, rowID) {
         if (itemDisplay) {
-            console.log("Rental Screen: displayChange: rowID: " + rowID);
             this.setState({
                 currentItem: itemDisplay
             })
@@ -35,12 +34,20 @@ class RentalScreen extends React.Component {
         }
     }
 
+    resetDisplay() {
+        this.setState({
+            currentItem: <RentalItemDisplay />
+        });
+    }
+
+    
+
     render() {
         return (
             <div>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
-                        <RentalTable displayChange={this.displayChange} />
+                        <RentalTable displayChange={this.displayChange} resetDisplay={this.resetDisplay}/>
                     </Col>
                     <Col lg={{ size: 5}}>
                         <Card body>
