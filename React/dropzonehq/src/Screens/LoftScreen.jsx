@@ -14,6 +14,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
 import { rootURL } from '../restInfo.js';
 import { toast } from 'react-toastify';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
@@ -25,10 +26,10 @@ export default class LoftScreen extends React.Component {
         super(props);
 
         this.URLsection = "/claims";
-        
-        
+
+
         this.getClaims = this.getClaims.bind(this);
-        
+
         this.getQueueItems = this.getQueueItems.bind(this);
         this.populateQueue = this.populateQueue.bind(this);
         this.addQueueItem = this.addQueueItem.bind(this);
@@ -120,7 +121,7 @@ export default class LoftScreen extends React.Component {
     }
 
     //Fetch claims from database
-//////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
     getQueueItems() {
         var isQueue = true;
         this.getClaims(isQueue);
@@ -165,7 +166,7 @@ export default class LoftScreen extends React.Component {
         });
     }
     //Populate frontend from json data
-//////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
     populateQueue(queueData) {
         var queueItems = [];
         for (var i = 0; i < queueData.length; i++) {
@@ -193,20 +194,20 @@ export default class LoftScreen extends React.Component {
     populateWarnings(warningData) {
         var warnings = [];
         for (var i = 0; i < warningData.length; i++) {
-            var nextWarning = 
-            <WarningListItem
-                key={this.state.warningListItems.length}
-                warnID={this.state.warningListItems.length}
-                selected={false}
-                onClick={this.selectWarning}
-                addToQueue={this.moveClaimToQueue}
-                dismiss={this.dismissClaim}
-                severity={warningData[i].severity}
-                rig_id={warningData[i].rig_id}
-                description={warningData[i].description}
-                submit_date={warningData[i].submit_date}
-                due_date={warningData[i].due_date} 
-            />
+            var nextWarning =
+                <WarningListItem
+                    key={this.state.warningListItems.length}
+                    warnID={this.state.warningListItems.length}
+                    selected={false}
+                    onClick={this.selectWarning}
+                    addToQueue={this.moveClaimToQueue}
+                    dismiss={this.dismissClaim}
+                    severity={warningData[i].severity}
+                    rig_id={warningData[i].rig_id}
+                    description={warningData[i].description}
+                    submit_date={warningData[i].submit_date}
+                    due_date={warningData[i].due_date}
+                />
             warnings.push(nextWarning);
         }
         this.setState({
@@ -214,9 +215,9 @@ export default class LoftScreen extends React.Component {
         });
     }
 
-    
+
     //Selecting
-//////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
     selectQueueItem(newIndex) {
         //grab the current qItems
         var newQItems = Array.from(this.state.queueListItems);
@@ -267,7 +268,7 @@ export default class LoftScreen extends React.Component {
     }
 
     //Changing status of claims
-//////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
     moveClaimToQueue(claim_id, warnID) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
@@ -379,7 +380,7 @@ export default class LoftScreen extends React.Component {
     }
 
     //Adding new claims to database and frontend
-//////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
     //add a claim to the database and the view
     addClaim(rig_id, severity, description, isQueueItem) {
         require('isomorphic-fetch');
@@ -476,7 +477,7 @@ export default class LoftScreen extends React.Component {
                 rig_id={claimData.rig_id}
                 description={claimData.description}
                 submit_date={claimData.submit_date}
-                due_date={claimData.due_date} 
+                due_date={claimData.due_date}
             />
         var newClaims = Array.from(this.state.warningListItems);
         newClaims.push(newClaim);
@@ -486,34 +487,41 @@ export default class LoftScreen extends React.Component {
     }
 
     //Rendering
-//////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
     render() {
         var tabHeaders = ['Schedule', 'Queue', 'Warnings'];
         var tabContents = [this.state.scheduleDisplay,
         this.state.queueDisplay,
         this.state.warningDisplay];
         return (
-            <Row className="viewport">
-                <Col xs={{ size: 6 }} md={{ size: 3 }}>
-                    <WarningList addWarning={this.addWarning}>
-                        {this.state.warningListItems}
-                    </WarningList>
-                </Col>
-                <Col xs={{ size: 6 }} md={{ size: 3 }}>
-                    <QueueList addQueueItem={this.addQueueItem}>
-                        {this.state.queueListItems}
-                    </QueueList>
-                </Col>
+            <div>
+                <Row>
+                    <Col lg={{ size: 12 }}>
+                        <DropzoneHQNav />
+                    </Col>
+                </Row>
+                <Row className="viewport">
+                    <Col xs={{ size: 6 }} md={{ size: 3 }}>
+                        <WarningList addWarning={this.addWarning}>
+                            {this.state.warningListItems}
+                        </WarningList>
+                    </Col>
+                    <Col xs={{ size: 6 }} md={{ size: 3 }}>
+                        <QueueList addQueueItem={this.addQueueItem}>
+                            {this.state.queueListItems}
+                        </QueueList>
+                    </Col>
 
-                <Col xs={{ size: 12 }} md={{ size: 6 }}>
-                    <Card>
-                        <CardHeader>Main View</CardHeader>
-                        <CardBlock className="main_view">
-                            <TabGroup activeTab={this.state.activeTab} tabHeaders={tabHeaders} tabContents={tabContents} />
-                        </CardBlock>
-                    </Card>
-                </Col>
-            </Row>
+                    <Col xs={{ size: 12 }} md={{ size: 6 }}>
+                        <Card>
+                            <CardHeader>Main View</CardHeader>
+                            <CardBlock className="main_view">
+                                <TabGroup activeTab={this.state.activeTab} tabHeaders={tabHeaders} tabContents={tabContents} />
+                            </CardBlock>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
         );
     }
 };

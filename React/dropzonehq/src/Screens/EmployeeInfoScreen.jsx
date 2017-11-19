@@ -7,6 +7,7 @@ import AFPInstructorStatDisplay from '../StatDisplays/AFPInstructorStatDisplay.j
 import PackingStatDisplay from '../StatDisplays/PackingStatDisplay.jsx';
 import RentalStatDisplay from '../StatDisplays/RentalStatDisplay.jsx';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -21,6 +22,11 @@ export default class EmployeeInfoScreen extends React.Component {
     render() {
         return (
             <div>
+                <Row>
+                    <Col lg={{ size: 12 }}>
+                        <DropzoneHQNav/>
+                    </Col>
+                </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 10, offset: 1 }}>
                         <Card>

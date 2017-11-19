@@ -12,18 +12,10 @@ export default class SaveItemDetailsBtn extends React.Component
         }
     }
 
-    onClickFunction() 
-    {
-        console.log(this.props);
-        
-
-    }
-
-
     render() {
         return (
             <div>
-                <Button onClick={this.onClickFunction}
+                <Button onClick={this.props.onClick}
                     size="lg"
                     color="primary"
                     disabled={this.props.disabled}>{this.props.buttonText}
