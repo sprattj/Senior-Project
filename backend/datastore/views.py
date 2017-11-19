@@ -6,222 +6,187 @@ from backend.datastore.models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.mixins import LoginRequiredMixin
 import datetime
 from django.core.mail import send_mail
 
 
-# @login_required()
-class AADList(generics.ListCreateAPIView):
+class AADList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
 
-# @login_required()
-class AADDetail(generics.RetrieveUpdateDestroyAPIView):
+class AADDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
 
-# @login_required()
-class CanopyList(generics.ListCreateAPIView):
+class CanopyList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
 
-# @login_required()
-class CanopyDetail(generics.RetrieveUpdateDestroyAPIView):
+class CanopyDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
 
-# @login_required()
-class ContainerList(generics.ListCreateAPIView):
+class ContainerList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Containers.objects.all()
     serializer_class = ContainerSerializer
 
 
-# @login_required()
-class DropzoneList(generics.ListCreateAPIView):
+class DropzoneList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
 
-# @login_required()
-class DropzoneDetail(generics.RetrieveUpdateDestroyAPIView):
+class DropzoneDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
 
-# @login_required()
-class EmployeeEmployeeRoleList(generics.ListCreateAPIView):
+class EmployeeEmployeeRoleList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = EmployeesEmployeeRoles.objects.all()
     serializer_class = EmployeeEmployeeRoleSerializer
 
 
-# @login_required()
-class EmployeeEmployeeRoleDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeEmployeeRoleDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesEmployeeRoles.objects.all()
     serializer_class = EmployeeEmployeeRoleSerializer
 
 
-# @login_required()
-class EmployeeList(generics.ListCreateAPIView):
+class EmployeeList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
 
-# @login_required()
-class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
 
-# @login_required()
-class ItemList(generics.ListCreateAPIView):
+class ItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
 
-# @login_required()
-class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
+class ItemDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
 
-# @login_required()
-class ItemTypeList(generics.ListCreateAPIView):
+class ItemTypeList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
 
-# @login_required()
-class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
+class ItemTypeDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
 
-# @login_required()
-class RentableItemList(generics.ListCreateAPIView):
+class RentableItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AllItems.objects.all().filter(is_rentable=1)
     serializer_class = AllItemSerializer
 
 
-# @login_required()
-class RentalList(generics.ListCreateAPIView):
+class RentalList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
 
-# @login_required()
-class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
+class RentalDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
 
-# @login_required()
-class ReserveCanopyList(generics.ListCreateAPIView):
+class ReserveCanopyList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
 
-# @login_required()
-class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
+class ReserveCanopyDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
 
-# @login_required()
-class RigList(generics.ListCreateAPIView):
+class RigList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
 
 
-# @login_required()
-class RigDetail(generics.RetrieveUpdateDestroyAPIView):
+class RigDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
 
 
-# @login_required()
-class RigAuditTrailList(generics.ListCreateAPIView):
+class RigAuditTrailList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = RigsAuditTrail.objects.all()
     serializer_class = RigAuditTrailSerializer
 
 
-# @login_required()
-class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
+class RigAuditTrailDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = RigsAuditTrail.objects.all()
     serializer_class = RigAuditTrailSerializer
 
 
-# @login_required()
-class ClaimList(generics.ListCreateAPIView):
+class ClaimList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
 
-# @login_required()
-class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
+class ClaimDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
 
-# @login_required()
-class SignoutList(generics.ListCreateAPIView):
+class SignoutList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Signouts.objects.all()
     serializer_class = SignoutSerializer
 
 
-# @login_required()
-class SignoutDetail(generics.RetrieveUpdateDestroyAPIView):
+class SignoutDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Signouts.objects.all()
     serializer_class = SignoutSerializer
 
 
-# @login_required()
-class AllCanopyList(generics.ListCreateAPIView):
+class AllCanopyList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AllCanopies.objects.all()
     serializer_class = AllCanopySerializer
 
 
-# @login_required()
-class AllCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
+class AllCanopyDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = AllCanopies.objects.all()
     serializer_class = AllCanopySerializer
 
 
-# @login_required()
-class AllItemList(generics.ListCreateAPIView):
+class AllItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AllItems.objects.all()
     serializer_class = AllItemSerializer
 
 
-# @login_required()
-class AllItemDetail(generics.RetrieveUpdateDestroyAPIView):
+class AllItemDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = AllItems.objects.all()
     serializer_class = AllItemSerializer
 
 
-# @login_required()
-class EmployeeVsSignoutList(generics.ListAPIView):
+class EmployeeVsSignoutList(LoginRequiredMixin, generics.ListAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-# @login_required()
-class EmployeeVsSignoutDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeVsSignoutDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-# @login_required()
-class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
+class EmployeeVsSignoutStudentList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-# @login_required()
-class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeVsSignoutStudentDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -244,7 +209,7 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
         return JsonResponse(data=data, status=status.HTTP_204_NO_CONTENT)
 
 
-class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
+class EmployeeVsSignoutTandemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -259,7 +224,7 @@ class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
 
-class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
+class EmployeeVsSignoutTandemDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -368,10 +333,10 @@ def createEmployee(request, dropzonePK):
         first = request.POST['first_name']
         last = request.POST['last_name']
         email = request.POST['email']
-        if Employees.employeeEmailInUse(email) is not None:
+        if Employees.employee_email_in_use(email) is not None:
             emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
             emp.save()
-            while Employees.employeePinInUse(emp.pin) :
+            while Employees.employee_pin_in_use(emp.pin) :
                 pin = util.randomUserPin(emp.employee_id)
                 emp.pin = Employees.pin_to_hash(pin)
             emp.save()

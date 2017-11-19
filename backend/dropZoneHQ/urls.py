@@ -47,15 +47,14 @@ urlpatterns = [
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentableItemList.as_view()),
     url(r'^(?i)claim[s]?[/]?$', ClaimList.as_view()),
-    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
-    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
-    url(r'^login/$', loginDropzone(), name='login'),
-    url(r'^logout/$', logoutDropzone(), name='logout'),
-    url(r'^temp/(?P<hash>\w+)/$', reset_url(), name="password_reset_temp"),
-    url(r'^reset/$', password_reset(), name='password_reset'),
-    url(r'^reset_employee/$', password_reset_employee(), name='employee_password_reset'),
-    url(r'^create_dropzone/$',createDropzone(),name='create_dropzone'),
-    url(r'^dropzone/(?P<pk>[0-9]+)/create_employee/$',createEmployee(),name='create_employee'),
-    url(r'^auth_employee/', authenticateUserPin(), name='authenticate_user_pin'),
-    url(r'^auth_name_dropzone', authenticateNameDropzone(), name='authenticate_name_dropzone')
-]
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
+    url(r'^login/$', loginDropzone, name='login'),
+    url(r'^logout/$', logoutDropzone, name='logout'),
+    url(r'^temp/(?P<hash>\w+)/$', reset_url, name="password_reset_temp"),
+    url(r'^reset/$', password_reset, name='password_reset'),
+    url(r'^reset_employee/$', password_reset_employee, name='employee_password_reset'),
+    url(r'^create_dropzone/$', createDropzone, name='create_dropzone'),
+    url(r'^dropzone/(?P<pk>[0-9]+)/create_employee/$', createEmployee, name='create_employee'),
+    url(r'^auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
+    url(r'^auth_name_dropzone', authenticateNameDropzone, name='authenticate_name_dropzone')
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

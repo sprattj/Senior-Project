@@ -229,7 +229,7 @@ class Employees(models.Model):
     def employee_pin_in_use(pin=None):
         emp = Employees.objects.get()
         for e in emp:
-            if Employees.checkEmployeePin(pin=pin, employee=e) is True:
+            if Employees.check_employee_pin(pin=pin, employee=e) is True:
                 return e
         return None
 

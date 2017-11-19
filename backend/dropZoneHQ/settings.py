@@ -12,13 +12,13 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
-#uncomment when deploying
-#sys.path.insert(0, '/opt/python/current/app')
+# uncomment when deploying
+# sys.path.insert(0, '/opt/python/current/app')
 from rest_framework.settings import api_settings
 from os.path import abspath, basename, dirname, join, normpath
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))  
 SITE_ROOT = dirname(DJANGO_ROOT)  
 SITE_NAME = basename(DJANGO_ROOT)
@@ -32,7 +32,7 @@ SECRET_KEY = '_@j1a4@c3ap8w92s+p-$_kqap%au7bl6@)$b*@$uwr+95#2^z^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.dropzone.com']
+ALLOWED_HOSTS = ['.dropzone.com', '*']
 
 # Application definition
 
@@ -57,11 +57,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
-SESSION_ENGINE = [
-    'django.contrib.sessions.backends.signed_cookies'
-]
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 ROOT_URLCONF = 'dropZoneHQ.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
@@ -95,9 +96,9 @@ if 'RDS_DB_NAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }, 'OPTIONS': {
             'skip-ssl',
-       }
+        }
     }
-else :
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -129,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-#Login URL
+# Login URL
 LOGIN_URL = 'dropzonehq.com/login/'
 
 # Internationalization
@@ -146,15 +147,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-#STATIC_ROOT = 'static'
-#STATIC_URL = '/static/'
+# STATIC_ROOT = 'static'
+# STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #   'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 STATIC_URL = '/static/'  
 STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
 STATICFILES_DIRS = ()  
-
-#django.setup()
