@@ -33,7 +33,7 @@ export default class ItemTable extends React.Component {
             type: { rowData[i].type };
             index: { i };
         };
-
+        console.log("ItemTable: processRows: index: " + i)
         return rowData;
     }
 

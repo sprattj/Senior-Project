@@ -18,7 +18,7 @@ class RentalScreen extends React.Component {
         this.resetDisplay = this.resetDisplay.bind(this);
 
         this.state = {
-            currentItem: <RentalItemDisplay />
+            currentItem: <RentalItemDisplay headerText={"Rental Item Details"}/>
         }
     }
 
@@ -36,11 +36,9 @@ class RentalScreen extends React.Component {
 
     resetDisplay() {
         this.setState({
-            currentItem: <RentalItemDisplay />
+            currentItem: <RentalItemDisplay headerText={"Rental Item Details"}/>
         });
     }
-
-    
 
     render() {
         return (

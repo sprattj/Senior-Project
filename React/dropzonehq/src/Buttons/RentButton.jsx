@@ -1,18 +1,30 @@
 import React from 'react';
-import { Button } from 'reactstrap';
+import VerifyForm from '../VerifyForm.jsx';
+import { Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
 
 export default class RentButton extends React.Component {
     constructor(props) {
         super(props);
         this.onClickFunction = this.onClickFunction.bind(this);
+        this.toggleVerifyModal = this.toggleVerifyModal.bind(this);
         
-        this.setState = {
-            disabled: this.props.disabled
+        this.state = {
+            verifyOpen: false
         }
+        console.log(this.state.verifyOpen);
+    }
+
+    //change the VERFIY modal's visibility via state
+    toggleVerifyModal() {
+        console.log("RentButton: toggleVerifyModal: ");
+        this.setState({
+            verifyOpen: !this.state.verifyOpen
+        });
     }
 
     onClickFunction() {
         console.log(this.props);
+        this.toggleVerifyModal();
         if (this.props.buttonText) {
             if (this.props.buttonText === "Return") {
                 //return function
@@ -24,18 +36,26 @@ export default class RentButton extends React.Component {
                 //do nothing on click if it doesnt say Rent or Return the button isnt being used properly
             }
         }
-
     }
 
 
     render() {
+        var buttonID = "RentReturnButton" + this.props.index;
         return (
             <div>
                 <Button onClick={this.onClickFunction}
                     size="lg"
                     color="primary"
-                    disabled={this.props.disabled}>{this.props.buttonText}
-                </Button>
+                    id={buttonID} > {this.props.buttonText} </Button>
+
+                <Popover placement="bottom" isOpen={this.state.verifyOpen} target={buttonID} toggle={this.toggleVerifyModal}>
+                    <PopoverTitle>Verify Rental</PopoverTitle>
+                    <PopoverContent>
+                        <VerifyForm pinChanged={this.props.pinChanged} />
+                        <Button color="primary" onClick={this.packButton}>Verify</Button>{' '}
+                        <Button color="secondary" onClick={this.toggleVerifyModal}>Cancel</Button>
+                    </PopoverContent>
+                </Popover>
             </div>
         );
     }
