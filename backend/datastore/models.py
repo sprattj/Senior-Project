@@ -226,8 +226,8 @@ class Employees(models.Model):
     # Checks if a pin is in use for an Employee.
     # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
-    def employee_pin_in_use(pin=None):
-        emp = Employees.objects.get()
+    def employee_pin_in_use(pin):
+        emp = Employees.objects.all()
         for e in emp:
             if Employees.check_employee_pin(pin=pin, employee=e) is True:
                 return e
