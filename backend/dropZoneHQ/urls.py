@@ -28,12 +28,10 @@ sys.path.append('../')
 from backend.datastore.views import *
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name='index.html')),
     url(r'^(?i)admin[/]?', admin.site.urls),
     url(r'^(?i)rigs/(?P<pk>[0-9]+)[/]?$', RigDetail.as_view()),
     url(r'^(?i)rigsheet[s]?/all[/]?', EmployeeVsSignoutList.as_view()),
     url(r'^(?i)rigsheet[s]?/(?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutDetail.as_view()),
-    url(r'^(?i)rigsheet[s]?/student[s]?[/]?$', EmployeeVsSignoutStudentList.as_view()),
     url(r'^(?i)rigsheet[s]?/student[s]?[/](?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutStudentDetail.as_view()),
     url(r'^(?i)rigsheet[s]?/tandem[s]?[/](?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutTandemDetail.as_view()),
     url(r'^(?i)rigsheet[s]?/student[s]?[/]?$', EmployeeVsSignoutStudentList.as_view()),
@@ -47,6 +45,9 @@ urlpatterns = [
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentableItemList.as_view()),
     url(r'^(?i)claim[s]?[/]?$', ClaimList.as_view()),
+    url(r'^(?i)claim[s]?/warnings[/]?$', ClaimWarningList.as_view()),
+    url(r'^(?i)claim[s]?/queue[/]?$', ClaimQueueList.as_view()),
+    url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^login/$', loginDropzone, name='login'),
     url(r'^logout/$', logoutDropzone, name='logout'),
@@ -58,3 +59,7 @@ urlpatterns = [
     url(r'^auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
     url(r'^auth_name_dropzone', authenticateNameDropzone, name='authenticate_name_dropzone')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns += [
+    url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')
+]

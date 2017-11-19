@@ -79,7 +79,7 @@ export default class Rigsheet extends React.Component {
     this.setState({
       pin: pin
     })
-    console.log(this.state.pin);
+    //console.log(this.state.pin);
   }
 
   //When this rigsheet component loads on the page, fetch the rows
@@ -139,7 +139,7 @@ export default class Rigsheet extends React.Component {
   //Packs a row in the table.
   //This is the function that is called when you click a 
   //PackButton in a row. It replaces the button with a name.
-  packRow(signout_id) {
+  packRow(signout_id, index) {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
@@ -171,7 +171,7 @@ export default class Rigsheet extends React.Component {
         var newRows = Array.from(self.state.rows);
         //replace the pack button of this signout
         //with the name of the packer who packed it
-        newRows[signout_id].packed_by = responseData.packed_by;
+        newRows[index].packed_by = responseData.packed_by;
 
         //update the state with the new rows so it rerenders
         self.setState({
@@ -252,10 +252,11 @@ export default class Rigsheet extends React.Component {
     //Return a tablesheet with a signout button footer
     return (
       <TableSheet
-        headerText={this.props.sheetType}
+        headerText={this.props.title}
         columns={this.state.columns}
         footer={
           <SignoutButton
+            sheetType={this.props.sheetType}
             pinChanged={this.pinChanged}
             authorize={this.addSignout} />
         }

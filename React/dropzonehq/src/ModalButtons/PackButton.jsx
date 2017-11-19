@@ -32,7 +32,7 @@ export default class PackButton extends React.Component {
 
   packButton(){
     //TODO make this use the stuff from verify in rigsheet instead of signout id and instructor
-    this.props.authorize(this.props.signout_id, this.props.signout_id, this.props.instructor);
+    this.props.authorize(this.props.signout_id, this.props.index);
   }
   
   render() {
