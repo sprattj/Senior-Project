@@ -17,6 +17,7 @@ import CreateDropzoneScreen from './CreateDropzoneScreen.jsx';
 import LoginScreen from './LoginScreen.jsx';
 import PasswordResetScreen from './PasswordResetScreen.jsx';
 import LandingScreen from './LandingScreen.jsx';
+import NotFoundScreen from './NotFoundScreen.jsx';
 
 /*
     MainView is the main wrapper component to decide what to render.
@@ -45,7 +46,7 @@ export default class MainView extends React.Component {
                 />
                 <main>
                     <Switch>
-                    LandingScreen
+                        <Route exact path='/' component={MainScreen} />
                         <Route path='/main-menu' component={MainScreen} />
                         <Route path='/dropzone-home' component={LandingScreen}/>
                         <Route path='/login' component={LoginScreen} />
@@ -58,6 +59,7 @@ export default class MainView extends React.Component {
                         <Route path='/inventory-menu' component={InventoryScreen} />
                         <Route path='/loft-menu' component={LoftScreen} />
                         <Route path='/test-fetch' component={TestScreen} />
+                        <Route path='*' exact={true} component={NotFoundScreen} />
                     </Switch>
                 </main>
             </div>
