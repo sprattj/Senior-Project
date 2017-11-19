@@ -4,6 +4,7 @@ import RentButton from '../Buttons/RentButton.jsx';
 import InventoryTable from '../Tables/InventoryTable.jsx';
 import EditInventoryItemDisplay from '../ItemDisplays/EditInventoryItemDisplay.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 const marginStyle = {
     marginTop: 25,
@@ -13,10 +14,8 @@ const marginStyle = {
 /*
     InventoryScreen ...
 */
-class InventoryScreen extends React.Component 
-{
-    constructor(props) 
-    {
+class InventoryScreen extends React.Component {
+    constructor(props) {
         super(props);
         this.displayChange = this.displayChange.bind(this);
 
@@ -28,14 +27,12 @@ class InventoryScreen extends React.Component
     //changes the display of the right side of the screen by
     //taking in a EditInventoryItemDisplay and setting it in the currentItem state
     displayChange(itemDisplay, rowID) {
-        if (itemDisplay) 
-        { 
-            console.log("Inventory Screen-> displayChange> rowID: " + rowID);           
+        if (itemDisplay) {
+            console.log("Inventory Screen-> displayChange> rowID: " + rowID);
             this.setState({
                 currentItem: itemDisplay
             });
-        } else 
-        {
+        } else {
             console.log("check what 'itemDisplay' is");
         }
 
@@ -44,11 +41,16 @@ class InventoryScreen extends React.Component
     render() {
         return (
             <div>
+                <Row>
+                    <Col lg={{ size: 12 }}>
+                        <DropzoneHQNav />
+                    </Col>
+                </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
                         <InventoryTable displayChange={this.displayChange} />
                     </Col>
-                    <Col lg={{ size: 5}}>
+                    <Col lg={{ size: 5 }}>
                         <Card body>
                             {this.state.currentItem}
                         </Card>
