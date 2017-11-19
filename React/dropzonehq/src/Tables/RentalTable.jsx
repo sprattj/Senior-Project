@@ -1,14 +1,16 @@
 import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from './ItemTable.jsx';
-import RentalItemDisplay from '../ItemDisplays/RentalItemDisplay.jsx';
+import RentalDisplayRig from '../ItemDisplays/RentalDisplayRig.jsx';
+import RentalDisplayCanopy from '../ItemDisplays/RentalDisplayCanopy.jsx';
+import RentalDisplayContainer from '../ItemDisplays/RentalDisplayContainer.jsx';
 import RentButton from '../Buttons/RentButton.jsx';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import "react-table/react-table.css";
 
 var count = 0;
-var display = <RentalItemDisplay var1={"nothing to"} var2={"see here"} />;
+var display = "";
 export default class RentalTable extends React.Component {
     constructor(props) {
         super(props);
@@ -16,49 +18,96 @@ export default class RentalTable extends React.Component {
         //it shouldn't be part of state. Save it in a class variable.
         this.URLsection = "/rentals";
 
-        //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
         this.rentItem = this.rentItem.bind(this);
         this.returnItem = this.returnItem.bind(this);
+        this.rigSelected = this.rigSelected.bind(this);
+        this.canopySelected = this.canopySelected.bind(this);
+        this.containerSelected = this.containerSelected.bind(this);
 
         this.all = [];
         this.rigs = [];
         this.canopies = [];
         this.containers = [];
 
+        this.columnsAll = [{
+            Header: 'Item Number',
+            accessor: 'number', // String-based value accessors!
+            width: 150
+        }, {
+            Header: 'Item Description',
+            accessor: 'desc',
+            width: 400
+        }];
+
+        this.columnsRigs = [{
+            Header: 'Main',
+            accessor: 'mainBrand',
+            width: 150
+        }, {
+            Header: 'Main Size',
+            accessor: 'mainSize',                           //TODO How will i get data back for the items attached to rigs?
+            width: 150
+        }, {
+            Header: 'Container',
+            accessor: 'containerBrand',
+            width: 250
+        }];
+
+        this.columnsCanopies = [{
+            Header: 'Canopy Brand',
+            accessor: 'brand',
+            width: 150
+        }, {
+            Header: 'Canopy Size',
+            accessor: 'size',
+            width: 150
+        }, {
+            Header: 'Canopy Description',
+            accessor: 'desc',
+            width: 250
+        }];
+
+        this.columnsContainers = [{
+            Header: 'Container Brand',
+            accessor: 'brand',
+            width: 150
+        }, {
+            Header: 'Container Description',
+            accessor: 'desc',
+            width: 400
+        }];
+
         //Test Data to fill the table until we connect to the DB
-        var rowData = [{ rowID: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig" },
-        { rowID: 2, number: "02", desc: "Red and Green Pilot 220. Black and Yellow Mirage", isRented: false, renterName: "", type: "rig" },
-        { rowID: 3, number: "03", desc: "Brown Navigator 190. Black and White Mirage", isRented: false, renterName: "", type: "rig" },
-        { rowID: 4, number: "04", desc: "Old Yellow and Gray Pilot240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig" },
-        { rowID: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig" },
-        { rowID: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { rowID: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { rowID: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { rowID: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { rowID: 10, number: "redJav", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig" },
-        { rowID: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig" },
-        { rowID: 12, number: "01125", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy" },
-        { rowID: 13, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container" },
-        { rowID: 14, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container" }
-        ];
+        var rowData =
+            [{ rowID: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
+            { rowID: 2, number: "02", desc: "Red and Green Pilot 220. Black and Yellow Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
+            { rowID: 3, number: "03", desc: "Brown Navigator 190. Black and White Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
+            { rowID: 4, number: "04", desc: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
+            { rowID: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
+            { rowID: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
+            { rowID: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
+            { rowID: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
+            { rowID: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+            { rowID: 10, number: "redJav", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+            { rowID: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
+            { rowID: 12, number: "01125", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy", brand: "Navigator", size: "210" },
+            { rowID: 13, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container", brand: "Mirage" },
+            { rowID: 14, number: "07663", desc: "Red and Black Mirage", isRented: true, renterName: "Edgar", type: "container", brand: "Mirage" }
+            ];
 
         this.state = {
             filter: "all",
-            columns: [{
-                Header: 'Item Number',
-                accessor: 'number' // String-based value accessors!
-            }, {
-                Header: 'Item Description',
-                accessor: 'desc',
-            }],
+            columns: this.columnsAll,
             rows: rowData,
             rowID: 0
         };
         this.getFilteredRows(this.state.rows);
     }
 
+    //Takes the whole set of data given from db call and split it into the types so the split doesnt
+    //need to take place more than once after each db call not when filter is selected
     getFilteredRows(rowData) {
         this.all = rowData;                                  //save everything first
         for (var i = 0; i < rowData.length; i++) {      //if the type is rig
@@ -73,32 +122,125 @@ export default class RentalTable extends React.Component {
     }
 
 
-    //for the dropdown    
+    //When a selection is made on FilterDropdown this function should be called to change the values on the RentalTable 
     filterChanged(selection) {
         switch (selection) {
             case "Show All":
-                this.setState({ filter: "all", rows: this.all });
+                this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
                 break;
             case "Rigs Only":
-                this.setState({ filter: "rig", rows: this.rigs });
+                this.setState({ filter: "rig", rows: this.rigs, columns: this.columnsRigs });
                 break;
             case "Canopies Only":
-                this.setState({ filter: "canopy", rows: this.canopies });
+                this.setState({ filter: "canopy", rows: this.canopies, columns: this.columnsCanopies });
                 break;
             case "Containers Only":
-                this.setState({ filter: "container", rows: this.containers });
+                this.setState({ filter: "container", rows: this.containers, columns: this.columnsContainers });
                 break;
             default:
-                this.setState({ filter: "all", rows: this.all });
+                this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
                 break;
         }
-        //this.processRows(this.state.rows, this.state.filter);
+        this.props.resetDisplay();
+    }
+
+    //calls up to the screen change the display on the right
+    itemSelected(selectedIndex) {
+        var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
+        var rentalButton;                           //variable Rent or Return button shows if Available or Rented 
+
+        /*
+        if (row.isRented) {     //if the item is rented set the rentalButton var to Return
+            rentalButton = <RentButton buttonText={"Return"} return={this.returnItem} rowID={selectedIndex + 1} />;
+        } else {                //if the item isnt rented set the rentalButton var to Rent
+            rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} rowID={selectedIndex + 1} />;
+        }*/
+
+        {
+            row.isRented ? (
+                rentalButton = <RentButton buttonText={"Return"} return={this.returnItem} rowID={selectedIndex + 1} />
+            ) : (
+                rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} rowID={selectedIndex + 1} />
+            )
+        }
+
+        //select the type of Rental Item Display will be shown based on the selected item's .type
+        switch (row.type) {
+            case ("rig"):
+                this.rigSelected(row, rentalButton);
+                break;
+
+            case ("canopy"):
+                this.canopySelected(row, rentalButton);
+                break;
+
+            case ("container"):
+                this.containerSelected(row, rentalButton);
+                break;
+        }
+        this.props.displayChange(display, row.rowID);          //pass it up thru props method call
+    }
+
+    //Rigs should display mainBrand, mainSize, reserveBrand, reserveSize, containerBrand, aadExpirationDate, description
+    rigSelected(row, rentalButton) {
+        display = <RentalDisplayRig
+            number={row.number}
+            isRented={row.isRented}
+            desc={row.desc}
+
+            renterName={row.renterName}
+            mainBrand={row.mainBrand}
+            mainSize={row.mainSize}
+            reserveBrand={row.reserveBrand}
+            reserveSize={row.reserveSize}
+            containerBrand={row.containerBrand}
+            aadExp={row.aadExpirationDate}
+
+            button={rentalButton}
+        />;
+    }
+
+    canopySelected(row, rentalButton) {
+        display = <RentalDisplayCanopy
+            number={row.number}
+            isRented={row.isRented}
+            desc={row.desc}
+
+            renterName={row.renterName}
+            brand={row.brand}
+            size={row.size}
+
+            button={rentalButton}
+        />;
+    }
+
+    containerSelected(row, rentalButton) {
+        display = <RentalDisplayContainer
+            number={row.number}
+            isRented={row.isRented}
+            desc={row.desc}
+
+            renterName={row.renterName}
+            brand={row.brand}
+
+            button={rentalButton}
+        />;
+    }
+
+    rentItem(rowID) {
+        console.log("RentalTable: rentItem Function");
+
+    }
+
+    returnItem(rowID) {
+        console.log("RentalTable: returnItem Function");
+
     }
 
     //When this RentalTable component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
-       // this.fetchRows();
+        this.fetchRows();
     }
 
     //Fetch the items from the database that are 
@@ -146,40 +288,11 @@ export default class RentalTable extends React.Component {
             });
     }
 
-    //calls up to the screen change the display on the right
-    itemSelected(selectedIndex) {
-        var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
-        var rentalButton;                           //variable Rent or Return button shows if Available or Rented 
-        
-        if (row.isRented) {
-            rentalButton=<RentButton buttonText={"Return"} return={this.returnItem} rowID={selectedIndex + 1} />;
-        } else {
-            rentalButton=<RentButton buttonText={"Rent"} rent={this.rentItem} rowID={selectedIndex + 1} />;
-        }
-
-        display = <RentalItemDisplay            //set up the display component
-            rowID={row.rowID}
-            number={row.number}
-            desc={row.desc}
-            isRented={row.isRented}
-            renterName={row.renterName}
-            type={row.type} 
-            button={rentalButton} />
-        this.props.displayChange(display, row.rowID);          //pass it up thru props method call
-        console.log(count);
-        count++;
+    processRows(rowData) {
+        this.setState({
+            rows: rowData
+        })
     }
-
-    rentItem(rowID) {
-        console.log("RentalTable: rentItem Function");
-        
-    }
-
-    returnItem(rowID) {
-        console.log("RentalTable: returnItem Function");
-
-    }
-
 
     render() {
         var filterDropdown = <FilterDropdown
@@ -192,6 +305,7 @@ export default class RentalTable extends React.Component {
                 <Row>
                     <Col>
                         <ItemTable
+                            columns={this.state.columns}
                             rows={this.state.rows}
                             top={filterDropdown}
                             bottom={""}

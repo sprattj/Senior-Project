@@ -1,16 +1,26 @@
 import React from 'react';
-import { ListGroupItem } from 'reactstrap';
+import { ListGroupItem, ButtonGroup } from 'reactstrap';
+import ModalButton from '../ModalButtons/ModalButton.jsx';
 
 export default class WarningListItem extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
+        this.addToQueue = this.addToQueue.bind(this);
+        this.dismiss = this.dismiss.bind(this);        
     }
 
-    handleClick(){
-        console.log("Clicked warning ID: " + this.props.warnID);
+    handleClick() {
         this.props.onClick(this.props.warnID);
+    }
+
+    addToQueue(){
+        this.props.addToQueue(this.props.warnID);
+    }
+
+    dismiss(){
+        this.props.dismiss(this.props.warnID);
     }
 
     render() {
@@ -19,20 +29,46 @@ export default class WarningListItem extends React.Component {
             backgroundColor: '#FFF',
             color: '#000'
         }
-        if(this.props.selected)
-        {
+        if (this.props.selected) {
             style = {
                 backgroundColor: '#d9534f',
                 color: '#FFF'
             }
         }
 
+        var addToQueueContent = 
+            <div>
+
+            </div>
+        var dismissContent = 
+            <div>
+
+            </div>
         return (
             <ListGroupItem style={style} onClick={this.handleClick}>
                 <ul>
-                    <h6>Rig: {this.props.rig}</h6>
-                    <h6>Problem: {this.props.problem}</h6>
+                    <li>Severity: {this.props.severity}</li>
+                    <li>Rig: {this.props.rig_id}</li>
+                    <li>Description: {this.props.description}</li>
+                    <li>Submit Date: {this.props.submit_date}</li>
+                    <li>Due Date: {this.props.due_date}</li>
                 </ul>
+                <ButtonGroup>
+                    <ModalButton buttonSize="sm"
+                        buttonColor={"info"}
+                        buttonText={"Add to Queue"}
+                        modalTitle={"Add Warning"}
+                        modalContent={addToQueueContent}
+                        modalPrimaryButtonText="Add"
+                        modalPrimaryClick={this.addToQueue} />
+                    <ModalButton buttonSize="sm"
+                        buttonColor={"danger"}
+                        buttonText={"Dismiss"}
+                        modalTitle={"Dismiss Warning"}
+                        modalContent={dismissContent}
+                        modalPrimaryButtonText="Dismiss"
+                        modalPrimaryClick={this.dismiss} />
+                </ButtonGroup>
             </ListGroupItem>
         );
     }

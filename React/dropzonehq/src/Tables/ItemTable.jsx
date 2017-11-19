@@ -18,16 +18,7 @@ export default class ItemTable extends React.Component {
         this.RowProps = this.RowProps.bind(this);
         this.clickedFunction = this.clickedFunction.bind(this);
 
-        this.state = {
-            columns: [{
-                Header: 'Item Number',
-                accessor: 'number', // String-based value accessors!
-                width: 150
-            }, {
-                Header: 'Item Description',
-                accessor: 'desc',
-                width: 400
-            }],
+        this.state = {            
             rowID: 0,
             selected: null
         };
@@ -41,11 +32,6 @@ export default class ItemTable extends React.Component {
             desc: { rowData[i].desc };
             type: { rowData[i].type };
             index: { i };
-
-
-            if (rowData[i].isRented) {
-                //change the way its viewed
-            }
         };
 
         return rowData;
@@ -102,7 +88,7 @@ export default class ItemTable extends React.Component {
                         <TableSheet
                             getTrProps={this.RowProps}
                             headerText={this.props.top}
-                            columns={this.state.columns}
+                            columns={this.props.columns}
                             footer={this.props.bottom}>
                             {this.processRows(this.props.rows)}
                         </TableSheet>

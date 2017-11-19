@@ -56,7 +56,6 @@ export default class Rigsheet extends React.Component {
     };
   }
 
-
   //Process the rows that are passed in to fill in the missing 
   //"Packed By" data with a PackButton
   addPackButtons(rowData) {

@@ -14,9 +14,6 @@ import os
 import sys
 #uncomment when deploying
 #sys.path.insert(0, '/opt/python/current/app')
-
-import django
-<<<<<<< HEAD
 from rest_framework.settings import api_settings
 from os.path import abspath, basename, dirname, join, normpath
 
@@ -56,8 +53,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageM iddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 SESSION_ENGINE = [
@@ -132,6 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+#Login URL
+LOGIN_URL = 'dropzonehq.com/login/'
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 LANGUAGE_CODE = 'en-us'
@@ -146,15 +146,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_ROOT = 'static'
-STATIC_URL = '/static/'
+#STATIC_ROOT = 'static'
+#STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-#STATIC_URL = '/static/'  
-#STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
+STATIC_URL = '/static/'  
+STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
 STATICFILES_DIRS = ()  
 
-django.setup()
+#django.setup()
