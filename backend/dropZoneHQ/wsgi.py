@@ -15,5 +15,5 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 #change to just dropZoneHQ.settings.py when deploying
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dropZoneHQ.settings.py")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.dropZoneHQ.settings.py")
 application = get_wsgi_application()

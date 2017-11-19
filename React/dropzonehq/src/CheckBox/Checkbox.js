@@ -10,7 +10,7 @@ export default class Checkbox extends React.Component {
         this.toggleCheckboxChange = this.toggleCheckboxChange.bind(this);
 
         this.state = {
-            isChecked: false
+            isChecked: this.props.isChecked
         }
     }
 
