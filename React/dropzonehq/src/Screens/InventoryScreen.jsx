@@ -2,6 +2,7 @@ import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from '../Tables/ItemTable.jsx';
 import EditInventoryItemDisplay from '../ItemDisplays/EditInventoryItemDisplay.jsx';
+import BlankItemDisplay from '../ItemDisplays/BlankItemDisplay.jsx';
 import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col, Card } from 'reactstrap';
@@ -65,7 +66,7 @@ export default class InventoryScreen extends React.Component {
             }],
             rows: rowData,
             index: 0,
-            currentItem:  <div> <h6> Please click item to view more details. </h6></div>
+            currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
         };
 
         this.getFilteredRows(this.state.rows);
@@ -228,6 +229,7 @@ export default class InventoryScreen extends React.Component {
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
                         <ItemTable
+                            columns={this.state.columns}
                             rows={this.state.rows}
                             top={filterDropdown}
                             bottom={addItemBtn}
