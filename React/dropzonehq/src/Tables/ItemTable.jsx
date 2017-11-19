@@ -85,9 +85,6 @@ export default class ItemTable extends React.Component {
     //filter stuff is for testing the states
     render() {
         return (
-            <div>
-                <Row>
-                    <Col>
                         <TableSheet
                             getTrProps={this.RowProps}
                             headerText={this.props.top}
@@ -95,10 +92,6 @@ export default class ItemTable extends React.Component {
                             footer={this.props.bottom}>
                             {this.processRows(this.props.rows)}
                         </TableSheet>
-                    </Col>
-                </Row>
-            </div>
         );
     }
-
 }
