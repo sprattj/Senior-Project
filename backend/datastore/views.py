@@ -116,8 +116,6 @@ class RigList(generics.ListCreateAPIView):
     serializer_class = RigSerializer
 
 
-<<<<<<< HEAD
-=======
 class AvailableStudentRigList(generics.ListAPIView):
     queryset = Rigs.objects.all().filter(istandem=0)
     serializer_class = RigSerializer
@@ -128,7 +126,6 @@ class AvailableTandemRigList(generics.ListAPIView):
     serializer_class = RigSerializer
 
 
->>>>>>> master
 class RigDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
@@ -153,13 +150,10 @@ class ClaimWarningList(generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.PENDING)
     serializer_class = ClaimSerializer
 
-<<<<<<< HEAD
-=======
 class ClaimQueueList(generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.IN_PROGRESS)
     serializer_class = ClaimSerializer
 
->>>>>>> master
 class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
@@ -230,14 +224,11 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
         jumpmaster = get_emp_full_name(employee_id)
         signout_id = post_signout(request)
 
-<<<<<<< HEAD
-=======
         post_emp_signout(employee_id, signout_id)
         ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
                     'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
->>>>>>> master
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
