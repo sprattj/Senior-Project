@@ -11,14 +11,14 @@ export default class AddEmployeeButton extends React.Component {
     this.verify = this.verify.bind(this);
 
     this.firstNameChanged = this.firstNameChanged.bind(this);
-    this.lastNameChanged = this.lastNameChanged.bind(this);    
+    this.lastNameChanged = this.lastNameChanged.bind(this);   
+    this.emailChanged  = this.emailChanged.bind(this); 
     this.jobsChanged = this.jobsChanged.bind(this);
-    this.PINChanged = this.PINChanged.bind(this);
 
     this.state = {
       firstName: '',
       lastName: '',
-      pin: '',
+      email: '',
       error: '',
       jobs: []
     }
@@ -26,12 +26,12 @@ export default class AddEmployeeButton extends React.Component {
 
   verify() {
 
-    if(this.state.firstName && this.state.lastName && this.state.pin && this.state.jobs.length > 0){
-      this.props.authorize(this.state.firstName, this.state.lastName, this.state.pin, this.state.jobs);
+    if(this.state.firstName && this.state.lastName && this.state.email && this.state.jobs.length > 0){
+      this.props.authorize(this.state.firstName, this.state.lastName, this.state.email, this.state.jobs);
       this.setState( {
         firstName: '',
         lastName: '',
-        pin: '',
+        email: '',
         error: '',
         jobs: []
       });
@@ -42,7 +42,6 @@ export default class AddEmployeeButton extends React.Component {
       );
       return false;
     }
-
   }
 
   firstNameChanged(e) {
@@ -53,8 +52,8 @@ export default class AddEmployeeButton extends React.Component {
     this.setState({ lastName: e.target.value });
   }
 
-  PINChanged(e) {
-    this.setState({ pin: e.target.value });
+  emailChanged(e) {
+    this.setState({ email: e.target.value });
   }
 
   jobsChanged(job) {
@@ -76,7 +75,6 @@ export default class AddEmployeeButton extends React.Component {
     } else {
       newJobs.push(job);
     }
-    console.log(newJobs);
     this.setState({
       jobs: newJobs
     })
@@ -92,7 +90,8 @@ export default class AddEmployeeButton extends React.Component {
 
     for (var i = 0; i < jobs.length; i++) {
       var nextJob = jobs[i];
-      var nextItem = <Checkbox key={i} label={nextJob} updateCheckBoxArray={this.jobsChanged} />
+      var t = true;
+      var nextItem = <Checkbox isChecked={false} key={i} label={nextJob} updateCheckBoxArray={this.jobsChanged} />
 
       if (i % 3 === 0) {
         col1.push(nextItem);
@@ -127,12 +126,12 @@ export default class AddEmployeeButton extends React.Component {
         <InputGroupAddon >Last Name: </InputGroupAddon>
         <Input id="addEmployeeLastName" type='text' value={this.state.lastName} onChange={this.lastNameChanged} />
       </InputGroup>
-      <br />      
-      <InputGroup>
-        <InputGroupAddon >PIN </InputGroupAddon>
-        <Input id="addEmployeeLastName" type='password' pattern="[0-9]{6}" value={this.state.PIN} onChange={this.PINChanged} />
-      </InputGroup>
       <br />
+      <InputGroup>
+        <InputGroupAddon >Email: </InputGroupAddon>
+        <Input id="addEmployeeEmail" type='email' value={this.state.email} onChange={this.emailChanged} />
+      </InputGroup>
+      <br />       
       <Col>
         <h3>Job(s)</h3>
         <FormGroup check>

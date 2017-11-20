@@ -1,8 +1,9 @@
 import React from 'react';
 import { Row, Col, Card } from 'reactstrap';
 import RentalTable from '../Tables/RentalTable.jsx';
-import RentalItemDisplay from '../ItemDisplays/RentalItemDisplay.jsx';
+import BlankItemDisplay from '../ItemDisplays/BlankItemDisplay.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 const marginStyle = {
     marginTop: 25,
@@ -18,7 +19,7 @@ class RentalScreen extends React.Component {
         this.resetDisplay = this.resetDisplay.bind(this);
 
         this.state = {
-            currentItem: <RentalItemDisplay />
+            currentItem: <BlankItemDisplay headerText={"Rental Item Details"}/>
         }
     }
 
@@ -36,15 +37,18 @@ class RentalScreen extends React.Component {
 
     resetDisplay() {
         this.setState({
-            currentItem: <RentalItemDisplay />
+            currentItem: <BlankItemDisplay headerText={"Rental Item Details"}/>
         });
     }
-
-    
 
     render() {
         return (
             <div>
+                <Row>
+                    <Col lg={{ size: 12 }}>
+                        <DropzoneHQNav/>
+                    </Col>
+                </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
                         <RentalTable displayChange={this.displayChange} resetDisplay={this.resetDisplay}/>

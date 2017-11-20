@@ -145,11 +145,18 @@ class ClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
+#TODO
+class ClaimWarningList(generics.ListCreateAPIView):
+    queryset = Claims.objects.filter(status=Claims.PENDING)
+    serializer_class = ClaimSerializer
+
+class ClaimQueueList(generics.ListCreateAPIView):
+    queryset = Claims.objects.filter(status=Claims.IN_PROGRESS)
+    serializer_class = ClaimSerializer
 
 class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
-
 
 class PendingClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all().filter(status='Pending')
@@ -221,7 +228,6 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
         ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
                     'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
-
 
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()

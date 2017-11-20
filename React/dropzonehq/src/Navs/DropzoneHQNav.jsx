@@ -1,9 +1,7 @@
 import React from 'react';
 import SiteNavbar from './SiteNavbar.jsx';
-import { NavItem, NavLink } from 'reactstrap';
-import ChangeScreenButton from '../Buttons/ChangeScreenButton.jsx';
-import MainScreen from '../Screens/MainScreen.jsx';
-
+import { NavItem } from 'reactstrap';
+import { Link } from 'react-router-dom'
 
 /*
     A SiteNavbar is a light styled Reactstrap Navbar that collapses on smaller screens.
@@ -12,20 +10,35 @@ import MainScreen from '../Screens/MainScreen.jsx';
 */
 export default class DropzoneHQNav extends React.Component {
 
-    //svg link https://docs.google.com/uc?id=0ByDw0k4qQe74SXUyNWhXb2dPc1U
     render() {
         return (
-            <SiteNavbar brandImage={"https://docs.google.com/uc?id=0ByDw0k4qQe74ZE5LVHY1eTZYaXM"} 
-            brandText="Dropzone HQ" brandLink="#">
-                <NavItem>
-                    <ChangeScreenButton screen={<MainScreen changeScreen={this.props.changeScreen} />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Return to Main" />
+            <SiteNavbar brandImage={"http://svgshare.com/i/3vT.svg"}
+                brandText="Dropzone HQ" brandLink="#">
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/dropzone-home'>Home</Link>
                 </NavItem>
-                <NavItem>
-                    <NavLink href="#">Thing 2</NavLink>
+                        <NavItem className="dzhq_nav_item">
+                <Link to='/employee-info'>Stats</Link>
                 </NavItem>
-            </SiteNavbar>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/employee-management'>Employee Admin</Link>
+                </NavItem>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/rental-menu'>Rentals</Link>
+                </NavItem>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/rig-sheets'>Rigsheets</Link>
+                </NavItem>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/inventory-menu'>Inventory</Link>
+                </NavItem>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/loft-menu'>Loft</Link>
+                </NavItem>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/test-fetch'>Test</Link>
+                </NavItem>
+            </SiteNavbar >
         );
     }
 }

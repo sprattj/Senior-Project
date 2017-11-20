@@ -4,9 +4,11 @@ import ItemTable from './ItemTable.jsx';
 import RentalDisplayRig from '../ItemDisplays/RentalDisplayRig.jsx';
 import RentalDisplayCanopy from '../ItemDisplays/RentalDisplayCanopy.jsx';
 import RentalDisplayContainer from '../ItemDisplays/RentalDisplayContainer.jsx';
-import RentButton from '../Buttons/RentButton.jsx';
+import RentReturnButton from '../Buttons/RentReturnButton.jsx';
+import RentButton from '../ModalButtons/RentButton.jsx';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
+import { toast } from 'react-toastify';
 import "react-table/react-table.css";
 
 var count = 0;
@@ -25,6 +27,7 @@ export default class RentalTable extends React.Component {
         this.rigSelected = this.rigSelected.bind(this);
         this.canopySelected = this.canopySelected.bind(this);
         this.containerSelected = this.containerSelected.bind(this);
+        this.pinChanged = this.pinChanged.bind(this);
 
         this.all = [];
         this.rigs = [];
@@ -94,14 +97,15 @@ export default class RentalTable extends React.Component {
             { rowID: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
             { rowID: 12, number: "01125", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy", brand: "Navigator", size: "210" },
             { rowID: 13, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container", brand: "Mirage" },
-            { rowID: 14, number: "07663", desc: "Red and Black Mirage", isRented: true, renterName: "Edgar", type: "container", brand: "Mirage" }
+            { rowID: 14, number: "07678", desc: "Red and Black Mirage", isRented: true, renterName: "Edgar", type: "container", brand: "Mirage" }
             ];
 
         this.state = {
             filter: "all",
             columns: this.columnsAll,
             rows: rowData,
-            rowID: 0
+            rowID: 0,
+            pin: ''
         };
         this.getFilteredRows(this.state.rows);
     }
@@ -120,7 +124,6 @@ export default class RentalTable extends React.Component {
             }
         }
     }
-
 
     //When a selection is made on FilterDropdown this function should be called to change the values on the RentalTable 
     filterChanged(selection) {
@@ -158,9 +161,9 @@ export default class RentalTable extends React.Component {
 
         {
             row.isRented ? (
-                rentalButton = <RentButton buttonText={"Return"} return={this.returnItem} rowID={selectedIndex + 1} />
+                rentalButton = <RentReturnButton buttonText={"Return"} return={this.returnItem} rowID={selectedIndex + 1} />
             ) : (
-                rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} rowID={selectedIndex + 1} />
+                rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} rowID={selectedIndex + 1} pinChanged={this.pinChanged} />
             )
         }
 
@@ -228,14 +231,64 @@ export default class RentalTable extends React.Component {
     }
 
     rentItem(rowID) {
+        /*
         console.log("RentalTable: rentItem Function");
-
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+    
+        var url = rootURL + this.URLsection + "/" + id;
+    
+        var self = this;
+        var requestVariables = {
+            pin: this.state.pin
+          };
+          fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+          })//when we get a response back
+            .then(function (response) {
+              if (response.status >= 400) {
+                throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
+              }
+              return response.json();
+            })//when the call succeeds
+            .then(function (responseData) {
+              //grab the current rows
+              var newRows = this.all;
+              
+              //--
+              newRows[rowID].isRented = true;
+              newRows[rowID].RenterName = "TEST NAME";
+              this.getFilteredRows(newRows);
+      
+              //update the state with the new rows so it rerenders
+              self.setState({
+                rows: newRows,
+                pin: ''
+              });
+      
+            })//catch any errors and display them as a toast
+            .catch(function (error) {
+              toast.error(error + "\n" + url);
+            });*/
     }
 
     returnItem(rowID) {
         console.log("RentalTable: returnItem Function");
 
     }
+
+    pinChanged(id, pin) {
+        this.setState({
+          pin: pin
+        })
+        console.log(this.state.pin);
+      }
 
     //When this RentalTable component loads on the page, fetch the rows
     //from the database and display them.

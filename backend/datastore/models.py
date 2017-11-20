@@ -71,6 +71,8 @@ class Claims(models.Model):
 
     # Autoincrement integer PK
     claim_id = models.AutoField(primary_key=True)
+    #Rig that this claim is for
+    rig_id = models.IntegerField()
     # How critical is this claim
     severity = models.CharField(max_length=12, choices=SEVERITY_CHOICES)
     # Status of the claim
@@ -79,13 +81,13 @@ class Claims(models.Model):
     description = models.CharField(max_length=45, blank=True, null=True)
     submitter = models.OneToOneField('Employees', models.DO_NOTHING)
     handler = models.OneToOneField('Employees', models.DO_NOTHING)
-
+    
     # Date the claim was submitted
-    submit_date = models.DateField()
+    submit_date = models.DateField(blank=True, null=True)
     # Date the claim is due
-    due_date = models.DateField()
+    due_date = models.DateField(blank=True, null=True)
     # Date the claim was completed
-    complete_date = models.DateField()
+    complete_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = True

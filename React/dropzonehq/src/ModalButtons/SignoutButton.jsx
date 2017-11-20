@@ -18,7 +18,6 @@ export default class SignoutButton extends React.Component {
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
     this.addSignout = this.addSignout.bind(this);
-
     this.rigChanged = this.rigChanged.bind(this);
     this.planeLoadChanged = this.planeLoadChanged.bind(this);
     //keep state for the values of the components in this modal

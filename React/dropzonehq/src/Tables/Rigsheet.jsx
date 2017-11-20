@@ -258,7 +258,7 @@ export default class Rigsheet extends React.Component {
         columns={this.state.columns}
         footer={
           <SignoutButton
-              sheetType={this.props.sheetType}
+            sheetType={this.props.sheetType}
             pinChanged={this.pinChanged}
             authorize={this.addSignout} />
         }
