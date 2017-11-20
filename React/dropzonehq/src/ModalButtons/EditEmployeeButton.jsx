@@ -13,7 +13,7 @@ export default class EditEmployeeButton extends React.Component {
         this.firstNameChanged = this.firstNameChanged.bind(this);
         this.lastNameChanged = this.lastNameChanged.bind(this);
         this.jobsChanged = this.jobsChanged.bind(this);
-        this.email = this.email.bind(this);
+        this.email = this.emailChanged.bind(this);
 
 
         this.state = {
@@ -72,19 +72,25 @@ export default class EditEmployeeButton extends React.Component {
         })
     }
 
-    getCheckBoxes() {
-        var jobsArray = ["Rigger", "Loft Head", "Loft Employee", "Tandem Instructor",
-            "AFP Instructor", "Packer", "Manifest", "Videographer",
-            "Hanger Master", "Administrator"];
+    getCheckBoxes(jobsList) {
+        console.log("Hey this is your job list!");
+        console.log(jobsList);
+        var jobsArray = ["rigger", "loft head", "loft employee", "tandem instructor",
+            "afp instructor", "packer", "manifest", "videographer",
+            "hanger master", "administrator"];
         var col1 = [];
         var col2 = [];
         var col3 = [];
-        var alreadyChecked = false;
-        if (this.jobs.length > 0) {
+
+        if (jobsList) {
+            this.state({
+                jobs: jobsList
+            });
+            var alreadyChecked = false;
             for (var i = 0; i < jobsArray.length; i++) {
                 var nextJob = jobsArray[i];
-                for (var j = 0; j < this.jobs.length; j++) {
-                    if (nextJob === this.jobs[j]) {
+                for (var j = 0; j < this.state.jobs.length; j++) {
+                    if (nextJob === this.state.jobs[j]) {
                         var NextItem = <Checkbox isChecked={true} key={i} label={nextJob} updateCheckBoxArray={this.jobsChanged} />
                         alreadyChecked = true;
                     }
@@ -103,7 +109,6 @@ export default class EditEmployeeButton extends React.Component {
             }
         } else {
             for (var i = 0; i < jobsArray.length; i++) {
-                var t = true;
                 var nextJob = jobsArray[i];
                 var nextItem = <Checkbox isChecked={false} key={i} label={nextJob} updateCheckBoxArray={this.jobsChanged} />
 
@@ -125,7 +130,7 @@ export default class EditEmployeeButton extends React.Component {
     }
 
     render() {
-        const checkboxes = this.getCheckBoxes();
+        const checkboxes = this.getCheckBoxes(this.props.checkedJobs);
         const modalContent = <Form>
             <InputGroup>
                 <InputGroupAddon >First Name: </InputGroupAddon>
