@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupItem } from 'reactstrap';
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
-import { rootURL } from './restInfo.js';
+import { rootURL, CLAIM_STATUS_CHOICES, CLAIM_SEVERITY_CHOICES } from './restInfo.js';
 import { toast } from 'react-toastify';
 
 /*
@@ -63,7 +63,8 @@ export default class RigAlertsContainer extends React.Component {
         var requestVariables = {
             rig_id: rig_id,
             severity: severity,
-            description: description
+            description: description,
+            status: CLAIM_STATUS_CHOICES.PENDING
         };
         fetch(url, {
             method: "POST",
@@ -114,7 +115,7 @@ export default class RigAlertsContainer extends React.Component {
         //that we set in our constructor (like "/rigsheets"), and
         //the sheetType prop ("Tandems" or "Students")
         //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection;
+        var url = rootURL + this.URLsection + "/warnings";
 
         //save 'this' so that we can call functions
         //inside the fetch() callback
@@ -160,7 +161,7 @@ export default class RigAlertsContainer extends React.Component {
             var nextAlert = <ListGroupItem
                 key={i}
                 color={itemColor}>
-                {claimsJSON[i].description}
+                Rig {claimsJSON[i].rig_id}: {claimsJSON[i].description}
             </ListGroupItem>
             alerts.unshift(nextAlert);
         }
@@ -169,17 +170,15 @@ export default class RigAlertsContainer extends React.Component {
 
     getSeverityColor(severity) {
         var color = "secondary";
+        severity = severity.toLowerCase();
         switch (severity) {
-            case ("COSMETIC"):
+            case (CLAIM_SEVERITY_CHOICES.COSMETIC.toLowerCase()):
                 color = "info";
                 break;
-            case ("NON-CRITICAL"):
+            case (CLAIM_SEVERITY_CHOICES.NON_CRITICAL.toLowerCase()):
                 color = "warning";
                 break;
-            case ("CRITICAL"):
-                color = "danger";
-                break;
-            case ("Problem Type 4"):
+            case (CLAIM_SEVERITY_CHOICES.CRITICAL.toLowerCase()):
                 color = "danger";
                 break;
             default:

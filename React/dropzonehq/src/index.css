@@ -13,28 +13,28 @@ body {
     overflow-y: scroll;
 }
 .navbar{
-    background: #fe4a49;
-    border-bottom: solid 5px #FFF;
-    color: #FFF;
+    /*background: #fe4a49;*/
+    outline: solid 7px #FFF;
+    border-bottom: solid 15px rgb(29, 195, 255);
 }
 .dzhq_nav_item {
     padding: 15px 10px;
     font-size: 1.2em;
-    height: 100%;   
-    
+    height: 100%;  
+    color: #000; 
 }
 
 .dzhq_nav_item > a {
-    color: #FFF;
+    color: inherit;
     height: 100%;    
+    padding-top: 50%;
 }
-.navbar-brand{
-    color: #FFF;
-}
+
 .dzhq_nav_item:hover {
     text-decoration: none;
-    background: #E44241;    
+    background: rgb(29, 195, 255);    
     border-radius: 10px;
+    color: #FFF;    
 }
 .dzhq_nav_item > a:hover {
     text-decoration: none;
@@ -47,7 +47,6 @@ body {
     padding-bottom: 0px;
     width: auto;
     float: left;
-    border: 3px solid #000;
     border-radius: 5px;
 }
 
