@@ -34,19 +34,19 @@ export default class RigProblemButton extends React.Component {
   //when the text area text is changed, update our state
   textChanged(id, text) {
     this.setState({
-      noteText: text
+      description: text
     })
   }
   //when the selected rig is changed, update our state
-  rigChanged(id, rig) {
+  rigChanged(rig) {
     this.setState({
-      selectedRig: rig
+      rig_id: rig.rig_id
     })
   }
   //when the selected problem type is changed, update our state
-  problemChanged(id, problem) {
+  problemChanged(problem) {
     this.setState({
-      selectedProblem: problem
+      severity: problem
     })
   }
 

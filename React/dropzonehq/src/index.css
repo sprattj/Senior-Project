@@ -13,7 +13,7 @@ body {
     overflow-y: scroll;
 }
 .navbar{
-    background: #E44241;
+    background: #fe4a49;
     border-bottom: solid 5px #FFF;
     color: #FFF;
 }
@@ -22,7 +22,6 @@ body {
     font-size: 1.2em;
     height: 100%;   
     
-    background: #fe4a49;
 }
 
 .dzhq_nav_item > a {
@@ -34,6 +33,8 @@ body {
 }
 .dzhq_nav_item:hover {
     text-decoration: none;
+    background: #E44241;    
+    border-radius: 10px;
 }
 .dzhq_nav_item > a:hover {
     text-decoration: none;

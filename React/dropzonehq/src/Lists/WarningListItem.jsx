@@ -12,15 +12,15 @@ export default class WarningListItem extends React.Component {
     }
 
     handleClick() {
-        this.props.onClick(this.props.warnID);
+        this.props.onClick(this.props.claim_id);
     }
 
     addToQueue(){
-        this.props.addToQueue(this.props.warnID);
+        this.props.addToQueue(this.props.claim_id);
     }
 
     dismiss(){
-        this.props.dismiss(this.props.warnID);
+        this.props.dismiss(this.props.claim_id);
     }
 
     render() {

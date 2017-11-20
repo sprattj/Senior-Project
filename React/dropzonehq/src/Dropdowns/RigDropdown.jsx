@@ -75,7 +75,7 @@ export default class RigDropdown extends React.Component {
         self.setState({
           rigData: responseData
         });
-        this.props.onChange(this.state.rigData[0]);
+        self.props.onChange(self.state.rigData[0]);
       })//catch any errors and display them as a toast
       .catch(function (error) {
         toast.error(error + "\n" + url);

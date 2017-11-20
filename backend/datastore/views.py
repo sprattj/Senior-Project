@@ -229,10 +229,6 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
                     'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> spratt
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
