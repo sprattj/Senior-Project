@@ -1,7 +1,5 @@
 import React from 'react';
-import { Row, Col } from 'reactstrap';
 import MainScreen from './MainScreen.jsx';
-import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -27,9 +25,6 @@ import NotFoundScreen from './NotFoundScreen.jsx';
     Below that is the screen that is currently being rendered
 */
 export default class MainView extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     //Render the Navbar and the screen below it
     render() {

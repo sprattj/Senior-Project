@@ -66,7 +66,7 @@ class Claims(models.Model):
     IN_PROGRESS = 'IN-PROGRESS'
     COMPLETE = 'COMPLETE'
     DISMISSED = 'DISMISSED'
-    STATUS_CHOICES = ((PENDING, 'Pending'), (IN-PROGRESS, 'In-Progress'), (COMPLETE, 'Complete'), (DISMISSED, 'Dismissed'))
+    STATUS_CHOICES = ((PENDING, 'Pending'), (IN_PROGRESS, 'In-Progress'), (COMPLETE, 'Complete'), (DISMISSED, 'Dismissed'))
 
     # Autoincrement integer PK
     claim_id = models.AutoField(primary_key=True)

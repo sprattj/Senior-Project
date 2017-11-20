@@ -12,7 +12,7 @@ import './LoftScreen.css';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import { rootURL } from '../restInfo.js';
+import { rootURL, CLAIM_SEVERITY_CHOICES, CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import { toast } from 'react-toastify';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
@@ -277,7 +277,7 @@ export default class LoftScreen extends React.Component {
 
         var self = this;
         var requestVariables = {
-            status: "IN PROGRESS"
+            status: CLAIM_STATUS_CHOICES.IN_PROGRESS
         };
 
         fetch(url, {
@@ -390,9 +390,9 @@ export default class LoftScreen extends React.Component {
 
         var status = "";
         if (isQueueItem) {
-            status = "IN PROGRESS"
+            status = CLAIM_STATUS_CHOICES.IN_PROGRESS
         } else {
-            status = "PENDING"
+            status = CLAIM_STATUS_CHOICES.PENDING
         }
 
         var self = this;

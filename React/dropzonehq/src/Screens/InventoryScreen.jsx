@@ -7,7 +7,9 @@ import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col, Card } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import "react-table/react-table.css";
+import { toast } from 'react-toastify';
 
 const marginStyle = {
     marginTop: 25,
@@ -265,7 +267,10 @@ export default class InventoryScreen extends React.Component {
                 self.setState({
                     rows: rowData
                 });
-            });
+            })//catch any errors and display them as a toast
+            .catch(function (error) {
+              toast.error(error + "\n" + url);
+            });;
     }
 
     //calls up to the screen change the display on the right

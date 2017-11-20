@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupItem } from 'reactstrap';
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
-import PackedWrongRigButton from './ModalButtons/PackedWrongRigButton.jsx';
 import { rootURL } from './restInfo.js';
 import { toast } from 'react-toastify';
 

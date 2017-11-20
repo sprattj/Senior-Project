@@ -141,7 +141,7 @@ class ClaimWarningList(generics.ListCreateAPIView):
     serializer_class = ClaimSerializer
 
 class ClaimQueueList(generics.ListCreateAPIView):
-    queryset = Claims.objects.filter(status=Claims.IN-PROGRESS)
+    queryset = Claims.objects.filter(status=Claims.IN_PROGRESS)
     serializer_class = ClaimSerializer
 
 class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):

@@ -12,7 +12,7 @@ export default class NotFoundScreen extends React.Component {
                         <h1>404 Page Not Found</h1>
                     </Col>
                     <Col className="mainscreen_col" xs={{ size: 12 }}>
-                        <img src="http://svgshare.com/i/3vT.svg" class="behind_nav img-responsive img-circle center-block" height="225" width="225"></img>
+                        <img src="http://svgshare.com/i/3vT.svg" class="behind_nav img-responsive img-circle center-block" height="225" width="225" alt="computer with parachute logo"></img>
                     </Col>
                     <Col className="mainscreen_col" xs={{ size: 12 }}>
                         <h3 class="title_color">The page you requested was not found.</h3>
