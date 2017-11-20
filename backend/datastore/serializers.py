@@ -74,7 +74,7 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Employees
-        fields = ('employee_id', 'first_name', 'last_name','email')
+        fields = ('employee_id', 'first_name', 'last_name', 'email', 'dropzone_id', 'roles')
 
 
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
@@ -119,8 +119,11 @@ class ReserveCanopySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RigSerializer(serializers.HyperlinkedModelSerializer):
+    # isrentable = ItemSerializer(read_only=True)
+
     class Meta:
         model = Rigs
+        # , 'isrentable'
         fields = ('item_id', 'rig_id', 'container_id', 'aad_id', 'istandem')
 
 
