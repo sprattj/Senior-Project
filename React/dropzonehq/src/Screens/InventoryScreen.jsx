@@ -23,7 +23,7 @@ export default class InventoryScreen extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/rentals";
+        this.URLsection = "/inventory";
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
@@ -36,22 +36,73 @@ export default class InventoryScreen extends React.Component {
         this.rigs = [];
         this.canopies = [];
         this.containers = [];
+        this.aad = [];
+
+        this.columnsRigs = [{
+            Header: 'Main',
+            accessor: 'mainBrand',
+            width: 150
+        }, {
+            Header: 'Main Size',
+            accessor: 'mainSize',                           //TODO How will i get data back for the items attached to rigs?
+            width: 150
+        }, {
+            Header: 'Container',
+            accessor: 'containerBrand',
+            width: 250
+        }];
+
+        this.columnsCanopies = [{
+            Header: 'Canopy Brand',
+            accessor: 'brand',
+            width: 150
+        }, {
+            Header: 'Canopy Size',
+            accessor: 'size',
+            width: 150
+        }, {
+            Header: 'Canopy Description',
+            accessor: 'desc',
+            width: 250
+        }];
+
+        this.columnsContainers = [{
+            Header: 'Container Brand',
+            accessor: 'brand',
+            width: 150
+        }, {
+            Header: 'Container Description',
+            accessor: 'desc',
+            width: 400
+        }];
+
+        this.columnsAAD = [{
+            Header: 'Lifespan',
+            accessor: 'life',
+            width: 150
+        }, {
+            Header: 'Deployment Date',
+            accessor: 'date',
+            width: 150
+        }];
 
         //Test Data to fill the table until we connect to the DB
-        var rowData = [{ index: 0, number: "07700", desc: "Blue, Brown, and Black Mirage", isRented: false, renterName: "", type: "container" },
-        { index: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig" },
-        { index: 2, number: "02", desc: "unknown description", isRented: false, renterName: "", type: "rig" },
-        { index: 3, number: "03", desc: "unknown description", isRented: true, renterName: "Jack", type: "rig" },
-        { index: 4, number: "04", desc: "Old Yellow and Gray Pilot240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig" },
-        { index: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig" },
-        { index: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { index: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { index: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { index: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig" },
-        { index: 10, number: "redJav", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig" },
-        { index: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig" },
-        { index: 12, number: "01125", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy" },
-        { index: 13, number: "07663", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container" }
+        var rowData =
+        [{ index: 0, number: "00", desc: "Red and Black Mirage", isRented: true, renterName: "Edgar", type: "container", brand: "Mirage" },
+        { index: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
+        { index: 2, number: "02", desc: "Red and Green Pilot 220. Black and Yellow Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
+        { index: 3, number: "03", desc: "Brown Navigator 190. Black and White Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
+        { index: 4, number: "04", desc: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
+        { index: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
+        { index: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
+        { index: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
+        { index: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
+        { index: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+        { index: 10, number: "10", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+        { index: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
+        { index: 12, number: "12", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy", brand: "Navigator", size: "210" },
+        { index: 13, number: "13", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container", brand: "Mirage" },
+        { index: 14, number: "14", desc: "Orange and Black Mirage", isRented: false, renterName: "", type: "aad", life: "Mirage", date: "11/19/2017" }
         
         ];
 
@@ -88,15 +139,31 @@ export default class InventoryScreen extends React.Component {
                                         + " itemType: " + this.state.rows[index].type);
     }
 
-    getFilteredRows(rowData) {
-        this.all = rowData;                                  //save everything first
-        for (var i = 0; i < rowData.length; i++) {      //if the type is rig
-            if (rowData[i].type === "rig") {
+    getFilteredRows(rowData) 
+    {
+        // save everything first
+        this.all = rowData;                                  
+        for (var i = 0; i < rowData.length; i++) 
+        {   
+            if (rowData[i].type === "rig") 
+            {
+                //if the type is rig
                 this.rigs.push(rowData[i]);
-            } else if (rowData[i].type === "canopy") {  //if the type is canopy
+            } 
+            else if (rowData[i].type === "canopy") 
+            {  
+                // if the type is canopy
                 this.canopies.push(rowData[i]);
-            } else if (rowData[i].type === "container") { //if the type is container
+            } 
+            else if (rowData[i].type === "container") 
+            { 
+                // if the type is container
                 this.containers.push(rowData[i]);
+            }
+            else if (rowData[i].type === "aad")
+            {
+                // if the type is AAD
+                this.aad.push(rowData[i]);    
             }
         }
     }
@@ -118,25 +185,36 @@ export default class InventoryScreen extends React.Component {
     }
 
     //for the dropdown    
-    filterChanged(id, selection) {
+    filterChanged(selection) {
         switch (selection) {
             case "Show All":
-                this.setState({ filter: "all", rows: this.all });
+                this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
                 break;
             case "Rigs Only":
-                this.setState({ filter: "rig", rows: this.rigs });
+                this.setState({ filter: "rig", rows: this.rigs, columns: this.columnsRigs });
                 break;
             case "Canopies Only":
-                this.setState({ filter: "canopy", rows: this.canopies });
+                this.setState({ filter: "canopy", rows: this.canopies, columns: this.columnsCanopies });
                 break;
             case "Containers Only":
-                this.setState({ filter: "container", rows: this.containers });
+                this.setState({ filter: "container", rows: this.containers, columns: this.columnsContainers });
+                break;
+            case "AADs Only":
+                this.setState({ filter: "aad", rows: this.aad, columns: this.columnsAAD });
                 break;
             default:
-                this.setState({ filter: "all", rows: this.all });
+                this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
                 break;
         }
+
+        this.resetDisplay();        
         //this.processRows(this.state.rows, this.state.filter);
+    }
+
+    resetDisplay() {
+        this.setState({
+            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"}/>
+        });
     }
 
     //When this RentalTable component loads on the page, fetch the rows
