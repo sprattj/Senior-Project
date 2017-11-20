@@ -3,6 +3,7 @@ import { Row, Col, Card } from 'reactstrap';
 import RentalTable from '../Tables/RentalTable.jsx';
 import BlankItemDisplay from '../ItemDisplays/BlankItemDisplay.jsx';
 import 'bootstrap/dist/css/bootstrap.css';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 const marginStyle = {
     marginTop: 25,
@@ -43,6 +44,11 @@ class RentalScreen extends React.Component {
     render() {
         return (
             <div>
+                <Row>
+                    <Col lg={{ size: 12 }}>
+                        <DropzoneHQNav/>
+                    </Col>
+                </Row>
                 <Row style={marginStyle}>
                     <Col lg={{ size: 5, offset: 1 }}>
                         <RentalTable displayChange={this.displayChange} resetDisplay={this.resetDisplay}/>

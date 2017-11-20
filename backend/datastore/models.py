@@ -16,21 +16,6 @@ from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
 import random
 
-# Actions that can be performed by employees
-class Actions(models.Model):
-
-    # Autoincrement integer PK
-    action_id = models.AutoField(primary_key=True)
-    # Type of action being performed
-    type = models.CharField(max_length=45)
-
-    class Meta:
-        # Whether or not dropZoneHQ can create, modify, or delete this table
-        managed = True
-        # Name of table in DB
-        db_table = 'actions'
-        app_label = 'dropZoneHQ'
-
 
 # An item used on a rig that automatically deploys a parachute at a certain altitude
 class AutomaticActivationDevices(models.Model):
@@ -71,6 +56,45 @@ class Canopies(models.Model):
         app_label = 'dropZoneHQ'
 
 
+# Claims employees make and service
+class Claims(models.Model):
+    CRITICAL = 'CRITICAL'
+    NON_CRITICAL = 'NON-CRITICAL'
+    COSMETIC = 'COSMETIC'
+    SEVERITY_CHOICES = ((CRITICAL, 'Critical'), (NON_CRITICAL, 'Non-critical'), (COSMETIC, 'Cosmetic'))
+    PENDING = 'PENDING'
+    IN_PROGRESS = 'IN-PROGRESS'
+    COMPLETE = 'COMPLETE'
+    DISMISSED = 'DISMISSED'
+    STATUS_CHOICES = ((PENDING, 'Pending'), (IN_PROGRESS, 'In-Progress'),
+                      (COMPLETE, 'Complete'), (DISMISSED, 'Dismissed'))
+
+    # Autoincrement integer PK
+    claim_id = models.AutoField(primary_key=True)
+    #Rig that this claim is for
+    rig_id = models.IntegerField()
+    # How critical is this claim
+    severity = models.CharField(max_length=12, choices=SEVERITY_CHOICES)
+    # Status of the claim
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES)
+    # Description of the problem that needs to be serviced.
+    description = models.CharField(max_length=45, blank=True, null=True)
+    submitter = models.OneToOneField('Employees', models.DO_NOTHING)
+    handler = models.OneToOneField('Employees', models.DO_NOTHING)
+    
+    # Date the claim was submitted
+    submit_date = models.DateField(blank=True, null=True)
+    # Date the claim is due
+    due_date = models.DateField(blank=True, null=True)
+    # Date the claim was completed
+    complete_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'claims'
+        app_label = 'dropZoneHQ'
+
+
 # An item that holds a canopy
 class Containers(models.Model):
 
@@ -101,35 +125,34 @@ class Dropzones(User):
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
-    location = models.CharField(unique=True,max_length=45)
+    location = models.CharField(unique=True, max_length=45)
 
     def get_dropzone(self, pk=None):
-        try :
+        try:
             return Dropzones.objects.get(pk)
         except:
             return None
 
     # Checks if a location is in use for a dropzone.
-    def dropzoneLocationInUse(location=None):
-        try :
+    def dropzoneLocationInUse(self, location=None):
+        try:
             return Dropzones.objects.filter(location)
-        except :
+        except:
             return None
 
     # Checks if a name is in use for a dropzone.
-    def dropzoneUsernameInUse(username=None):
-        try :
+    def dropzoneUsernameInUse(self, username=None):
+        try:
             return Dropzones.objects.filter(username)
-        except :
+        except:
             return None
 
     # Chcek if the email has been used in the database
-    def dropzoneEmailInUse(email=None):
-        try :
+    def dropzoneEmailInUse(self, email=None):
+        try:
             return Dropzones.objects.filter(email)
-        except :
+        except:
             return None
-
 
     class Meta:
         managed = True
@@ -144,10 +167,10 @@ class EmployeeRoles(models.Model):
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
     auth_level_choice = (
-        (0,'Packer'),
-        (1,'Intructor'),
-        (2,'Rigger'),
-        (3,'Admin')
+        (0, 'Packer'),
+        (1, 'Intructor'),
+        (2, 'Rigger'),
+        (3, 'Admin')
     )
     auth_level = models.IntegerField(choices=auth_level_choice)
 
@@ -166,49 +189,50 @@ class Employees(models.Model):
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
+    is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
-    #pin Sha hash
+    # pin Sha hash
     pin = models.CharField(max_length=45, blank=True)
     employment_date = models.DateTimeField(auto_now_add=True)
 
-    #check is the pin of an employee matches the pin given
+    # check is the pin of an employee matches the pin given
     @staticmethod
     def check_employee_pin(pin, employee):
         if pin or employee is None:
             return None
         else:
             salt = int(pin[:3])
-            if BCryptSHA256PasswordHasher.encode(password=pin, salt=salt) == employee.pin:
+            if BCryptSHA256PasswordHasher().encode(password=pin, salt=salt) == employee.pin:
                 return True
             else:
                 return False
 
-    #hash a pin to a value
+    # hash a pin to a value
     @staticmethod
     def pin_to_hash(pin):
         if pin is None:
             return None
         else:
             salt = int(pin[:3])
-            return BCryptSHA256PasswordHasher.encode(password=pin, salt=salt)
+            return BCryptSHA256PasswordHasher().encode(password=pin, salt=salt)
 
-    #Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
+    # Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
     @staticmethod
     def create_random_user_pin(userPK=None):
         if userPK is None:
             return None
         else:
-            salt = util.stringToThree(random.randint(0,1000))
+            salt = util.stringToThree(random.randint(0, 1000))
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
             return key
 
     # Checks if a pin is in use for an Employee.
-    #returns true if the pin is in use and false if the pin is not being used
+    # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
-    def employee_pin_in_use(pin=None):
-        emp = Employees.objects.get()
-        for e in emp :
-            if Employees.checkEmployeePin(pin=pin, employee=e) is True:
+    def employee_pin_in_use(pin):
+        emp = Employees.objects.all()
+        for e in emp:
+            if Employees.check_employee_pin(pin=pin, employee=e) is True:
                 return e
         return None
 
@@ -221,20 +245,6 @@ class Employees(models.Model):
     class Meta:
         managed = True
         db_table = 'employees'
-        app_label = 'dropZoneHQ'
-
-
-# Bridge between Employees and Actions. Many employees can perform many actions.
-class EmployeesActions(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
-    action = models.ForeignKey(Actions, models.DO_NOTHING)
-    # Timestamp for when this action was performed
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'employees_actions'
-        unique_together = (('employee', 'action'),)
         app_label = 'dropZoneHQ'
 
 
@@ -262,28 +272,20 @@ class EmployeesRentals(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Bridge between Employees and Services. Many employees can perform many services.
-class EmployeesServices(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
-    service = models.ForeignKey('Services', models.DO_NOTHING)
-    # What type of service was performed
-    action = models.ForeignKey(Actions, models.DO_NOTHING)
-    # Timestamp of when this service was performed
-    timestamp = models.DateTimeField()
-
-    class Meta:
-        managed = True
-        db_table = 'employees_services'
-        unique_together = (('employee', 'service'),)
-        app_label = 'dropZoneHQ'
-
-
 # Bridge between Employees and Signouts. Many employees can sign off on many signouts.
 class EmployeesSignouts(models.Model):
-    employee = models.OneToOneField(Employees, models.DO_NOTHING, primary_key=True)
+    PACKED = 'PACKED'
+    SIGNOUT = 'SIGNOUT'
+    PACKED_SIGNOUT_CHOICES = (
+        (PACKED, 'packed'),
+        (SIGNOUT, 'signout')
+    )
+    employee = models.ForeignKey('Employees', models.DO_NOTHING)
     signout = models.ForeignKey('Signouts', models.DO_NOTHING)
     # What type of sign off occurred
-    packed_signout = models.CharField(db_column='packed_or_signout', max_length=7)
+    packed_signout = models.CharField(db_column='packed_or_signout',
+                                      max_length=7,
+                                      choices=PACKED_SIGNOUT_CHOICES)
     # When this sign off occurred
     timestamp = models.DateTimeField()
 
@@ -319,7 +321,8 @@ class Items(models.Model):
     brand = models.CharField(max_length=45, blank=True, null=True)
     description = models.CharField(max_length=45, blank=True, null=True)
     # Whether or not this item is rentable
-    is_rentable = models.CharField(max_length=4)
+    # is_rentable = models.CharField(max_length=4)
+    is_rentable = models.BooleanField(max_length=4)
     rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
@@ -388,6 +391,7 @@ class Rigs(models.Model):
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
     istandem = models.CharField(db_column='isTandem', max_length=4)
+    # isrentable = models.BooleanField('Items')
 
     class Meta:
         managed = True
@@ -417,26 +421,6 @@ class RigsAuditTrail(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Services that employees need to perform
-class Services(models.Model):
-
-    # Autoincrement integer PK
-    service_id = models.AutoField(primary_key=True)
-    # How critical is this service
-    severity = models.CharField(max_length=12)
-    # What thype of service is being performed.
-    service_type = models.CharField(max_length=11)
-    # Description of the problem that needs to be serviced.
-    description = models.CharField(max_length=45, blank=True, null=True)
-
-    employees = models.ManyToManyField('Employees', through='EmployeesServices')
-
-    class Meta:
-        managed = True
-        db_table = 'services'
-        app_label = 'dropZoneHQ'
-
-
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.
 class Signouts(models.Model):
     # Autoincrement integer PK
@@ -453,6 +437,7 @@ class Signouts(models.Model):
         managed = True
         db_table = 'signouts'
 
+
 class TempUrl(models.Model):
     url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True)
     expires = models.DateTimeField(name="Expries")
@@ -465,13 +450,14 @@ class TempUrl(models.Model):
         managed = False
         db_table = 'Temp_Url'
 
+
 # Descriptive view for all canopies in the inventory
 class AllCanopies(models.Model):
     item_id = models.IntegerField(primary_key=True)
     type = models.CharField(max_length=45)
     serial_number = models.CharField(max_length=45)
     rig = models.ForeignKey(Rigs, models.DO_NOTHING)
-    is_rentable = models.CharField(max_length=45)
+    is_rentable = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
@@ -501,7 +487,7 @@ class AllItems(models.Model):
     container_sn = models.CharField(max_length=45)
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
-    is_rentable = models.CharField(max_length=45)
+    is_rentable = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)

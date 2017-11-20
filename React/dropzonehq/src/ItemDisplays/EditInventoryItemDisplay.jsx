@@ -8,17 +8,10 @@ import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import SaveItemDetailsBtn from '../Buttons/SaveItemDetailsBtn.jsx';
 // import InlineEdit from 'react-edit-inline';
-
-
 // var EditableInput = require('react-editable-input').default; 
-export default class EditInventoryItemDisplay extends React.Component 
-{
-    constructor(props) 
-    {
+export default class EditInventoryItemDisplay extends React.Component {
+    constructor(props) {
         super(props);
-        //since the URL section is not directly related to rendering,
-        //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/editInventoryItemDisplay";
 
         this.itemNumChanged = this.itemNumChanged.bind(this);
         this.itemRenterNameChanged = this.itemRenterNameChanged.bind(this);
@@ -85,7 +78,6 @@ export default class EditInventoryItemDisplay extends React.Component
       // <EditInventoryItemDisplay saveFunction={this.addItem}
 
     render() {
-
         return (
             <div>
                 <Row>
@@ -142,17 +134,15 @@ export default class EditInventoryItemDisplay extends React.Component
                                             </div>
                                         </Col>
                                     </Row>
-                                    <Row>
-                                        <Col>
-                                            
-                                        </Col>
-                                    </Row>
                                 </div>
                             } 
                             footerText = {
                                 <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} />
                             }
-                            />
+                            footerText={
+                                <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} />
+                            }
+                        />
                     </Col>
                 </Row>
             </div>

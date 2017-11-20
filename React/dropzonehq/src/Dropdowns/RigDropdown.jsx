@@ -28,7 +28,7 @@ export default class RigDropdown extends React.Component {
         Object.keys(rigData).forEach(function (i) {
             var nextOption = <DropdownOption
                 key={i}
-                optionText={rigData[i].rigID} />
+                optionText={rigData[i].rig_id} />
             options.push(nextOption);
         });
         return options;
@@ -43,10 +43,13 @@ export default class RigDropdown extends React.Component {
     require('es6-promise').polyfill();
 
     //Define our endpoint using the rootURL, the URL section 
-    //that we set in our constructor (like "/rigsheets"), and
-    //the sheetType prop ("Tandems" or "Students")
     //(rootURL is imported from our rest info file)
-    var url = rootURL + "/rigs/available-for-signout";
+    if(this.props.sheetType){
+        var url = rootURL + "/rigs/" + this.props.sheetType + "/available-for-signout";
+    }else{
+        var url = rootURL + "/rigs/student/available-for-signout"; //TODO redesign this portion
+    }
+    
 
     //save 'this' so we can reference it inside fetch() callback
     var self = this;
@@ -72,9 +75,11 @@ export default class RigDropdown extends React.Component {
         self.setState({
           rigData: responseData
         });
+        self.props.onChange(self.state.rigData[0]);
       })//catch any errors and display them as a toast
       .catch(function (error) {
         toast.error(error + "\n" + url);
+        console.log(error);
       });
     }
 

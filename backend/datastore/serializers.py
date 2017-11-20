@@ -9,12 +9,6 @@ from rest_framework import serializers
 from .models import *
 
 
-class ActionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Actions
-        fields = ('action_id', 'type')
-
-
 class AADSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AutomaticActivationDevices
@@ -34,8 +28,8 @@ class AllCanopySerializer(serializers.HyperlinkedModelSerializer):
 class AllItemSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AllItems
-        fields = ('item_id', 'item_type', 'rig_number', 'aad'
-                  'conatainer', 'isTandem', 'canopy_on_rig', 'canopy_sn',
+        fields = ('item_id', 'item_type', 'rig_number', 'aad',
+                  'container', 'isTandem', 'canopy_on_rig', 'canopy_sn',
                   'container_sn', 'aad_sn', 'lifespan', 'is_rentable',
                   'manufacturer', 'brand', 'description', 'date_of_manufacture',
                   'size', 'next_repack_date', 'jump_count', 'ride_count',
@@ -46,7 +40,7 @@ class CanopySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Canopies
         fields = ('item_id', 'rig_id', 'serial_number', 'size',
-                  'dadte_of_manufacture', 'jump_count')
+                  'date_of_manufacture', 'jump_count')
 
 
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
@@ -67,6 +61,12 @@ class EmployeeEmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EmployeesEmployeeRoles
         fields = ('employee_id', 'role_id', 'role')
+
+
+class EmployeeSignoutSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = EmployeesSignouts
+        fields = ('employee_id', 'signout_id', 'packed_signout', 'timestamp')
 
 
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
@@ -137,10 +137,11 @@ class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('role_id', 'role')
 
 
-class ServiceSerializer(serializers.HyperlinkedModelSerializer):
+class ClaimSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Services
-        fields = ('service_id', 'severity', 'service_type', 'description')
+        model = Claims
+        fields = ('claim_id', 'rig_id', 'severity', 'status', 'description',
+                  'submitter_id', 'handler_id', 'submit_date', 'due_date', 'complete_date')
 
 
 class SignoutSerializer(serializers.HyperlinkedModelSerializer):
