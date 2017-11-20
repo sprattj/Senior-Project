@@ -12,7 +12,10 @@
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.14",
     "react-table": "^6.6.0",
-    "react-toastify": "^2.2.0"
+    "react-toastify": "^2.2.0",
+    "reactstrap": "^5.0.0-alpha.3",
+    "react-addons-css-transition-group": "^16.0.0-alpha.3",
+    "react-addons-transition-group": "^16.0.0-alpha.3"
   },
   "scripts": {
     "start": "react-scripts start",

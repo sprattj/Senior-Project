@@ -5,12 +5,13 @@ export default class SaveItemDetailsBtn extends React.Component
 {
     constructor(props) {
         super(props);
-        this.onClickFunction = this.onClickFunction.bind(this);
         
         this.setState = {
             disabled: this.props.disabled
         }
     }
+
+
 
     render() {
         return (
