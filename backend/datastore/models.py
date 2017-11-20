@@ -66,7 +66,8 @@ class Claims(models.Model):
     IN_PROGRESS = 'IN-PROGRESS'
     COMPLETE = 'COMPLETE'
     DISMISSED = 'DISMISSED'
-    STATUS_CHOICES = ('Pending', 'In-Progress', 'Complete', 'Dismissed')
+    STATUS_CHOICES = ((PENDING, 'Pending'), (IN_PROGRESS, 'In-Progress'),
+                      (COMPLETE, 'Complete'), (DISMISSED, 'Dismissed'))
 
     # Autoincrement integer PK
     claim_id = models.AutoField(primary_key=True)
@@ -388,6 +389,7 @@ class Rigs(models.Model):
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
     istandem = models.CharField(db_column='isTandem', max_length=4)
+    # isrentable = models.BooleanField('Items')
 
     class Meta:
         managed = True

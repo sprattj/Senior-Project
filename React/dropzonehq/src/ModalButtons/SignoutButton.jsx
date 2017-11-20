@@ -17,7 +17,7 @@ export default class SignoutButton extends React.Component {
     super(props);
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
-    this.verify = this.addSignout.bind(this);
+    this.addSignout = this.addSignout.bind(this);
 
     this.rigChanged = this.rigChanged.bind(this);
     this.planeLoadChanged = this.planeLoadChanged.bind(this);
@@ -33,7 +33,7 @@ export default class SignoutButton extends React.Component {
     this.setState({
       rig_id: rigData.rig_id
     })
-    console.log(this.state.rigData);
+    console.log(rigData);
   }
 
   //when the selected plane load is changed, update our state
@@ -55,7 +55,7 @@ export default class SignoutButton extends React.Component {
   render() {
     const modalContent =
       <Form>
-        <RigDropdown onChange={this.rigChanged} />
+        <RigDropdown sheetType={this.props.sheetType} onChange={this.rigChanged} />
         <InputGroup>
           <InputGroupAddon >Plane Load </InputGroupAddon>
           <Input id="addPlaneLoad" type="number" pattern="[0-9]*" onChange={this.planeLoadChanged} />
