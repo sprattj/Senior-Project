@@ -1,6 +1,6 @@
 import React from 'react';
 import ItemDisplay from './ItemDisplay.jsx';
-import RentButton from '../Buttons/RentButton.jsx';
+
 // import EditableInput from 'react-editable-input';
 // import PropTypes from 'prop-types';
 import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
