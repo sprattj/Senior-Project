@@ -2,16 +2,15 @@ import React from 'react';
 import VerifyForm from '../VerifyForm.jsx';
 import { Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
 
-export default class RentButton extends React.Component {
+export default class RentReturnButton extends React.Component {
     constructor(props) {
         super(props);
         this.onClickFunction = this.onClickFunction.bind(this);
         this.toggleVerifyModal = this.toggleVerifyModal.bind(this);
-        
+
         this.state = {
             verifyOpen: false
         }
-        console.log(this.state.verifyOpen);
     }
 
     //change the VERFIY modal's visibility via state
@@ -38,9 +37,26 @@ export default class RentButton extends React.Component {
         }
     }
 
+    titleSelect(text) {
+        var title = "";
+        if (text) {
+            {
+                if (text === "Return") {
+                    title = "Verify Return";
+                } else if (text === "Rent") {
+                    title = "Verify Rental";
+                } else {
+                    //do nothing on click if it doesnt say Rent or Return the button isnt being used properly
+                }
+            }
+        }
+        return title
+    }
+
 
     render() {
         var buttonID = "RentReturnButton" + this.props.index;
+        
         return (
             <div>
                 <Button onClick={this.onClickFunction}
@@ -49,7 +65,7 @@ export default class RentButton extends React.Component {
                     id={buttonID} > {this.props.buttonText} </Button>
 
                 <Popover placement="bottom" isOpen={this.state.verifyOpen} target={buttonID} toggle={this.toggleVerifyModal}>
-                    <PopoverTitle>Verify Rental</PopoverTitle>
+                    <PopoverTitle>{this.titleSelect(this.props.buttonText)}</PopoverTitle>
                     <PopoverContent>
                         <VerifyForm pinChanged={this.props.pinChanged} />
                         <Button color="primary" onClick={this.packButton}>Verify</Button>{' '}
