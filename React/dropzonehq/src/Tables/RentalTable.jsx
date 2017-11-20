@@ -36,11 +36,11 @@ export default class RentalTable extends React.Component {
 
         this.columnsAll = [{
             Header: 'Item Number',
-            accessor: 'number', // String-based value accessors!
+            accessor: 'item_id', // String-based value accessors!
             width: 150
         }, {
             Header: 'Item Description',
-            accessor: 'desc',
+            accessor: 'description',
             width: 400
         }];
 
@@ -309,7 +309,7 @@ export default class RentalTable extends React.Component {
         //that we set in our constructor (like "/rigsheets"), and
         //the sheetType prop ("Tandems" or "Students")
         //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection + this.props.sheetType;
+        var url = rootURL + this.URLsection;
 
         //save 'this' so that we can call functions
         //inside the fetch() callback
