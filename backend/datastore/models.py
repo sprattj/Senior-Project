@@ -66,10 +66,13 @@ class Claims(models.Model):
     IN_PROGRESS = 'IN-PROGRESS'
     COMPLETE = 'COMPLETE'
     DISMISSED = 'DISMISSED'
-    STATUS_CHOICES = ('Pending', 'In-Progress', 'Complete', 'Dismissed')
+    STATUS_CHOICES = ((PENDING, 'Pending'), (IN_PROGRESS, 'In-Progress'),
+                      (COMPLETE, 'Complete'), (DISMISSED, 'Dismissed'))
 
     # Autoincrement integer PK
     claim_id = models.AutoField(primary_key=True)
+    #Rig that this claim is for
+    rig_id = models.IntegerField()
     # How critical is this claim
     severity = models.CharField(max_length=12, choices=SEVERITY_CHOICES)
     # Status of the claim
@@ -78,13 +81,13 @@ class Claims(models.Model):
     description = models.CharField(max_length=45, blank=True, null=True)
     submitter = models.OneToOneField('Employees', models.DO_NOTHING)
     handler = models.OneToOneField('Employees', models.DO_NOTHING)
-
+    
     # Date the claim was submitted
-    submit_date = models.DateField()
+    submit_date = models.DateField(blank=True, null=True)
     # Date the claim is due
-    due_date = models.DateField()
+    due_date = models.DateField(blank=True, null=True)
     # Date the claim was completed
-    complete_date = models.DateField()
+    complete_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = True
@@ -388,6 +391,7 @@ class Rigs(models.Model):
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
     istandem = models.CharField(db_column='isTandem', max_length=4)
+    # isrentable = models.BooleanField('Items')
 
     class Meta:
         managed = True

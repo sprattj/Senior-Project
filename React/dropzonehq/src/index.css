@@ -12,36 +12,63 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
 }
-
-a{
-    color: inherit;
+.navbar{
+    /*background: #fe4a49;*/
+    outline: solid 7px #FFF;
+    border-bottom: solid 15px rgb(29, 195, 255);
 }
-a:hover{
+.dzhq_nav_item {
+    padding: 15px 10px;
+    font-size: 1.2em;
+    height: 100%;  
+    color: #000; 
+}
+
+.dzhq_nav_item > a {
     color: inherit;
+    height: 100%;    
+    padding-top: 50%;
+}
+
+.dzhq_nav_item:hover {
+    text-decoration: none;
+    background: rgb(29, 195, 255);    
+    border-radius: 10px;
+    color: #FFF;    
+}
+.dzhq_nav_item > a:hover {
     text-decoration: none;
 }
 
-#main_body{
+.navbar-brand>img {
+    height: 50px;
+    width: 50px;
+    margin-right: 15px;
+    padding-bottom: 0px;
+    width: auto;
+    float: left;
+    border-radius: 5px;
+}
+
+.navbar-brand {
+    padding: 0px;
+}
+
+.behind-nav {
+    z-index: -999;
+}
+
+#main_body {
     margin-top: 50px;
     color: #FFF;
 }
-.mainscreen_col{
+
+.mainscreen_col {
     padding-top: 15px;
     padding-bottom: 15px;
     text-align: center;
 }
-.navbar-brand {
-    padding: 0px;
-}
-.behind-nav{
-    z-index: -999;
-}
-.navbar-brand>img {
-    height: 75px;
-    padding-bottom: 0px;
-    width: auto;
-    float: left;
-}
+
 .slide_down {
     transition-timing-function: ease-in-out;
     animation: slide_down 4s;
@@ -58,28 +85,31 @@ a:hover{
 }
 
 .btn_transparent {
-	background: transparent;
-	color: #ECF0F1;
-	-webkit-transition: background .2s ease-in-out, border .2s ease-in-out;
-	-moz-transition: background .2s ease-in-out, border .2s ease-in-out;
-	-o-transition: background .2s ease-in-out, border .2s ease-in-out;
-	transition: background .2s ease-in-out, border .2s ease-in-out;
+    background: transparent;
+    color: #ECF0F1;
+    -webkit-transition: background .2s ease-in-out, border .2s ease-in-out;
+    -moz-transition: background .2s ease-in-out, border .2s ease-in-out;
+    -o-transition: background .2s ease-in-out, border .2s ease-in-out;
+    transition: background .2s ease-in-out, border .2s ease-in-out;
     border: 2px solid #fff;
     margin: 15px;
     border-radius: 5px;
 }
+
 .btn_transparent:hover {
-	color: #058ED9;
-	background-color: #FFF;
-	border: 2px solid #fff;
+    color: #058ED9;
+    background-color: #FFF;
+    border: 2px solid #fff;
 }
+
 .btn_transparent:active {
-	color: #058ED9;
-	background-color: #FFF;
-	border: 2px solid #fff;
+    color: #058ED9;
+    background-color: #FFF;
+    border: 2px solid #fff;
 }
+
 .btn_transparent:focus {
-	color: #058ED9;
-	background-color: #F0F0F0;
-	border: 2px solid #fff;
+    color: #058ED9;
+    background-color: #F0F0F0;
+    border: 2px solid #fff;
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import { Switch, Route } from 'react-router-dom'
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +13,7 @@ export default class LandingScreen extends React.Component {
                 <Container id="main_body">
                     <Row>
                         <Col className="mainscreen_col" xs={{ size: 12 }}>
-                            <img src="http://svgshare.com/i/3vT.svg" class="behind_nav img-responsive img-circle center-block" height="100" width="100"></img>
+                            <img src="http://svgshare.com/i/3vT.svg" className="behind_nav img-responsive img-circle center-block" height="100" width="100" alt=""></img>
                         </Col>
                         <Col className="mainscreen_col" xs={{ size: 12 }}>
                             <h1>Areas</h1>

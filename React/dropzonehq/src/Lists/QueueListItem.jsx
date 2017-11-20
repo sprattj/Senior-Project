@@ -12,15 +12,15 @@ export default class QueueListItem extends React.Component {
     }
 
     handleClick() {
-        this.props.onClick(this.props.qID);
+        this.props.onClick(this.props.claim_id);
     }
 
     complete(){
-        this.props.complete(this.props.qID);
+        this.props.complete(this.props.claim_id);
     }
 
     dismiss(){
-        this.props.dismiss(this.props.qID);
+        this.props.dismiss(this.props.claim_id);
     }
 
     render() {

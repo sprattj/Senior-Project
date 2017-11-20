@@ -1,13 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import { Switch, Route } from 'react-router-dom'
-import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import { Link } from 'react-router-dom';
-const marginStyle = {
-    marginTop: 15,
-    marginBottom: 15
-};
 
 export default class MainScreen extends React.Component {
 
@@ -19,10 +13,10 @@ export default class MainScreen extends React.Component {
                         <h1>Dropzone HQ</h1>
                     </Col>
                     <Col className="mainscreen_col" xs={{ size: 12 }}>
-                        <img src="http://svgshare.com/i/3vT.svg" class="behind_nav img-responsive img-circle center-block" height="225" width="225"></img>
+                        <img src="http://svgshare.com/i/3vT.svg" className="behind_nav img-responsive img-circle center-block" height="225" width="225" alt="computer with parachute logo"></img>
                     </Col>
                     <Col className="mainscreen_col" xs={{ size: 12 }}>
-                        <h3 class="title_color">A web-based solution for skydiving dropzone management.</h3>
+                        <h3 className="title_color">A web-based solution for skydiving dropzone management.</h3>
                     </Col>
                 </Row>
                 <Row>

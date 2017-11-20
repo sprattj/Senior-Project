@@ -107,7 +107,7 @@ else:
             'NAME': 'ebdb',
             'USER': 'dropzonehq',
             'PASSWORD': 'DropzoneHQSQL2017',
-            'HOST': 'aa1xao7vtsdjaou.cfsukzzhrolk.us-east-1.rds.amazonaws.com',
+            'HOST': 'ebdb2.cfsukzzhrolk.us-east-1.rds.amazonaws.com',
             'PORT': 3306
         }
     }

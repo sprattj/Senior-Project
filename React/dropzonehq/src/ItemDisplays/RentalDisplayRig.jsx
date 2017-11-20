@@ -1,6 +1,5 @@
 import React from 'react';
 import ItemDisplay from './ItemDisplay.jsx';
-import RentButton from '../Buttons/RentButton.jsx';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 
@@ -32,7 +31,7 @@ export default class RentalDisplayRig extends React.Component {
                                         </Col>
                                         <Col>
                                             <p>Reserve Canopy: {this.props.reserveBrand} {this.props.reserveSize}</p>
-                                            <p>AAD expiration date: {this.props.aadExp}</p>
+                                            <p>AAD Lifespan: {this.props.aadExp}</p>
                                         </Col>
                                     </Row>
                                     <Row>

@@ -1,6 +1,7 @@
 import React from 'react';
 import Dropdown from './Dropdown.jsx';
 import DropdownOption from './DropdownOption.jsx';
+import { rootURL, CLAIM_SEVERITY_CHOICES } from '../restInfo.js';
 
 export default class ProblemTypesDropdown extends React.Component {
 
@@ -20,9 +21,9 @@ export default class ProblemTypesDropdown extends React.Component {
 
     //get all of the problem type data from server
     getProblemTypes() {
-        var problemTypesData = [{ name: "CRITICAL", id: "1" },
-        { name: "NON-CRITICAL", id: "2" },
-        { name: "COSMETIC", id: "3" }];//get row data from ajax
+        var problemTypesData = [{ name: CLAIM_SEVERITY_CHOICES.CRITICAL, id: "1" },
+        { name: CLAIM_SEVERITY_CHOICES.NON_CRITICAL, id: "2" },
+        { name: CLAIM_SEVERITY_CHOICES.COSMETIC, id: "3" }];//get row data from ajax
         return problemTypesData;
     }
 

@@ -1,8 +1,6 @@
 import React from 'react';
 import SiteNavbar from './SiteNavbar.jsx';
-import { NavItem, NavLink } from 'reactstrap';
-import ChangeScreenButton from '../Buttons/ChangeScreenButton.jsx';
-import MainScreen from '../Screens/MainScreen.jsx';
+import { NavItem } from 'reactstrap';
 import { Link } from 'react-router-dom'
 
 /*
@@ -12,50 +10,33 @@ import { Link } from 'react-router-dom'
 */
 export default class DropzoneHQNav extends React.Component {
 
-    //svg link https://docs.google.com/uc?id=0ByDw0k4qQe74SXUyNWhXb2dPc1U
     render() {
         return (
-            <SiteNavbar brandImage={"https://docs.google.com/uc?id=0ByDw0k4qQe74ZE5LVHY1eTZYaXM"}
+            <SiteNavbar brandImage={"http://svgshare.com/i/3vT.svg"}
                 brandText="Dropzone HQ" brandLink="#">
-                <NavItem>
-                    <NavLink>
-                        <Link to='/dropzone-home'>Dropzone Home</Link>
-                    </NavLink>
+                <NavItem className="dzhq_nav_item">
+                        <Link to='/dropzone-home'>Home</Link>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
-                        <Link to='/employee-info'>Employee Info</Link>
-                    </NavLink>
+                        <NavItem className="dzhq_nav_item">
+                <Link to='/employee-info'>Stats</Link>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
+                <NavItem className="dzhq_nav_item">
                         <Link to='/employee-management'>Employee Admin</Link>
-                    </NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
+                <NavItem className="dzhq_nav_item">
                         <Link to='/rental-menu'>Rentals</Link>
-                    </NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
+                <NavItem className="dzhq_nav_item">
                         <Link to='/rig-sheets'>Rigsheets</Link>
-                    </NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
+                <NavItem className="dzhq_nav_item">
                         <Link to='/inventory-menu'>Inventory</Link>
-                    </NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
+                <NavItem className="dzhq_nav_item">
                         <Link to='/loft-menu'>Loft</Link>
-                    </NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink>
+                <NavItem className="dzhq_nav_item">
                         <Link to='/test-fetch'>Test</Link>
-                    </NavLink>
                 </NavItem>
             </SiteNavbar >
         );

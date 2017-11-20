@@ -12,24 +12,23 @@ import './LoftScreen.css';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import { rootURL } from '../restInfo.js';
+import { rootURL, CLAIM_SEVERITY_CHOICES, CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import { toast } from 'react-toastify';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
-
+const DEFAULT_SELECTED_CLAIM_ID = -1;
 export default class LoftScreen extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.URLsection = "/claims";
-
-
+        this.pinChanged = this.getClaims.bind(this);
+        
         this.getClaims = this.getClaims.bind(this);
-
         this.getQueueItems = this.getQueueItems.bind(this);
         this.populateQueue = this.populateQueue.bind(this);
         this.addQueueItem = this.addQueueItem.bind(this);
@@ -49,9 +48,8 @@ export default class LoftScreen extends React.Component {
         this.dismiss = this.dismiss.bind(this);
         this.removeClaim = this.removeClaim.bind(this);
 
-        var queueItems = [];
-        var warningItems = [];
-
+        var queueItems = new Map();
+        var warningItems = new Map();
         var myEventsList = [
             {
                 'title': 'All Day Event very long title',
@@ -71,11 +69,13 @@ export default class LoftScreen extends React.Component {
                 'end': new Date(2016, 2, 20, 0, 0, 0)
             }
         ];
+        
+        this.pin = 222222; //TODO
         this.state = {
             queueListItems: queueItems,
             warningListItems: warningItems,
-            selectedQNdx: 0,
-            selectedWarnNdx: 0,
+            selectedQClaimID: DEFAULT_SELECTED_CLAIM_ID,
+            selectedWarnClaimID: DEFAULT_SELECTED_CLAIM_ID,
             activeTab: 0,
             queueDisplay: <QueueDisplay />,
             warningDisplay: <WarningDisplay />,
@@ -88,7 +88,7 @@ export default class LoftScreen extends React.Component {
             </div>
         }
 
-        for (var i = 0; i < 10; i++) {
+        /*(for (var i = 0; i < 10; i++) {
             queueItems.push(<QueueListItem
                 key={i}
                 qID={i}
@@ -112,9 +112,14 @@ export default class LoftScreen extends React.Component {
                 description={"there's a problemo"}
                 submit_date={""}
                 due_date={""} />);
-        }
+        }*/
+        
     }
 
+    pinChanged(pin){
+        this.pin = pin;
+        //TODO does this stop the recalling of componentdidmount?
+    }
     componentDidMount() {
         this.getQueueItems();
         this.getWarnings();
@@ -133,6 +138,7 @@ export default class LoftScreen extends React.Component {
     }
 
     getClaims(isQueue) {
+        console.log("GETTING CLAIMS THIS SHOULDN'T HAPPEN LIKE THAT MUCH");
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -168,12 +174,12 @@ export default class LoftScreen extends React.Component {
     //Populate frontend from json data
     //////////////////////////////////////////////////////////
     populateQueue(queueData) {
-        var queueItems = [];
+        var queueItems = new Map();
         for (var i = 0; i < queueData.length; i++) {
             var nextQItem =
                 <QueueListItem
-                    key={i}
-                    qID={i}
+                    key={queueData[i].claim_id}
+                    claim_id={queueData[i].claim_id}
                     selected={false}
                     onClick={this.selectQueueItem}
                     dismiss={this.dismissQueueItem}
@@ -184,7 +190,7 @@ export default class LoftScreen extends React.Component {
                     submit_date={queueData[i].submit_date}
                     due_date={queueData[i].due_date}
                 />;
-            queueItems.push(nextQItem);
+            queueItems.set(queueData[i].claim_id, nextQItem);
         }
         this.setState({
             queueListItems: queueItems
@@ -192,12 +198,13 @@ export default class LoftScreen extends React.Component {
     }
 
     populateWarnings(warningData) {
-        var warnings = [];
+        console.log("warning data: " + warningData);
+        var warnings = new Map();
         for (var i = 0; i < warningData.length; i++) {
             var nextWarning =
                 <WarningListItem
-                    key={this.state.warningListItems.length}
-                    warnID={this.state.warningListItems.length}
+                    key={warningData[i].claim_id}
+                    claim_id={warningData[i].claim_id}
                     selected={false}
                     onClick={this.selectWarning}
                     addToQueue={this.moveClaimToQueue}
@@ -208,7 +215,8 @@ export default class LoftScreen extends React.Component {
                     submit_date={warningData[i].submit_date}
                     due_date={warningData[i].due_date}
                 />
-            warnings.push(nextWarning);
+            //warnings.push(nextWarning);
+            warnings.set(warningData[i].claim_id, nextWarning);
         }
         this.setState({
             warningListItems: warnings
@@ -218,58 +226,67 @@ export default class LoftScreen extends React.Component {
 
     //Selecting
     //////////////////////////////////////////////////////////
-    selectQueueItem(newIndex) {
+    selectQueueItem(newClaimID) {
         //grab the current qItems
-        var newQItems = Array.from(this.state.queueListItems);
-        var oldQItem = newQItems[this.state.selectedQNdx];
+        var newQItems = new Map(this.state.queueListItems);
 
-        //grab the qItem that is currently selected and deselect it
-        var deselectedOldItem = <QueueListItem {...oldQItem.props} selected={false} />
-        //put the deselected version back
-        newQItems[this.state.selectedQNdx] = deselectedOldItem;
 
+        //if the old selected claim hasn't been deleted
+        if(this.state.queueListItems.has(this.state.selectedQClaimID)){
+            var oldQItem = newQItems.get(this.state.selectedQClaimID);
+
+            //grab the qItem that is currently selected and deselect it
+            var deselectedOldItem = <QueueListItem {...oldQItem.props} selected={false} />
+            //put the deselected version back
+            newQItems.set(this.state.selectedQClaimID, deselectedOldItem);
+        }
         //take the new selected qItem and select it
-        var newItem = newQItems[newIndex];
+        var newItem = newQItems.get(newClaimID);
         var selectedNewItem = <QueueListItem {...newItem.props} selected={true} />
         //put the deselected version back
-        newQItems[newIndex] = selectedNewItem;
+        newQItems.set(newClaimID, selectedNewItem);
 
         //update the state with the new rows so it rerenders
         this.setState({
             queueListItems: newQItems,
-            selectedQNdx: newIndex,
+            selectedQClaimID: newClaimID,
             activeTab: 1
         });
     }
 
-    selectWarning(newIndex) {
+    selectWarning(newClaimID) {
         //grab the current claims
-        var newClaims = Array.from(this.state.warningListItems);
-        //grab the claim that is currently selected
-        var oldClaim = newClaims[this.state.selectedWarnNdx];
+        var newClaims = new Map(this.state.warningListItems)
 
-        //take the claim that is currently selected and deselect it
-        var deselectedClaim = <WarningListItem {...oldClaim.props} selected={false} />
-        //put the deselected version back
-        newClaims[this.state.selectedWarnNdx] = deselectedClaim;
+        //if the old selected claim hasn't been deleted
+        if(this.state.warningListItems.has(this.state.selectedWarnClaimID)){
+            
+            //grab the claim that is currently selected
+            var oldClaim = newClaims.get(this.state.selectedWarnClaimID);
+
+            //take the claim that is currently selected and deselect it
+            var deselectedClaim = <WarningListItem {...oldClaim.props} selected={false} />
+            //put the deselected version back
+            newClaims.set(this.state.selectedWarnClaimID, deselectedClaim);
+        }
 
         //take the new selected claim and select it
-        var newClaim = newClaims[newIndex];
+        var newClaim = newClaims.get(newClaimID);
         var selectedNewClaim = <WarningListItem {...newClaim.props} selected={true} />
         //put the selected version back
-        newClaims[newIndex] = selectedNewClaim;
+        newClaims.set(newClaimID, selectedNewClaim);
 
         //update the state with the new claims so it rerenders
         this.setState({
             warningListItems: newClaims,
-            selectedWarnNdx: newIndex,
+            selectedWarnClaimID: newClaimID,
             activeTab: 2
         });
     }
 
     //Changing status of claims
     //////////////////////////////////////////////////////////
-    moveClaimToQueue(claim_id, warnID) {
+    moveClaimToQueue(claim_id) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -277,7 +294,7 @@ export default class LoftScreen extends React.Component {
 
         var self = this;
         var requestVariables = {
-            status: "IN PROGRESS"
+            status: CLAIM_STATUS_CHOICES.IN_PROGRESS
         };
 
         fetch(url, {
@@ -294,21 +311,20 @@ export default class LoftScreen extends React.Component {
             }
             return response.json();
         }).then(function (responseData) {
-            var oldClaim = self.state.warningListItems[warnID];
+            var oldClaim = self.state.warningListItems.get(claim_id);
             var newNdx = self.state.queueListItems.length;
             var newQItem = <QueueListItem
                 {...oldClaim.props}
-                key={newNdx}
-                qID={newNdx}
+                key={claim_id}
                 selected={false}
                 onClick={self.selectQueueItem}
-                complete={this.completeQueueItem}
-                dismiss={this.dismissQueueItem}
+                complete={self.completeQueueItem}
+                dismiss={self.dismissQueueItem}
             />
-            var newClaims = Array.from(this.state.warningListItems);
-            newClaims.splice(warnID, 1);
-            var newQItems = Array.from(this.state.queueListItems);
-            newQItems.push(newQItem);
+            var newClaims = new Map(self.state.warningListItems);
+            newClaims.delete(claim_id);
+            var newQItems = new Map(self.state.queueListItems);
+            newQItems.set(claim_id, newQItem);
             self.setState({
                 warningListItems: newClaims,
                 queueListItems: newQItems
@@ -318,7 +334,7 @@ export default class LoftScreen extends React.Component {
         });
     }
 
-    removeClaim(claim_id, index, isInQueue, endStatus) {
+    removeClaim(claim_id, isInQueue, endStatus) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -344,14 +360,14 @@ export default class LoftScreen extends React.Component {
             return response.json();
         }).then(function (responseData) {
             if (isInQueue) {
-                var newQItems = Array.from(this.state.queueListItems);
-                newQItems.splice(index, 1);
+                var newQItems = new Map(self.state.queueListItems)
+                newQItems.delete(claim_id);
                 self.setState({
                     queueListItems: newQItems
                 });
             } else {
-                var newClaims = Array.from(this.state.warningListItems);
-                newClaims.splice(index, 1);
+                var newClaims = new Map(self.state.warningListItems)                
+                newClaims.delete(claim_id);
                 self.setState({
                     warningListItems: newClaims
                 });
@@ -360,23 +376,23 @@ export default class LoftScreen extends React.Component {
             toast.error(error + "\n" + url);
         });
     }
-    dismiss(claim_id, index, isInQueue) {
-        this.removeClaim(claim_id, index, isInQueue, "DISMISSED");
+    dismiss(claim_id, isInQueue) {
+        this.removeClaim(claim_id, isInQueue, "DISMISSED");
     }
 
-    dismissClaim(claim_id, warnID) {
+    dismissClaim(claim_id) {
         var isInQueue = false;
-        this.dismiss(claim_id, warnID, isInQueue);
+        this.dismiss(claim_id, isInQueue);
     }
 
-    dismissQueueItem(claim_id, qID) {
+    dismissQueueItem(claim_id) {
         var isInQueue = true;
-        this.dismiss(claim_id, qID, isInQueue);
+        this.dismiss(claim_id, isInQueue);
     }
 
-    completeQueueItem(claim_id, qID) {
+    completeQueueItem(claim_id) {
         var isInQueue = true;
-        this.removeClaim(claim_id, qID, isInQueue, "COMPLETE");
+        this.removeClaim(claim_id, isInQueue, "COMPLETE");
     }
 
     //Adding new claims to database and frontend
@@ -390,9 +406,9 @@ export default class LoftScreen extends React.Component {
 
         var status = "";
         if (isQueueItem) {
-            status = "IN PROGRESS"
+            status = CLAIM_STATUS_CHOICES.IN_PROGRESS
         } else {
-            status = "PENDING"
+            status = CLAIM_STATUS_CHOICES.PENDING
         }
 
         var self = this;
@@ -444,8 +460,8 @@ export default class LoftScreen extends React.Component {
     addItemToQueueFromJSON(qItemData) {
         var newQItem =
             <QueueListItem
-                key={this.state.queueListItems.length}
-                qID={this.state.queueListItems.length}
+                key={qItemData.claim_id}
+                claim_id={qItemData.claim_id}
                 selected={false}
                 onClick={this.selectQueueItem}
                 dismiss={this.dismissQueueItem}
@@ -457,8 +473,9 @@ export default class LoftScreen extends React.Component {
                 due_date={qItemData.due_date}
             />;
 
-        var newQItems = Array.from(this.state.queueListItems);
-        newQItems.push(newQItem);
+        var newQItems = new Map(this.state.queueListItems);
+        newQItems.set(qItemData.claim_id, newQItem);
+
         this.setState({
             queueListItems: newQItems
         });
@@ -467,8 +484,8 @@ export default class LoftScreen extends React.Component {
     addClaimToListFromJSON(claimData) {
         var newClaim =
             <WarningListItem
-                key={this.state.warningListItems.length}
-                warnID={this.state.warningListItems.length}
+                key={claimData.claim_id}
+                claim_id={claimData.claim_id}
                 selected={false}
                 onClick={this.selectWarning}
                 addToQueue={this.moveClaimToQueue}
@@ -479,8 +496,8 @@ export default class LoftScreen extends React.Component {
                 submit_date={claimData.submit_date}
                 due_date={claimData.due_date}
             />
-        var newClaims = Array.from(this.state.warningListItems);
-        newClaims.push(newClaim);
+        var newClaims = new Map(this.state.warningListItems);
+        newClaims.set(claimData.claim_id, newClaim);
         this.setState({
             warningListItems: newClaims
         });
@@ -502,13 +519,13 @@ export default class LoftScreen extends React.Component {
                 </Row>
                 <Row className="viewport">
                     <Col xs={{ size: 6 }} md={{ size: 3 }}>
-                        <WarningList addWarning={this.addWarning}>
-                            {this.state.warningListItems}
+                        <WarningList pinChanged={this.pinChanged} addWarning={this.addWarning}>
+                            {Array.from(this.state.warningListItems.values())}
                         </WarningList>
                     </Col>
                     <Col xs={{ size: 6 }} md={{ size: 3 }}>
                         <QueueList addQueueItem={this.addQueueItem}>
-                            {this.state.queueListItems}
+                            {Array.from(this.state.queueListItems.values())}
                         </QueueList>
                     </Col>
 

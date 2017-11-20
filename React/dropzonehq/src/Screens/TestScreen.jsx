@@ -60,7 +60,7 @@ export default class TestScreen extends React.Component {
         "under 'Headers', and DJANGO'S DEBUG INFO ON THE 'PREVIEW' TAB");
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
-        var self = this;
+        //var self = this;
 
         if(this.method === "GET")
         {

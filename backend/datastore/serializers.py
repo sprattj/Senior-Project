@@ -140,7 +140,7 @@ class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
 class ClaimSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Claims
-        fields = ('claim_id', 'severity', 'status', 'description',
+        fields = ('claim_id', 'rig_id', 'severity', 'status', 'description',
                   'submitter_id', 'handler_id', 'submit_date', 'due_date', 'complete_date')
 
 
