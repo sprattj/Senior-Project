@@ -116,6 +116,16 @@ class RigList(generics.ListCreateAPIView):
     serializer_class = RigSerializer
 
 
+class AvailableStudentRigList(generics.ListAPIView):
+    queryset = Rigs.objects.all().filter(istandem=0)
+    serializer_class = RigSerializer
+
+
+class AvailableTandemRigList(generics.ListAPIView):
+    queryset = Rigs.objects.all().filter(istandem=1)
+    serializer_class = RigSerializer
+
+
 class RigDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
@@ -147,6 +157,16 @@ class ClaimQueueList(generics.ListCreateAPIView):
 class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
+
+class PendingClaimList(generics.ListCreateAPIView):
+    queryset = Claims.objects.all().filter(status='Pending')
+    serializer_class = ClaimSerializer
+
+
+class InProgressClaimList(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Claims.objects.all().filter(status='In-Progress')
+    serializer_class = ClaimSerializer
+
 
 class SignoutList(generics.ListCreateAPIView):
     queryset = Signouts.objects.all()
@@ -192,14 +212,37 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
+    def post(self, request, *args, **kwargs):
+        employee = Employees.objects.get(pin=request.data.get('pin'))
+        employee_id = employee.employee_id
+        rig_id = request.data.get('rig_id')
+        load_number = request.data.get('load_number')
+        '''
+        employee = Employees.employee_pin_in_use(request.data.get('pin'))
+        employee_id = employee.employee_id
+        '''
+        jumpmaster = get_emp_full_name(employee_id)
+        signout_id = post_signout(request)
 
+        post_emp_signout(employee_id, signout_id)
+        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
+                    'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> spratt
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
     def patch(self, request, *args, **kwargs):
-        employee_id = request.data.get('packer_id')
-        signout_id = request.data.get('signout_id')
+        # employee = Employees.employee_pin_in_use(request.data.get('pin'))
+        employee = Employees.objects.get(pin=request.data.get('pin'))
+        signout_id = self.kwargs.get('pk')
+        employee_id = employee.employee_id
+
         patch_emp_signout(employee_id, signout_id)
 
         packed_by = get_emp_full_name(employee_id)
@@ -221,13 +264,20 @@ class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
     serializer_class = EmployeeVsSignoutSerializer
 
     def post(self, request, *args, **kwargs):
-
-        employee_id = request.data.get('jumpmaster_id')
+        employee = Employees.objects.get(pin=request.data.get('pin'))
+        employee_id = employee.employee_id
+        rig_id = request.data.get('rig_id')
+        load_number = request.data.get('load_number')
+        '''
+        employee = Employees.employee_pin_in_use(request.data.get('pin'))
+        employee_id = employee.employee_id
+        '''
         jumpmaster = get_emp_full_name(employee_id)
+        signout_id = post_signout(request)
 
-        post_signout(request)
-        post_emp_signout(employee_id)
-        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id}
+        post_emp_signout(employee_id, signout_id)
+        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
+                    'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
 
@@ -253,15 +303,14 @@ def post_signout(request):
     load_number = request.data.get('load_number')
 
     Signouts.objects.create(rig_id=rig_id, load_number=load_number)
-    return
-
-
-def post_emp_signout(employee_id):
     signout_id_dict = Signouts.objects.values().get(signout_id=
                                                     Signouts.objects.latest('signout_id')
                                                     .serializable_value('signout_id'))
     signout_id = signout_id_dict.get("signout_id", "")
+    return signout_id
 
+
+def post_emp_signout(employee_id, signout_id):
     EmployeesSignouts.objects.create(signout_id=signout_id,
                                      employee_id=employee_id,
                                      packed_signout=EmployeesSignouts.SIGNOUT,

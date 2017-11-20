@@ -37,7 +37,7 @@ export default class PackButton extends React.Component {
   
   render() {
     console.log(this.props.index);
-    var buttonID = "PackButton" + this.props.index;
+    var buttonID = "PackButton" + this.props.index + this.props.sheetType;
     return (
       <div>
         <Button size="md" color="primary"

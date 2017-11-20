@@ -68,7 +68,8 @@ export default class Rigsheet extends React.Component {
           load={rowData[i].load_number}
           pinChanged={this.pinChanged}
           authorize={this.packRow}
-          index={i} />;
+          index={i}
+          sheetType={this.props.sheetType}/>;
     };
   }
 
@@ -233,7 +234,8 @@ export default class Rigsheet extends React.Component {
             load={responseData.load_number}
             pinChanged={self.pinChanged}
             authorize={self.packRow}
-            index={self.state.rows.length} />
+            index={self.state.rows.length}
+            sheetType={self.props.sheetType}/>
         };
         //grab the current rows
         var newRows = Array.from(self.state.rows);

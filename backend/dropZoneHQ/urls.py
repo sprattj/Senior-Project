@@ -30,7 +30,9 @@ from backend.datastore.views import *
 urlpatterns = [
     url(r'^(?i)admin[/]?', admin.site.urls),
     url(r'^(?i)rigs/(?P<pk>[0-9]+)[/]?$', RigDetail.as_view()),
-    url(r'^(?i)rigsheet[s]?/all[/]?', EmployeeVsSignoutList.as_view()),
+    url(r'^(?i)rigs/student[s]?/available-for-signout[/]?$', AvailableStudentRigList.as_view()),
+    url(r'^(?i)rigs/tandem[s]?/available-for-signout[/]?$', AvailableTandemRigList.as_view()),
+    url(r'^(?i)rigsheet[s]?/all[/]?$', EmployeeVsSignoutList.as_view()),
     url(r'^(?i)rigsheet[s]?/(?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutDetail.as_view()),
     url(r'^(?i)rigsheet[s]?/student[s]?[/](?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutStudentDetail.as_view()),
     url(r'^(?i)rigsheet[s]?/tandem[s]?[/](?P<pk>[0-9]+)[/]?$', EmployeeVsSignoutTandemDetail.as_view()),
