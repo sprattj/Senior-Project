@@ -137,17 +137,16 @@ class ClaimList(generics.ListCreateAPIView):
 
 #TODO
 class ClaimWarningList(generics.ListCreateAPIView):
-    queryset = Claims.objects.all()
+    queryset = Claims.objects.filter(status=Claims.PENDING)
     serializer_class = ClaimSerializer
 
 class ClaimQueueList(generics.ListCreateAPIView):
-    queryset = Claims.objects.all()
+    queryset = Claims.objects.filter(status=Claims.IN-PROGRESS)
     serializer_class = ClaimSerializer
 
 class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
-
 
 class SignoutList(generics.ListCreateAPIView):
     queryset = Signouts.objects.all()
