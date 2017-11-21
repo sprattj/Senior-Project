@@ -1,1 +1,15 @@
 export const rootURL = "http://127.0.0.1:8000";
+
+export const CLAIM_STATUS_CHOICES =
+{
+    PENDING: "PENDING",
+    IN_PROGRESS: "IN-PROGRESS",
+    COMPLETE: "COMPLETE",
+    DISMISSED: "DISMISSED"
+}
+export const CLAIM_SEVERITY_CHOICES =
+{
+    CRITICAL: 'CRITICAL',
+    NON_CRITICAL: 'NON-CRITICAL',
+    COSMETIC: 'COSMETIC'
+}

@@ -3,6 +3,7 @@ import {Row, Col, Button} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import { rootURL } from '../restInfo.js';
 import EditInventoryItemDisplay from '../ItemDisplays/EditInventoryItemDisplay.jsx';
+import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
 export default class TestScreen extends React.Component {
 
@@ -60,7 +61,7 @@ export default class TestScreen extends React.Component {
         "under 'Headers', and DJANGO'S DEBUG INFO ON THE 'PREVIEW' TAB");
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
-        var self = this;
+        //var self = this;
 
         if(this.method === "GET")
         {
@@ -101,6 +102,12 @@ export default class TestScreen extends React.Component {
     
     render() {
         return(
+            <div>
+            <Row>
+            <Col lg={{ size: 12 }}>
+                <DropzoneHQNav/>
+            </Col>
+        </Row>
             <Row>
                 <Col lg={{ size: 4, offset: 4 }}>
                     <Button size="lg" color="danger" onClick={this.fetchCall}>
@@ -118,8 +125,12 @@ export default class TestScreen extends React.Component {
             type={"All"} 
             changeRowData={4}/>
             </Row>
+<<<<<<< HEAD
             </Row>
             
+=======
+            </div>
+>>>>>>> master
         );
         
     }

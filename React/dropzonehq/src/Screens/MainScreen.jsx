@@ -1,76 +1,34 @@
 import React from 'react';
-import { Row, Col, Card, CardBlock } from 'reactstrap';
-import ChangeScreenButton from '../Buttons/ChangeScreenButton.jsx';
-import EmployeeAdminScreen from '../Screens/EmployeeAdminScreen.jsx';
-import RentalScreen from '../Screens/RentalScreen.jsx';
-import SheetsScreen from '../Screens/SheetsScreen.jsx';
-import EmployeeInfoScreen from '../Screens/EmployeeInfoScreen.jsx';
-import InventoryScreen from '../Screens/InventoryScreen.jsx';
-import LoftScreen from '../Screens/LoftScreen.jsx';
-import TestScreen from '../Screens/TestScreen.jsx';
+import { Container, Row, Col, Button } from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-
-const marginStyle = {
-    marginTop: 15,
-    marginBottom: 15
-};
+import { Link } from 'react-router-dom';
 
 export default class MainScreen extends React.Component {
 
     render() {
         return (
-            <div>
-                <Card>
-                    <CardBlock>
-                        <Row style={marginStyle}>
-                            <Col>
-                                <ChangeScreenButton screen={<EmployeeInfoScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Employee Information" />
-                            </Col>
-                            <Col>
-                                <ChangeScreenButton screen={<EmployeeAdminScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Employee Management" />
-                            </Col>
-                        </Row>
-                        <Row style={marginStyle}>
-                            <Col>
-                                <ChangeScreenButton screen={<RentalScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Rentals" />
-                            </Col>
-                            <Col>
-                                <ChangeScreenButton screen={<SheetsScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Rig Sheets" />
-                            </Col>
-                        </Row>
-                        <Row style={marginStyle}>
-                            <Col>
-                                <ChangeScreenButton screen={<InventoryScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Inventory" />
-                            </Col>
-                            <Col>
-                                <ChangeScreenButton screen={<LoftScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="Loft" />
-                            </Col>
-                        </Row>
-                        <Row style={marginStyle}>
-                            <Col>
-                                <ChangeScreenButton screen={<TestScreen />}
-                                    changeScreen={this.props.changeScreen}
-                                    buttonText="FETCH CALL TEST SCREEN" />
-                            </Col>
-                        </Row>
-                    </CardBlock>
-                </Card>
+            <Container id="main_body">
+                <Row>
+                    <Col className="mainscreen_col" xs={{ size: 12 }}>
+                        <h1>Dropzone HQ</h1>
+                    </Col>
+                    <Col className="mainscreen_col" xs={{ size: 12 }}>
+                        <img src="http://svgshare.com/i/3vT.svg" className="behind_nav img-responsive img-circle center-block" height="225" width="225" alt="computer with parachute logo"></img>
+                    </Col>
+                    <Col className="mainscreen_col" xs={{ size: 12 }}>
+                        <h3 className="title_color">A web-based solution for skydiving dropzone management.</h3>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col className="mainscreen_col" xs={{ size: 12 }}>
+                    <Link to='/dropzone-home'><Button className="btn_transparent" size="lg">Ya gotta log in to use this screen but it's going to be here for test purposes so click me to get thru to the rest of the application</Button></Link>
 
-            </div>
+                        <Link to='/create-dropzone'><Button className="btn_transparent" size="lg">New Dropzone</Button></Link>
+                        <Link to='/login'><Button className="btn_transparent" size="lg">Login</Button></Link>
+                        <Link to='/reset'><Button className="btn_transparent" size="lg">Password Reset</Button></Link>
+                    </Col>
+                </Row>
+            </Container>
         );
     }
-
-
 }
