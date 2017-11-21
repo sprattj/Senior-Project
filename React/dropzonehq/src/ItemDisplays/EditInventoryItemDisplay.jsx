@@ -13,6 +13,10 @@ export default class EditInventoryItemDisplay extends React.Component {
     constructor(props) {
         super(props);
 
+        //since the URL section is not directly related to rendering,
+        //it shouldn't be part of state. Save it in a class variable.
+        this.URLsection = "/items";
+
         this.itemNumChanged = this.itemNumChanged.bind(this);
         this.itemRenterNameChanged = this.itemRenterNameChanged.bind(this);
         this.itemDescChanged = this.itemDescChanged.bind(this);
@@ -23,23 +27,31 @@ export default class EditInventoryItemDisplay extends React.Component {
         this.state = {
             // initially is number that's passed
          
+            itemNum: this.props.number,
+            itemRenterName: this.props.renterName,
+            itemDesc: this.props.desc,
+            itemType: this.props.type
 
         };
 
-        this.itemNum = this.props.number;
+/*         this.itemNum = this.props.number;
         this.itemRenterName = this.props.renterName;
         this.itemDesc = this.props.desc;
-        this.itemType = this.props.type;
+        this.itemType = this.props.type; */
     }
 
     itemNumChanged(e) 
     {
         console.log("in itemNumChanged:  " + e.target.value);
-        console.log("old itemNum value:  " + this.itemNum);
+        console.log("old itemNum value:  " + this.state.itemNum);
 
         this.itemNum = e.target.value;
 
-        console.log("new itemNum value:  " + this.itemNum);
+        this.setState({
+            itemNum: e.target.value
+        });
+
+        console.log("new itemNum value:  " + this.state.itemNum);
     }
 
       itemRenterNameChanged(e) 
@@ -47,7 +59,11 @@ export default class EditInventoryItemDisplay extends React.Component {
         console.log("in itemRenterNameChanged:  " + e.target.value);
         this.itemRenterName = e.target.value;
 
-        console.log("new itemRenterName value:  " + this.itemRenterName);
+        this.setState({
+            itemRenterName: e.target.value
+        });
+
+        console.log("new itemRenterName value:  " + this.state.itemRenterName);
       }
 
       itemDescChanged(e) 
@@ -55,7 +71,11 @@ export default class EditInventoryItemDisplay extends React.Component {
         console.log("in itemDescChanged:  " + e.target.value);
         this.itemDesc = e.target.value;
 
-        console.log("new itemDesc value:  " + this.itemDesc);
+        this.setState({
+            itemDesc: e.target.value
+        });
+
+        console.log("new itemDesc value:  " + this.state.itemDesc);
       }
 
       itemTypeChanged(e) 
@@ -63,14 +83,18 @@ export default class EditInventoryItemDisplay extends React.Component {
         console.log("in itemTypeChanged:  " + e.target.value);
         this.itemType = e.target.value;
 
-        console.log("new itemType value:  " + this.itemType);
+        this.setState({
+            itemType: e.target.value
+        });
+
+        console.log("new itemType value:  " + this.state.itemType);
       }
 
         // CONTINUE TODO: 
         save()
         {
             console.log("clicked save, index: " + this.props.index);
-            this.props.changeRowData(this.props.index, this.itemNum, this.itemRenterName, this.itemDesc, this.itemType);
+            this.props.changeRowData(this.props.index, this.state.itemNum, this.state.itemRenterName, this.state.itemDesc, this.state.itemType);
         }
  
 
