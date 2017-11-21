@@ -2,6 +2,7 @@ import React from 'react';
 import {Row, Col, Button} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import { rootURL } from '../restInfo.js';
+import EditInventoryItemDisplay from '../ItemDisplays/EditInventoryItemDisplay.jsx';
 
 export default class TestScreen extends React.Component {
 
@@ -107,7 +108,18 @@ export default class TestScreen extends React.Component {
                     </Button>
                     <p>(check the console for info about what happened)</p>
                 </Col>
+                <Row>
+                <EditInventoryItemDisplay            //set up the display component
+            index={1}
+            number={55}
+            desc={"Asdfasdf"}
+            isRented={true}
+            renterName={"Test McTesterson"}
+            type={"All"} 
+            changeRowData={4}/>
             </Row>
+            </Row>
+            
         );
         
     }

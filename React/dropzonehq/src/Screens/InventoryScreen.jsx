@@ -274,7 +274,7 @@ export default class InventoryScreen extends React.Component {
         console.log("selectedIndex: " + selectedIndex);
 
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
-        display = <EditInventoryItemDisplay            //set up the display component
+        var display = <EditInventoryItemDisplay            //set up the display component
             index={row.index}
             number={row.number}
             desc={row.desc}
@@ -283,7 +283,8 @@ export default class InventoryScreen extends React.Component {
             type={row.type} 
             changeRowData={this.changeRowData}/>;
 
-        this.displayChange(display, row.index);         
+        console.log("row: " + row);
+        //this.displayChange(display, row.index);         
         console.log("Selection count: " + count);
         count++;
 

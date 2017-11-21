@@ -6,9 +6,9 @@ export default class SaveItemDetailsBtn extends React.Component
     constructor(props) {
         super(props);
         
-        this.setState = {
+/*         this.setState({
             disabled: this.props.disabled
-        }
+        }); */
     }
 
 
