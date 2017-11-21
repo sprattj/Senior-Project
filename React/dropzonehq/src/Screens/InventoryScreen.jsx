@@ -25,7 +25,7 @@ export default class InventoryScreen extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/inventory";
+        this.URLsection = "/items";
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
@@ -279,7 +279,7 @@ export default class InventoryScreen extends React.Component {
         console.log("selectedIndex: " + selectedIndex);
 
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
-        display = <EditInventoryItemDisplay            //set up the display component
+        var display = <EditInventoryItemDisplay            //set up the display component
             index={row.index}
             number={row.number}
             desc={row.desc}
@@ -288,7 +288,8 @@ export default class InventoryScreen extends React.Component {
             type={row.type} 
             changeRowData={this.changeRowData}/>;
 
-        this.displayChange(display, row.index);         
+        console.log("row: " + row);
+        //this.displayChange(display, row.index);         
         console.log("Selection count: " + count);
         count++;
 

@@ -1,7 +1,5 @@
 import React from 'react';
 import TableSheet from './TableSheet.jsx';
-import PropTypes from 'prop-types';
-import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 
 //a generic table to show just a brief description of the items to be clicked and
@@ -33,7 +31,6 @@ export default class ItemTable extends React.Component {
             type: { rowData[i].type };
             index: { i };
         };
-        console.log("ItemTable: processRows: index: " + i)
         return rowData;
     }
 
@@ -49,7 +46,7 @@ export default class ItemTable extends React.Component {
 
             //if it has a isRented that returns true it will show red background
             //a little unclear on why its .original but thats what got it to work
-            if (rowInfo.original.isRented) {
+            if (!rowInfo.original.is_available) {
                 backgroundColor = "lightcoral";
             }
 
