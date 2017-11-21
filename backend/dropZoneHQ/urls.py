@@ -47,6 +47,6 @@ urlpatterns = [
     url(r'^login/$', loginDropzone, name='login'),
     url(r'^logout/$', logoutDropzone, name='logout'),
     url(r'^temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
-    url(r'^reset/$', password_reset_dropzone, name='password_reset')
+    url(r'^reset/$', password_reset_dropzone, name='password_reset'),
     url(r'^emp_reset',password_reset_employee, name='pin reset')
 ]
