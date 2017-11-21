@@ -36,7 +36,7 @@ export default class RentalDisplayCanopy extends React.Component {
                                     <Row>
                                         <div>
                                             <p>Description:</p>
-                                            <p>{this.props.desc}</p>
+                                            <p>{this.props.description}</p>
                                         </div>
                                     </Row>
                                     <Row>

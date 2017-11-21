@@ -15,22 +15,23 @@ export default class RentReturnButton extends React.Component {
 
     //change the VERFIY modal's visibility via state
     toggleVerifyModal() {
-        console.log("RentButton: toggleVerifyModal: ");
         this.setState({
             verifyOpen: !this.state.verifyOpen
         });
     }
 
     onClickFunction() {
+        console.log("RentReturnButton: onClickFunction: this.props = ");
         console.log(this.props);
         this.toggleVerifyModal();
         if (this.props.buttonText) {
             if (this.props.buttonText === "Return") {
                 //return function
-                this.props.return(this.props.rowID)
+                console.log();
+                this.props.return(this.props.index)
             } else if (this.props.buttonText === "Rent") {
                 //rent out function
-                this.props.rent(this.props.rowID)
+                this.props.rent(this.props.index)
             } else {
                 //do nothing on click if it doesnt say Rent or Return the button isnt being used properly
             }
