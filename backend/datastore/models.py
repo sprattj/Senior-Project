@@ -432,6 +432,11 @@ class RigComponentDetails(models.Model):
     container_brand = models.CharField(max_length=45)
     aad_lifespan = models.CharField(max_length=45)
 
+    class Meta:
+        managed = True
+        db_table = 'rig_component_details'
+        app_label = 'dropZoneHQ'
+
 
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.
 class Signouts(models.Model):
