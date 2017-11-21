@@ -24,4 +24,16 @@ def createHash():
     return BCryptSHA256PasswordHasher.encode(password=randomHotdog(),salt=2)
 
 def createPasswordResetMessage(hash=None):
-    return "Please visit dropzonehq.com/temp/" + hash + " to reset your password"
+    return "Please visit dropzonehq.com/temp_reset/" + hash + " to reset your password"
+
+def createPinResetMessage(pin=None):
+    return "Please user " + pin + " as your new dropzone employee pin"
+
+def dropzoneHQPasswordResetTo():
+    return "DropzoneHQ Password Reset [DropzoneHQ NO REPLY]"
+
+def fromEmailString():
+    return 'dropzonehqNO-REPLY@dropzonehq.com'
+
+def employeePinResetTo():
+    return 'Employee Pin Reset [DropzoneHQ NO REPLY]'

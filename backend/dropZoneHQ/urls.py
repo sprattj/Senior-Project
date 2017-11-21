@@ -44,8 +44,9 @@ urlpatterns = [
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
-    url(r'^login/$', loginDropzone(), name='login'),
-    url(r'^logout/$', logoutDropzone(), name='logout'),
-    url(r'^temp/(?P<hash>\w+)/$', reset_url(), name="password_reset_temp"),
-    url(r'^reset/$', password_reset(), name='password_reset')
+    url(r'^login/$', loginDropzone, name='login'),
+    url(r'^logout/$', logoutDropzone, name='logout'),
+    url(r'^temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
+    url(r'^reset/$', password_reset_dropzone, name='password_reset')
+    url(r'^emp_reset',password_reset_employee, name='pin reset')
 ]

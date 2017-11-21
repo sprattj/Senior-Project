@@ -8,7 +8,7 @@ from .serializers import *
 from . import util
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, login, logout, authenticate
-from django.contrib.auth import views as auth_views
+from django.core.mail import send_mail
 import datetime
 
 
@@ -521,7 +521,7 @@ def authenticateNameDropzone(request):
 
 
 
-def password_reset(request):
+def password_reset_dropzone(request):
     email = None
     try:
         email = request.POST['email']
@@ -531,24 +531,51 @@ def password_reset(request):
     if email is None :
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     else:
-        dropzone = Dropzones.dropzoneEmailInUse(email)
-        hashs = util.createHash(email)
-        temp = TempUrl.objects.create(hashs,datetime.date.today() + datetime.timedelta(days=1))
-        message = util.createPasswordResetMessage(temp.get_url_hash())
-        Dropzones.email_user(dropzone,
-                             "DropzoneHQ Password Reset [NO REPLY]",
-                             message=message,
-                             from_email='dropzonehqNO-REPLY@dropzonehq.com')
+        try:
+            dropzone = Dropzones.dropzoneEmailInUse(email)
+            hashs = util.createHash(email)
+            temp = TempUrl.objects.create(hashs,datetime.date.today() + datetime.timedelta(days=1))
+            Dropzones.email_user(dropzone,
+                                 subject=util.dropzoneHQPasswordResetTo(),
+                                 message=util.createPasswordResetMessage(temp.get_url_hash()),
+                                 from_email=util.fromEmailString())
+        except:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
+def password_reset_employee(request):
+    email = None
+    try:
+        email = request.POST['email']
+    except:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
-def reset_url(request, hash=None):
+    if email is None:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+    else:
+        try:
+            employee = Employees.employee_email_in_use(email)
+            pin = Employees.create_random_user_pin(userPK=employee.pk)
+            pin_hash = Employees.pin_to_hash(pin=pin)
+            employee.pin = pin_hash
+            Employees.save(employee)
+            send_mail(
+                subject=util.employeePinResetTo(),
+                message=util.createPinResetMessage(pin=pin),
+                from_email=util.fromEmailString(),
+                recipient_list=[employee.email]
+            )
+        except:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+def reset_url_dropzone(request, hash=None):
     try:
         reset = TempUrl.objects.get(hash)
-        if reset is None :
+        if reset is not None :
             dropzone = reset.dropzone
             Dropzones.set_password(dropzone, request.POST['password'])
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else :
+            Dropzones.save(dropzone)
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        else :
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     except:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)

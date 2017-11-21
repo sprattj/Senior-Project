@@ -103,12 +103,6 @@ class Dropzones(User):
     # The location of the drop zone
     location = models.CharField(unique=True,max_length=45)
 
-    def get_dropzone(self, pk=None):
-        try :
-            return Dropzones.objects.get(pk)
-        except:
-            return None
-
     # Checks if a location is in use for a dropzone.
     def dropzoneLocationInUse(location=None):
         try :
@@ -130,7 +124,6 @@ class Dropzones(User):
         except :
             return None
 
-
     class Meta:
         managed = True
         db_table = 'dropzones'
@@ -143,6 +136,7 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
+    permission = models.
 
     class Meta:
         managed = True
@@ -192,7 +186,7 @@ class Employees(models.Model):
         else:
             salt = random.randint(0, 1000)
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
-            return BCryptSHA256PasswordHasher.encode(key, salt)
+            return key
 
     # Checks if a pin is in use for an Employee.
     #returns true if the pin is in use and false if the pin is not being used
@@ -446,7 +440,16 @@ class Signouts(models.Model):
         db_table = 'signouts'
 
 class TempUrl(models.Model):
-    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True)
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
+    dropzone = models.ForeignKey(Dropzones, name='dropzone')
+    expires = models.DateTimeField(name="Expries")
+
+    def get_url_hash(self):
+        return self.url_hashv    155955
+
+class TempUrlE(models.Model):
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
+    employee = models.ForeignKey(Employees, name='employee')
     expires = models.DateTimeField(name="Expries")
 
     def get_url_hash(self):
