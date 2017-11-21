@@ -324,6 +324,7 @@ class Items(models.Model):
     # is_rentable = models.CharField(max_length=4)
     is_rentable = models.BooleanField(max_length=4)
     is_on_rig = models.BooleanField(max_length=4)
+    is_available = models.BooleanField(max_length=4)
     rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
@@ -490,6 +491,7 @@ class AllItems(models.Model):
     lifespan = models.CharField(max_length=45)
     is_rentable = models.BooleanField(max_length=4)
     is_on_rig = models.BooleanField(max_length=4)
+    is_available = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
