@@ -25,7 +25,7 @@ export default class InventoryScreen extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/inventory";
+        this.URLsection = "/items";
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);

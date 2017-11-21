@@ -125,12 +125,8 @@ export default class TestScreen extends React.Component {
             type={"All"} 
             changeRowData={4}/>
             </Row>
-<<<<<<< HEAD
             </Row>
-            
-=======
             </div>
->>>>>>> master
         );
         
     }

@@ -13,6 +13,10 @@ export default class EditInventoryItemDisplay extends React.Component {
     constructor(props) {
         super(props);
 
+        //since the URL section is not directly related to rendering,
+        //it shouldn't be part of state. Save it in a class variable.
+        this.URLsection = "/items";
+
         this.itemNumChanged = this.itemNumChanged.bind(this);
         this.itemRenterNameChanged = this.itemRenterNameChanged.bind(this);
         this.itemDescChanged = this.itemDescChanged.bind(this);
