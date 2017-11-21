@@ -145,7 +145,7 @@ class EmployeeRoles(models.Model):
 class EmployeeRolesPermissions(models.Model):
     employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
     permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
-     
+
     class Meta:
         managed = True
         db_table = 'EmployeeRolesPermissions'
@@ -461,7 +461,7 @@ class TempUrl(models.Model):
     expires = models.DateTimeField(name="Expries")
 
     def get_url_hash(self):
-        return self.url_hashv    155955
+        return self.url_hash
 
 class TempUrlE(models.Model):
     url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
