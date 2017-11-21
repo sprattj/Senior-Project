@@ -39,3 +39,7 @@ def employeePinTo():
     return 'Employee Pin [DropzoneHQ NO REPLY]'
 def employeePinResetTo():
     return 'Employee Pin Reset [DropzoneHQ NO REPLY]'
+
+def createPinResetMessage(pin=None):
+    return "Your new pin is " + pin + ".  Please use this when you do any actions on dropzonehq.com"
+

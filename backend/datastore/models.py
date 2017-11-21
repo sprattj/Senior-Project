@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
-from random import random
+import random
 
 # Actions that can be performed by employees
 class Actions(models.Model):
@@ -136,6 +136,21 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
+    auth_level_choice = (
+        (0,'Packer'),
+        (1,'Intructor'),
+        (2,'Rigger'),
+        (3,'Admin')
+    )
+    auth_level = models.IntegerField(choices=auth_level_choice)
+
+    #hard coded return 0 for the failure.  If no role is found get rid
+    def find_role_auth_level(role):
+        roles = EmployeeRoles.objects.all()
+        for trole in roles:
+            if trole == role:
+                return trole.auth_level
+        return 0
 
     class Meta:
         managed = True
@@ -175,6 +190,7 @@ class Employees(models.Model):
     employment_date = models.DateTimeField(auto_now_add=True)
 
     #check is the pin of an employee matches the pin given
+    @staticmethod
     def check_employee_pin(pin, employee):
         if pin or employee is None:
             return None
@@ -200,7 +216,7 @@ class Employees(models.Model):
         if userPK is None:
             return None
         else:
-            salt = random.randint(0, 1000)
+            salt = util.stringToThree(random.randint(0,1000))
             key = util.stringToThree(str(salt)) + str(userPK % 1000)
             return key
 
@@ -208,7 +224,7 @@ class Employees(models.Model):
     #returns true if the pin is in use and false if the pin is not being used
     @staticmethod
     def employee_pin_in_use(pin=None):
-        emp = Employees.objects.get()
+        emp = Employees.objects.all()
         for e in emp :
             if Employees.checkEmployeePin(pin=pin, employee=e) is True:
                 return e
@@ -470,6 +486,11 @@ class TempUrlE(models.Model):
 
     def get_url_hash(self):
         return self.url_hash
+
+    class Meta:
+        app_label = 'dropZoneHQ'
+        managed = False
+        db_table = 'Temp_Url'
 
 # Descriptive view for all canopies in the inventory
 class AllCanopies(models.Model):

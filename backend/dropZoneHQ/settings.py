@@ -57,9 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SESSION_ENGINE = [
-    'django.contrib.sessions.backends.signed_cookies'
-]
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 ROOT_URLCONF = 'dropZoneHQ.urls'
 
