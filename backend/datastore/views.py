@@ -458,10 +458,20 @@ def createEmployee(request, dropzonePK):
         if Employees.employeeEmailInUse(email) is not None:
             emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
             emp.save()
+            pin = None
+            pin_hash = None
             while Employees.employeePinInUse(emp.pin) :
-                emp.pin = util.randomUserPin(emp.employee_id)
+                pin = Employees.create_random_user_pin(emp.employee_id)
+                pin_hash = Employees.pin_to_hash(pin)
+                emp.pin = pin_hash
             emp.save()
             serializer = EmployeeSerializer(emp)
+            send_mail(
+                subject=util.employeePinTo(),
+                message=util.createPinResetMessage(pin=pin),
+                from_email=util.fromEmailString(),
+                recipient_list=[emp.email]
+            )
             return JsonResponse(data= serializer.data ,status=201)
         else :
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
@@ -554,7 +564,7 @@ def password_reset_employee(request):
     else:
         try:
             employee = Employees.employee_email_in_use(email)
-            pin = Employees.create_random_user_pin(userPK=employee.pk)
+            pin = Employees.create_random_user_pin(userPK=employee.employee_id)
             pin_hash = Employees.pin_to_hash(pin=pin)
             employee.pin = pin_hash
             Employees.save(employee)
