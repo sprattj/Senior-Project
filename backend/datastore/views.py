@@ -141,6 +141,11 @@ class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RigAuditTrailSerializer
 
 
+class RigComponentDetailList(generics.ListAPIView):
+    queryset = RigComponentDetails.objects.all()
+    serializer_class = RigComponentDetailSerializer
+
+
 class ClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer

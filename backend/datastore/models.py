@@ -412,7 +412,7 @@ class RigsAuditTrail(models.Model):
     rig_id = models.IntegerField()
     container_id = models.IntegerField()
     aad_id = models.IntegerField()
-    description = models.CharField(max_length=45, blank=True, null=True)
+    # description = models.CharField(max_length=45, blank=True, null=True)
 
     # Date that a rig was modified.
     date_of_change = models.DateTimeField()
@@ -421,6 +421,16 @@ class RigsAuditTrail(models.Model):
         managed = True
         db_table = 'rigs_audit_trail'
         app_label = 'dropZoneHQ'
+
+
+class RigComponentDetails(models.Model):
+    rig_id = models.IntegerField()
+    main_canopy_size = models.CharField(max_length=45)
+    main_canopy_brand = models.CharField(max_length=45)
+    reserve_canopy_size = models.CharField(max_length=45)
+    reserve_canopy_brand = models.CharField(max_length=45)
+    container_brand = models.CharField(max_length=45)
+    aad_lifespan = models.CharField(max_length=45)
 
 
 # Signouts are where packers mark a rig as ready to go and instructors sign the gear out for use.

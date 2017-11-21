@@ -134,6 +134,14 @@ class RigAuditTrailSerializer(serializers.HyperlinkedModelSerializer):
                   'aad_id', 'description', 'date_of_change')
 
 
+class RigComponentDetailSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = RigComponentDetails
+        fields = ('rig_id', 'main_canopy_size', 'main_canopy_brand',
+                  'reserve_canopy_size', 'reserve_canopy_brand',
+                  'container_brand', 'aad_lifespan')
+
+
 class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EmployeeRoles
