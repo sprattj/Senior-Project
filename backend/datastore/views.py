@@ -375,6 +375,7 @@ def loginDropzone(request):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
+@login_required()
 def logoutDropzone(request):
     logout(request)
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
@@ -387,23 +388,28 @@ def createEmployee(request, dropzonePK):
         first = request.POST['first_name']
         last = request.POST['last_name']
         email = request.POST['email']
+        role = request.POST['role']
         if Employees.employee_email_in_use(email) is not None:
             emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
             emp.save()
-            while Employees.employee_pin_in_use(emp.pin) :
-                pin = util.randomUserPin(emp.employee_id)
-                emp.pin = Employees.pin_to_hash(pin)
+            pin = None
+            pin_hash = None
+            while Employees.employeePinInUse(emp.pin) :
+                pin = Employees.create_random_user_pin(emp.employee_id)
+                pin_hash = Employees.pin_to_hash(pin)
+                emp.pin = pin_hash
             emp.save()
             serializer = EmployeeSerializer(emp)
             send_mail(
-                subject='DropzoneHQ Employee Pin [NO REPLY]',
-                message='Your new employee pin is ' + pin,
-                from_email='dropzonehqNO-REPLY@dropzonehq.com',
+                subject=util.employeePinTo(),
+                message=util.createPinResetMessage(pin=pin),
+                from_email=util.fromEmailString(),
                 recipient_list=[emp.email],
                 fail_silently=False
             )
-            return JsonResponse(data= serializer.data ,status=201)
-        else:
+
+            return JsonResponse(data= serializer.data, status=201)
+        else :
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     except:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
@@ -461,8 +467,7 @@ def authenticateNameDropzone(request):
             serializer = DropZoneSerializer(dropzone)
             return JsonResponse(data=serializer.data, status=200)
 
-
-def password_reset(request):
+def password_reset_dropzone(request):
     email = None
     try:
         email = request.POST['email']
@@ -472,15 +477,17 @@ def password_reset(request):
     if email is None:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
     else:
-        dropzone = Dropzones.dropzoneEmailInUse(email)
-        hashs = util.createHash(email)
-        temp = TempUrl.objects.create(hashs,datetime.date.today() + datetime.timedelta(days=1))
-        message = util.createPasswordResetMessage(temp.get_url_hash())
-        Dropzones.email_user(dropzone,
-                             "DropzoneHQ Password Reset [NO REPLY]",
-                             message=message,
-                             from_email='dropzonehqNO-REPLY@dropzonehq.com')
-        return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        try:
+            dropzone = Dropzones.dropzoneEmailInUse(email)
+            hashs = util.createHash(email)
+            temp = TempUrl.objects.create(hashs,datetime.date.today() + datetime.timedelta(days=1))
+            Dropzones.email_user(dropzone,
+                                 subject=util.dropzoneHQPasswordResetTo(),
+                                 message=util.createPasswordResetMessage(temp.get_url_hash()),
+                                 from_email=util.fromEmailString())
+        except:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @login_required()
@@ -507,15 +514,15 @@ def password_reset_employee(request):
         )
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-
-def reset_url(request, hash=None):
+def reset_url_dropzone(request, hash=None):
     try:
         reset = TempUrl.objects.get(hash)
-        if reset is None:
+        if reset is not None :
             dropzone = reset.dropzone
             Dropzones.set_password(dropzone, request.POST['password'])
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else:
+            Dropzones.save(dropzone)
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        else :
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     except:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
