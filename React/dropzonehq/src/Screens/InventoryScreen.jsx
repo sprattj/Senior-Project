@@ -32,13 +32,23 @@ export default class InventoryScreen extends React.Component {
         this.itemSelected = this.itemSelected.bind(this);
         this.displayChange = this.displayChange.bind(this);
         this.changeRowData = this.changeRowData.bind(this);
-
+        this.displayAddView = this.displayAddView.bind(this);
 
         this.all = [];
         this.rigs = [];
         this.canopies = [];
         this.containers = [];
         this.aad = [];
+
+        this.columnsAll = [{
+            Header: 'Item Number',
+            accessor: 'number', // String-based value accessors!
+            width: 150
+        }, {
+            Header: 'Item Description',
+            accessor: 'desc',
+            width: 400
+        }];
 
         this.columnsRigs = [{
             Header: 'Main',
@@ -110,15 +120,9 @@ export default class InventoryScreen extends React.Component {
 
         this.state = {
             filter: "all",
-            columns: [{
-                Header: 'Item Number',
-                accessor: 'number' // String-based value accessors!
-            }, {
-                Header: 'Item Description',
-                accessor: 'desc',
-            }],
+            columns: this.columnsAll,
             rows: rowData,
-            index: 0,
+            index: null,
             currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
         };
 
@@ -128,17 +132,43 @@ export default class InventoryScreen extends React.Component {
 
     changeRowData(index, itemNum, itemRenterName, itemDesc, itemType) 
     {
-        console.log("in change, old values => index: " + index + " itemNum: " + this.state.rows[index].number + " itemRenterName: " 
-                                                        + this.state.rows[index].renterName + " itemDesc: " + this.state.rows[index].desc 
-                                                        + " itemType: " + this.state.rows[index].type);
-        this.state.rows[index].number = itemNum;
+        console.log("in change, old values => index: " + index + " \n itemNum: " + this.state.rows[index].number + " \n itemRenterName: " 
+                                                        + this.state.rows[index].renterName + " \n itemDesc: " + this.state.rows[index].desc 
+                                                        + " \n itemType: " + this.state.rows[index].type);
+
+        // grab the current rows
+        var newRows = Array.from(this.state.rows);
+
+        // update the copy's row's fields
+        newRows[index].number = itemNum;
+        newRows[index].renterName = itemRenterName;
+        newRows[index].desc = itemDesc;
+        newRows[index].type = itemType;
+
+        // update the state with the new rows so it rerenders
+        this.setState({
+            rows: newRows
+        })             
+
+/*         this.state.rows[index].number = itemNum;
         this.state.rows[index].renterName = itemRenterName;
         this.state.rows[index].desc = itemDesc;
-        this.state.rows[index].type = itemType; 
+        this.state.rows[index].type = itemType;  
 
-        console.log("new values => index: " + index + " itemNum: " + this.state.rows[index].number + " itemRenterName: " 
-                                        + this.state.rows[index].renterName + " itemDesc: " + this.state.rows[index].desc 
-                                        + " itemType: " + this.state.rows[index].type);
+        this.forceUpdate();
+
+         this.setState({
+             rows,
+             rows[index].number: itemNum,
+            rows[index].renterName: itemRenterName,
+            rows[index].desc: itemDesc,
+            rows[index].type: itemType  
+        });  
+        */
+
+        console.log("new values => index: " + index + " \n itemNum: " + this.state.rows[index].number + " \n itemRenterName: " 
+                                        + this.state.rows[index].renterName + " \n itemDesc: " + this.state.rows[index].desc 
+                                        + " \n itemType: " + this.state.rows[index].type);
     }
 
     getFilteredRows(rowData) 
@@ -173,12 +203,13 @@ export default class InventoryScreen extends React.Component {
 
     //changes the display of the right side of the screen by
     //taking in a EditInventoryItemDisplay and setting it in the currentItem state
-    displayChange(itemDisplay, index) {
+    displayChange(itemDisplay, selectedIndex) {
         if (! (itemDisplay === "")) 
         {
-            console.log("Inventory Screen-> displayChange> index: " + index);
+            console.log("Inventory Screen-> displayChange> index: " + selectedIndex);
             this.setState({
-                currentItem: itemDisplay
+                currentItem: itemDisplay,
+                index: selectedIndex
             });
         } else {
             console.log("check what 'itemDisplay' is");
@@ -288,13 +319,33 @@ export default class InventoryScreen extends React.Component {
             type={row.type} 
             changeRowData={this.changeRowData}/>;
 
-        console.log("row: " + row);
-        //this.displayChange(display, row.index);         
+        this.displayChange(display, row.index);         
         console.log("Selection count: " + count);
         count++;
 
+        console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].number + " \n itemRenterName: " 
+                                            + this.state.rows[selectedIndex].renterName + " \n itemDesc: " + this.state.rows[selectedIndex].desc 
+                                            + " \n itemType: " + this.state.rows[selectedIndex].type);
+    }
+
+    // calls on "ADD" btn click to change right side view to empty field values by default
+    displayAddView()
+    {        
+        console.log("hit displayAddView funct");
+        // set up the display component
+        var display = <EditInventoryItemDisplay            
+            index={""}
+            number={""}
+            desc={""}
+            isRented={""}
+            renterName={""}
+            type={""} 
+            changeRowData={""}/>;
+
+        // this.displayChange(display, row.index);  
+        
         this.setState({
-            index: selectedIndex,
+            // index: selectedIndex,
             currentItem: display 
         });
     }
@@ -307,7 +358,7 @@ export default class InventoryScreen extends React.Component {
             id="InventoryFilterDropdown"
         />;
 
-        var addItemBtn = <AddInventoryItemBtn buttonText={"ADD"} />;
+        var addItemBtn = <AddInventoryItemBtn buttonText={"ADD"} onClick={this.displayAddView} />;
         return (
             <div>
                 <Row>

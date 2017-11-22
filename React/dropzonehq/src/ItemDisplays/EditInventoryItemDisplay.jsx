@@ -163,9 +163,6 @@ export default class EditInventoryItemDisplay extends React.Component {
                             footerText = {
                                 <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} />
                             }
-                            footerText={
-                                <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} />
-                            }
                         />
                     </Col>
                 </Row>
