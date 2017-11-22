@@ -31,7 +31,7 @@ export default class RentalDisplayContainer extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <p>{this.props.desc}</p>
+                                        <p>{this.props.description}</p>
                                     </Row>
                                     <Row>
                                         {this.props.button}

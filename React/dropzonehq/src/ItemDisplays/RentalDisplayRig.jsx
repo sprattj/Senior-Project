@@ -22,20 +22,20 @@ export default class RentalDisplayRig extends React.Component {
                             statsToDisplay={
                                 <div>
                                     <Row>
-                                        <p>Rental Status: {this.props.isRented ? "Rented by " + this.props.renterName : "Available" }</p>
+                                        <p>Rental Status: {!(this.props.is_available) ? "Rented by " + this.props.renterName : "Available" }</p>
                                     </Row>
                                     <Row>
                                         <Col>
-                                            <p>Main Canopy: {this.props.mainBrand} {this.props.mainSize}</p>
-                                            <p>Container: {this.props.containerBrand}</p>
+                                            <p>Main Canopy: {this.props.main_canopy_brand} {this.props.main_canopy_size}</p>
+                                            <p>Container: {this.props.container_brand}</p>
                                         </Col>
                                         <Col>
-                                            <p>Reserve Canopy: {this.props.reserveBrand} {this.props.reserveSize}</p>
-                                            <p>AAD Lifespan: {this.props.aadExp}</p>
+                                            <p>Reserve Canopy: {this.props.reserve_canopy_brand} {this.props.reserve_canopy_size}</p>
+                                            <p>AAD Lifespan: {this.props.aad_lifespan}</p>
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <p>{this.props.desc}</p>
+                                        <p>Description: {this.props.description}</p>
                                     </Row>
                                     <Row>
                                         {this.props.button}

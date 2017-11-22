@@ -27,8 +27,23 @@ def createHash():
 
 
 def createPasswordResetMessage(hash=None):
-    return "Please visit dropzonehq.com/temp/" + hash + " to reset your password"
+    return "Please visit dropzonehq.com/temp_reset/" + hash + " to reset your password"
 
 
 def createPinResetMessage(pin=None):
+    return "Please user " + pin + " as your dropzone employee pin"
+
+def dropzoneHQPasswordResetTo():
+    return "DropzoneHQ Password Reset [DropzoneHQ NO REPLY]"
+
+def fromEmailString():
+    return 'dropzonehqNO-REPLY@dropzonehq.com'
+
+def employeePinTo():
+    return 'Employee Pin [DropzoneHQ NO REPLY]'
+def employeePinResetTo():
+    return 'Employee Pin Reset [DropzoneHQ NO REPLY]'
+
+def createPinResetMessage(pin=None):
     return "Your new pin is " + pin + ".  Please use this when you do any actions on dropzonehq.com"
+

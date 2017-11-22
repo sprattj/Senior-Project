@@ -1,7 +1,6 @@
 import React from 'react';
 import ItemDisplay from './ItemDisplay.jsx';
 import { Row, Col } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
 
 //This is an initial place holder for the ItemDetails section of
 //the rental and inventory screen so that that section isnt blank but doesnt need data.
