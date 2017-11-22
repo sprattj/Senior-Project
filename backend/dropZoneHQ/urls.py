@@ -49,7 +49,6 @@ urlpatterns = [
     url(r'^temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
     url(r'^reset/$', password_reset_dropzone, name='password_reset'),
     url(r'^reset_employee/$',password_reset_employee, name='pin reset'),
-    #todo figure out the dropzone pk from url
     url(r'^create_dropzone/$',createDropzone,name='create_dropzone'),
     url(r'^dropzone/(?P<pk>[0-9]+)/create_employee/$',createEmployee,name='create_employee'),
     url(r'^auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
