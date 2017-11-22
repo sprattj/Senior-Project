@@ -22,11 +22,14 @@ export default class RentButton extends React.Component {
   }
 
   rentItem() {
-
+    this.props.rentItem(this.props.index, this.state.renterName, this.props.item_id)
   }
 
   renterNameChange(event) {
-
+    console.log(event.target.value);
+    this.setState({
+      renterName: event.target.value
+    })
   }  
 
   render() {

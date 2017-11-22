@@ -4,7 +4,7 @@ import ItemTable from './ItemTable.jsx';
 import RentalDisplayRig from '../ItemDisplays/RentalDisplayRig.jsx';
 import RentalDisplayCanopy from '../ItemDisplays/RentalDisplayCanopy.jsx';
 import RentalDisplayContainer from '../ItemDisplays/RentalDisplayContainer.jsx';
-import RentReturnButton from '../Buttons/RentReturnButton.jsx';
+import ReturnButton from '../Buttons/ReturnButton.jsx';
 import RentButton from '../ModalButtons/RentButton.jsx';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
@@ -21,6 +21,7 @@ export default class RentalTable extends React.Component {
         this.URLsection = "/rentals";
 
         //method binding-
+        this.processRows = this.processRows.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
         this.rentItem = this.rentItem.bind(this);
@@ -158,7 +159,7 @@ export default class RentalTable extends React.Component {
             { index: 1019, item_id: 1019, description: "Red, White, Yellow Saber2 170", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
             { index: 1010, item_id: 1010, description: "Blue and Black", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 107, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
             { index: 1011, item_id: 1011, description: "Red, White, Blue Sigma", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
-            
+
             { index: 1012, item_id: 1012, description: "Green and Brown Navigator 210", is_rentable: 1, is_available: 1, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "210", brand: "Navigator" },
 
             //Reserves
@@ -190,7 +191,7 @@ export default class RentalTable extends React.Component {
             { index: 5011, item_id: 5011, description: "Rainbow Flap Sigma", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
 
             { index: 5012, item_id: 5012, description: "Rainbow Javelin", is_rentable: 1, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
-            
+
 
             //AADs
             { index: 7000, item_id: 7000, description: "aad 01", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
@@ -241,7 +242,7 @@ export default class RentalTable extends React.Component {
     //sorts any rows by thier "item_type" into the rentalX array of that item_type
     sortRentals(rowData) {
         for (var i = 0; i < rowData.length; i++) {
-            if (rowData[i].is_rentable){            //if its rentable
+            if (rowData[i].is_rentable) {            //if its rentable
                 this.rentals.push(rowData[i]);      //add it to the rentals list
             }
 
@@ -303,11 +304,11 @@ export default class RentalTable extends React.Component {
 
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
         var rentalButton;                           //variable Rent or Return button shows if Available or Rented         
-        
+
         if (!row.is_available) {     //if the item is rented set the rentalButton var to Return
-            rentalButton = <RentReturnButton buttonText={"Return"} return={this.returnItem} index={selectedIndex} />;
+            rentalButton = <ReturnButton buttonText={"Return"} return={this.returnItem} index={selectedIndex} item_id={row.item_id} />;
         } else {                //if the item isnt rented set the rentalButton var to Rent
-            rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} index={selectedIndex} />;
+            rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} index={selectedIndex} item_id={row.item_id} />;
         }
 
         //select the type of Rental Item Display will be shown based on the selected item's .item_type
@@ -385,16 +386,19 @@ export default class RentalTable extends React.Component {
         />;
     }
 
-    rentItem(index, renterName) {
-        /*        
+    rentItem(index, renterName, item_id) {      
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
     
+        var id = "rentalTemp";
         var url = rootURL + this.URLsection + "/" + id;
     
         var self = this;
         var requestVariables = {
-            pin: this.state.pin
+            pin: '222222',
+            item_id: item_id,
+            renter_name: renterName,
+            is_available: false
           };
           fetch(url, {
             method: "PATCH",
@@ -417,33 +421,82 @@ export default class RentalTable extends React.Component {
               
               //--
               newRows[index].is_available = 1;
-              newRows[index].RenterName = "TEST NAME";
+              newRows[index].RenterName = renterName;
               this.getFilteredRows(newRows);
       
               //update the state with the new rows so it rerenders
               self.setState({
-                rows: newRows,
+                
                 pin: ''
               });
       
             })//catch any errors and display them as a toast
             .catch(function (error) {
               toast.error(error + "\n" + url);
-            });*/
+            });
 
 
-            for (var i = 0; i < this.all.length; i++) {
-                if (index === this.all[i].index && !this.all[i].is_available) {
-                    this.all[i].is_available = 0;
-                    this.all[i].renterName = renterName;
-                }
+        for (var i = 0; i < this.all.length; i++) {
+            if (index === this.all[i].index && !this.all[i].is_available) {
+                this.all[i].is_available = 0;
+                this.all[i].renterName = renterName;
             }
+        }
         console.log("RentalTable: rentItem Function");
         this.getFilteredRows(this.all);
     }
 
-    returnItem(index) {
-        //patch the return
+    returnItem(index, item_id) {
+        
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+    
+        var id = "rentalTemp";
+        var url = rootURL + this.URLsection + "/" + id;
+    
+        var self = this;
+        var requestVariables = {
+            pin: '222222',
+            item_id: item_id,
+            renter_name: "",
+            is_available: true
+          };
+          fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+          })//when we get a response back
+            .then(function (response) {
+              if (response.status >= 400) {
+                throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
+              }
+              return response.json();
+            })//when the call succeeds
+            .then(function (responseData) {
+              //grab the current rows
+              var newRows = this.all;
+              
+              //--
+              newRows[index].is_available = 0;
+              newRows[index].RenterName = "";
+              this.getFilteredRows(newRows);
+      
+              //update the state with the new rows so it rerenders
+              self.setState({
+                
+                pin: ''
+              });
+      
+            })//catch any errors and display them as a toast
+            .catch(function (error) {
+              toast.error(error + "\n" + url);
+            });
+
+
         console.log("RentalTable: returnItem Function: index passed in: " + index);
         for (var i = 0; i < this.all.length; i++) {
             if (index === this.all[i].index && !this.all[i].is_available) {
@@ -485,11 +538,11 @@ export default class RentalTable extends React.Component {
         //that we set in our constructor (like "/rigsheets"), and
         //the sheetType prop ("Tandems" or "Students")
         //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection;
+        var url = rootURL + "/rig_info";
 
         //save 'this' so that we can call functions
         //inside the fetch() callback-------------
-        //var self = this;
+        var self = this;
 
         //fetch from the specified URL, to GET the data
         //we need. Enable CORS so we can access from localhost.
@@ -507,8 +560,8 @@ export default class RentalTable extends React.Component {
                 //into JSON format
                 return response.json();
             })//when the call succeeds
-            .then(function (rigData) {
-                this.rigsInfo = rigData;    //set the array for the rigInfo view to be the result
+            .then(function (response) {
+                self.rigsInfo.push(response);    //set the array for the rigInfo view to be the result
                 console.log("successful rigInfo fetch");
             })//catch any errors and display them as a toast
             .catch(function (error) {

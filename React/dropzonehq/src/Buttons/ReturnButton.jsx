@@ -2,7 +2,7 @@ import React from 'react';
 import VerifyForm from '../VerifyForm.jsx';
 import { Button, Popover, PopoverTitle, PopoverContent } from 'reactstrap';
 
-export default class RentReturnButton extends React.Component {
+export default class ReturnButton extends React.Component {
     constructor(props) {
         super(props);
         this.onClickFunction = this.onClickFunction.bind(this);
@@ -21,52 +21,26 @@ export default class RentReturnButton extends React.Component {
     }
 
     onClickFunction() {
-        console.log("RentReturnButton: onClickFunction: this.props = ");
+        console.log("ReturnButton: onClickFunction: this.props = ");
         console.log(this.props);
         this.toggleVerifyModal();
-        if (this.props.buttonText) {
-            if (this.props.buttonText === "Return") {
-                //return function
-                console.log();
-                this.props.return(this.props.index)
-            } else if (this.props.buttonText === "Rent") {
-                //rent out function
-                this.props.rent(this.props.index)
-            } else {
-                //do nothing on click if it doesnt say Rent or Return the button isnt being used properly
-            }
-        }
-    }
+        //return function
+        this.props.return(this.props.index, this,props.item_id)
 
-    titleSelect(text) {
-        var title = "";
-        if (text) {
-            {
-                if (text === "Return") {
-                    title = "Verify Return";
-                } else if (text === "Rent") {
-                    title = "Verify Rental";
-                } else {
-                    //do nothing on click if it doesnt say Rent or Return the button isnt being used properly
-                }
-            }
-        }
-        return title
     }
-
 
     render() {
-        var buttonID = "RentReturnButton" + this.props.index;
-        
+        var buttonID = "ReturnButton" + this.props.index;
+
         return (
             <div>
                 <Button onClick={this.onClickFunction}
                     size="lg"
                     color="primary"
-                    id={buttonID} > {this.props.buttonText} </Button>
+                    id={buttonID} > {"Return"} </Button>
 
                 <Popover placement="bottom" isOpen={this.state.verifyOpen} target={buttonID} toggle={this.toggleVerifyModal}>
-                    <PopoverTitle>{this.titleSelect(this.props.buttonText)}</PopoverTitle>
+                    <PopoverTitle>{"Verify Return"}</PopoverTitle>
                     <PopoverContent>
                         <VerifyForm pinChanged={this.props.pinChanged} />
                         <Button color="primary" onClick={this.packButton}>Verify</Button>{' '}
