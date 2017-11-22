@@ -166,13 +166,6 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
-    auth_level_choice = (
-        (0, 'Packer'),
-        (1, 'Intructor'),
-        (2, 'Rigger'),
-        (3, 'Admin')
-    )
-    auth_level = models.IntegerField(choices=auth_level_choice)
 
     #hard coded return 0 for the failure.  If no role is found get rid
     def find_role_auth_level(role):
@@ -199,6 +192,14 @@ class EmployeeRolesPermissions(models.Model):
 
 class Permissions(models.Model):
     permission = models.CharField(max_length=45)
+
+    auth_level_choice = (
+        (0, 'Packer'),
+        (1, 'Intructor'),
+        (2, 'Rigger'),
+        (3, 'Admin')
+    )
+    auth_level = models.IntegerField(choices=auth_level_choice)
 
     class Meta:
         managed = True
