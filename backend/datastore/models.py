@@ -213,7 +213,7 @@ class Employees(models.Model):
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
-    dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
+    dropzone = models.ForeignKey('Dropzones', models.DO_NOTHING)
     is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
     # pin Sha hash
@@ -349,6 +349,8 @@ class Items(models.Model):
     # Whether or not this item is rentable
     # is_rentable = models.CharField(max_length=4)
     is_rentable = models.BooleanField(max_length=4)
+    is_on_rig = models.BooleanField(max_length=4)
+    is_available = models.BooleanField(max_length=4)
     rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
@@ -436,7 +438,7 @@ class RigsAuditTrail(models.Model):
     rig_id = models.IntegerField()
     container_id = models.IntegerField()
     aad_id = models.IntegerField()
-    description = models.CharField(max_length=45, blank=True, null=True)
+    # description = models.CharField(max_length=45, blank=True, null=True)
 
     # Date that a rig was modified.
     date_of_change = models.DateTimeField()
@@ -444,6 +446,21 @@ class RigsAuditTrail(models.Model):
     class Meta:
         managed = True
         db_table = 'rigs_audit_trail'
+        app_label = 'dropZoneHQ'
+
+
+class RigComponentDetails(models.Model):
+    rig_id = models.IntegerField()
+    main_canopy_size = models.CharField(max_length=45)
+    main_canopy_brand = models.CharField(max_length=45)
+    reserve_canopy_size = models.CharField(max_length=45)
+    reserve_canopy_brand = models.CharField(max_length=45)
+    container_brand = models.CharField(max_length=45)
+    aad_lifespan = models.CharField(max_length=45)
+
+    class Meta:
+        managed = True
+        db_table = 'rig_component_details'
         app_label = 'dropZoneHQ'
 
 
@@ -523,6 +540,8 @@ class AllItems(models.Model):
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
     is_rentable = models.BooleanField(max_length=4)
+    is_on_rig = models.BooleanField(max_length=4)
+    is_available = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)
