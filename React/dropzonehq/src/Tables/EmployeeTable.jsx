@@ -21,13 +21,6 @@ export default class EmployeeTable extends React.Component {
 
     this.processRows = this.processRows.bind(this);
 
-    //   var rowData = [{ name: "Paul B", info: "Senior Developer", jobs: ["Administrator"], actions: <EditEmployeeButton />, rowID: 1},
-    //   { name: "Andres B", info: "Senior Program", jobs: ["Rigger", "Packer"], actions: <ButtonGroup><EditEmployeeButton /><EmployeeStatusButton /></ButtonGroup>, rowID: 2 },
-    //   { name: "Jatin B", info: "Full Stack Developer", jobs: ["Tandem"], actions: <ButtonGroup><EditEmployeeButton /><EmployeeStatusButton /></ButtonGroup>,rowID: 3 }];
-
-
-    //   this.processRows(rowData);
-
     this.state = {
       columns: [
         {
@@ -51,14 +44,10 @@ export default class EmployeeTable extends React.Component {
           accessor: 'actions'
         },
         {
-          Header: 'PIN',
-          accessor: 'pin'
-        },
-        {
           Header: 'Status',
           accessor: 'status'
         }
-        ],
+      ],
       rows: [],
       rowID: 0
     };
@@ -73,9 +62,19 @@ export default class EmployeeTable extends React.Component {
       newRows[i].employee_id = rowData[i].employee_id;
       newRows[i].firstname = rowData[i].first_name;
       newRows[i].lastname = rowData[i].last_name;
-      newRows[i].pin = rowData[i].pin;
-      newRows[i].actions = <ButtonGroup><EditEmployeeButton id={rowData[i].employee_id} authorize={this.editEmployee} roles={rowData[i].roles} /><EmployeeStatusButton id={rowData[i].employee_id} authorize={this.toggleEmployeeStatus} firstName={rowData[i].first_name} lastName={rowData[i].last_name} status={rowData[i].status}/></ButtonGroup>;
-      newRows[i].status = rowData[i].status;
+      newRows[i].actions = <ButtonGroup>
+        <EditEmployeeButton
+          id={rowData[i].employee_id}
+          authorize={this.editEmployee}
+          roles={rowData[i].roles} />
+        <EmployeeStatusButton
+          id={rowData[i].employee_id}
+          toggleEmployeeStatus={this.toggleEmployeeStatus}
+          firstName={rowData[i].first_name}
+          lastName={rowData[i].last_name}
+          status={rowData[i].is_active} />
+      </ButtonGroup>;
+      newRows[i].status = rowData[i].is_active;
       newRows[i].email = rowData[i].email;
       var jobs = "";
       for (var j = 0; j < rowData[i].roles.length; j++) {
@@ -130,15 +129,14 @@ export default class EmployeeTable extends React.Component {
     var self = this;
     var employee_id = (Date.now() % 100000); //TODO
     var status = true;
-    var pin = 0;  //TODO
     var requestVariables = {
       employee_id: employee_id,
       first_name: firstName,
       last_name: lastName,
       email: email,
       roles: jobs,
-      pin: pin,
-      status: status
+      status: status,
+      dropzone_id: 1 //TODO
     };
     fetch(url, {
       method: "POST",
@@ -157,7 +155,17 @@ export default class EmployeeTable extends React.Component {
       })//when the call succeeds
       .then(function (rowData) {
         var jobsString = "";
-        var actionButtons = <ButtonGroup><EditEmployeeButton id={employee_id} authorize={self.editEmployee} /><EmployeeStatusButton id={employee_id} toggleEmployeeStatus={self.toggleEmployeeStatus} firstName={firstName} lastName={lastName} status={status} /></ButtonGroup>;
+        var actionButtons = <ButtonGroup>
+          <EditEmployeeButton
+            id={employee_id}
+            authorize={self.editEmployee} />
+          <EmployeeStatusButton
+            employee_id={employee_id}
+            toggleEmployeeStatus={self.toggleEmployeeStatus}
+            firstName={firstName}
+            lastName={lastName}
+            status={status} />
+        </ButtonGroup>;
         var newRowID = self.state.rowID;
 
         for (var i = 0; i < jobs.length; i++) {
@@ -167,7 +175,7 @@ export default class EmployeeTable extends React.Component {
             jobsString += jobs[i] + ", ";
           }
           if (jobs[i] === "Administrator") {
-            actionButtons = <EditEmployeeButton id={employee_id} authorize={self.editEmployee}/>;
+            actionButtons = <EditEmployeeButton id={employee_id} authorize={self.editEmployee} />;
           }
         }
 
@@ -212,11 +220,10 @@ export default class EmployeeTable extends React.Component {
     } if (email) {
       requestVariables.email = email
     }
-    if (jobs.length > 0){
-      requestVariables.roles = jobs      
+    if (jobs.length > 0) {
+      requestVariables.roles = jobs
     }
-    if(Object.keys(requestVariables).length > 0)
-    {
+    if (Object.keys(requestVariables).length > 0) {
       fetch(url, {
         method: "PATCH",
         mode: 'CORS',
@@ -233,7 +240,7 @@ export default class EmployeeTable extends React.Component {
           return response.json();
         })//when the call succeeds
         .then(function (rowData) {
-          
+
           var newRows = Array.from(self.state.rows);
           for (var i = 0; i < newRows.length; i++) {
             if (newRows[i].employee_id === id) {
@@ -241,11 +248,11 @@ export default class EmployeeTable extends React.Component {
                 newRows[i].first_name = firstName
               } if (lastName) {
                 newRows[i].last_name = lastName
-              } if (email){
+              } if (email) {
                 newRows[i].email = email
               }
-               if (jobs.length > 0){
-                newRows[i].roles = jobs      
+              if (jobs.length > 0) {
+                newRows[i].roles = jobs
               }
               break;
             }
@@ -259,7 +266,7 @@ export default class EmployeeTable extends React.Component {
           toast.error(error + "\n" + url);
           return false;
         });
-    } 
+    }
   }
 
   deleteEmployee(id) {
@@ -319,7 +326,7 @@ export default class EmployeeTable extends React.Component {
     })//when we get a response back
       .then(function (response) {
         if (response.status >= 400) {
-          throw new Error("Deleting employee failed. Bad response " + response.status + " from server.");
+          throw new Error("Toggling employee failed. Bad response " + response.status + " from server.");
         }
         return response.json();
       })//when the call succeeds
@@ -327,10 +334,10 @@ export default class EmployeeTable extends React.Component {
         var newRows = Array.from(self.state.rows);
         for (var i = 0; i < newRows.length; i++) {
           if (newRows[i].rowID === id) {
-            if(newRows[i].status === true){
-              newRows[i].status = false;
-            }else{
-              newRows[i].status = true;
+            if (newRows[i].is_active === true) {
+              newRows[i].is_active = false;
+            } else {
+              newRows[i].is_active = true;
             }
           }
         }
@@ -342,7 +349,7 @@ export default class EmployeeTable extends React.Component {
         toast.error(error + "\n" + url);
         return false;
       });
-  }  
+  }
 
   render() {
     return (
