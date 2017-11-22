@@ -174,11 +174,36 @@ class EmployeeRoles(models.Model):
     )
     auth_level = models.IntegerField(choices=auth_level_choice)
 
+    #hard coded return 0 for the failure.  If no role is found get rid
+    def find_role_auth_level(role):
+        roles = EmployeeRoles.objects.all()
+        for trole in roles:
+            if trole == role:
+                return trole.auth_level
+        return 0
+
     class Meta:
         managed = True
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
+class EmployeeRolesPermissions(models.Model):
+    employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
+    permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        managed = True
+        db_table = 'EmployeeRolesPermissions'
+        unique_together = (('employeeRole', 'permission'),)
+        app_label = 'dropZoneHQ'
+
+class Permissions(models.Model):
+    permission = models.CharField(max_length=45)
+
+    class Meta:
+        managed = True
+        db_table = 'permissions'
+        app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone
 class Employees(models.Model):
@@ -229,10 +254,11 @@ class Employees(models.Model):
     # Checks if a pin is in use for an Employee.
     # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
-    def employee_pin_in_use(pin):
-        emp = Employees.objects.all()
-        for e in emp:
-            if Employees.check_employee_pin(pin=pin, employee=e) is True:
+
+    def employee_pin_in_use(pin=None):
+        emp = Employees.objects.values()
+        for e in emp :
+            if Employees.checkEmployeePin(pin=pin, employee=e) is True:
                 return e
         return None
 
@@ -439,7 +465,16 @@ class Signouts(models.Model):
 
 
 class TempUrl(models.Model):
-    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True)
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
+    dropzone = models.ForeignKey(Dropzones, name='dropzone')
+    expires = models.DateTimeField(name="Expries")
+
+    def get_url_hash(self):
+        return self.url_hash
+
+class TempUrlE(models.Model):
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
+    employee = models.ForeignKey(Employees, name='employee')
     expires = models.DateTimeField(name="Expries")
 
     def get_url_hash(self):
