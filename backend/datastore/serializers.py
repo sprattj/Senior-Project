@@ -85,16 +85,18 @@ class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
+    rental = serializers.ReadOnlyField()
     class Meta:
         model = ItemsRentals
-        fields = ('item_id', 'rental_id')
+        fields = ('item_id', 'rental_id', 'rental')
 
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
+    rentals = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
     class Meta:
         model = Items
         fields = ('item_id', 'item_type_id', 'manufacturer', 'brand',
-                  'description', 'is_rentable', 'is_on_rig', 'is_available')
+                  'description', 'is_rentable', 'is_on_rig', 'is_available', 'rentals')
 
 
 class ItemTypeSerializer(serializers.HyperlinkedModelSerializer):

@@ -44,15 +44,13 @@ urlpatterns = [
     url(r'^(?i)itemtype[s]?[/]?$', ItemTypeList.as_view()),
     url(r'^(?i)item[s]?/(?P<pk>[0-9]+)[/]?$', AllItemDetail.as_view()),
     url(r'^(?i)item[s]?[/]?$', AllItemList.as_view()),
-    url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
-    url(r'^(?i)rental[s]?[/]?$', RentableItemList.as_view()),
+    url(r'^(?i)rentable-items[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
+    url(r'^(?i)rental-items[s]?[/]?$', RentableItemList.as_view()),
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)claim[s]?[/]?$', ClaimList.as_view()),
     url(r'^(?i)claim[s]?/warnings[/]?$', ClaimWarningList.as_view()),
     url(r'^(?i)claim[s]?/queue[/]?$', ClaimQueueList.as_view()),
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
-    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
-    url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')
-    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
     url(r'^login/$', loginDropzone, name='login'),
     url(r'^logout/$', logoutDropzone, name='logout'),
     url(r'^temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),

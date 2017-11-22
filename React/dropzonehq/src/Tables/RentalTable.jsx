@@ -18,10 +18,14 @@ export default class RentalTable extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/rentals";
+        this.URLsection = "/rental-items";
 
         //method binding-
         this.processRows = this.processRows.bind(this);
+        this.getFilteredRows = this.getFilteredRows.bind(this);
+        this.sortCanopies = this.sortCanopies.bind(this);
+        this.sortRentals = this.sortRentals.bind(this);
+
         this.filterChanged = this.filterChanged.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
         this.rentItem = this.rentItem.bind(this);
@@ -208,7 +212,7 @@ export default class RentalTable extends React.Component {
             { index: 7011, item_id: 7011, description: "aad 12", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
         ];
 
-        this.getFilteredRows(rowData);  //FILTER THE ROWS BEFORE YOU SET THE STATES 
+        // this.getFilteredRows(rowData);  //FILTER THE ROWS BEFORE YOU SET THE STATES 
         this.state = {
             filter: "all",
             columns: this.columnsAll,
@@ -306,9 +310,9 @@ export default class RentalTable extends React.Component {
         var rentalButton;                           //variable Rent or Return button shows if Available or Rented         
 
         if (!row.is_available) {     //if the item is rented set the rentalButton var to Return
-            rentalButton = <ReturnButton buttonText={"Return"} return={this.returnItem} index={selectedIndex} item_id={row.item_id} />;
+            rentalButton = <ReturnButton pinChanged={this.pinChanged} buttonText={"Return"} return={this.returnItem} index={selectedIndex} item_id={row.item_id} />;
         } else {                //if the item isnt rented set the rentalButton var to Rent
-            rentalButton = <RentButton buttonText={"Rent"} rent={this.rentItem} index={selectedIndex} item_id={row.item_id} />;
+            rentalButton = <RentButton pinChanged={this.pinChanged} buttonText={"Rent"} rent={this.rentItem} index={selectedIndex} item_id={row.item_id} />;
         }
 
         //select the type of Rental Item Display will be shown based on the selected item's .item_type
@@ -386,126 +390,91 @@ export default class RentalTable extends React.Component {
         />;
     }
 
-    rentItem(index, renterName, item_id) {      
+    rentItem(index, renterName, item_id) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
-    
-        var id = "rentalTemp";
-        var url = rootURL + this.URLsection + "/" + id;
-    
+
+        var url = rootURL + "/rentals/";
+
         var self = this;
         var requestVariables = {
             pin: '222222',
             item_id: item_id,
-            renter_name: renterName,
-            is_available: false
-          };
-          fetch(url, {
-            method: "PATCH",
+            renter_name: renterName
+        };
+        fetch(url, {
+            method: "POST",
             mode: 'CORS',
             headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
+                "Accept": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(requestVariables)
-          })//when we get a response back
+        })//when we get a response back
             .then(function (response) {
-              if (response.status >= 400) {
-                throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
-              }
-              return response.json();
+                if (response.status >= 400) {
+                    throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
+                }
+                return response.json();
             })//when the call succeeds
             .then(function (responseData) {
-              //grab the current rows
-              var newRows = this.all;
-              
-              //--
-              newRows[index].is_available = 1;
-              newRows[index].RenterName = renterName;
-              this.getFilteredRows(newRows);
-      
-              //update the state with the new rows so it rerenders
-              self.setState({
-                
-                pin: ''
-              });
-      
+                for (var i = 0; i < self.all.length; i++) {
+                    if (index === self.all[i].index && !self.all[i].is_available) {
+                        self.all[i].is_available = 0;
+                        self.all[i].renterName = renterName;
+                    }
+                }
+                console.log("RentalTable: rentItem Function");
+                self.getFilteredRows(self.all);
+
             })//catch any errors and display them as a toast
             .catch(function (error) {
-              toast.error(error + "\n" + url);
+                toast.error(error + "\n" + url);
             });
-
-
-        for (var i = 0; i < this.all.length; i++) {
-            if (index === this.all[i].index && !this.all[i].is_available) {
-                this.all[i].is_available = 0;
-                this.all[i].renterName = renterName;
-            }
-        }
-        console.log("RentalTable: rentItem Function");
-        this.getFilteredRows(this.all);
     }
 
     returnItem(index, item_id) {
-        
+
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
-    
-        var id = "rentalTemp";
-        var url = rootURL + this.URLsection + "/" + id;
-    
+
+        var url = rootURL + this.URLsection + "/" + item_id;
+
         var self = this;
         var requestVariables = {
             pin: '222222',
             item_id: item_id,
             renter_name: "",
             is_available: true
-          };
-          fetch(url, {
+        };
+        fetch(url, {
             method: "PATCH",
             mode: 'CORS',
             headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
+                "Accept": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(requestVariables)
-          })//when we get a response back
+        })//when we get a response back
             .then(function (response) {
-              if (response.status >= 400) {
-                throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
-              }
-              return response.json();
+                if (response.status >= 400) {
+                    throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
+                }
+                return response.json();
             })//when the call succeeds
             .then(function (responseData) {
-              //grab the current rows
-              var newRows = this.all;
-              
-              //--
-              newRows[index].is_available = 0;
-              newRows[index].RenterName = "";
-              this.getFilteredRows(newRows);
-      
-              //update the state with the new rows so it rerenders
-              self.setState({
-                
-                pin: ''
-              });
-      
+                console.log("RentalTable: returnItem Function: index passed in: " + index);
+                for (var i = 0; i < self.all.length; i++) {
+                    if (index === self.all[i].index && !self.all[i].is_available) {
+                        self.all[i].is_available = 1;
+                        self.all[i].renterName = "";
+                    }
+                }
+                this.getFilteredRows(this.all);
             })//catch any errors and display them as a toast
             .catch(function (error) {
-              toast.error(error + "\n" + url);
+                toast.error(error + "\n" + url);
             });
-
-
-        console.log("RentalTable: returnItem Function: index passed in: " + index);
-        for (var i = 0; i < this.all.length; i++) {
-            if (index === this.all[i].index && !this.all[i].is_available) {
-                this.all[i].is_available = 1;
-                this.all[i].renterName = "";
-            }
-        }
-
-        this.getFilteredRows(this.all);
     }
 
     pinChanged(id, pin) {

@@ -10,7 +10,7 @@ export default class RentalDisplayContainer extends React.Component {
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
         this.URLsection = "/rentaldisplaycontainer";
-        var currentRenter = this.props.renterName;
+        var currentRenter = this.props.renter_name;
     }
 
     render() {
@@ -23,7 +23,7 @@ export default class RentalDisplayContainer extends React.Component {
                             statsToDisplay={
                                 <div>
                                     <Row>
-                                        <p>Rental Status: {this.props.isRented ? "Rented by " + this.props.renterName : "Available"}</p>
+                                        <p>Rental Status: {this.props.is_available ? "Available" : "Rented by " + this.props.renter_name}</p>
                                     </Row>
                                     <Row>
                                         <Col>

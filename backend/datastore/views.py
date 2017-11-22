@@ -95,6 +95,16 @@ class RentalList(generics.ListCreateAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
+    def post(self, request, *args, **kwargs):
+        item = Items.objects.get(item_id=request.data.get('item_id'))
+        item_id = item.item_id
+
+        rental_id = post_rental(request)
+
+        post_item_rental(item_id, rental_id)
+
+        ret_data = {'item_id': item_id, 'rental_id': rental_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
 class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rentals.objects.all()
@@ -150,7 +160,6 @@ class ClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
-#TODO
 class ClaimWarningList(generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.PENDING)
     serializer_class = ClaimSerializer
@@ -274,9 +283,8 @@ class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
         employee_id = employee.employee_id
         '''
         jumpmaster = get_emp_full_name(employee_id)
-        signout_id = post_signout(request)
-
-        post_emp_signout(employee_id, signout_id)
+        rental_id = post_rental(request)
+        post_item_rental(item_id, rental_id)
         ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
                     'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
@@ -318,6 +326,21 @@ def post_emp_signout(employee_id, signout_id):
                                      timestamp=datetime.datetime.now())
     return
 
+def post_rental(request):
+    renter_name = request.data.get('renter_name')
+
+    Rentals.objects.create(renter_name=renter_name, rental_date=datetime.datetime.now())
+
+    rental_id_dict = Rentals.objects.values().get(rental_id=
+                                                    Rentals.objects.latest('rental_id')
+                                                    .serializable_value('rental_id'))
+    rental_id = rental_id_dict.get("rental_id", "")
+    return rental_id
+
+def post_item_rental(item_id, rental_id):
+    ItemsRentals.objects.create(item_id=item_id,
+                                     rental_id=rental_id)
+    return
 
 def patch_emp_signout(employee_id, signout_id):
     EmployeesSignouts.objects.create(signout_id=signout_id,

@@ -25,7 +25,7 @@ export default class ReturnButton extends React.Component {
         console.log(this.props);
         this.toggleVerifyModal();
         //return function
-        this.props.return(this.props.index, this,props.item_id)
+        this.props.return(this.props.index, this.props.item_id)
 
     }
 

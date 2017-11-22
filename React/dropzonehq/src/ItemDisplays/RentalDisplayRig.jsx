@@ -22,7 +22,7 @@ export default class RentalDisplayRig extends React.Component {
                             statsToDisplay={
                                 <div>
                                     <Row>
-                                        <p>Rental Status: {!(this.props.is_available) ? "Rented by " + this.props.renterName : "Available" }</p>
+                                        <p>Rental Status: {this.props.is_available ? "Available" : "Rented by " + this.props.renter_name}</p>
                                     </Row>
                                     <Row>
                                         <Col>

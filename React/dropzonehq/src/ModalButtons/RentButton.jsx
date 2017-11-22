@@ -12,7 +12,7 @@ export default class RentButton extends React.Component {
     super(props);
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
-    this.verify = this.rentItem.bind(this);
+    this.rentItem = this.rentItem.bind(this);
     this.renterNameChange = this.renterNameChange.bind(this);
     
     //keep state for the values of the components in this modal
@@ -22,7 +22,7 @@ export default class RentButton extends React.Component {
   }
 
   rentItem() {
-    this.props.rentItem(this.props.index, this.state.renterName, this.props.item_id)
+    this.props.rent(this.props.index, this.state.renterName, this.props.item_id)
   }
 
   renterNameChange(event) {

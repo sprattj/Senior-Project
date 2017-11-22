@@ -23,7 +23,7 @@ export default class RentalDisplayCanopy extends React.Component {
                             statsToDisplay={
                                 <div>
                                     <Row>
-                                        <p>Rental Status: {this.props.isRented ? "Rented by " + this.props.renterName : "Available"}</p>
+                                        <p>Rental Status: {this.props.is_available ?  "Available" : "Rented by " + this.props.renter_name}</p>
                                     </Row>
                                     <Row>
                                         <Col>

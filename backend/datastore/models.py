@@ -187,6 +187,14 @@ class EmployeeRoles(models.Model):
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
+class Permissions(models.Model):
+    permission = models.CharField(max_length=45)
+
+    class Meta:
+        managed = True
+        db_table = 'permissions'
+        app_label = 'dropZoneHQ'
+
 class EmployeeRolesPermissions(models.Model):
     employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
     permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
@@ -197,13 +205,6 @@ class EmployeeRolesPermissions(models.Model):
         unique_together = (('employeeRole', 'permission'),)
         app_label = 'dropZoneHQ'
 
-class Permissions(models.Model):
-    permission = models.CharField(max_length=45)
-
-    class Meta:
-        managed = True
-        db_table = 'permissions'
-        app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone
 class Employees(models.Model):
@@ -488,6 +489,9 @@ class TempUrl(models.Model):
 
     def get_url_hash(self):
         return self.url_hash
+    
+    class Meta:
+        app_label = 'dropZoneHQ'
 
 class TempUrlE(models.Model):
     url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
