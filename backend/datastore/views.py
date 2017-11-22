@@ -141,6 +141,11 @@ class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RigAuditTrailSerializer
 
 
+class RigComponentDetailList(generics.ListAPIView):
+    queryset = RigComponentDetails.objects.all()
+    serializer_class = RigComponentDetailSerializer
+
+
 class ClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
@@ -348,7 +353,7 @@ def createDropzone(request):
         password = request.POST['password']
         location = request.POST['location']
         email = request.POST['email']
-        if email or password or location or username is None :
+        if email or password or location or username is None:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         else:
             try:
@@ -418,7 +423,7 @@ def createEmployee(request, dropzonePK):
 # authenticate an employee based on their pin and return an http status if the user is authentic
 @login_required()
 def authenticateUserPin(request):
-    if request.method == 'POST' :
+    if request.method == 'POST':
 
         # the way our pin works sets the user primary as their last 3 digits
         try:
@@ -430,10 +435,10 @@ def authenticateUserPin(request):
                 try:
                     pk = int(pin[4:])
                     employee = Employees.objects.get(pk)
-                    if employee is None :
+                    if employee is None:
                         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        if Employees.check_employee_pin(pin,employee) :
+                        if Employees.check_employee_pin(pin, employee) :
                             return HttpResponse(status=status.HTTP_202_ACCEPTED)
                         else:
                             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
@@ -461,9 +466,9 @@ def authenticateNameDropzone(request):
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     else:
         dropzone = Dropzones.dropzoneNameInUse(name)
-        if dropzone is None :
+        if dropzone is None:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else :
+        else:
             serializer = DropZoneSerializer(dropzone)
             return JsonResponse(data=serializer.data, status=200)
 
