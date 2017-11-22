@@ -9,6 +9,7 @@ import RentButton from '../ModalButtons/RentButton.jsx';
 import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 import "react-table/react-table.css";
 
 
@@ -39,6 +40,7 @@ export default class RentalTable extends React.Component {
         //variable arrays--
         this.all = [];              //all items in the db
         this.rentals = [];          //all rentable items
+        this.activeRentals = []     //all current rental records
 
         this.rigs = [];             //all rigs in the db
         this.rentalRigs = [];       //all rentable rigs        
@@ -433,19 +435,17 @@ export default class RentalTable extends React.Component {
             });
     }
 
-    returnItem(index, item_id) {
+    returnItem(index, rental_id) {
 
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + this.URLsection + "/" + item_id;
+        var url = rootURL + this.URLsection + "/" + rental_id;
 
         var self = this;
         var requestVariables = {
             pin: '222222',
-            item_id: item_id,
-            renter_name: "",
-            is_available: true
+            returned_date: moment()
         };
         fetch(url, {
             method: "PATCH",
@@ -575,13 +575,57 @@ export default class RentalTable extends React.Component {
             })//when the call succeeds
             .then(function (rowData) {
                 //process the row data we received back
-                self.processRows(rowData);
-                //update our state with these rows to rerender the table
-                //self.setState({
-                //    rows: rowData
-                //});
+                self.fetchActiveRentals(self);
             });
+    }
 
+    fetchActiveRentals(self) {
+        var url = rootURL + "/rentals/active";
+        //fetch from the specified URL, to GET the data
+        //we need. Enable CORS so we can access from localhost.
+        fetch(url, {
+            method: "GET",
+            mode: 'CORS'
+        })//when we get a response back
+            .then(function (response) {
+                //check to see if the call we made failed
+                //if it failed, throw an error and stop.
+                if (response.status >= 400) {
+                    throw new Error("Bad response from server");
+                }
+                //if it didn't fail, process the data we got back
+                //into JSON format
+                return response.json();
+            })//when the call succeeds
+            .then(function (rowData) {
+                self.addRentalData(rowData);
+            });
+    }
+
+    addRentalData(rentalData) {
+        var count = 0;
+        while (count < rentalData.length) {
+            var allCount = 0;
+            var activeV = rentalData[count].item_id;
+            while (this.all[allCount].item_id <= activeV) {
+                allCount++;
+                if (this.all[allCount].item_id === activeV) {
+                    this.all[allCount].renter_name = rentalData[count].renter_name;
+                    this.all[allCount].rental_id = rentalData[count].rental_id;
+                    count++;
+                    activeV = rentalData[count];
+                }
+            }
+        }
+
+        /* //Longest way possible
+        for (var i = 0; i < this.all.length; i++) {
+            for (var j = 0; j < rentalData; j++) {
+                if (this.all[i].item_id === rentalData[j].item_id) {
+                    this.all[i].push(rentalData[j]);
+                }
+            }
+        }*/
     }
 
     //Fetching end----------------------------
