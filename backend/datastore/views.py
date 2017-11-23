@@ -286,8 +286,9 @@ class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
         employee_id = employee.employee_id
         '''
         jumpmaster = get_emp_full_name(employee_id)
-        rental_id = post_rental(request)
-        post_item_rental(item_id, rental_id)
+        signout_id = post_signout(request)
+
+        post_emp_signout(employee_id, signout_id)
         ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
                     'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
