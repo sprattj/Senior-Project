@@ -110,6 +110,9 @@ class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
+class ActiveRentalList(generics.ListAPIView):
+    queryset = Rentals.objects.all().filter(returned_date=None)
+    serializer_class = RentalSerializer
 
 class ReserveCanopyList(generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()

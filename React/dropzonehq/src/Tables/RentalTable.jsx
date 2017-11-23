@@ -26,6 +26,8 @@ export default class RentalTable extends React.Component {
         this.getFilteredRows = this.getFilteredRows.bind(this);
         this.sortCanopies = this.sortCanopies.bind(this);
         this.sortRentals = this.sortRentals.bind(this);
+        this.fetchActiveRentals = this.fetchActiveRentals.bind(this);
+        this.addRentalData = this.addRentalData.bind(this);
 
         this.filterChanged = this.filterChanged.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
@@ -40,7 +42,7 @@ export default class RentalTable extends React.Component {
         //variable arrays--
         this.all = [];              //all items in the db
         this.rentals = [];          //all rentable items
-        this.activeRentals = []     //all current rental records
+        this.activeRentals = [];     //all current rental records
 
         this.rigs = [];             //all rigs in the db
         this.rentalRigs = [];       //all rentable rigs        
@@ -139,79 +141,79 @@ export default class RentalTable extends React.Component {
         //rigs start at 0, canopies start at 1000, containers start at 5000, aad start at 7000
         var rowData = [
             //Rigs
-            { index: 0, item_id: 0, description: "Blue and White Saber2 170. Pink and Blue Javelin", is_rentable: 1, is_available: 0, renterName: "Frank", item_type: "rig", rig_number: 1, aad: 7000, container: 5000, isTandem: 0, canopy_on_rig: 1 },
-            { index: 1, item_id: 1, description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 2, aad: 7001, container: 5001, isTandem: 0, canopy_on_rig: 1 },
-            { index: 2, item_id: 2, description: "Brown Navigator 190. Black and White Mirage", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 3, aad: 7002, container: 5002, isTandem: 0, canopy_on_rig: 1 },
-            { index: 3, item_id: 3, description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: 1, is_available: 0, renterName: "Sam", item_type: "rig", rig_number: 4, aad: 7003, container: 5003, isTandem: 0, canopy_on_rig: 1 },
-            { index: 4, item_id: 4, description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: 1, is_available: 0, renterName: "Sue", item_type: "rig", rig_number: 5, aad: 7004, container: 5004, isTandem: 0, canopy_on_rig: 1 },
-            { index: 5, item_id: 5, description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 6, aad: 7005, container: 5005, isTandem: 0, canopy_on_rig: 1 },
-            { index: 6, item_id: 6, description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 7, aad: 7006, container: 5006, isTandem: 0, canopy_on_rig: 1 },
-            { index: 7, item_id: 7, description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 8, aad: 7007, container: 5007, isTandem: 0, canopy_on_rig: 1 },
-            { index: 8, item_id: 8, description: "Black Main in Black Javelin", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 9, aad: 7008, container: 5008, isTandem: 0, canopy_on_rig: 1 },
-            { index: 9, item_id: 9, description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: 1, is_available: 0, renterName: "Ralph", item_type: "rig", rig_number: 10, aad: 709, container: 5009, isTandem: 0, canopy_on_rig: 1 },
-            { index: 10, item_id: 10, description: "Blue and Black Main. Blue and Black Mirage", is_rentable: 1, is_available: 1, renterName: "", item_type: "rig", rig_number: 11, aad: 7010, container: 5010, isTandem: 0, canopy_on_rig: 1 },
-            { index: 11, item_id: 11, description: "MicroSigma", is_rentable: 0, is_available: 0, renterName: null, item_type: "rig", rig_number: 12, aad: 7011, container: 5011, isTandem: 0, canopy_on_rig: 1 },
+            { index: 0, item_id: 0, description: "Blue and White Saber2 170. Pink and Blue Javelin", is_rentable: 1, is_available: 0, renter_name: "Frank", item_type: "rig", rig_number: 1, aad: 7000, container: 5000, isTandem: 0, canopy_on_rig: 1 },
+            { index: 1, item_id: 1, description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 2, aad: 7001, container: 5001, isTandem: 0, canopy_on_rig: 1 },
+            { index: 2, item_id: 2, description: "Brown Navigator 190. Black and White Mirage", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 3, aad: 7002, container: 5002, isTandem: 0, canopy_on_rig: 1 },
+            { index: 3, item_id: 3, description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: 1, is_available: 0, renter_name: "Sam", item_type: "rig", rig_number: 4, aad: 7003, container: 5003, isTandem: 0, canopy_on_rig: 1 },
+            { index: 4, item_id: 4, description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: 1, is_available: 0, renter_name: "Sue", item_type: "rig", rig_number: 5, aad: 7004, container: 5004, isTandem: 0, canopy_on_rig: 1 },
+            { index: 5, item_id: 5, description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 6, aad: 7005, container: 5005, isTandem: 0, canopy_on_rig: 1 },
+            { index: 6, item_id: 6, description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 7, aad: 7006, container: 5006, isTandem: 0, canopy_on_rig: 1 },
+            { index: 7, item_id: 7, description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 8, aad: 7007, container: 5007, isTandem: 0, canopy_on_rig: 1 },
+            { index: 8, item_id: 8, description: "Black Main in Black Javelin", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 9, aad: 7008, container: 5008, isTandem: 0, canopy_on_rig: 1 },
+            { index: 9, item_id: 9, description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: 1, is_available: 0, renter_name: "Ralph", item_type: "rig", rig_number: 10, aad: 709, container: 5009, isTandem: 0, canopy_on_rig: 1 },
+            { index: 10, item_id: 10, description: "Blue and Black Main. Blue and Black Mirage", is_rentable: 1, is_available: 1, renter_name: "", item_type: "rig", rig_number: 11, aad: 7010, container: 5010, isTandem: 0, canopy_on_rig: 1 },
+            { index: 11, item_id: 11, description: "MicroSigma", is_rentable: 0, is_available: 0, renter_name: null, item_type: "rig", rig_number: 12, aad: 7011, container: 5011, isTandem: 0, canopy_on_rig: 1 },
 
             //Mains
-            { index: 1000, item_id: 1000, description: "Blue and White Saber2 170", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 150, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
-            { index: 1001, item_id: 1001, description: "Red and Green Pilot 220", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 116, date_of_manufacture: "dateTime", size: "220", brand: "Pilot" },
-            { index: 1002, item_id: 1002, description: "Brown Navigator 190", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 60, date_of_manufacture: "dateTime", size: "190", brand: "Navigator" },
-            { index: 1003, item_id: 1003, description: "Old Yellow and Gray Pilot 240", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 8000, date_of_manufacture: "dateTime", size: "240", brand: "Pilot" },
-            { index: 1004, item_id: 1004, description: "Green, Orange, White Navigator 210", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "210", brand: "Navigator" },
-            { index: 1005, item_id: 1005, description: "Green, Orange, White Navigator 170", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 153, date_of_manufacture: "dateTime", size: "170", brand: "Navigator" },
-            { index: 1006, item_id: 1006, description: "Green, Orange, White Navigator 150", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 120, date_of_manufacture: "dateTime", size: "150", brand: "Navigator" },
-            { index: 1007, item_id: 1007, description: "Green, Yellow, Purple Navigator 190", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "190", brand: "Navigator" },
-            { index: 1008, item_id: 1008, description: "Black Main in Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
-            { index: 1019, item_id: 1019, description: "Red, White, Yellow Saber2 170", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
-            { index: 1010, item_id: 1010, description: "Blue and Black", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 107, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
-            { index: 1011, item_id: 1011, description: "Red, White, Blue Sigma", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
+            { index: 1000, item_id: 1000, description: "Blue and White Saber2 170", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 150, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
+            { index: 1001, item_id: 1001, description: "Red and Green Pilot 220", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 116, date_of_manufacture: "dateTime", size: "220", brand: "Pilot" },
+            { index: 1002, item_id: 1002, description: "Brown Navigator 190", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 60, date_of_manufacture: "dateTime", size: "190", brand: "Navigator" },
+            { index: 1003, item_id: 1003, description: "Old Yellow and Gray Pilot 240", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 8000, date_of_manufacture: "dateTime", size: "240", brand: "Pilot" },
+            { index: 1004, item_id: 1004, description: "Green, Orange, White Navigator 210", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "210", brand: "Navigator" },
+            { index: 1005, item_id: 1005, description: "Green, Orange, White Navigator 170", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 153, date_of_manufacture: "dateTime", size: "170", brand: "Navigator" },
+            { index: 1006, item_id: 1006, description: "Green, Orange, White Navigator 150", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 120, date_of_manufacture: "dateTime", size: "150", brand: "Navigator" },
+            { index: 1007, item_id: 1007, description: "Green, Yellow, Purple Navigator 190", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "190", brand: "Navigator" },
+            { index: 1008, item_id: 1008, description: "Black Main in Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
+            { index: 1019, item_id: 1019, description: "Red, White, Yellow Saber2 170", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
+            { index: 1010, item_id: 1010, description: "Blue and Black", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 107, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
+            { index: 1011, item_id: 1011, description: "Red, White, Blue Sigma", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "170", brand: "Saber2" },
 
-            { index: 1012, item_id: 1012, description: "Green and Brown Navigator 210", is_rentable: 1, is_available: 1, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "210", brand: "Navigator" },
+            { index: 1012, item_id: 1012, description: "Green and Brown Navigator 210", is_rentable: 1, is_available: 1, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "210", brand: "Navigator" },
 
             //Reserves
-            { index: 3000, item_id: 3000, description: "White Reserve 01", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 150, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3001, item_id: 3001, description: "White Reserve 02", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 116, date_of_manufacture: "dateTime", size: "190", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 1 },
-            { index: 3002, item_id: 3002, description: "White Reserve 03", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 60, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3003, item_id: 3003, description: "White Reserve 04", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 8000, date_of_manufacture: "dateTime", size: "190", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 2 },
-            { index: 3004, item_id: 3004, description: "White Reserve 05", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3005, item_id: 3005, description: "White Reserve 06", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 153, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3006, item_id: 3006, description: "White Reserve 07", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 120, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 4 },
-            { index: 3007, item_id: 3007, description: "White Reserve 08", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3008, item_id: 3008, description: "White Reserve 09", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3019, item_id: 3019, description: "White Reserve 10", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 7 },
-            { index: 3010, item_id: 3010, description: "White Reserve 11", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 107, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
-            { index: 3011, item_id: 3011, description: "White Reserve 12", is_rentable: 0, is_available: 0, renterName: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3000, item_id: 3000, description: "White Reserve 01", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 150, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3001, item_id: 3001, description: "White Reserve 02", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 116, date_of_manufacture: "dateTime", size: "190", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 1 },
+            { index: 3002, item_id: 3002, description: "White Reserve 03", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 60, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3003, item_id: 3003, description: "White Reserve 04", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 8000, date_of_manufacture: "dateTime", size: "190", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 2 },
+            { index: 3004, item_id: 3004, description: "White Reserve 05", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "170", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3005, item_id: 3005, description: "White Reserve 06", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 153, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3006, item_id: 3006, description: "White Reserve 07", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 120, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 4 },
+            { index: 3007, item_id: 3007, description: "White Reserve 08", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3008, item_id: 3008, description: "White Reserve 09", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3019, item_id: 3019, description: "White Reserve 10", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 100, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 7 },
+            { index: 3010, item_id: 3010, description: "White Reserve 11", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 107, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
+            { index: 3011, item_id: 3011, description: "White Reserve 12", is_rentable: 0, is_available: 0, renter_name: "", item_type: "canopy", rig_number: null, aad: null, container: null, isTandem: null, canopy_on_rig: null, jump_count: 110, date_of_manufacture: "dateTime", size: "150", brand: "Pilot", next_repack_date: "dateTime", packed_by_employee_id: 1, ride_count: 0 },
 
             //Containers
-            { index: 5000, item_id: 5000, description: "Pink and Blue Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont001" },
-            { index: 5001, item_id: 5001, description: "Black and Yellow Mirage", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont002" },
-            { index: 5002, item_id: 5002, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont003" },
-            { index: 5003, item_id: 5003, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
-            { index: 5004, item_id: 5004, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont001" },
-            { index: 5005, item_id: 5005, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont002" },
-            { index: 5006, item_id: 5006, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont003" },
-            { index: 5007, item_id: 5007, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
-            { index: 5008, item_id: 5008, description: "Black Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont001" },
-            { index: 5019, item_id: 5019, description: "Red Javelin", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont002" },
-            { index: 5010, item_id: 5010, description: "Blue and Black Mirage", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont003" },
-            { index: 5011, item_id: 5011, description: "Rainbow Flap Sigma", is_rentable: 0, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
+            { index: 5000, item_id: 5000, description: "Pink and Blue Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont001" },
+            { index: 5001, item_id: 5001, description: "Black and Yellow Mirage", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont002" },
+            { index: 5002, item_id: 5002, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont003" },
+            { index: 5003, item_id: 5003, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
+            { index: 5004, item_id: 5004, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont001" },
+            { index: 5005, item_id: 5005, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont002" },
+            { index: 5006, item_id: 5006, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont003" },
+            { index: 5007, item_id: 5007, description: "Brown and Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
+            { index: 5008, item_id: 5008, description: "Black Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont001" },
+            { index: 5019, item_id: 5019, description: "Red Javelin", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont002" },
+            { index: 5010, item_id: 5010, description: "Blue and Black Mirage", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont003" },
+            { index: 5011, item_id: 5011, description: "Rainbow Flap Sigma", is_rentable: 0, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
 
-            { index: 5012, item_id: 5012, description: "Rainbow Javelin", is_rentable: 1, is_available: 0, renterName: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
+            { index: 5012, item_id: 5012, description: "Rainbow Javelin", is_rentable: 1, is_available: 0, renter_name: "", item_type: "container", brand: "Mirage", container_sn: "cont004" },
 
 
             //AADs
-            { index: 7000, item_id: 7000, description: "aad 01", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7001, item_id: 7001, description: "aad 02", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7002, item_id: 7002, description: "aad 03", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7003, item_id: 7003, description: "aad 04", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7004, item_id: 7004, description: "aad 05", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7005, item_id: 7005, description: "aad 06", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7006, item_id: 7006, description: "aad 07", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7007, item_id: 7007, description: "aad 08", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7008, item_id: 7008, description: "aad 09", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7019, item_id: 7019, description: "aad 10", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7010, item_id: 7010, description: "aad 11", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
-            { index: 7011, item_id: 7011, description: "aad 12", is_rentable: 0, is_available: 0, renterName: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7000, item_id: 7000, description: "aad 01", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7001, item_id: 7001, description: "aad 02", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7002, item_id: 7002, description: "aad 03", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7003, item_id: 7003, description: "aad 04", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7004, item_id: 7004, description: "aad 05", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7005, item_id: 7005, description: "aad 06", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7006, item_id: 7006, description: "aad 07", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7007, item_id: 7007, description: "aad 08", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7008, item_id: 7008, description: "aad 09", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7019, item_id: 7019, description: "aad 10", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7010, item_id: 7010, description: "aad 11", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
+            { index: 7011, item_id: 7011, description: "aad 12", is_rentable: 0, is_available: 0, renter_name: "", item_type: "aad", deployment_timestamp: "timeStamp", aad_sn: "aad001", lifespan: "forever!" },
         ];
 
         // this.getFilteredRows(rowData);  //FILTER THE ROWS BEFORE YOU SET THE STATES 
@@ -352,7 +354,7 @@ export default class RentalTable extends React.Component {
             is_available={row.is_available}
             description={row.description}
 
-            renterName={row.renterName}
+            renter_name={row.renter_name}
 
             main_canopy_brand={this.currentMainBrand}
             main_canopy_size={this.currentMainSize}
@@ -371,7 +373,7 @@ export default class RentalTable extends React.Component {
             is_available={row.is_available}
             description={row.description}
 
-            renterName={row.renterName}
+            renter_name={row.renter_name}
             brand={row.brand}
             size={row.size}
 
@@ -385,14 +387,14 @@ export default class RentalTable extends React.Component {
             is_available={row.is_available}
             description={row.description}
 
-            renterName={row.renterName}
+            renter_name={row.renter_name}
             brand={row.brand}
 
             button={rentalButton}
         />;
     }
 
-    rentItem(index, renterName, item_id) {
+    rentItem(index, renter_name, item_id) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -402,7 +404,7 @@ export default class RentalTable extends React.Component {
         var requestVariables = {
             pin: '222222',
             item_id: item_id,
-            renter_name: renterName
+            renter_name: renter_name
         };
         fetch(url, {
             method: "POST",
@@ -423,7 +425,7 @@ export default class RentalTable extends React.Component {
                 for (var i = 0; i < self.all.length; i++) {
                     if (index === self.all[i].index && !self.all[i].is_available) {
                         self.all[i].is_available = 0;
-                        self.all[i].renterName = renterName;
+                        self.all[i].renter_name = renter_name;
                     }
                 }
                 console.log("RentalTable: rentItem Function");
@@ -467,7 +469,7 @@ export default class RentalTable extends React.Component {
                 for (var i = 0; i < self.all.length; i++) {
                     if (index === self.all[i].index && !self.all[i].is_available) {
                         self.all[i].is_available = 1;
-                        self.all[i].renterName = "";
+                        self.all[i].renter_name = "";
                     }
                 }
                 this.getFilteredRows(this.all);
@@ -573,13 +575,15 @@ export default class RentalTable extends React.Component {
                 //into JSON format
                 return response.json();
             })//when the call succeeds
-            .then(function (rowData) {
+            .then(function (allRentableItems) {
+                console.log(allRentableItems);
                 //process the row data we received back
-                self.fetchActiveRentals(self);
+                self.processRows(allRentableItems);
+                self.fetchActiveRentals(self, allRentableItems);
             });
     }
 
-    fetchActiveRentals(self) {
+    fetchActiveRentals(self, allRentableItems) {
         var url = rootURL + "/rentals/active";
         //fetch from the specified URL, to GET the data
         //we need. Enable CORS so we can access from localhost.
@@ -597,36 +601,35 @@ export default class RentalTable extends React.Component {
                 //into JSON format
                 return response.json();
             })//when the call succeeds
-            .then(function (rowData) {
-                self.addRentalData(rowData);
+            .then(function (response) {
+                self.addRentalData(response);
             });
     }
 
     addRentalData(rentalData) {
-        var count = 0;
+        /*var count = 0;
         while (count < rentalData.length) {
             var allCount = 0;
             var activeV = rentalData[count].item_id;
-            while (this.all[allCount].item_id <= activeV) {
-                allCount++;
+            while (allCount < this.all.length && this.all[allCount].item_id <= activeV) {
                 if (this.all[allCount].item_id === activeV) {
                     this.all[allCount].renter_name = rentalData[count].renter_name;
                     this.all[allCount].rental_id = rentalData[count].rental_id;
                     count++;
                     activeV = rentalData[count];
                 }
-            }
-        }
-
-        /* //Longest way possible
+                allCount++;
+            }*/
         for (var i = 0; i < this.all.length; i++) {
             for (var j = 0; j < rentalData; j++) {
                 if (this.all[i].item_id === rentalData[j].item_id) {
-                    this.all[i].push(rentalData[j]);
+                    this.all[i].renter_name = rentalData[j].renter_name;
+                    this.all[i].rental_id = rentalData[j].rental_id;
                 }
             }
-        }*/
+        }
     }
+
 
     //Fetching end----------------------------
 
