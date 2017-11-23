@@ -1,7 +1,5 @@
 import React from 'react';
 import TableSheet from './TableSheet.jsx';
-import PropTypes from 'prop-types';
-import { Row, Col } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 
 //a generic table to show just a brief description of the items to be clicked and
@@ -18,16 +16,7 @@ export default class ItemTable extends React.Component {
         this.RowProps = this.RowProps.bind(this);
         this.clickedFunction = this.clickedFunction.bind(this);
 
-        this.state = {
-            columns: [{
-                Header: 'Item Number',
-                accessor: 'number', // String-based value accessors!
-                width: 150
-            }, {
-                Header: 'Item Description',
-                accessor: 'desc',
-                width: 400
-            }],
+        this.state = {            
             rowID: 0,
             selected: null
         };
@@ -41,13 +30,7 @@ export default class ItemTable extends React.Component {
             desc: { rowData[i].desc };
             type: { rowData[i].type };
             index: { i };
-
-
-            if (rowData[i].isRented) {
-                //change the way its viewed
-            }
         };
-
         return rowData;
     }
 
@@ -63,7 +46,7 @@ export default class ItemTable extends React.Component {
 
             //if it has a isRented that returns true it will show red background
             //a little unclear on why its .original but thats what got it to work
-            if (rowInfo.original.isRented) {
+            if (!rowInfo.original.is_available) {
                 backgroundColor = "lightcoral";
             }
 
@@ -99,20 +82,13 @@ export default class ItemTable extends React.Component {
     //filter stuff is for testing the states
     render() {
         return (
-            <div>
-                <Row>
-                    <Col>
                         <TableSheet
                             getTrProps={this.RowProps}
                             headerText={this.props.top}
-                            columns={this.state.columns}
+                            columns={this.props.columns}
                             footer={this.props.bottom}>
                             {this.processRows(this.props.rows)}
                         </TableSheet>
-                    </Col>
-                </Row>
-            </div>
         );
     }
-
 }

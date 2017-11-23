@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 
 export default class ItemDisplay extends React.Component {    
 
@@ -13,6 +13,7 @@ export default class ItemDisplay extends React.Component {
                             <CardBlock>
                                 {this.props.statsToDisplay}
                             </CardBlock>
+                            <CardFooter> {this.props.footerText} </CardFooter>
                         </Card>
                     </Col>
                 </Row>

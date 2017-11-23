@@ -1,8 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupItem } from 'reactstrap';
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
-import PackedWrongRigButton from './ModalButtons/PackedWrongRigButton.jsx';
-import { rootURL } from './restInfo.js';
+import { rootURL, CLAIM_STATUS_CHOICES, CLAIM_SEVERITY_CHOICES } from './restInfo.js';
 import { toast } from 'react-toastify';
 
 /*
@@ -14,19 +13,17 @@ export default class RigAlertsContainer extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/reports";
+        this.URLsection = "/claims";
 
         //Bind all methods that are passed down so that they can
         //be called via this.methodName in child components
         this.pinChanged = this.pinChanged.bind(this);
         this.reportRigIssue = this.reportRigIssue.bind(this);
-        this.reportPackingError = this.reportPackingError.bind(this);
-        this.validatePIN = this.validatePIN.bind(this);
 
-        var alertData = [{ severity: "Problem Type 1", message: "Rig S9 has a tear on its container" },
-        { severity: "Problem Type 2", message: "Rig S4 has a tear on its container" },
-        { severity: "Problem Type 3", message: "Rig S1 has this warning listed for it. Uh oh!" }];//get row data from ajax
-        var alerts = this.processAlerts(alertData);
+        var alertData = [{ severity: "CRITICAL", description: "Rig S9 has a tear on its container" },
+        { severity: "COSMETIC", description: "Rig S4 has a tear on its container" },
+        { severity: "NON-CRITICAL", description: "Rig S1 has this warning listed for it. Uh oh!" }];//get row data from ajax
+        var alerts = this.alertListFromJSON(alertData);
 
         this.state = {
             username: '',
@@ -34,7 +31,6 @@ export default class RigAlertsContainer extends React.Component {
             alerts: alerts
         }
     }
-
 
     //This is the function passed down to the password component
     //that's inside the PackButton's verify modal.
@@ -56,7 +52,7 @@ export default class RigAlertsContainer extends React.Component {
     //Add a report to the rig.
     //This is passed down to the authorize button inside
     //of the modal that the RigProblemButton creates.
-    reportRigIssue(rig, severity, issue) {
+    reportRigIssue(rig_id, severity, description) {
 
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
@@ -65,7 +61,10 @@ export default class RigAlertsContainer extends React.Component {
 
         var self = this;
         var requestVariables = {
-            
+            rig_id: rig_id,
+            severity: severity,
+            description: description,
+            status: CLAIM_STATUS_CHOICES.PENDING
         };
         fetch(url, {
             method: "POST",
@@ -84,7 +83,7 @@ export default class RigAlertsContainer extends React.Component {
             })//when the call succeeds
             .then(function (rowData) {
                 //create a new alert for the list
-                var message = "Rig " + rig + ": " + issue;
+                var message = "Rig " + rig_id + ": " + description;
                 var itemColor = self.getSeverityColor(severity);
                 var alert = <ListGroupItem key={self.state.alerts.length + 1}
                     color={itemColor}>{message}</ListGroupItem>
@@ -103,10 +102,6 @@ export default class RigAlertsContainer extends React.Component {
             });
     }
 
-    reportPackingError() {
-        console.log("packing error reported");
-    }
-
     //Fetch the reports for rigs from the database and 
     //update the state to display them.
     fetchAlerts() {
@@ -120,7 +115,7 @@ export default class RigAlertsContainer extends React.Component {
         //that we set in our constructor (like "/rigsheets"), and
         //the sheetType prop ("Tandems" or "Students")
         //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection;
+        var url = rootURL + this.URLsection + "/warnings";
 
         //save 'this' so that we can call functions
         //inside the fetch() callback
@@ -146,12 +141,12 @@ export default class RigAlertsContainer extends React.Component {
                 //into JSON format
                 return response.json();
             })//when the call succeeds
-            .then(function (alertData) {
+            .then(function (responseData) {
                 //process the row data we received back
-                self.processAlerts(alertData);
+                self.alertListFromJSON(responseData);
                 //update our state with these rows to rerender the table
                 self.setState({
-                    alerts: alertData
+                    alerts: self.alertListFromJSON(responseData)
                 });
             }).catch(function (error) {
                 toast.error(error + "\n" + url);
@@ -159,14 +154,14 @@ export default class RigAlertsContainer extends React.Component {
             });
     }
 
-    processAlerts(alertData) {
+    alertListFromJSON(claimsJSON) {
         var alerts = [];
-        for (var i = 0; i < alertData.length; i++) {
-            var itemColor = this.getSeverityColor(alertData[i].severity);
+        for (var i = 0; i < claimsJSON.length; i++) {
+            var itemColor = this.getSeverityColor(claimsJSON[i].severity);
             var nextAlert = <ListGroupItem
                 key={i}
                 color={itemColor}>
-                {alertData[i].message}
+                Rig {claimsJSON[i].rig_id}: {claimsJSON[i].description}
             </ListGroupItem>
             alerts.unshift(nextAlert);
         }
@@ -174,36 +169,22 @@ export default class RigAlertsContainer extends React.Component {
     }
 
     getSeverityColor(severity) {
-        var color = "primary";
+        var color = "secondary";
+        severity = severity.toLowerCase();
         switch (severity) {
-            case ("Problem Type 1"):
+            case (CLAIM_SEVERITY_CHOICES.COSMETIC.toLowerCase()):
                 color = "info";
                 break;
-            case ("Problem Type 2"):
+            case (CLAIM_SEVERITY_CHOICES.NON_CRITICAL.toLowerCase()):
                 color = "warning";
                 break;
-            case ("Problem Type 3"):
-                color = "danger";
-                break;
-            case ("Problem Type 4"):
+            case (CLAIM_SEVERITY_CHOICES.CRITICAL.toLowerCase()):
                 color = "danger";
                 break;
             default:
-                color = "secondary"
                 break;
         }
         return color;
-    }
-
-    //Validates the given PIN
-    //Returns true if they are valid for this action,
-    //and false otherwise.
-    validatePIN(PIN) {
-        //OBVIOUSLY THIS DOESN'T DO ANYTHING RIGHT NOW
-        this.setState({
-            pin: ''
-        });
-        return true;
     }
 
     render() {
@@ -224,9 +205,6 @@ export default class RigAlertsContainer extends React.Component {
                                     pinChanged={this.pinChanged}
                                     verify={this.reportRigIssue} />
                                 <br />
-                                <PackedWrongRigButton
-                                    pinChanged={this.pinChanged}
-                                    verify={this.reportPackingError} />
                             </Col>
                         </Row>
                     </CardBlock>

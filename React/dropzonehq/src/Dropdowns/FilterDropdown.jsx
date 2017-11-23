@@ -53,7 +53,19 @@ export default class FilterDropdown extends React.Component {
     }
 
     onChange(index) {
-        this.props.onChange(rentalFiltersData[index].name.toString());
+        
+        var choice;
+        switch (this.props.id) {
+            case "RentalFilterDropdown":
+                this.props.onChange(rentalFiltersData[index].name.toString());;
+                break;
+            case "InventoryFilterDropdown":
+                this.props.onChange(itemFiltersData[index].name.toString());;
+                break;
+            default:
+                choice = defaultFiltersData;
+                break;
+        }
     }
 
     render() {

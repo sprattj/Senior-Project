@@ -1,6 +1,7 @@
 import React from 'react';
 import Dropdown from './Dropdown.jsx';
 import DropdownOption from './DropdownOption.jsx';
+import { rootURL, CLAIM_SEVERITY_CHOICES } from '../restInfo.js';
 
 export default class ProblemTypesDropdown extends React.Component {
 
@@ -20,10 +21,9 @@ export default class ProblemTypesDropdown extends React.Component {
 
     //get all of the problem type data from server
     getProblemTypes() {
-        var problemTypesData = [{ name: "Problem Type 1", id: "1" },
-        { name: "Problem Type 2", id: "2" },
-        { name: "Problem Type 3", id: "3" },
-        { name: "Problem Type 4", id: "4" }];//get row data from ajax
+        var problemTypesData = [{ name: CLAIM_SEVERITY_CHOICES.CRITICAL, id: "1" },
+        { name: CLAIM_SEVERITY_CHOICES.NON_CRITICAL, id: "2" },
+        { name: CLAIM_SEVERITY_CHOICES.COSMETIC, id: "3" }];//get row data from ajax
         return problemTypesData;
     }
 
@@ -41,7 +41,7 @@ export default class ProblemTypesDropdown extends React.Component {
 
     //send back the data for the dropdown item that was selected
     handleChange(selectedIndex) {
-        this.props.onChange(this.state.rigData[selectedIndex]);
+        this.props.onChange(this.state.problemTypesData[selectedIndex].name);
     }
 
     //render a dropdown and pass it our data converted into dropdownoptions

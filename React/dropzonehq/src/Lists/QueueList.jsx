@@ -1,5 +1,4 @@
 import React from 'react';
-import { ListGroup, Button } from 'reactstrap';
 import LoftList from './LoftList.jsx';
 import ModalButton from '../ModalButtons/ModalButton.jsx';
 
