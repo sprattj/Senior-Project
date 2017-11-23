@@ -453,35 +453,43 @@ def logoutDropzone(request):
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 @login_required()
-def createEmployee(request, dropzonePK):
-    try:
-        dropzone = Dropzones.objects.get(dropzonePK)
-        first = request.POST['first_name']
-        last = request.POST['last_name']
-        email = request.POST['email']
-        role = request.POST['role']
-        if Employees.employee_email_in_use(email) is not None:
-            emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
-            emp.save()
-            while Employees.employee_pin_in_use(emp.pin) :
-                pin = Employees.create_random_user_pin(emp.employee_id)
-                emp.pin = Employees.pin_to_hash(pin)
-            trole = EmployeeRoles.find_role_auth_level(role)
-            emp.roles = trole
-            emp.save()
-            serializer = EmployeeSerializer(emp)
-            send_mail(
-                subject='DropzoneHQ Employee Pin [NO REPLY]',
-                message='Your new employee pin is ' + pin,
-                from_email='dropzonehqNO-REPLY@dropzonehq.com',
-                recipient_list=[emp.email],
-                fail_silently=False
-            )
-            return JsonResponse(data= serializer.data ,status=201)
-        else :
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-    except:
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+def EmployeeView(request, dropzonePK):
+
+    if request.method == 'GET':
+
+        dro
+
+    elif request.method == 'POST':
+
+        try:
+            dropzone = Dropzones.objects.get(dropzonePK)
+            first = request.POST['first_name']
+            last = request.POST['last_name']
+            email = request.POST['email']
+            role = request.POST['role']
+
+            if Employees.employee_email_in_use(email) is not None:
+                emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
+                emp.save()
+                while Employees.employee_pin_in_use(emp.pin)  :
+                    pin = Employees.create_random_user_pin(emp.employee_id)
+                    emp.pin = Employees.pin_to_hash(pin)
+                trole = EmployeeRoles.find_role_auth_level(role)
+                emp.roles = trole
+                emp.save()
+                serializer = EmployeeSerializer(emp)
+                send_mail(
+                    subject='DropzoneHQ Employee Pin [NO REPLY]',
+                    message='Your new employee pin is ' + pin,
+                    from_email='dropzonehqNO-REPLY@dropzonehq.com',
+                    recipient_list=[emp.email],
+                    fail_silently=False
+                )
+                return JsonResponse(data= serializer.data ,status=201)
+            else :
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 #authenticate an employee based on their pin and return an http status if the user is authentic
