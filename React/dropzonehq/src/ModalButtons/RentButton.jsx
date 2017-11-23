@@ -1,9 +1,7 @@
 import React from 'react';
 import { Form, Input, InputGroup, InputGroupAddon } from 'reactstrap';
 import ModalWithVerify from '../ModalWithVerify.jsx';
-import RigDropdown from '../Dropdowns/RigDropdown.jsx';
-import PlaneLoadDropdown from '../Dropdowns/PlaneLoadDropdown.jsx';
-import InstructorDropdown from '../Dropdowns/InstructorDropdown.jsx';
+
 
 
 export default class RentButton extends React.Component {

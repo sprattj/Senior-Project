@@ -451,7 +451,7 @@ class RigsAuditTrail(models.Model):
 
 
 class RigComponentDetails(models.Model):
-    rig_id = models.IntegerField()
+    rig_id = models.IntegerField(primary_key=True)
     main_canopy_size = models.CharField(max_length=45)
     main_canopy_brand = models.CharField(max_length=45)
     reserve_canopy_size = models.CharField(max_length=45)
