@@ -15,26 +15,127 @@ class AADList(generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        lifespan = request.data.get('lifespan')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        #TODO take deployment timestamp as a value?
+        AutomaticActivationDevices.objects.create(item_id=item_id,
+                                deployment_timestamp=datetime.datetime.now(),
+                                lifespan=lifespan
+                                serial_number=serial_number)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class AADDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
+
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
 class CanopyList(generics.ListCreateAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        size = request.data.get('size')
+        date_of_manufacture = request.data.get('date_of_manufacture')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        Canopies.objects.create(item_id=item_id,
+                                rig_id=None,
+                                serial_number=serial_number,
+                                size=size,
+                                date_of_manufacture=date_of_manufacture,
+                                jump_count=0)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class CanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
+
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
 class ContainerList(generics.ListCreateAPIView):
     queryset = Containers.objects.all()
     serializer_class = ContainerSerializer
 
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        Containers.objects.create(item_id=item_id,
+                                serial_number=serial_number)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
+class ContainerDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class DropzoneList(generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()
@@ -95,21 +196,75 @@ class RentalList(generics.ListCreateAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
+    def post(self, request, *args, **kwargs):
+        item = Items.objects.get(item_id=request.data.get('item_id'))
+        item_id = item.item_id
+
+        rental_id = post_rental(request)
+
+        post_item_rental(item_id, rental_id)
+
+        ret_data = {'item_id': item_id, 'rental_id': rental_id}
+        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
 class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
+class ActiveRentalList(generics.ListAPIView):
+    queryset = Rentals.objects.all().filter(returned_date=None)
+    serializer_class = RentalSerializer
 
 class ReserveCanopyList(generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        size = request.data.get('size')
+        date_of_manufacture = request.data.get('date_of_manufacture')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        Canopies.objects.create(item_id=item_id,
+                                rig_id=None,
+                                serial_number=serial_number,
+                                size=size,
+                                date_of_manufacture=date_of_manufacture,
+                                jump_count=0)
+        ReserveCanopies.objects.create(item_id=item_id,
+                                        last_repack_date=None,
+                                        next_repack_date=None,
+                                        packed_by_employee_id=None,
+                                        ride_count=0)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+        canopy = Canopies.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        canopy.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class RigList(generics.ListCreateAPIView):
     queryset = Rigs.objects.all()
@@ -141,11 +296,15 @@ class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RigAuditTrailSerializer
 
 
+class RigComponentDetailList(generics.ListAPIView):
+    queryset = RigComponentDetails.objects.all()
+    serializer_class = RigComponentDetailSerializer
+
+
 class ClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
-#TODO
 class ClaimWarningList(generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.PENDING)
     serializer_class = ClaimSerializer
@@ -313,6 +472,21 @@ def post_emp_signout(employee_id, signout_id):
                                      timestamp=datetime.datetime.now())
     return
 
+def post_rental(request):
+    renter_name = request.data.get('renter_name')
+
+    Rentals.objects.create(renter_name=renter_name, rental_date=datetime.datetime.now())
+
+    rental_id_dict = Rentals.objects.values().get(rental_id=
+                                                    Rentals.objects.latest('rental_id')
+                                                    .serializable_value('rental_id'))
+    rental_id = rental_id_dict.get("rental_id", "")
+    return rental_id
+
+def post_item_rental(item_id, rental_id):
+    ItemsRentals.objects.create(item_id=item_id,
+                                     rental_id=rental_id)
+    return
 
 def patch_emp_signout(employee_id, signout_id):
     EmployeesSignouts.objects.create(signout_id=signout_id,
@@ -348,7 +522,7 @@ def createDropzone(request):
         password = request.POST['password']
         location = request.POST['location']
         email = request.POST['email']
-        if email or password or location or username is None :
+        if email or password or location or username is None:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         else:
             try:
@@ -430,7 +604,7 @@ def EmployeeView(request, dropzonePK):
 # authenticate an employee based on their pin and return an http status if the user is authentic
 @login_required()
 def authenticateUserPin(request):
-    if request.method == 'POST' :
+    if request.method == 'POST':
 
         # the way our pin works sets the user primary as their last 3 digits
         try:
@@ -442,10 +616,10 @@ def authenticateUserPin(request):
                 try:
                     pk = int(pin[4:])
                     employee = Employees.objects.get(pk)
-                    if employee is None :
+                    if employee is None:
                         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        if Employees.check_employee_pin(pin,employee) :
+                        if Employees.check_employee_pin(pin, employee) :
                             return HttpResponse(status=status.HTTP_202_ACCEPTED)
                         else:
                             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
@@ -473,9 +647,9 @@ def authenticateNameDropzone(request):
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     else:
         dropzone = Dropzones.dropzoneNameInUse(name)
-        if dropzone is None :
+        if dropzone is None:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else :
+        else:
             serializer = DropZoneSerializer(dropzone)
             return JsonResponse(data=serializer.data, status=200)
 

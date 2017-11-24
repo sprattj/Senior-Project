@@ -1,18 +1,18 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 
-export default class RentButton extends React.Component 
+export default class AddInventoryItemBtn extends React.Component 
 {
     constructor(props) {
         super(props);
-        this.onClickFunction = this.onClickFunction.bind(this);
+        // this.onClickFunction = this.onClickFunction.bind(this);
         
         this.setState = {
             disabled: this.props.disabled
         }
     }
 
-    onClickFunction() {
+/*     onClickFunction() {
         console.log(this.props);
         if (this.props.buttonText) {
             if (this.props.buttonText === "Return") {
@@ -26,13 +26,13 @@ export default class RentButton extends React.Component
             }
         }
 
-    }
+    } */
 
 
     render() {
         return (
             <div>
-                <Button onClick={this.onClickFunction}
+                <Button onClick={this.props.onClick}
                     size="lg"
                     color="primary"
                     disabled={this.props.disabled}>{this.props.buttonText}

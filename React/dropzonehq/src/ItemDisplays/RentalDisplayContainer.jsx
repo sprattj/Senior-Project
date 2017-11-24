@@ -1,16 +1,11 @@
 import React from 'react';
 import ItemDisplay from './ItemDisplay.jsx';
 import { Row, Col } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
 
 export default class RentalDisplayContainer extends React.Component {
 
     constructor(props) {
-        super(props);
-        //since the URL section is not directly related to rendering,
-        //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/rentaldisplaycontainer";
-        var currentRenter = this.props.renterName;
+        super(props);        
     }
 
     render() {
@@ -23,7 +18,10 @@ export default class RentalDisplayContainer extends React.Component {
                             statsToDisplay={
                                 <div>
                                     <Row>
-                                        <p>Rental Status: {this.props.isRented ? "Rented by " + this.props.renterName : "Available"}</p>
+                                        <Col>
+                                            <p>Rental Status: {this.props.is_available ? "Available" : "Rented by " + this.props.renter_name}</p>
+                                        </Col>
+
                                     </Row>
                                     <Row>
                                         <Col>
@@ -31,10 +29,16 @@ export default class RentalDisplayContainer extends React.Component {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <p>{this.props.description}</p>
+                                        <Col>
+                                            <p>{this.props.description}</p>
+                                        </Col>
+
                                     </Row>
                                     <Row>
-                                        {this.props.button}
+                                        <Col>
+                                            {this.props.button}
+                                        </Col>
+
                                     </Row>
                                 </div>
                             } />

@@ -21,7 +21,7 @@ import random
 class AutomaticActivationDevices(models.Model):
 
     # item_id PK -> shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     # Date when this AAD was deployed
     deployment_timestamp = models.DateTimeField()
     # Serial number may include digits and letters
@@ -40,7 +40,7 @@ class Canopies(models.Model):
 
     # FOREIGN KEYS
     # item_id PK -> Shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     # rig_id -> what rig this canopy is installed on
     rig = models.ForeignKey('Rigs', models.DO_NOTHING, null=True)
 
@@ -99,7 +99,7 @@ class Claims(models.Model):
 class Containers(models.Model):
 
     # item_id PK -> shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     serial_number = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
@@ -180,6 +180,7 @@ class EmployeeRoles(models.Model):
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
+
 class EmployeeRolesPermissions(models.Model):
     employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
     permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
@@ -214,7 +215,7 @@ class Employees(models.Model):
     # PK
     employee_id = models.IntegerField(primary_key=True)
     # FK -> dropzone_id
-    dropzone = models.ForeignKey(Dropzones, models.DO_NOTHING)
+    dropzone = models.ForeignKey('Dropzones', models.DO_NOTHING)
     is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
     # pin Sha hash
@@ -350,6 +351,8 @@ class Items(models.Model):
     # Whether or not this item is rentable
     # is_rentable = models.CharField(max_length=4)
     is_rentable = models.BooleanField(max_length=4)
+    is_on_rig = models.BooleanField(max_length=4)
+    is_available = models.BooleanField(max_length=4)
     rentals = models.ManyToManyField('Rentals', through='ItemsRentals')
 
     class Meta:
@@ -392,7 +395,7 @@ class Rentals(models.Model):
 # A subclass of items and canopies.
 class ReserveCanopies(models.Model):
     # item_id PK -> Shares PK from canopies
-    item = models.OneToOneField(Canopies, models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField(Canopies, on_delete=models.CASCADE, primary_key=True)
 
     last_repack_date = models.DateTimeField()
     next_repack_date = models.DateTimeField()
@@ -411,7 +414,7 @@ class ReserveCanopies(models.Model):
 class Rigs(models.Model):
 
     # PK -> Shares PK from items table
-    item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField(Items, on_delete=models.CASCADE, primary_key=True)
     # Unique identifier for this rig
     rig_id = models.AutoField(unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
@@ -437,7 +440,7 @@ class RigsAuditTrail(models.Model):
     rig_id = models.IntegerField()
     container_id = models.IntegerField()
     aad_id = models.IntegerField()
-    description = models.CharField(max_length=45, blank=True, null=True)
+    # description = models.CharField(max_length=45, blank=True, null=True)
 
     # Date that a rig was modified.
     date_of_change = models.DateTimeField()
@@ -445,6 +448,21 @@ class RigsAuditTrail(models.Model):
     class Meta:
         managed = True
         db_table = 'rigs_audit_trail'
+        app_label = 'dropZoneHQ'
+
+
+class RigComponentDetails(models.Model):
+    rig_id = models.IntegerField(primary_key=True)
+    main_canopy_size = models.CharField(max_length=45)
+    main_canopy_brand = models.CharField(max_length=45)
+    reserve_canopy_size = models.CharField(max_length=45)
+    reserve_canopy_brand = models.CharField(max_length=45)
+    container_brand = models.CharField(max_length=45)
+    aad_lifespan = models.CharField(max_length=45)
+
+    class Meta:
+        managed = True
+        db_table = 'rig_component_details'
         app_label = 'dropZoneHQ'
 
 
@@ -472,6 +490,9 @@ class TempUrl(models.Model):
 
     def get_url_hash(self):
         return self.url_hash
+    
+    class Meta:
+        app_label = 'dropZoneHQ'
 
 class TempUrlE(models.Model):
     url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
@@ -524,6 +545,8 @@ class AllItems(models.Model):
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
     is_rentable = models.BooleanField(max_length=4)
+    is_on_rig = models.BooleanField(max_length=4)
+    is_available = models.BooleanField(max_length=4)
     manufacturer = models.CharField(max_length=45)
     brand = models.CharField(max_length=45)
     description = models.CharField(max_length=45)

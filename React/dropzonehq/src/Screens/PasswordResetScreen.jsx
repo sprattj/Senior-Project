@@ -1,8 +1,38 @@
 import React from 'react';
-import { Container, Button, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Container, Button, Input, Row, Col, InputGroup, InputGroupAddon, Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 export default class PasswordResetScreen extends React.Component {
+
+    constructor(props){
+        super(props);
+
+        this.submit = this.submit.bind(this);
+        this.updateEmail = this.updateEmail.bind(this);
+
+        this.state = {
+            email: "",
+            warning: ""
+        }
+    }
+
+    updateEmail(e){
+        this.setState({
+            email: e.target.value
+        });
+    }
+
+    submit(){
+        var warning;
+        if(this.state.email === ""){
+            warning = <Alert color="danger">Please enter a valid email.</Alert>;
+        }else{
+            warning = ""
+        }
+        this.setState({
+            warning: warning
+        })
+    }
 
     render() {
         return (
@@ -16,9 +46,12 @@ export default class PasswordResetScreen extends React.Component {
                             <InputGroupAddon>Dropzone Email: </InputGroupAddon>
                             <Input type='email' />
                         </InputGroup>
-                        <Button className="btn_transparent" size="lg">Login</Button>
+                        <Button className="btn_transparent" size="lg" onClick={this.submit} >Send Reset Email</Button>
                         <Link to='/main-menu'><Button className="btn_transparent" size="lg">Back to Main</Button></Link>
                     </Col>
+                    <Col className="mainscreen_col" xs={{ size: 12, offset: 0 }} sm={{ size: 10, offset: 1 }} md={{ size: 8, offset: 2 }} lg={{ size: 6, offset: 3 }}>
+                        {this.state.warning}
+                    </Col> 
                 </Row>
             </Container>
         );
