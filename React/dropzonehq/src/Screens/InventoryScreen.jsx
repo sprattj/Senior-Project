@@ -134,7 +134,7 @@ export default class InventoryScreen extends React.Component {
         this.state = {
             filter: "all",
             columns: this.columnsAll,
-            rows: this.all.values(), // rows: mapName.values() instead of rows: rowData
+            rows: Array.from(this.all.values()), // rows: mapName.values() instead of rows: rowData
             index: 0,
             currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
         };
@@ -242,22 +242,22 @@ export default class InventoryScreen extends React.Component {
     filterChanged(selection) {
         switch (selection) {
             case "Show All":
-                this.setState({ filter: "all", rows: this.all.values(), columns: this.columnsAll });
+                this.setState({ filter: "all", rows: Array.from(this.all.values()), columns: this.columnsAll });
                 break;
             case "Rigs Only":
-                this.setState({ filter: "rig", rows: this.rigs.values(), columns: this.columnsRigs });
+                this.setState({ filter: "rig", rows: Array.from(this.rigs.values()), columns: this.columnsRigs });
                 break;
             case "Canopies Only":
-                this.setState({ filter: "canopy", rows: this.canopies.values(), columns: this.columnsCanopies });
+                this.setState({ filter: "canopy", rows: Array.from(this.canopies.values()), columns: this.columnsCanopies });
                 break;
             case "Containers Only":
-                this.setState({ filter: "container", rows: this.containers.values(), columns: this.columnsContainers });
+                this.setState({ filter: "container", rows: Array.from(this.containers.values()), columns: this.columnsContainers });
                 break;
             case "AADs Only":
-                this.setState({ filter: "aad", rows: this.aad.values(), columns: this.columnsAAD });
+                this.setState({ filter: "aad", rows: Array.from(this.aad.values()), columns: this.columnsAAD });
                 break;
             default:
-                this.setState({ filter: "all", rows: this.all.values(), columns: this.columnsAll });
+                this.setState({ filter: "all", rows: Array.from(this.all.values()), columns: this.columnsAll });
                 break;
         }
 
