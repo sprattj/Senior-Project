@@ -381,7 +381,6 @@ export default class InventoryScreen extends React.Component {
                             {this.state.currentItem}
                         </Card>
                     </Col>
-
                 </Row>
             </div>
         );
