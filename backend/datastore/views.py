@@ -15,6 +15,30 @@ class AADList(generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        lifespan = request.data.get('lifespan')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        #TODO take deployment timestamp as a value?
+        AutomaticActivationDevices.objects.create(item_id=item_id,
+                                deployment_timestamp=datetime.datetime.now(),
+                                lifespan=lifespan
+                                serial_number=serial_number)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class AADDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AutomaticActivationDevices.objects.all()
@@ -35,6 +59,32 @@ class CanopyList(generics.ListCreateAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        size = request.data.get('size')
+        date_of_manufacture = request.data.get('date_of_manufacture')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        Canopies.objects.create(item_id=item_id,
+                                rig_id=None,
+                                serial_number=serial_number,
+                                size=size,
+                                date_of_manufacture=date_of_manufacture,
+                                jump_count=0)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class CanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Canopies.objects.all()
@@ -54,6 +104,26 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView):
 class ContainerList(generics.ListCreateAPIView):
     queryset = Containers.objects.all()
     serializer_class = ContainerSerializer
+
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        Containers.objects.create(item_id=item_id,
+                                serial_number=serial_number)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class ContainerDetail(generics.RetrieveUpdateDestroyAPIView):
 
@@ -148,6 +218,37 @@ class ActiveRentalList(generics.ListAPIView):
 class ReserveCanopyList(generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
+
+    def post(self, request, *args, **kwargs):
+        item_type_id = request.data.get('item_type_id')
+        manufacturer = request.data.get('manufacturer')
+        brand = request.data.get('brand')
+        description = request.data.get('description')
+        is_rentable = request.data.get('is_rentable')
+        is_available = request.data.get('is_rentable')
+        serial_number = request.data.get('serial_number')
+        size = request.data.get('size')
+        date_of_manufacture = request.data.get('date_of_manufacture')
+        item_id = Items.objects.create(item_type_id=item_type_id,
+                            manufacturer=manufacturer,
+                            brand=brand,
+                            description=description,
+                            is_rentable=is_rentable,
+                            is_rented=False,
+                            is_on_rig=False)
+        Canopies.objects.create(item_id=item_id,
+                                rig_id=None,
+                                serial_number=serial_number,
+                                size=size,
+                                date_of_manufacture=date_of_manufacture,
+                                jump_count=0)
+        ReserveCanopies.objects.create(item_id=item_id,
+                                        last_repack_date=None,
+                                        next_repack_date=None,
+                                        packed_by_employee_id=None,
+                                        ride_count=0)
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ReserveCanopies.objects.all()
