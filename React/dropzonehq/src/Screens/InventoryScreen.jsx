@@ -41,17 +41,18 @@ export default class InventoryScreen extends React.Component {
         this.changeRowData = this.changeRowData.bind(this);
         this.displayAddView = this.displayAddView.bind(this);
         this.resetDisplay = this.resetDisplay.bind(this);
+        this.updateAADRow = this.updateAADRow.bind(this);
 
 /*         this.all = [];
         this.rigs = [];
         this.canopies = [];
         this.containers = [];
-        this.aad = []; */
+        this.aads = []; */
         this.all = new Map();
         this.rigs = new Map();
         this.canopies = new Map();
         this.containers = new Map();
-        this.aad = new Map();
+        this.aads = new Map();
 
         this.columnsAll = [{
             Header: 'Item manufacturer',
@@ -131,6 +132,8 @@ export default class InventoryScreen extends React.Component {
         
         ];
 
+        this.getFilteredRows(rowData);
+
         this.state = {
             filter: "all",
             columns: this.columnsAll,
@@ -139,11 +142,10 @@ export default class InventoryScreen extends React.Component {
             currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
         };
 
-        this.getFilteredRows(this.state.rows);
-
+        
     }
 
-    changeRowData(index, manufacturer, description, isOnRig, brand,
+    changeRowData(index, item_id, manufacturer, description, isOnRig, brand,
                     isRentable, lifespan, itemType, aadSerialNum ) 
     {
 
@@ -153,26 +155,30 @@ export default class InventoryScreen extends React.Component {
                                                         + " \n itemType: " + this.state.rows[index].item_type); */
 
         // grab the current rows
-        var newRows = Array.from(this.all.values());
-        console.log("newRows: " + newRows);
+        // var newRows = Array.from(this.all.values());
+        // console.log("newRows: " + newRows);
 
         // update the copy's row's fields
-        newRows[index].manufacturer = manufacturer;
+
+/*         newRows[index].manufacturer = manufacturer;
         newRows[index].brand = brand;
         newRows[index].description = description;
-        newRows[index].item_type = itemType;
+        newRows[index].item_type = itemType; */
+
+        // update the copy's row's fields for itemType == AAD 
+        //  if (itemType === 'aad')
+        this.updateAADRow(item_id, manufacturer, description, isOnRig, brand,
+                        isRentable, lifespan, itemType, aadSerialNum);
 
         // update the state with the new rows so it rerenders
         this.setState({
-            rows: newRows
+            rows: Array.from(this.all.values())
         })             
 
 /*         this.state.rows[index].manufacturer = itemNum;
         this.state.rows[index].brand = brand;
         this.state.rows[index].description = itemDesc;
         this.state.rows[index].item_type = itemType;  
-
-        this.forceUpdate();
 
          this.setState({
              rows,
@@ -183,9 +189,30 @@ export default class InventoryScreen extends React.Component {
         });  
         */
 
-        console.log("new values => index: " + index + " \n itemNum: " + this.state.rows[index].manufacturer + " \n brand: " 
+       /*  console.log("new values => index: " + index + " \n itemNum: " + this.state.rows[index].manufacturer + " \n brand: " 
                                         + this.state.rows[index].brand + " \n itemdescription: " + this.state.rows[index].description 
-                                        + " \n itemType: " + this.state.rows[index].item_type);
+                                        + " \n itemType: " + this.state.rows[index].item_type); */
+    }
+
+    updateAADRow(item_id, manufacturer, description, isOnRig, brand,
+                    isRentable, lifespan, itemType, aadSerialNum)
+    {
+        var editAAD = this.all.get(item_id);
+        editAAD.manufacturer = manufacturer;
+        editAAD.description = description;
+        editAAD.is_on_rig = isOnRig;    
+        editAAD.brand = brand;
+        editAAD.item_type = itemType;
+        editAAD.is_rentable = isRentable;
+        editAAD.lifespan = lifespan;
+        editAAD.aad_sn = aadSerialNum;
+
+        this.all.set(item_id, editAAD);
+		this.aads.set(item_id, editAAD);
+		
+/*         this.setState({
+            rows: Array.from(this.all.values())
+        })   */
     }
 
     getFilteredRows(rowData) 
@@ -216,7 +243,7 @@ export default class InventoryScreen extends React.Component {
             else if (rowData[i].item_type === "aad")
             {
                 // if the type is AAD
-                this.aad.set(rowData[i].item_id, rowData[i]);    
+                this.aads.set(rowData[i].item_id, rowData[i]);    
             }
         }
     }
@@ -254,7 +281,7 @@ export default class InventoryScreen extends React.Component {
                 this.setState({ filter: "container", rows: Array.from(this.containers.values()), columns: this.columnsContainers });
                 break;
             case "AADs Only":
-                this.setState({ filter: "aad", rows: Array.from(this.aad.values()), columns: this.columnsAAD });
+                this.setState({ filter: "aad", rows: Array.from(this.aads.values()), columns: this.columnsAAD });
                 break;
             default:
                 this.setState({ filter: "all", rows: Array.from(this.all.values()), columns: this.columnsAll });
