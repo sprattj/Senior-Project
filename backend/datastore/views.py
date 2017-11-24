@@ -453,67 +453,67 @@ class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView, Login
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
-    def post_signout(request):
-        rig_id = request.data.get('rig_id')
-        load_number = request.data.get('load_number')
+def post_signout(request):
+    rig_id = request.data.get('rig_id')
+    load_number = request.data.get('load_number')
 
-        Signouts.objects.create(rig_id=rig_id, load_number=load_number)
-        signout_id_dict = Signouts.objects.values().get(signout_id=
-                                                        Signouts.objects.latest('signout_id')
-                                                        .serializable_value('signout_id'))
-        signout_id = signout_id_dict.get("signout_id", "")
-        return signout_id
-
-
-    def post_emp_signout(employee_id, signout_id):
-        EmployeesSignouts.objects.create(signout_id=signout_id,
-                                         employee_id=employee_id,
-                                         packed_signout=EmployeesSignouts.SIGNOUT,
-                                         timestamp=datetime.datetime.now())
-        return
-
-    def post_rental(request):
-        renter_name = request.data.get('renter_name')
-
-        Rentals.objects.create(renter_name=renter_name, rental_date=datetime.datetime.now())
-
-        rental_id_dict = Rentals.objects.values().get(rental_id=
-                                                        Rentals.objects.latest('rental_id')
-                                                        .serializable_value('rental_id'))
-        rental_id = rental_id_dict.get("rental_id", "")
-        return rental_id
-
-    def post_item_rental(item_id, rental_id):
-        ItemsRentals.objects.create(item_id=item_id,
-                                         rental_id=rental_id)
-        return
-
-    def patch_emp_signout(employee_id, signout_id):
-        EmployeesSignouts.objects.create(signout_id=signout_id,
-                                         employee_id=employee_id,
-                                         packed_signout=EmployeesSignouts.PACKED,
-                                         timestamp=datetime.datetime.now())
-        return
-
-    '''
-    data = {'employee_id': employee_id, 'signout_id': signout_id, 'packed_signout': EmployeesSignouts.PACKED,
-            'timestamp': datetime.datetime.now()}
-    print(data)
-
-    serializer = EmployeeSignoutSerializer(data=data)
-    print(serializer.get_fields())
-    if serializer.is_valid():
-        print(serializer.validated_data)
-        # serializer.save()
-        return
-    print(serializer.is_valid())
-    '''
+    Signouts.objects.create(rig_id=rig_id, load_number=load_number)
+    signout_id_dict = Signouts.objects.values().get(signout_id=
+                                                    Signouts.objects.latest('signout_id')
+                                                    .serializable_value('signout_id'))
+    signout_id = signout_id_dict.get("signout_id", "")
+    return signout_id
 
 
-    def get_emp_full_name(employee_id):
-        emp_name = Employees.objects.get(employee_id=employee_id).first_name + ' ' + \
-            Employees.objects.get(employee_id=employee_id).last_name
-        return emp_name
+def post_emp_signout(employee_id, signout_id):
+    EmployeesSignouts.objects.create(signout_id=signout_id,
+                                     employee_id=employee_id,
+                                     packed_signout=EmployeesSignouts.SIGNOUT,
+                                     timestamp=datetime.datetime.now())
+    return
+
+def post_rental(request):
+    renter_name = request.data.get('renter_name')
+
+    Rentals.objects.create(renter_name=renter_name, rental_date=datetime.datetime.now())
+
+    rental_id_dict = Rentals.objects.values().get(rental_id=
+                                                    Rentals.objects.latest('rental_id')
+                                                    .serializable_value('rental_id'))
+    rental_id = rental_id_dict.get("rental_id", "")
+    return rental_id
+
+def post_item_rental(item_id, rental_id):
+    ItemsRentals.objects.create(item_id=item_id,
+                                     rental_id=rental_id)
+    return
+
+def patch_emp_signout(employee_id, signout_id):
+    EmployeesSignouts.objects.create(signout_id=signout_id,
+                                     employee_id=employee_id,
+                                     packed_signout=EmployeesSignouts.PACKED,
+                                     timestamp=datetime.datetime.now())
+    return
+
+'''
+data = {'employee_id': employee_id, 'signout_id': signout_id, 'packed_signout': EmployeesSignouts.PACKED,
+        'timestamp': datetime.datetime.now()}
+print(data)
+
+serializer = EmployeeSignoutSerializer(data=data)
+print(serializer.get_fields())
+if serializer.is_valid():
+    print(serializer.validated_data)
+    # serializer.save()
+    return
+print(serializer.is_valid())
+'''
+
+
+def get_emp_full_name(employee_id):
+    emp_name = Employees.objects.get(employee_id=employee_id).first_name + ' ' + \
+        Employees.objects.get(employee_id=employee_id).last_name
+    return emp_name
 
 
 def createDropzone(request):
