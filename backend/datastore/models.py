@@ -21,7 +21,7 @@ import random
 class AutomaticActivationDevices(models.Model):
 
     # item_id PK -> shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     # Date when this AAD was deployed
     deployment_timestamp = models.DateTimeField()
     # Serial number may include digits and letters
@@ -40,7 +40,7 @@ class Canopies(models.Model):
 
     # FOREIGN KEYS
     # item_id PK -> Shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     # rig_id -> what rig this canopy is installed on
     rig = models.ForeignKey('Rigs', models.DO_NOTHING, null=True)
 
@@ -99,7 +99,7 @@ class Claims(models.Model):
 class Containers(models.Model):
 
     # item_id PK -> shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     serial_number = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
@@ -394,7 +394,7 @@ class Rentals(models.Model):
 # A subclass of items and canopies.
 class ReserveCanopies(models.Model):
     # item_id PK -> Shares PK from canopies
-    item = models.OneToOneField(Canopies, models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField(Canopies, on_delete=models.CASCADE, primary_key=True)
 
     last_repack_date = models.DateTimeField()
     next_repack_date = models.DateTimeField()
@@ -413,7 +413,7 @@ class ReserveCanopies(models.Model):
 class Rigs(models.Model):
 
     # PK -> Shares PK from items table
-    item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField(Items, on_delete=models.CASCADE, primary_key=True)
     # Unique identifier for this rig
     rig_id = models.AutoField(unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)

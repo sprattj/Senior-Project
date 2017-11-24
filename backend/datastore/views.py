@@ -20,6 +20,16 @@ class AADDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class CanopyList(generics.ListCreateAPIView):
     queryset = Canopies.objects.all()
@@ -30,11 +40,32 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class ContainerList(generics.ListCreateAPIView):
     queryset = Containers.objects.all()
     serializer_class = ContainerSerializer
 
+class ContainerDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class DropzoneList(generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()
@@ -118,11 +149,21 @@ class ReserveCanopyList(generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
-
 class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
+    def patch(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+        item = Items.objects.get(item_id=item_id)
+        canopy = Canopies.objects.get(item_id=item_id)
+
+        item.partial_update(request, *args, **kwargs)
+        canopy.partial_update(request, *args, **kwargs)
+        self.partial_update(request, *args, **kwargs)
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 class RigList(generics.ListCreateAPIView):
     queryset = Rigs.objects.all()
