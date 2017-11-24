@@ -52,6 +52,7 @@ export default class InventoryDisplayAAD extends React.Component {
         this.state = {
             // initially is manufacturer that's passed
             // values returned from 'all_items' View in DB
+            item_id: this.props.item_id,
             manufacturer: this.props.manufacturer,
             brand: this.props.brand,
             description: this.props.description,
@@ -341,7 +342,7 @@ export default class InventoryDisplayAAD extends React.Component {
         
         console.log("clicked save, index: " + this.props.index);
         console.log("state: " + this.state);
-        this.props.changeRowData(this.props.index, this.state.manufacturer, this.state.description, this.state.is_on_rig,
+        this.props.changeRowData(this.props.index, this.props.item_id, this.state.manufacturer, this.state.description, this.state.is_on_rig,
                                         this.state.brand, this.state.is_rentable, this.state.lifespan, this.state.item_type, 
                                         this.state.aad_sn);
 /*         this.props.changeRowData(this.props.index, this.state.manufacturer, this.state.brand, 
