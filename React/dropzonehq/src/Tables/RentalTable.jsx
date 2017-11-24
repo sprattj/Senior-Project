@@ -42,6 +42,7 @@ export default class RentalTable extends React.Component {
         this.returnItem = this.returnItem.bind(this);
         this.pinChanged = this.pinChanged.bind(this);
 
+        this.testFunc = this.testFunc.bind(this);
         //method binding end-
 
         //variable arrays--
@@ -135,15 +136,13 @@ export default class RentalTable extends React.Component {
     componentDidMount() {
     }
 
-    //every time this is called it should redo 
-    //the entire sorting section to keep things up to date 
-    processRows(rowData) {
-        this.sortAllData(rowData, this.rigsInfo, this.activeRentals);
+    //idk if this is used anymore here? might need for itemTable but im not sure 
+    processRows(rowData) {        
         this.setState({
             filter: "all",
             columns: this.columnsAll,
             rows: this.all
-        })
+        });
     }
 
     /* ***************************************************************************************************************************************************************
@@ -399,15 +398,21 @@ export default class RentalTable extends React.Component {
         this.props.resetDisplay();
     }
 
+    testFunc() {
+        console.log("ReturnButton Test");
+    }
+
     //calls up to the screen change the display on the right
     itemSelected(selectedIndex) {
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
         var rentalButton;                           //variable Rent or Return button shows if Available or Rented         
 
-        if (!row.is_available) {     //if the item is rented set the rentalButton var to Return
-            rentalButton = <ReturnButton pinChanged={this.pinChanged} buttonText={"Return"} return={this.returnItem} index={selectedIndex} item_id={row.item_id} />;
+        if (row.is_available) {     //if the item is rented set the rentalButton var to Return
+            rentalButton = <RentButton pinChanged={this.pinChanged} buttonText={"Rent"} rent={this.rentItem} 
+                                        index={selectedIndex} item_id={row.item_id} />;
         } else {                //if the item isnt rented set the rentalButton var to Rent
-            rentalButton = <RentButton pinChanged={this.pinChanged} buttonText={"Rent"} rent={this.rentItem} index={selectedIndex} item_id={row.item_id} />;
+            rentalButton = <ReturnButton pinChanged={this.pinChanged} buttonText={"Return"} return={this.returnItem} 
+                                            index={selectedIndex} item_id={row.item_id} rental_id={row.rental_id} />;
         }
 
         //select the type of Rental Item Display will be shown based on the selected item's .item_type
@@ -487,6 +492,9 @@ export default class RentalTable extends React.Component {
     }
 
     rentItem(index, renter_name, item_id) {
+        console.log("RentalTable: rentItem: index: " + index + ". item_id: " + item_id +
+                        ". renter_name: " + renter_name);
+        
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -526,15 +534,16 @@ export default class RentalTable extends React.Component {
             })//catch any errors and display them as a toast
             .catch(function (error) {
                 toast.error(error + "\n" + url);
-            });
+            });  
     }
 
     returnItem(index, rental_id) {
-
+        console.log("RentalTable: returnItem: index: " + index + ". rental_id: " + rental_id);
+        
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + this.URLsection + "/" + rental_id;
+        var url = rootURL + "/rentals/" + rental_id;
 
         var self = this;
         var requestVariables = {
@@ -558,24 +567,24 @@ export default class RentalTable extends React.Component {
             })//when the call succeeds
             .then(function (responseData) {
                 console.log("RentalTable: returnItem Function: index passed in: " + index);
-                for (var i = 0; i < self.all.length; i++) {
-                    if (index === self.all[i].index && !self.all[i].is_available) {
-                        self.all[i].is_available = 1;
-                        self.all[i].renter_name = "";
-                    }
-                }
-                this.getFilteredRows(this.all);
+                //for (var i = 0; i < self.all.length; i++) {
+                //     if (index === self.all[i].index && !self.all[i].is_available) {
+                //        self.all[i].is_available = 1;
+                //        self.all[i].renter_name = "";
+                //    }
+                //}
+                self.fetchRows();
             })//catch any errors and display them as a toast
             .catch(function (error) {
                 toast.error(error + "\n" + url);
-            });
+            }); 
     }
 
     pinChanged(id, pin) {
         this.setState({
             pin: pin
         })
-        console.log(this.state.pin);
+        console.log("RentalTable: pinChanged: pin is now: "  + this.state.pin);
     }
 
     /* ***************************************************************************************************************************************************************
