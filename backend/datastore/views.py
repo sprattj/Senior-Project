@@ -34,7 +34,7 @@ class AADList(generics.ListCreateAPIView):
         #TODO take deployment timestamp as a value?
         AutomaticActivationDevices.objects.create(item_id=item_id,
                                 deployment_timestamp=datetime.datetime.now(),
-                                lifespan=lifespan
+                                lifespan=lifespan,
                                 serial_number=serial_number)
         data = {'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
