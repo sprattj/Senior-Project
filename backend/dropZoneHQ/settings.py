@@ -96,6 +96,7 @@ if 'RDS_DB_NAME' in os.environ:
             'PASSWORD': os.environ['RDS_PASSWORD'],
             'HOST': os.environ['RDS_HOSTNAME'],
             'PORT': os.environ['RDS_PORT'],
+            'STORAGE_ENGINE': 'INNODB'
         }, 'OPTIONS': {
             'skip-ssl',
         }
@@ -108,7 +109,8 @@ else:
             'USER': 'dropzonehq',
             'PASSWORD': 'DropzoneHQSQL2017',
             'HOST': 'ebdb2.cfsukzzhrolk.us-east-1.rds.amazonaws.com',
-            'PORT': 3306
+            'PORT': 3306,
+            'STORAGE_ENGINE': 'INNODB'
         }
     }
 

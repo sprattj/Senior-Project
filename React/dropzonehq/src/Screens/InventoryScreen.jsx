@@ -317,7 +317,7 @@ export default class InventoryScreen extends React.Component {
         //that we set in our constructor (like "/rigsheets"), and
         //the sheetType prop ("Tandems" or "Students")
         //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection + this.props.sheetType;
+        var url = rootURL + this.URLsection;
 
         //save 'this' so that we can call functions
         //inside the fetch() callback
@@ -492,7 +492,6 @@ export default class InventoryScreen extends React.Component {
                             {this.state.currentItem}
                         </Card>
                     </Col>
-
                 </Row>
             </div>
         );
