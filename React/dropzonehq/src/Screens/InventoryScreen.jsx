@@ -1,8 +1,13 @@
 import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from '../Tables/ItemTable.jsx';
-import EditInventoryItemDisplay from '../ItemDisplays/EditInventoryItemDisplay.jsx';
+
 import BlankItemDisplay from '../ItemDisplays/BlankItemDisplay.jsx';
+import InventoryDisplayRig from '../ItemDisplays/InventoryDisplayRig.jsx';
+import InventoryDisplayCanopy from '../ItemDisplays/InventoryDisplayCanopy.jsx';
+import InventoryDisplayContainer from '../ItemDisplays/InventoryDisplayContainer.jsx';
+import InventoryDisplayAAD from '../ItemDisplays/InventoryDisplayAAD.jsx';
+
 import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col, Card } from 'reactstrap';
@@ -18,7 +23,7 @@ const marginStyle = {
 };
 
 var count = 0;
-var display = <EditInventoryItemDisplay var1={"nothing to"} var2={"see here"} />;
+var display; //= <EditInventoryItemDisplay var1={"nothing to"} var2={"see here"} />;
 
 export default class InventoryScreen extends React.Component {
     constructor(props) {
@@ -29,10 +34,13 @@ export default class InventoryScreen extends React.Component {
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
+        this.getFilteredRows = this.getFilteredRows.bind(this);
         this.itemSelected = this.itemSelected.bind(this);
+        this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
         this.changeRowData = this.changeRowData.bind(this);
         this.displayAddView = this.displayAddView.bind(this);
+        this.resetDisplay = this.resetDisplay.bind(this);
 
         this.all = [];
         this.rigs = [];
@@ -41,12 +49,12 @@ export default class InventoryScreen extends React.Component {
         this.aad = [];
 
         this.columnsAll = [{
-            Header: 'Item Number',
-            accessor: 'number', // String-based value accessors!
+            Header: 'Item manufacturer',
+            accessor: 'manufacturer', // String-based value accessors!
             width: 150
         }, {
             Header: 'Item Description',
-            accessor: 'desc',
+            accessor: 'description',
             width: 400
         }];
 
@@ -74,7 +82,7 @@ export default class InventoryScreen extends React.Component {
             width: 150
         }, {
             Header: 'Canopy Description',
-            accessor: 'desc',
+            accessor: 'description',
             width: 250
         }];
 
@@ -84,13 +92,13 @@ export default class InventoryScreen extends React.Component {
             width: 150
         }, {
             Header: 'Container Description',
-            accessor: 'desc',
+            accessor: 'description',
             width: 400
         }];
 
         this.columnsAAD = [{
             Header: 'Lifespan',
-            accessor: 'life',
+            accessor: 'lifespan',
             width: 150
         }, {
             Header: 'Deployment Date',
@@ -100,21 +108,21 @@ export default class InventoryScreen extends React.Component {
 
         //Test Data to fill the table until we connect to the DB
         var rowData =
-        [{ index: 0, number: "00", desc: "Red and Black Mirage", isRented: true, renterName: "Edgar", type: "container", brand: "Mirage" },
-        { index: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
-        { index: 2, number: "02", desc: "Red and Green Pilot 220. Black and Yellow Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
-        { index: 3, number: "03", desc: "Brown Navigator 190. Black and White Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
-        { index: 4, number: "04", desc: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
-        { index: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
-        { index: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
-        { index: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
-        { index: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
-        { index: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 10, number: "10", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
-        { index: 12, number: "12", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy", brand: "Navigator", size: "210" },
-        { index: 13, number: "13", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container", brand: "Mirage" },
-        { index: 14, number: "14", desc: "Orange and Black Mirage", isRented: false, renterName: "", type: "aad", life: "Mirage", date: "11/19/2017" }
+        [{ index: 0, manufacturer: "00", description: "Red and Black Mirage", is_rentable: true, isRented: true, item_type: "container", brand: "Mirage" },
+        { index: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
+        { index: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
+        { index: 3, manufacturer: "03", description: "Brown Navigator 190. Black and White Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
+        { index: 4, manufacturer: "04", description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sam", item_type: "rig", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
+        { index: 5, manufacturer: "05", description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sue", item_type: "rig", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
+        { index: 6, manufacturer: "06", description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
+        { index: 7, manufacturer: "07", description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
+        { index: 8, manufacturer: "08", description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
+        { index: 9, manufacturer: "09", description: "Black Main in Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+        { index: 10, manufacturer: "10", description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: true, isRented: true, brand: "Ralph", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+        { index: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
+        { index: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
+        { index: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
+        { index: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" }
         
         ];
 
@@ -122,7 +130,7 @@ export default class InventoryScreen extends React.Component {
             filter: "all",
             columns: this.columnsAll,
             rows: rowData,
-            index: null,
+            index: 0,
             currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
         };
 
@@ -130,45 +138,47 @@ export default class InventoryScreen extends React.Component {
 
     }
 
-    changeRowData(index, itemNum, itemRenterName, itemDesc, itemType) 
+    changeRowData(index, manufacturer, description, isOnRig, brand,
+                    isRentable, lifespan, itemType, aadSerialNum ) 
     {
-        console.log("in change, old values => index: " + index + " \n itemNum: " + this.state.rows[index].number + " \n itemRenterName: " 
-                                                        + this.state.rows[index].renterName + " \n itemDesc: " + this.state.rows[index].desc 
-                                                        + " \n itemType: " + this.state.rows[index].type);
+
+        /* console.log("in change, old values => index: " + index + " \n itemNum: " + this.state.rows[index].manufacturer + " \n brand: " 
+                                                        + this.state.rows[index].brand + " \n itemdescription: " + this.state.rows[index].description 
+                                                        + " \n itemType: " + this.state.rows[index].item_type); */
 
         // grab the current rows
         var newRows = Array.from(this.state.rows);
 
         // update the copy's row's fields
-        newRows[index].number = itemNum;
-        newRows[index].renterName = itemRenterName;
-        newRows[index].desc = itemDesc;
-        newRows[index].type = itemType;
+        newRows[index].manufacturer = manufacturer;
+        newRows[index].brand = brand;
+        newRows[index].description = description;
+        newRows[index].item_type = itemType;
 
         // update the state with the new rows so it rerenders
         this.setState({
             rows: newRows
         })             
 
-/*         this.state.rows[index].number = itemNum;
-        this.state.rows[index].renterName = itemRenterName;
-        this.state.rows[index].desc = itemDesc;
-        this.state.rows[index].type = itemType;  
+/*         this.state.rows[index].manufacturer = itemNum;
+        this.state.rows[index].brand = brand;
+        this.state.rows[index].description = itemDesc;
+        this.state.rows[index].item_type = itemType;  
 
         this.forceUpdate();
 
          this.setState({
              rows,
-             rows[index].number: itemNum,
-            rows[index].renterName: itemRenterName,
-            rows[index].desc: itemDesc,
-            rows[index].type: itemType  
+             rows[index].manufacturer: itemNum,
+            rows[index].brand: brand,
+            rows[index].description: itemDesc,
+            rows[index].item_type: itemType  
         });  
         */
 
-        console.log("new values => index: " + index + " \n itemNum: " + this.state.rows[index].number + " \n itemRenterName: " 
-                                        + this.state.rows[index].renterName + " \n itemDesc: " + this.state.rows[index].desc 
-                                        + " \n itemType: " + this.state.rows[index].type);
+        console.log("new values => index: " + index + " \n itemNum: " + this.state.rows[index].manufacturer + " \n brand: " 
+                                        + this.state.rows[index].brand + " \n itemdescription: " + this.state.rows[index].description 
+                                        + " \n itemType: " + this.state.rows[index].item_type);
     }
 
     getFilteredRows(rowData) 
@@ -177,22 +187,22 @@ export default class InventoryScreen extends React.Component {
         this.all = rowData;                                  
         for (var i = 0; i < rowData.length; i++) 
         {   
-            if (rowData[i].type === "rig") 
+            if (rowData[i].item_type === "rig") 
             {
                 //if the type is rig
                 this.rigs.push(rowData[i]);
             } 
-            else if (rowData[i].type === "canopy") 
+            else if (rowData[i].item_type === "canopy") 
             {  
                 // if the type is canopy
                 this.canopies.push(rowData[i]);
             } 
-            else if (rowData[i].type === "container") 
+            else if (rowData[i].item_type === "container") 
             { 
                 // if the type is container
                 this.containers.push(rowData[i]);
             }
-            else if (rowData[i].type === "aad")
+            else if (rowData[i].item_type === "aad")
             {
                 // if the type is AAD
                 this.aad.push(rowData[i]);    
@@ -310,22 +320,84 @@ export default class InventoryScreen extends React.Component {
         console.log("selectedIndex: " + selectedIndex);
 
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
-        var display = <EditInventoryItemDisplay            //set up the display component
+
+        var display = this.setupDisplay(row);
+/*         var display = <EditInventoryItemDisplay            //set up the display component
             index={row.index}
-            number={row.number}
-            desc={row.desc}
+            manufacturer={row.manufacturer}
+            description={row.description}
             isRented={row.isRented}
-            renterName={row.renterName}
-            type={row.type} 
-            changeRowData={this.changeRowData}/>;
+            brand={row.brand}
+            type={row.item_type} 
+            changeRowData={this.changeRowData}/>; */
 
         this.displayChange(display, row.index);         
+
         console.log("Selection count: " + count);
         count++;
 
-        console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].number + " \n itemRenterName: " 
-                                            + this.state.rows[selectedIndex].renterName + " \n itemDesc: " + this.state.rows[selectedIndex].desc 
-                                            + " \n itemType: " + this.state.rows[selectedIndex].type);
+        console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].manufacturer + " \n brand: " 
+                                            + this.state.rows[selectedIndex].brand + " \n itemdescription: " + this.state.rows[selectedIndex].description 
+                                            + " \n itemType: " + this.state.rows[selectedIndex].item_type);
+    }
+
+    // set up the display component, based on Item Type
+    setupDisplay(row)
+    {
+        var display;
+        
+        if (row.item_type === "rig") 
+        {
+            display = <InventoryDisplayRig            
+            index={row.index}
+            manufacturer={row.manufacturer}
+            description={row.description}
+            isRented={row.isRented}
+            brand={row.brand}
+            item_type={row.item_type} 
+            changeRowData={this.changeRowData}/>;
+        } 
+        else if (row.item_type === "canopy") 
+        {  
+            display = <InventoryDisplayCanopy            
+            index={row.index}
+            manufacturer={row.manufacturer}
+            description={row.description}
+            isRented={row.isRented}
+            brand={row.brand}
+            item_type={row.item_type} 
+            changeRowData={this.changeRowData}/>;
+        } 
+        else if (row.item_type === "container") 
+        { 
+            display = <InventoryDisplayContainer            
+            index={row.index}
+            manufacturer={row.manufacturer}
+            description={row.description}
+            isRented={row.isRented}
+            brand={row.brand}
+            item_type={row.item_type} 
+            changeRowData={this.changeRowData}/>;
+        }
+        else if (row.item_type === "aad")
+        {
+            display = <InventoryDisplayAAD            
+            index={row.index}
+            manufacturer={row.manufacturer}
+            description={row.description}
+            isRented={row.isRented}
+            brand={row.brand}
+            item_type={row.item_type}
+            lifespan={row.lifespan} 
+            changeRowData={this.changeRowData}
+            />;    
+        }
+        else
+        {
+            console.log("check Item Type passed bruh, Item Type is: " + row.item_type)
+        }
+
+        return display;
     }
 
     // calls on "ADD" btn click to change right side view to empty field values by default
@@ -333,12 +405,12 @@ export default class InventoryScreen extends React.Component {
     {        
         console.log("hit displayAddView funct");
         // set up the display component
-        var display = <EditInventoryItemDisplay            
+        var display = <InventoryDisplayAAD            
             index={""}
-            number={""}
+            manufacturer={""}
             desc={""}
             isRented={""}
-            renterName={""}
+            brand={""}
             type={""} 
             changeRowData={""}/>;
 

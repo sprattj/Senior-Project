@@ -10,7 +10,8 @@ export default class UncontrolledTextInput extends React.Component{
     constructor (props)
     {
         super (props);
-        this.shouldSetInputTextToDefaultValue = this.shouldSetInputTextToDefaultValue.bind (this); // bind method's 'this' to the instance
+        this.shouldSetInputTextToDefaultValue = this.shouldSetInputTextToDefaultValue.bind(this); // bind method's 'this' to the instance
+   
     }
 
     shouldSetInputTextToDefaultValue (props)
@@ -42,22 +43,18 @@ export default class UncontrolledTextInput extends React.Component{
         return this.shouldSetInputTextToDefaultValue (nextProps);
     }
 
-    setNewValue(e)
-    {
-        console.log("e value: " + e.target.value);
-        this.newTextValue = e.target.value;
-    }
-
     render ()
     {
         var result = (
             <div>
                 <input
-                    {...this.props.inputProps}
-                    type        = "text"
-                    ref         = "textInput" 
-                    onBlur      = {this.props.onBlur}
-                   // onChange    = {this.setNewValue}
+                    // {...this.props.inputProps}
+                    type = "text"
+                    ref = "textInput" 
+                    onBlur = {this.props.onBlur}
+                    placeholder = {this.props.defaultText}
+                    autoFocus
+                    // onLoad = {this.props.setDefaultState}
                     // className   = "inputTxtBoxes"
                 />
             </div>
