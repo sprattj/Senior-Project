@@ -41,6 +41,11 @@ export default class InventoryScreen extends React.Component {
         this.displayAddView = this.displayAddView.bind(this);
         this.resetDisplay = this.resetDisplay.bind(this);
         this.updateAADRow = this.updateAADRow.bind(this);
+        this.updateCanopyRow = this.updateCanopyRow.bind(this);
+        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
+        this.updateContainerRow = this.updateContainerRow.bind(this);
+        this.updateRigRow = this.updateRigRow.bind(this);
+        
 
         this.all = new Map();
         this.rigs = new Map();
@@ -135,8 +140,58 @@ export default class InventoryScreen extends React.Component {
             index: 0,
             currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
         };
+    }
 
+     //When this RentalTable component loads on the page, fetch the rows
+    //from the database and display them.
+    componentDidMount() {
+        this.fetchRows();
+    }
 
+    //Fetch the items from the database that are 
+    //rentals and update the RentalTable's state to display them.
+    fetchRows() {
+
+        //make sure we have the packages required to
+        //make a fetch call (maybe not needed)
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + this.URLsection;
+
+        //save 'this' so that we can call functions
+        //inside the fetch() callback
+        var self = this;
+
+        //fetch from the specified URL, to GET the data
+        //we need. Enable CORS so we can access from localhost.
+        fetch(url, {
+            method: "GET",
+            mode: 'CORS'
+        })//when we get a response back
+            .then(function (response) {
+                //check to see if the call we made failed
+                //if it failed, throw an error and stop.
+                if (response.status >= 400) {
+                    throw new Error("Bad response from server");
+                }
+                //if it didn't fail, process the data we got back
+                //into JSON format
+                return response.json();
+            })//when the call succeeds
+            .then(function (rowData) {
+                self.getFilteredRows(rowData);
+                self.setState( {
+                    filter: "all",
+                    columns: self.columnsAll,
+                    rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
+                    index: 0,
+                    currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+                });
+            })//catch any errors and display them as a toast
+            .catch(function (error) {
+                toast.error(error + "\n" + url);
+            });;
     }
 
     updateAADRow(item_id, manufacturer, description, isOnRig, brand,
@@ -154,7 +209,6 @@ export default class InventoryScreen extends React.Component {
             brand: brand,
             is_rentable: isRentable,
             lifespan: lifespan,
-            item_type: itemType,
             serial_number: aadSerialNum,
             pin: this.state.pin
         };
@@ -178,7 +232,6 @@ export default class InventoryScreen extends React.Component {
             AAD.description = description;
             AAD.is_on_rig = isOnRig;
             AAD.brand = brand;
-            AAD.item_type = itemType;
             AAD.is_rentable = isRentable;
             AAD.lifespan = lifespan;
             AAD.aad_sn = aadSerialNum;
@@ -194,9 +247,9 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    updateCanopyRow(item_id, manufacturer, description, isOnRig, brand,
+    updateReserveCanopyRow(item_id, manufacturer, description, isOnRig, brand,
         isRentable, rig_id, serial_number, size, date_of_manufacture,
-        jump_count) {
+        jump_count, last_repack_date, next_repack_date, packed_by_employee_id, ride_count) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -214,6 +267,10 @@ export default class InventoryScreen extends React.Component {
             size: size,
             date_of_manufacture: date_of_manufacture,
             jump_count: jump_count,
+            last_repack_date: last_repack_date,
+            next_repack_date: next_repack_date,
+            packed_by_employee_id: packed_by_employee_id,
+            ride_count: ride_count,
             pin: this.state.pin
         };
 
@@ -227,7 +284,7 @@ export default class InventoryScreen extends React.Component {
             body: JSON.stringify(requestVariables)
         }).then(function (response) {
             if (response.status >= 400) {
-                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
+                throw new Error("Editing reserve canopy failed. Bad response " + response.status + " from server");
             }
             return response.json();
         }).then(function (responseData) {
@@ -236,7 +293,6 @@ export default class InventoryScreen extends React.Component {
             reserveCanopy.description = description;
             reserveCanopy.is_on_rig = isOnRig;
             reserveCanopy.brand = brand;
-            reserveCanopy.item_type = itemType;
             reserveCanopy.is_rentable = isRentable;
             reserveCanopy.serial_number = serial_number;
             reserveCanopy.size = size;
@@ -288,7 +344,7 @@ export default class InventoryScreen extends React.Component {
             body: JSON.stringify(requestVariables)
         }).then(function (response) {
             if (response.status >= 400) {
-                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
+                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
             }
             return response.json();
         }).then(function (responseData) {
@@ -297,7 +353,6 @@ export default class InventoryScreen extends React.Component {
             canopy.description = description;
             canopy.is_on_rig = isOnRig;
             canopy.brand = brand;
-            canopy.item_type = itemType;
             canopy.is_rentable = isRentable;
             canopy.serial_number = serial_number;
             canopy.size = size;
@@ -345,7 +400,7 @@ export default class InventoryScreen extends React.Component {
             body: JSON.stringify(requestVariables)
         }).then(function (response) {
             if (response.status >= 400) {
-                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
+                throw new Error("Editing rig failed. Bad response " + response.status + " from server");
             }
             return response.json();
         }).then(function (responseData) {
@@ -355,7 +410,6 @@ export default class InventoryScreen extends React.Component {
             rig.description = description;
             rig.is_on_rig = isOnRig;
             rig.brand = brand;
-            rig.item_type = itemType;
             rig.is_rentable = isRentable;
             rig.container_id = container_id;
             rig.aad_id = aad_id;
@@ -400,7 +454,7 @@ export default class InventoryScreen extends React.Component {
             body: JSON.stringify(requestVariables)
         }).then(function (response) {
             if (response.status >= 400) {
-                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
+                throw new Error("Editing container failed. Bad response " + response.status + " from server");
             }
             return response.json();
         }).then(function (responseData) {
@@ -409,7 +463,6 @@ export default class InventoryScreen extends React.Component {
             container.description = description;
             container.is_on_rig = isOnRig;
             container.brand = brand;
-            container.item_type = itemType;
             container.is_rentable = isRentable;
             container.container_sn = serial_number;
 
@@ -496,58 +549,6 @@ export default class InventoryScreen extends React.Component {
         this.setState({
             currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
         });
-    }
-
-    //When this RentalTable component loads on the page, fetch the rows
-    //from the database and display them.
-    componentDidMount() {
-        this.fetchRows();
-    }
-
-    //Fetch the items from the database that are 
-    //rentals and update the RentalTable's state to display them.
-    fetchRows() {
-
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + this.URLsection;
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback
-        var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (rowData) {
-                self.getFilteredRows(rowData);
-                self.state = {
-                    filter: "all",
-                    columns: self.columnsAll,
-                    rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
-                    index: 0,
-                    currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
-                };
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });;
     }
 
     //calls up to the screen change the display on the right
