@@ -1,14 +1,10 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 
-export default class SaveItemDetailsBtn extends React.Component 
-{
+export default class SaveItemDetailsBtn extends React.Component {
+    
     constructor(props) {
         super(props);
-        
-/*         this.setState({
-            disabled: this.props.disabled
-        }); */
     }
 
 
