@@ -116,4 +116,4 @@ typings/
 .idea/
 React/node_modules/
 driver.py
-DJANGO_BOIS_install.txt
+DJANGO_install_Info.txt
