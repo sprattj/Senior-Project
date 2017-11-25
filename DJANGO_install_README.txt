@@ -1,5 +1,5 @@
 FOR WINDOWS:
-0. INSTALL PYTHON 3.6 AND MAKE SURE THAT DIDN'T FUCK UP (python --version)
+0. INSTALL PYTHON 3.6 AND MAKE SURE THAT DIDN'T MESS UP (python --version)
 1. CREATE A DIRECTORY SOMEWHERE CONVIENIENT
 2. cd INTO IT
 3. pip install virtualenv (I did this in cmd prompt - Jatin)
