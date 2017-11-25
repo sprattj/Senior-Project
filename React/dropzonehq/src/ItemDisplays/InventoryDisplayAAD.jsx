@@ -393,11 +393,14 @@ export default class InventoryDisplayAAD extends React.Component {
                                                 <br />
                                                 <InputGroup>
                                                     <InputGroupAddon >Rentable: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.is_rentableChanged}
-                                                        id              = "is_rentableID"
-                                                        defaultText     = {this.props.is_rentable ? "Yes" : "No"}
-                                                    />
+                                                    <Input type="select" 
+                                                        value={this.props.is_rentable}
+                                                        onChange={this.is_rentableChanged}
+                                                        id="is_rentableID"
+                                                    >
+                                                    <option value={true}>Is rentable</option>
+                                                    <option value={false}>Is NOT rentable</option>
+                                                    </Input>
                                                 </InputGroup>
                                             </div>
                                         </Col>
@@ -405,11 +408,14 @@ export default class InventoryDisplayAAD extends React.Component {
                                             <div>
                                                 <InputGroup>
                                                     <InputGroupAddon >On a Rig: </InputGroupAddon>
-                                                    <UncontrolledTextInput                                                     
-                                                        onBlur          = {this.is_on_rigChanged}
-                                                        id              = "is_on_rigID"
-                                                        defaultText     = {this.props.is_on_rig}
-                                                    />
+                                                    <Input type="select" 
+                                                        value={this.props.is_on_rig}
+                                                        onChange={this.is_on_rigChanged}
+                                                        id="is_on_rigID"
+                                                    >
+                                                    <option value={true}>Is on a rig</option>
+                                                    <option value={false}>NOT on a rig</option>
+                                                    </Input>
                                                 </InputGroup>
                                                 <br />
                                                 <InputGroup>

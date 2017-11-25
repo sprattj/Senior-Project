@@ -372,8 +372,8 @@ export default class InventoryDisplayRig extends React.Component {
         // TODO: SAVE TO DB, after success update data table view
         
         console.log("clicked save, item_id: " + this.props.item_id);
-        this.props.updateRigRow(this.props.item_id, this.state.manufacturer, this.state.description, this.state.is_on_rig,
-                                    this.state.brand, this.state.is_rentable, this.state.container, this.state.aad, this.state.isTandem
+        this.props.updateRigRow(this.props.item_id, this.state.manufacturer, this.state.description, this.state.brand, 
+                                this.state.is_rentable, this.state.container, this.state.aad, this.state.isTandem
                                 );
     }
  
@@ -425,25 +425,19 @@ export default class InventoryDisplayRig extends React.Component {
                                                 <br />
                                                 <InputGroup>
                                                     <InputGroupAddon >Rentable: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.is_rentableChanged}
-                                                        id              = "is_rentableID"
-                                                        defaultText     = {this.props.is_rentable ? "Yes" : "No"}
-                                                    />
+                                                     <Input type="select" 
+                                                        value={this.props.is_rentable}
+                                                        onChange={this.is_rentableChanged}
+                                                        id="is_rentableID"
+                                                    >
+                                                    <option value={true}>Is rentable</option>
+                                                    <option value={false}>Is NOT rentable</option>
+                                                    </Input>
                                                 </InputGroup>
                                             </div>
                                         </Col>
                                         <Col>
                                             <div>
-                                                <InputGroup>
-                                                    <InputGroupAddon >On a Rig: </InputGroupAddon>
-                                                    <UncontrolledTextInput                                                     
-                                                        onBlur          = {this.is_on_rigChanged}
-                                                        id              = "is_on_rigID"
-                                                        defaultText     = {this.props.is_on_rig}
-                                                    />
-                                                </InputGroup>
-                                                <br />
                                                 <InputGroup>
                                                     <InputGroupAddon >Reserve Canopy: </InputGroupAddon>
                                                     <UncontrolledTextInput
