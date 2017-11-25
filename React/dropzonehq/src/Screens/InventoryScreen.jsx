@@ -375,7 +375,7 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    updateRigRow(item_id, manufacturer, description, isOnRig, brand,
+    updateRigRow(item_id, manufacturer, description, brand,
         isRentable, container_id, aad_id, isTandem) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
@@ -386,7 +386,6 @@ export default class InventoryScreen extends React.Component {
         var requestVariables = {
             manufacturer: manufacturer,
             description: description,
-            is_on_rig: isOnRig,
             brand: brand,
             is_rentable: isRentable,
             container_id: container_id,
@@ -413,7 +412,6 @@ export default class InventoryScreen extends React.Component {
             var rig = self.all.get(item_id);
             rig.manufacturer = manufacturer;
             rig.description = description;
-            rig.is_on_rig = isOnRig;
             rig.brand = brand;
             rig.is_rentable = isRentable;
             rig.container_id = container_id;
@@ -609,11 +607,13 @@ export default class InventoryScreen extends React.Component {
         item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
-        isRented={row.isRented}
+        is_on_rig={row.is_on_rig}
         brand={row.brand}
+        is_rentable={row.is_rentable}
+        container={row.container}
+        aad={row.aad}
+        isTandem={row.isTandem}
         item_type={row.item_type}
-        main_canopy_brand={row.main_canopy_brand}
-        reserve_canopy_brand={row.reserve_canopy_brand} 
         updateRigRow={this.updateRigRow}
         />;
 
@@ -626,8 +626,14 @@ export default class InventoryScreen extends React.Component {
         item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
-        isRented={row.isRented}
+        is_on_rig={row.is_on_rig}
         brand={row.brand}
+        is_rentable={row.is_rentable}
+        rig_id={row.rig_id}
+        canopy_sn={row.canopy_sn}
+        size={row.size}
+        date_of_manufacture={row.date_of_manufacture}
+        jump_count={row.jump_count}
         item_type={row.item_type} 
         updateCanopyRow={this.updateCanopyRow}
         />;
@@ -641,8 +647,10 @@ export default class InventoryScreen extends React.Component {
         item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
-        isRented={row.isRented}
+        is_on_rig={row.is_on_rig}
         brand={row.brand}
+        is_rentable={row.is_rentable}
+        container_sn={row.container_sn}
         item_type={row.item_type} 
         updateContainerRow={this.updateContainerRow}
         />;
@@ -656,10 +664,12 @@ export default class InventoryScreen extends React.Component {
         item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
-        isRented={row.isRented}
+        is_on_rig={row.is_on_rig}
         brand={row.brand}
-        item_type={row.item_type}
-        lifespan={row.lifespan} 
+        is_rentable={row.is_rentable}
+        lifespan={row.lifespan}
+        aad_sn={row.aad_sn}
+        item_type={row.item_type} 
         updateAADRow={this.updateAADRow}
         />;    
 
