@@ -343,15 +343,10 @@ export default class InventoryDisplayCanopy extends React.Component {
     {
         // TODO: SAVE TO DB, after success update data table view
         
-        console.log("clicked save, index: " + this.props.index);
-        this.props.changeRowData(this.props.index, this.state.manufacturer, this.state.brand, 
-                                    this.state.description, this.state.is_rentable, this.state.is_on_rig,
-                                    this.state.is_available, this.state.item_type, this.state.rig_number,
-                                    this.state.aad, this.state.container, this.state.isTandem, 
-                                    this.state.canopy_on_rig, this.state.jump_count, this.date_of_manufacture,
-                                    this.state.size, this.state.canopy_sn, this.state.next_repack_date,
-                                    this.state.packed_by_employee_id, this.state.ride_count, this.container_sn,
-                                    this.state.deployment_timestamp, this.state.aad_sn, this.state.lifespan
+        console.log("clicked save, item_id: " + this.props.item_id);
+        this.props.updateCanopyRow(this.props.item_id, this.state.manufacturer, this.state.description, this.state.is_on_rig,
+                                    this.state.brand, this.state.is_rentable, this.state.rig_id, this.canopy_sn,
+                                    this.state.size, this.state.date_of_manufacture, this.jump_count
                             );
     }
  

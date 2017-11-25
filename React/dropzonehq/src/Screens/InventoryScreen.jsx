@@ -35,10 +35,17 @@ export default class InventoryScreen extends React.Component {
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
         this.getFilteredRows = this.getFilteredRows.bind(this);
+        
         this.itemSelected = this.itemSelected.bind(this);
+        this.rigSelected = this.rigSelected.bind(this);
+        this.canopySelected = this.canopySelected.bind(this);
+        this.containerSelected = this.containerSelected.bind(this);
+        this.aadSelected = this.aadSelected.bind(this);
         this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
+
         this.changeRowData = this.changeRowData.bind(this);
+
         this.displayAddView = this.displayAddView.bind(this);
         this.resetDisplay = this.resetDisplay.bind(this);
         this.updateAADRow = this.updateAADRow.bind(this);
@@ -115,21 +122,21 @@ export default class InventoryScreen extends React.Component {
         //Test Data to fill the table until we connect to the DB
         var rowData =
         [{ index: 0, item_id: 0, manufacturer: "00", description: "Red and Black Mirage", is_rentable: true, isRented: true, item_type: "container", brand: "Mirage" },
-        { index: 1, item_id: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
-        { index: 2, item_id: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
-        { index: 3, item_id: 3, manufacturer: "03", description: "Brown Navigator 190. Black and White Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
-        { index: 4, item_id: 4, manufacturer: "04", description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sam", item_type: "rig", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
-        { index: 5, item_id: 5, manufacturer: "05", description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sue", item_type: "rig", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
-        { index: 6, item_id: 6, manufacturer: "06", description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
-        { index: 7, item_id: 7, manufacturer: "07", description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
-        { index: 8, item_id: 8, manufacturer: "08", description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
+        { index: 1, item_id: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
+        { index: 2, item_id: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
+        { index: 3, item_id: 3, manufacturer: "03", description: "Brown Navigator 190. Black and White Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
+        { index: 4, item_id: 4, manufacturer: "04", description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sam", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
+        { index: 5, item_id: 5, manufacturer: "05", description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sue", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
+        { index: 6, item_id: 6, manufacturer: "06", description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
+        { index: 7, item_id: 7, manufacturer: "07", description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
+        { index: 8, item_id: 8, manufacturer: "08", description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
         { index: 9, item_id: 9, manufacturer: "09", description: "Black Main in Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 10, item_id: 10, manufacturer: "10", description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: true, isRented: true, brand: "Ralph", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
+        { index: 10, item_id: 10, manufacturer: "10", description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: true, isRented: true, brand: "Ralph", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+        { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
         { index: 12, item_id: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
         { index: 13, item_id: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
-        { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" }
-        
+        { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" },
+        { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", date: "11/24/2017" }
         ];
 
         this.getFilteredRows(rowData);
@@ -360,14 +367,6 @@ export default class InventoryScreen extends React.Component {
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
 
         var display = this.setupDisplay(row);
-/*         var display = <EditInventoryItemDisplay            //set up the display component
-            index={row.index}
-            manufacturer={row.manufacturer}
-            description={row.description}
-            isRented={row.isRented}
-            brand={row.brand}
-            type={row.item_type} 
-            changeRowData={this.changeRowData}/>; */
 
         this.displayChange(display, row.index);         
 
@@ -384,60 +383,94 @@ export default class InventoryScreen extends React.Component {
     {
         var display;
         
-        if (row.item_type === "rig") 
+        // select the type of Inventory Item Display will be shown 
+        // based on the selected item's .item_type
+        switch (row.item_type) 
         {
-            display = <InventoryDisplayRig            
-            index={row.index}
-            manufacturer={row.manufacturer}
-            description={row.description}
-            isRented={row.isRented}
-            brand={row.brand}
-            item_type={row.item_type} 
-            changeRowData={this.changeRowData}/>;
-        } 
-        else if (row.item_type === "canopy") 
-        {  
-            display = <InventoryDisplayCanopy            
-            index={row.index}
-            manufacturer={row.manufacturer}
-            description={row.description}
-            isRented={row.isRented}
-            brand={row.brand}
-            item_type={row.item_type} 
-            changeRowData={this.changeRowData}/>;
-        } 
-        else if (row.item_type === "container") 
-        { 
-            display = <InventoryDisplayContainer            
-            index={row.index}
-            manufacturer={row.manufacturer}
-            description={row.description}
-            isRented={row.isRented}
-            brand={row.brand}
-            item_type={row.item_type} 
-            changeRowData={this.changeRowData}/>;
-        }
-        else if (row.item_type === "aad")
-        {
-            display = <InventoryDisplayAAD            
-            index={row.index}
-            item_id={row.item_id}
-            manufacturer={row.manufacturer}
-            description={row.description}
-            isRented={row.isRented}
-            brand={row.brand}
-            item_type={row.item_type}
-            lifespan={row.lifespan} 
-            changeRowData={this.changeRowData}
-            />;    
-        }
-        else
-        {
-            console.log("check Item Type passed bruh, Item Type is: " + row.item_type)
+            case ("rig"):
+                display = this.rigSelected(row);
+                break;
+
+            case ("canopy"):
+                display = this.canopySelected(row);
+                break;
+
+            case ("container"):
+                display = this.containerSelected(row);
+                break;
+
+            case ("aad"):
+                display = this.aadSelected(row);
+                break;    
         }
 
         return display;
     }
+
+    rigSelected(row)
+    {
+        var display = <InventoryDisplayRig            
+        index={row.index}
+        manufacturer={row.manufacturer}
+        description={row.description}
+        isRented={row.isRented}
+        brand={row.brand}
+        item_type={row.item_type}
+        main_canopy_brand={row.main_canopy_brand}
+        reserve_canopy_brand={row.reserve_canopy_brand} 
+        updateRigRow={this.updateRigRow}
+        />;
+
+        return display;
+    }
+
+    canopySelected(row)
+    {
+        var display = <InventoryDisplayCanopy            
+        index={row.index}
+        manufacturer={row.manufacturer}
+        description={row.description}
+        isRented={row.isRented}
+        brand={row.brand}
+        item_type={row.item_type} 
+        updateCanopyRow={this.updateCanopyRow}
+        />;
+
+        return display;
+    }
+
+    containerSelected(row)
+    {
+        var display = <InventoryDisplayContainer            
+        index={row.index}
+        manufacturer={row.manufacturer}
+        description={row.description}
+        isRented={row.isRented}
+        brand={row.brand}
+        item_type={row.item_type} 
+        updateContainerRow={this.updateContainerRow}
+        />;
+
+        return display;
+    }
+
+    aadSelected(row)
+    {
+        var display = <InventoryDisplayAAD            
+        index={row.index}
+        item_id={row.item_id}
+        manufacturer={row.manufacturer}
+        description={row.description}
+        isRented={row.isRented}
+        brand={row.brand}
+        item_type={row.item_type}
+        lifespan={row.lifespan} 
+        updateAADRow={this.updateAADRow}
+        />;    
+
+        return display;
+    }
+
 
     // calls on "ADD" btn click to change right side view to empty field values by default
     displayAddView()
