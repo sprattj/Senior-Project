@@ -379,109 +379,95 @@ export default class InventoryDisplayRig extends React.Component {
  
     render() {
         return (
-            <div>
-                <Row>
-                    <Col>
-                        <ItemDisplay headerText="Inventory Item Details"
-                            statsToDisplay={
-                                <div>
-                                    <Row>
-                                        <Col>
-                                            <div>
-                                                <InputGroup>
-                                                    <InputGroupAddon > Manufacturer: </InputGroupAddon>
-                                                    {/* <Input id="editInventoryItem" type='text' value={this.props.manufacturer} onChange={this.manufacturerChanged}  />  */}
-                                                    <UncontrolledTextInput
-                                                        // inputProps      = {{className: 'inputTxtBoxes'}}
-                                                        onBlur          = {this.manufacturerChanged}
-                                                        id              = "manufacturerID"
-                                                        defaultText     = {this.props.manufacturer}
-                                                       // newTextValue        = {this.manufacturerChanged}
-                                                       // changeIndicator = {this.props.manufacturer}
-                                                    />
-                                                </InputGroup>
-                                                <br />
-                                                <InputGroup>
-                                                    <InputGroupAddon >Brand: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.brandChanged}
-                                                        id              = "brandID"
-                                                        defaultText     = {this.props.brand}
-                                                    />
-                                                </InputGroup>
-                                                
-                                            </div>
-                                        </Col>
-                                        <Col>
-                                            <div>
-                                                <InputGroup>
-                                                    <InputGroupAddon >Description: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.descriptionChanged}
-                                                        id              = "descriptionID"
-                                                        defaultText     = {this.props.description}
-                                                    />
-                                                </InputGroup>
-                                                <br />
-                                                <InputGroup>
-                                                    <InputGroupAddon >Rentable: </InputGroupAddon>
-                                                     <Input type="select" 
-                                                        value={this.props.is_rentable}
-                                                        onChange={this.is_rentableChanged}
-                                                        id="is_rentableID"
-                                                    >
-                                                    <option value={true}>Is rentable</option>
-                                                    <option value={false}>Is NOT rentable</option>
-                                                    </Input>
-                                                </InputGroup>
-                                            </div>
-                                        </Col>
-                                        <Col>
-                                            <div>
-                                                <InputGroup>
-                                                    <InputGroupAddon >Reserve Canopy: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.reserve_canopy_brandChanged}
-                                                        id              = "item_typeID"
-                                                        defaultText     = {this.props.reserve_canopy_brand}
-                                                    />
-                                                </InputGroup>
-                                                
-                                            </div>
-                                        </Col>
-                                        <Col>
-                                            <div>
-                                                <InputGroup>
-                                                    <InputGroupAddon >Item Type: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.item_typeChanged}
-                                                        id              = "item_typeID"
-                                                        defaultText     = {this.props.item_type}
-                                                    />
-                                                </InputGroup>
-                                                <br />
-                                                <InputGroup>
-                                                    <InputGroupAddon >Main Canopy: </InputGroupAddon>
-                                                    <UncontrolledTextInput
-                                                        onBlur          = {this.main_canopy_brandChanged}
-                                                        id              = "main_canopy_brandID"
-                                                        defaultText     = {this.props.main_canopy_brand}
-                                                    />
-                                                </InputGroup>
-                                                
-                                            </div>
-                                        </Col>
- 
-                                    </Row>
-                                </div>
-                            } 
-                            footerText = {
-                                <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} />
-                            }
-                        />
-                    </Col>
-                </Row>
-            </div>
+
+                <ItemDisplay headerText="Inventory Item Details"
+                    statsToDisplay={
+                        <Row>
+                            <Col>
+                            <br />
+                                <InputGroup>
+                                    <InputGroupAddon > Manufacturer: </InputGroupAddon>
+                                    {/* <Input id="editInventoryItem" type='text' value={this.props.manufacturer} onChange={this.manufacturerChanged}  />  */}
+                                    <UncontrolledTextInput
+                                        // inputProps      = {{className: 'inputTxtBoxes'}}
+                                        onBlur          = {this.manufacturerChanged}
+                                        id              = "manufacturerID"
+                                        defaultText     = {this.props.manufacturer}
+                                        // newTextValue        = {this.manufacturerChanged}
+                                        // changeIndicator = {this.props.manufacturer}
+                                    />
+                                </InputGroup>
+                                <br />
+                                <InputGroup>
+                                    <InputGroupAddon >Brand: </InputGroupAddon>
+                                    <UncontrolledTextInput
+                                        onBlur          = {this.brandChanged}
+                                        id              = "brandID"
+                                        defaultText     = {this.props.brand}
+                                    />
+                                </InputGroup>
+
+                                <br />
+                                <InputGroup>
+                                    <InputGroupAddon >Item Type: </InputGroupAddon>
+                                    <UncontrolledTextInput
+                                        onBlur          = {this.item_typeChanged}
+                                        id              = "item_typeID"
+                                        defaultText     = {this.props.item_type}
+                                    />
+                                </InputGroup>
+                                <br />
+                                <InputGroup>
+                                    <InputGroupAddon >Main Canopy: </InputGroupAddon>
+                                    <UncontrolledTextInput
+                                        onBlur          = {this.main_canopy_brandChanged}
+                                        id              = "main_canopy_brandID"
+                                        defaultText     = {this.props.main_canopy_brand}
+                                    />
+                                </InputGroup>
+                                <br />
+                            </Col>
+                            <Col>
+                            <br />
+                                <InputGroup>
+                                    <InputGroupAddon >Description: </InputGroupAddon>
+                                    <UncontrolledTextInput
+                                        onBlur          = {this.descriptionChanged}
+                                        id              = "descriptionID"
+                                        defaultText     = {this.props.description}
+                                    />
+                                </InputGroup>
+                                <br />
+                                <InputGroup>
+                                    <InputGroupAddon >Rentable: </InputGroupAddon>
+                                        <Input type="select" 
+                                        value={this.props.is_rentable}
+                                        onChange={this.is_rentableChanged}
+                                        id="is_rentableID"
+                                    >
+                                    <option value={true}>Is rentable</option>
+                                    <option value={false}>Is NOT rentable</option>
+                                    </Input>
+                                </InputGroup>
+    
+                                <br />
+                                <InputGroup>
+                                    <InputGroupAddon >Reserve Canopy: </InputGroupAddon>
+                                    <UncontrolledTextInput
+                                        onBlur          = {this.reserve_canopy_brandChanged}
+                                        id              = "item_typeID"
+                                        defaultText     = {this.props.reserve_canopy_brand}
+                                    />
+                                </InputGroup>
+
+                                <br />    
+                            </Col> 
+                        </Row>
+                    } 
+                    footerText = {
+                        <SaveItemDetailsBtn buttonText={"SAVE"} itemDetailsFields={this.props} onClick={this.save} />
+                    }
+                />
         );
     }
 };
