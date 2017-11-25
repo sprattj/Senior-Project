@@ -35,7 +35,7 @@ export default class InventoryScreen extends React.Component {
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
         this.getFilteredRows = this.getFilteredRows.bind(this);
-        
+
         this.itemSelected = this.itemSelected.bind(this);
         this.rigSelected = this.rigSelected.bind(this);
         this.canopySelected = this.canopySelected.bind(this);
@@ -50,7 +50,7 @@ export default class InventoryScreen extends React.Component {
         this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
         this.updateContainerRow = this.updateContainerRow.bind(this);
         this.updateRigRow = this.updateRigRow.bind(this);
-        
+
 
         this.all = new Map();
         this.rigs = new Map();
@@ -118,23 +118,23 @@ export default class InventoryScreen extends React.Component {
 
         //Test Data to fill the table until we connect to the DB
         var rowData =
-        [{ index: 0, item_id: 0, manufacturer: "00", description: "Red and Black Mirage", is_rentable: true, isRented: true, item_type: "container", brand: "Mirage" },
-        { index: 1, item_id: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
-        { index: 2, item_id: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
-        { index: 3, item_id: 3, manufacturer: "03", description: "Brown Navigator 190. Black and White Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
-        { index: 4, item_id: 4, manufacturer: "04", description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sam", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
-        { index: 5, item_id: 5, manufacturer: "05", description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sue", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
-        { index: 6, item_id: 6, manufacturer: "06", description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
-        { index: 7, item_id: 7, manufacturer: "07", description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
-        { index: 8, item_id: 8, manufacturer: "08", description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
-        { index: 9, item_id: 9, manufacturer: "09", description: "Black Main in Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 10, item_id: 10, manufacturer: "10", description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: true, isRented: true, brand: "Ralph", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
-        { index: 12, item_id: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
-        { index: 13, item_id: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
-        { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" },
-        { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", date: "11/24/2017" }
-        ];
+            [{ index: 0, item_id: 0, manufacturer: "00", description: "Red and Black Mirage", is_rentable: true, isRented: true, item_type: "container", brand: "Mirage" },
+            { index: 1, item_id: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
+            { index: 2, item_id: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
+            { index: 3, item_id: 3, manufacturer: "03", description: "Brown Navigator 190. Black and White Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
+            { index: 4, item_id: 4, manufacturer: "04", description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sam", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
+            { index: 5, item_id: 5, manufacturer: "05", description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sue", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
+            { index: 6, item_id: 6, manufacturer: "06", description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
+            { index: 7, item_id: 7, manufacturer: "07", description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
+            { index: 8, item_id: 8, manufacturer: "08", description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
+            { index: 9, item_id: 9, manufacturer: "09", description: "Black Main in Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+            { index: 10, item_id: 10, manufacturer: "10", description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: true, isRented: true, brand: "Ralph", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+            { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
+            { index: 12, item_id: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
+            { index: 13, item_id: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
+            { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" },
+            { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", date: "11/24/2017" }
+            ];
 
         this.getFilteredRows(rowData);
 
@@ -147,7 +147,7 @@ export default class InventoryScreen extends React.Component {
         };
     }
 
-     //When this RentalTable component loads on the page, fetch the rows
+    //When this RentalTable component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
         this.fetchRows();
@@ -186,7 +186,7 @@ export default class InventoryScreen extends React.Component {
             })//when the call succeeds
             .then(function (rowData) {
                 self.getFilteredRows(rowData);
-                self.setState( {
+                self.setState({
                     filter: "all",
                     columns: self.columnsAll,
                     rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
@@ -199,24 +199,16 @@ export default class InventoryScreen extends React.Component {
             });;
     }
 
-    updateAADRow(item_id, manufacturer, description, isOnRig, brand,
-        isRentable, lifespan, aadSerialNum) {
+    updateAADRow(itemInfo, AADInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + "/AADs/" + item_id;
+        var url = rootURL + "/AADs/" + itemInfo.item_id;
 
         var self = this;
-        var requestVariables = {
-            manufacturer: manufacturer,
-            description: description,
-            is_on_rig: isOnRig,
-            brand: brand,
-            is_rentable: isRentable,
-            lifespan: lifespan,
-            serial_number: aadSerialNum,
-            pin: this.state.pin
-        };
+        var requestVariables = itemInfo;
+        requestVariables.lifespan = AADInfo.lifespan;
+        requestVariables.serial_number = AADInfo.aad_sn;
 
         fetch(url, {
             method: "PATCH",
@@ -232,17 +224,17 @@ export default class InventoryScreen extends React.Component {
             }
             return response.json();
         }).then(function (responseData) {
-            var AAD = self.all.get(item_id);
-            AAD.manufacturer = manufacturer;
-            AAD.description = description;
-            AAD.is_on_rig = isOnRig;
-            AAD.brand = brand;
-            AAD.is_rentable = isRentable;
-            AAD.lifespan = lifespan;
-            AAD.aad_sn = aadSerialNum;
+            var AAD = self.all.get(itemInfo.item_id);
+            AAD.manufacturer = itemInfo.manufacturer;
+            AAD.description = itemInfo.description;
+            AAD.is_on_rig = itemInfo.is_on_rig;
+            AAD.brand = itemInfo.brand;
+            AAD.is_rentable = itemInfo.is_rentable;
+            AAD.lifespan = AADInfo.lifespan;
+            AAD.aad_sn = AADInfo.aad_sn;
 
-            self.all.set(item_id, AAD);
-            self.aads.set(item_id, AAD);
+            self.all.set(itemInfo.item_id, AAD);
+            self.aads.set(itemInfo.item_id, AAD);
 
             self.setState({
                 rows: Array.from(self.all.values())
@@ -316,28 +308,19 @@ export default class InventoryScreen extends React.Component {
 
     }
 
-    updateCanopyRow(item_id, manufacturer, description, isOnRig, brand,
-        isRentable, rig_id, serial_number, size, date_of_manufacture,
-        jump_count) {
+    updateCanopyRow(itemInfo, canopyInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + "/canopies/" + item_id;
+        var url = rootURL + "/canopies/" + itemInfo.item_id;
 
         var self = this;
-        var requestVariables = {
-            manufacturer: manufacturer,
-            description: description,
-            is_on_rig: isOnRig,
-            brand: brand,
-            is_rentable: isRentable,
-            rig_id: rig_id,
-            serial_number: serial_number,
-            size: size,
-            date_of_manufacture: date_of_manufacture,
-            jump_count: jump_count,
-            pin: this.state.pin
-        };
+        var requestVariables = itemInfo;
+        requestVariables.pin = this.state.pin;
+        requestVariables.rig_id = canopyInfo.rig_num;
+        requestVariables.serial_number = canopyInfo.canopy_sn;
+        requestVariables.size = canopyInfo.size;
+        requestVariables.jump_count = canopyInfo.jump_count;
 
         fetch(url, {
             method: "PATCH",
@@ -353,19 +336,18 @@ export default class InventoryScreen extends React.Component {
             }
             return response.json();
         }).then(function (responseData) {
-            var canopy = self.all.get(item_id);
-            canopy.manufacturer = manufacturer;
-            canopy.description = description;
-            canopy.is_on_rig = isOnRig;
-            canopy.brand = brand;
-            canopy.is_rentable = isRentable;
-            canopy.serial_number = serial_number;
-            canopy.size = size;
-            canopy.date_of_manufacture = date_of_manufacture;
-            canopy.jump_count = jump_count;
+            var canopy = self.all.get(itemInfo.item_id);
+            canopy.manufacturer = itemInfo.manufacturer;
+            canopy.description = itemInfo.description;
+            canopy.is_on_rig = itemInfo.is_on_rig;
+            canopy.brand = itemInfo.brand;
+            canopy.is_rentable = itemInfo.is_rentable;
+            canopy.serial_number = canopyInfo.canopy_sn;
+            canopy.size = canopyInfo.size;
+            canopy.jump_count = canopyInfo.jump_count;
 
-            self.all.set(item_id, canopy);
-            self.canopies.set(item_id, canopy);
+            self.all.set(itemInfo.item_id, canopy);
+            self.canopies.set(itemInfo.item_id, canopy);
 
             self.setState({
                 rows: Array.from(self.all.values())
@@ -375,24 +357,18 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    updateRigRow(item_id, manufacturer, description, brand,
-        isRentable, container_id, aad_id, isTandem) {
+    updateRigRow(itemInfo, rigInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + "/rigs/" + item_id;
+        var url = rootURL + "/rigs/" + itemInfo.item_id;
 
         var self = this;
-        var requestVariables = {
-            manufacturer: manufacturer,
-            description: description,
-            brand: brand,
-            is_rentable: isRentable,
-            container_id: container_id,
-            aad_id: aad_id,
-            isTandem: isTandem,
-            pin: this.state.pin
-        };
+        var requestVariables = itemInfo;
+        requestVariables.aad_id = rigInfo.aad;
+        requestVariables.container_id = rigInfo.container;
+        requestVariables.isTandem = rigInfo.isTandem;
+        requestVariables.pin = this.state.pin;
 
         fetch(url, {
             method: "PATCH",
@@ -409,17 +385,17 @@ export default class InventoryScreen extends React.Component {
             return response.json();
         }).then(function (responseData) {
 
-            var rig = self.all.get(item_id);
-            rig.manufacturer = manufacturer;
-            rig.description = description;
-            rig.brand = brand;
-            rig.is_rentable = isRentable;
-            rig.container_id = container_id;
-            rig.aad_id = aad_id;
-            rig.isTandem = isTandem;
+            var rig = self.all.get(itemInfo.item_id);
+            rig.manufacturer = itemInfo.manufacturer;
+            rig.description = itemInfo.description;
+            rig.brand = itemInfo.brand;
+            rig.is_rentable = itemInfo.isRentable;
+            rig.container_id = rigInfo.container;
+            rig.aad_id = rigInfo.aad;
+            rig.isTandem = rigInfo.isTandem;
 
-            self.all.set(item_id, rig);
-            self.rigs.set(item_id, rig);
+            self.all.set(itemInfo.item_id, rig);
+            self.rigs.set(itemInfo.item_id, rig);
 
             self.setState({
                 rows: Array.from(self.all.values())
@@ -429,23 +405,16 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    updateContainerRow(item_id, manufacturer, description, isOnRig, brand,
-        isRentable, serial_number) {
+    updateContainerRow(itemInfo, containerInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + "/containers/" + item_id;
+        var url = rootURL + "/containers/" + itemInfo.item_id;
 
         var self = this;
-        var requestVariables = {
-            manufacturer: manufacturer,
-            description: description,
-            is_on_rig: isOnRig,
-            brand: brand,
-            is_rentable: isRentable,
-            serial_number: serial_number,
-            pin: this.state.pin
-        };
+        var requestVariables = itemInfo;
+        requestVariables.serial_number = containerInfo.container_sn;
+        requestVariables.pin = this.state.pin;
 
         fetch(url, {
             method: "PATCH",
@@ -461,18 +430,18 @@ export default class InventoryScreen extends React.Component {
             }
             return response.json();
         }).then(function (responseData) {
-            var container = self.all.get(item_id);
-            container.manufacturer = manufacturer;
-            container.description = description;
-            container.is_on_rig = isOnRig;
-            container.brand = brand;
-            container.is_rentable = isRentable;
-            container.container_sn = serial_number;
+            var container = self.all.get(itemInfo.item_id);
+            container.manufacturer = itemInfo.manufacturer;
+            container.description = itemInfo.description;
+            container.is_on_rig = itemInfo.is_on_rig;
+            container.brand = itemInfo.brand;
+            container.is_rentable = itemInfo.is_rentable;
+            container.container_sn = containerInfo.container_sn;
 
-            self.all.set(item_id, container);
-            self.containers.set(item_id, container);
+            self.all.set(itemInfo.item_id, container);
+            self.containers.set(itemInfo.item_id, container);
             self.setState({
-                rows: Array.from(self.all.values())
+                rows: Array.from(self.containers.values())
             })
         }).catch(function (error) {
             toast.error(error + "\n" + url);
@@ -576,104 +545,84 @@ export default class InventoryScreen extends React.Component {
     // set up the display component, based on Item Type
     setupDisplay(row) {
         var display;
-        
+
         // select the type of Inventory Item Display will be shown 
         // based on the selected item's .item_type
-        switch (row.item_type) 
-        {
+        var itemInfo = {
+            item_id: row.item_id,
+            item_type: row.item_type,
+            manufacturer: row.manufacturer,
+            description: row.description,
+            is_on_rig: row.is_on_rig,
+            brand: row.brand,
+            is_rentable: row.is_rentable
+        };
+        switch (row.item_type) {
             case ("rig"):
-                display = this.rigSelected(row);
+                display = this.rigSelected(row, itemInfo);
                 break;
-
             case ("canopy"):
-                display = this.canopySelected(row);
+                display = this.canopySelected(row, itemInfo);
                 break;
-
             case ("container"):
-                display = this.containerSelected(row);
+                display = this.containerSelected(row, itemInfo);
                 break;
-
             case ("aad"):
-                display = this.aadSelected(row);
-                break;    
+                display = this.aadSelected(row, itemInfo);
+                break;
         }
-
         return display;
     }
 
-    rigSelected(row)
-    {
-        var display = <InventoryDisplayRig            
-        item_id={row.item_id}
-        manufacturer={row.manufacturer}
-        description={row.description}
-        is_on_rig={row.is_on_rig}
-        brand={row.brand}
-        is_rentable={row.is_rentable}
-        container={row.container}
-        aad={row.aad}
-        isTandem={row.isTandem}
-        item_type={row.item_type}
-        updateRigRow={this.updateRigRow}
+    rigSelected(row, itemInfo) {
+        var rigInfo = {
+            container: row.container,
+            aad: row.aad,
+            isTandem: row.isTandem
+        }
+        return <InventoryDisplayRig
+            itemInfo={itemInfo}
+            rigInfo={rigInfo}
+            updateRigRow={this.updateRigRow}
         />;
-
-        return display;
     }
 
-    canopySelected(row)
-    {
-        var display = <InventoryDisplayCanopy            
-        item_id={row.item_id}
-        manufacturer={row.manufacturer}
-        description={row.description}
-        is_on_rig={row.is_on_rig}
-        brand={row.brand}
-        is_rentable={row.is_rentable}
-        rig_id={row.rig_id}
-        canopy_sn={row.canopy_sn}
-        size={row.size}
-        date_of_manufacture={row.date_of_manufacture}
-        jump_count={row.jump_count}
-        item_type={row.item_type} 
-        updateCanopyRow={this.updateCanopyRow}
+    canopySelected(row, itemInfo) {
+        var canopyInfo = {
+            rig_id: row.rig_id,
+            canopy_sn: row.canopy_sn,
+            size: row.size,
+            date_of_manufacture: row.date_of_manufacture,
+            jump_count: row.jump_count
+        }
+        return <InventoryDisplayCanopy
+            itemInfo={itemInfo}
+            canopyInfo={canopyInfo}
+            updateCanopyRow={this.updateCanopyRow}
         />;
-
-        return display;
     }
 
-    containerSelected(row)
-    {
-        var display = <InventoryDisplayContainer            
-        item_id={row.item_id}
-        manufacturer={row.manufacturer}
-        description={row.description}
-        is_on_rig={row.is_on_rig}
-        brand={row.brand}
-        is_rentable={row.is_rentable}
-        container_sn={row.container_sn}
-        item_type={row.item_type} 
-        updateContainerRow={this.updateContainerRow}
+    containerSelected(row, itemInfo) {
+        var containerInfo = {
+            container_sn: row.container_sn
+        }
+        return <InventoryDisplayContainer
+            itemInfo={itemInfo}
+            containerInfo={containerInfo}
+            updateContainerRow={this.updateContainerRow}
         />;
-
-        return display;
     }
 
-    aadSelected(row)
-    {
-        var display = <InventoryDisplayAAD            
-        item_id={row.item_id}
-        manufacturer={row.manufacturer}
-        description={row.description}
-        is_on_rig={row.is_on_rig}
-        brand={row.brand}
-        is_rentable={row.is_rentable}
-        lifespan={row.lifespan}
-        aad_sn={row.aad_sn}
-        item_type={row.item_type} 
-        updateAADRow={this.updateAADRow}
-        />;    
-
-        return display;
+    aadSelected(row, itemInfo) {
+        var AADInfo = {
+            aad_sn: row.aad_sn,
+            lifespan: row.lifespan
+        }
+        return <InventoryDisplayAAD
+            itemInfo={itemInfo}
+            AADInfo={AADInfo}
+            updateAADRow={this.updateAADRow}
+        />;
     }
 
 
