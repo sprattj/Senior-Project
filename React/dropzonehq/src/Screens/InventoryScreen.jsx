@@ -606,7 +606,7 @@ export default class InventoryScreen extends React.Component {
     rigSelected(row)
     {
         var display = <InventoryDisplayRig            
-        index={row.index}
+        item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
         isRented={row.isRented}
@@ -623,7 +623,7 @@ export default class InventoryScreen extends React.Component {
     canopySelected(row)
     {
         var display = <InventoryDisplayCanopy            
-        index={row.index}
+        item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
         isRented={row.isRented}
@@ -638,7 +638,7 @@ export default class InventoryScreen extends React.Component {
     containerSelected(row)
     {
         var display = <InventoryDisplayContainer            
-        index={row.index}
+        item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
         isRented={row.isRented}
@@ -653,7 +653,6 @@ export default class InventoryScreen extends React.Component {
     aadSelected(row)
     {
         var display = <InventoryDisplayAAD            
-        index={row.index}
         item_id={row.item_id}
         manufacturer={row.manufacturer}
         description={row.description}
