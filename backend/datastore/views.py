@@ -47,12 +47,22 @@ class AADDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
         item = Items.objects.get(item_id=item_id)
+        aad = AutomaticActivationDevices.objects.get(item_id=item_id)
 
-        item.partial_update(request, *args, **kwargs)
-        self.partial_update(request, *args, **kwargs)
+        #item.partial_update(request, *args, **kwargs)
+        #self.partial_update(request, *args, **kwargs)
 
-        data = {'success': True}
-        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+        serializer = ItemSerializer(item, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        new_instance = serializer.save()
+
+        serializer = AADSerializer(aad, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        new_instance = serializer.save()
+        return Response(serializer.data)
+
+        #data = {'success': True}
+        #return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
 class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
@@ -93,12 +103,19 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
         item = Items.objects.get(item_id=item_id)
+        canopy = Canopies.objects.get(item_id=item_id)
 
-        item.partial_update(request, *args, **kwargs)
-        self.partial_update(request, *args, **kwargs)
+        serializer = CanopySerializer(canopy, data=request.data, partial=True)
+        serializer = ItemSerializer(item, data=request.data, partial=True)
 
-        data = {'success': True}
-        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+        new_instance = serializer.save()
+        return Response(serializer.data)
+
+        #item.partial_update(request, *args, **kwargs)
+        #self.partial_update(request, *args, **kwargs)
+
+        #data = {'success': True}
+        #return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
 class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
