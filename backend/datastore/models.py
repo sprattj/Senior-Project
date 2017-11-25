@@ -180,17 +180,6 @@ class EmployeeRoles(models.Model):
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
-
-class EmployeeRolesPermissions(models.Model):
-    employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
-    permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
-
-    class Meta:
-        managed = True
-        db_table = 'EmployeeRolesPermissions'
-        unique_together = (('employeeRole', 'permission'),)
-        app_label = 'dropZoneHQ'
-
 class Permissions(models.Model):
     permission = models.CharField(max_length=45)
 
@@ -205,6 +194,16 @@ class Permissions(models.Model):
     class Meta:
         managed = True
         db_table = 'permissions'
+        app_label = 'dropZoneHQ'
+
+class EmployeeRolesPermissions(models.Model):
+    employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
+    permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        managed = True
+        db_table = 'EmployeeRolesPermissions'
+        unique_together = (('employeeRole', 'permission'),)
         app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone

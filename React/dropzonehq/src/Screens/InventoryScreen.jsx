@@ -43,18 +43,15 @@ export default class InventoryScreen extends React.Component {
         this.aadSelected = this.aadSelected.bind(this);
         this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
-
-        this.changeRowData = this.changeRowData.bind(this);
-
         this.displayAddView = this.displayAddView.bind(this);
         this.resetDisplay = this.resetDisplay.bind(this);
         this.updateAADRow = this.updateAADRow.bind(this);
+        this.updateCanopyRow = this.updateCanopyRow.bind(this);
+        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
+        this.updateContainerRow = this.updateContainerRow.bind(this);
+        this.updateRigRow = this.updateRigRow.bind(this);
+        
 
-/*         this.all = [];
-        this.rigs = [];
-        this.canopies = [];
-        this.containers = [];
-        this.aads = []; */
         this.all = new Map();
         this.rigs = new Map();
         this.canopies = new Map();
@@ -146,111 +143,367 @@ export default class InventoryScreen extends React.Component {
             columns: this.columnsAll,
             rows: Array.from(this.all.values()), // rows: mapName.values() instead of rows: rowData
             index: 0,
-            currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
+            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
         };
-
-        
     }
 
-    changeRowData(index, item_id, manufacturer, description, isOnRig, brand,
-                    isRentable, lifespan, itemType, aadSerialNum ) 
-    {
+     //When this RentalTable component loads on the page, fetch the rows
+    //from the database and display them.
+    componentDidMount() {
+        this.fetchRows();
+    }
 
-        console.log("index: " + index + " manufacturer: " + manufacturer);
-        /* console.log("in change, old values => index: " + index + " \n itemNum: " + this.state.rows[index].manufacturer + " \n brand: " 
-                                                        + this.state.rows[index].brand + " \n itemdescription: " + this.state.rows[index].description 
-                                                        + " \n itemType: " + this.state.rows[index].item_type); */
+    //Fetch the items from the database that are 
+    //rentals and update the RentalTable's state to display them.
+    fetchRows() {
 
-        // grab the current rows
-        // var newRows = Array.from(this.all.values());
-        // console.log("newRows: " + newRows);
+        //make sure we have the packages required to
+        //make a fetch call (maybe not needed)
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
 
-        // update the copy's row's fields
+        var url = rootURL + this.URLsection;
 
-/*         newRows[index].manufacturer = manufacturer;
-        newRows[index].brand = brand;
-        newRows[index].description = description;
-        newRows[index].item_type = itemType; */
+        //save 'this' so that we can call functions
+        //inside the fetch() callback
+        var self = this;
 
-        // update the copy's row's fields for itemType == AAD 
-        //  if (itemType === 'aad')
-        this.updateAADRow(item_id, manufacturer, description, isOnRig, brand,
-                        isRentable, lifespan, itemType, aadSerialNum);
-
-        // update the state with the new rows so it rerenders
-        this.setState({
-            rows: Array.from(this.all.values())
-        })             
-
-/*         this.state.rows[index].manufacturer = itemNum;
-        this.state.rows[index].brand = brand;
-        this.state.rows[index].description = itemDesc;
-        this.state.rows[index].item_type = itemType;  
-
-         this.setState({
-             rows,
-             rows[index].manufacturer: itemNum,
-            rows[index].brand: brand,
-            rows[index].description: itemDesc,
-            rows[index].item_type: itemType  
-        });  
-        */
-
-       /*  console.log("new values => index: " + index + " \n itemNum: " + this.state.rows[index].manufacturer + " \n brand: " 
-                                        + this.state.rows[index].brand + " \n itemdescription: " + this.state.rows[index].description 
-                                        + " \n itemType: " + this.state.rows[index].item_type); */
+        //fetch from the specified URL, to GET the data
+        //we need. Enable CORS so we can access from localhost.
+        fetch(url, {
+            method: "GET",
+            mode: 'CORS'
+        })//when we get a response back
+            .then(function (response) {
+                //check to see if the call we made failed
+                //if it failed, throw an error and stop.
+                if (response.status >= 400) {
+                    throw new Error("Bad response from server");
+                }
+                //if it didn't fail, process the data we got back
+                //into JSON format
+                return response.json();
+            })//when the call succeeds
+            .then(function (rowData) {
+                self.getFilteredRows(rowData);
+                self.setState( {
+                    filter: "all",
+                    columns: self.columnsAll,
+                    rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
+                    index: 0,
+                    currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+                });
+            })//catch any errors and display them as a toast
+            .catch(function (error) {
+                toast.error(error + "\n" + url);
+            });;
     }
 
     updateAADRow(item_id, manufacturer, description, isOnRig, brand,
-                    isRentable, lifespan, itemType, aadSerialNum)
-    {
-        var editAAD = this.all.get(item_id);
-        editAAD.manufacturer = manufacturer;
-        editAAD.description = description;
-        editAAD.is_on_rig = isOnRig;    
-        editAAD.brand = brand;
-        editAAD.item_type = itemType;
-        editAAD.is_rentable = isRentable;
-        editAAD.lifespan = lifespan;
-        editAAD.aad_sn = aadSerialNum;
+        isRentable, lifespan, aadSerialNum) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
 
-        this.all.set(item_id, editAAD);
-		this.aads.set(item_id, editAAD);
-		
-/*         this.setState({
-            rows: Array.from(this.all.values())
-        })   */
+        var url = rootURL + "/AADs/" + item_id;
+
+        var self = this;
+        var requestVariables = {
+            manufacturer: manufacturer,
+            description: description,
+            is_on_rig: isOnRig,
+            brand: brand,
+            is_rentable: isRentable,
+            lifespan: lifespan,
+            serial_number: aadSerialNum,
+            pin: this.state.pin
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var AAD = self.all.get(item_id);
+            AAD.manufacturer = manufacturer;
+            AAD.description = description;
+            AAD.is_on_rig = isOnRig;
+            AAD.brand = brand;
+            AAD.is_rentable = isRentable;
+            AAD.lifespan = lifespan;
+            AAD.aad_sn = aadSerialNum;
+
+            self.all.set(item_id, AAD);
+            self.aads.set(item_id, AAD);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
     }
 
-    getFilteredRows(rowData) 
-    {
+    updateReserveCanopyRow(item_id, manufacturer, description, isOnRig, brand,
+        isRentable, rig_id, serial_number, size, date_of_manufacture,
+        jump_count, last_repack_date, next_repack_date, packed_by_employee_id, ride_count) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/canopies/reserve/" + item_id;
+
+        var self = this;
+        var requestVariables = {
+            manufacturer: manufacturer,
+            description: description,
+            is_on_rig: isOnRig,
+            brand: brand,
+            is_rentable: isRentable,
+            rig_id: rig_id,
+            serial_number: serial_number,
+            size: size,
+            date_of_manufacture: date_of_manufacture,
+            jump_count: jump_count,
+            last_repack_date: last_repack_date,
+            next_repack_date: next_repack_date,
+            packed_by_employee_id: packed_by_employee_id,
+            ride_count: ride_count,
+            pin: this.state.pin
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing reserve canopy failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var reserveCanopy = self.all.get(item_id);
+            reserveCanopy.manufacturer = manufacturer;
+            reserveCanopy.description = description;
+            reserveCanopy.is_on_rig = isOnRig;
+            reserveCanopy.brand = brand;
+            reserveCanopy.is_rentable = isRentable;
+            reserveCanopy.serial_number = serial_number;
+            reserveCanopy.size = size;
+            reserveCanopy.date_of_manufacture = date_of_manufacture;
+            reserveCanopy.jump_count = jump_count;
+
+            self.all.set(item_id, reserveCanopy);
+            self.canopies.set(item_id, reserveCanopy);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+
+    }
+
+    updateCanopyRow(item_id, manufacturer, description, isOnRig, brand,
+        isRentable, rig_id, serial_number, size, date_of_manufacture,
+        jump_count) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/canopies/" + item_id;
+
+        var self = this;
+        var requestVariables = {
+            manufacturer: manufacturer,
+            description: description,
+            is_on_rig: isOnRig,
+            brand: brand,
+            is_rentable: isRentable,
+            rig_id: rig_id,
+            serial_number: serial_number,
+            size: size,
+            date_of_manufacture: date_of_manufacture,
+            jump_count: jump_count,
+            pin: this.state.pin
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var canopy = self.all.get(item_id);
+            canopy.manufacturer = manufacturer;
+            canopy.description = description;
+            canopy.is_on_rig = isOnRig;
+            canopy.brand = brand;
+            canopy.is_rentable = isRentable;
+            canopy.serial_number = serial_number;
+            canopy.size = size;
+            canopy.date_of_manufacture = date_of_manufacture;
+            canopy.jump_count = jump_count;
+
+            self.all.set(item_id, canopy);
+            self.canopies.set(item_id, canopy);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    updateRigRow(item_id, manufacturer, description, isOnRig, brand,
+        isRentable, container_id, aad_id, isTandem) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/rigs/" + item_id;
+
+        var self = this;
+        var requestVariables = {
+            manufacturer: manufacturer,
+            description: description,
+            is_on_rig: isOnRig,
+            brand: brand,
+            is_rentable: isRentable,
+            container_id: container_id,
+            aad_id: aad_id,
+            isTandem: isTandem,
+            pin: this.state.pin
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing rig failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+
+            var rig = self.all.get(item_id);
+            rig.manufacturer = manufacturer;
+            rig.description = description;
+            rig.is_on_rig = isOnRig;
+            rig.brand = brand;
+            rig.is_rentable = isRentable;
+            rig.container_id = container_id;
+            rig.aad_id = aad_id;
+            rig.isTandem = isTandem;
+
+            self.all.set(item_id, rig);
+            self.rigs.set(item_id, rig);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    updateContainerRow(item_id, manufacturer, description, isOnRig, brand,
+        isRentable, serial_number) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/containers/" + item_id;
+
+        var self = this;
+        var requestVariables = {
+            manufacturer: manufacturer,
+            description: description,
+            is_on_rig: isOnRig,
+            brand: brand,
+            is_rentable: isRentable,
+            serial_number: serial_number,
+            pin: this.state.pin
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing container failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var container = self.all.get(item_id);
+            container.manufacturer = manufacturer;
+            container.description = description;
+            container.is_on_rig = isOnRig;
+            container.brand = brand;
+            container.is_rentable = isRentable;
+            container.container_sn = serial_number;
+
+            self.all.set(item_id, container);
+            self.containers.set(item_id, container);
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    getFilteredRows(rowData) {
+        this.all = new Map();
+        this.rigs = new Map();
+        this.canopies = new Map();
+        this.containers = new Map();
+        this.aads = new Map();
+
         // save everything first
-        // this.all = rowData;    -- USING MAP instead
-        
-        
-        for (var i = 0; i < rowData.length; i++) 
-        {   
+        for (var i = 0; i < rowData.length; i++) {
             // map row to item_id in that row
             this.all.set(rowData[i].item_id, rowData[i]);
-            if (rowData[i].item_type === "rig") 
-            {
+            if (rowData[i].item_type === "rig") {
                 //if the type is rig
                 this.rigs.set(rowData[i].item_id, rowData[i]);
-            } 
-            else if (rowData[i].item_type === "canopy") 
-            {  
+            } else if (rowData[i].item_type === "canopy") {
                 // if the type is canopy
                 this.canopies.set(rowData[i].item_id, rowData[i]);
-            } 
-            else if (rowData[i].item_type === "container") 
-            { 
+            } else if (rowData[i].item_type === "container") {
                 // if the type is container
                 this.containers.set(rowData[i].item_id, rowData[i]);
-            }
-            else if (rowData[i].item_type === "aad")
-            {
+            } else if (rowData[i].item_type === "aad") {
                 // if the type is AAD
-                this.aads.set(rowData[i].item_id, rowData[i]);    
+                this.aads.set(rowData[i].item_id, rowData[i]);
             }
         }
     }
@@ -259,8 +512,7 @@ export default class InventoryScreen extends React.Component {
     //changes the display of the right side of the screen by
     //taking in a EditInventoryItemDisplay and setting it in the currentItem state
     displayChange(itemDisplay, selectedIndex) {
-        if (! (itemDisplay === "")) 
-        {
+        if (!(itemDisplay === "")) {
             console.log("Inventory Screen-> displayChange> index: " + selectedIndex);
             this.setState({
                 currentItem: itemDisplay,
@@ -269,7 +521,6 @@ export default class InventoryScreen extends React.Component {
         } else {
             console.log("check what 'itemDisplay' is");
         }
-
     }
 
     //for the dropdown    
@@ -295,68 +546,14 @@ export default class InventoryScreen extends React.Component {
                 break;
         }
 
-        this.resetDisplay();        
+        this.resetDisplay();
         //this.processRows(this.state.rows, this.state.filter);
     }
 
     resetDisplay() {
         this.setState({
-            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"}/>
+            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
         });
-    }
-
-    //When this RentalTable component loads on the page, fetch the rows
-    //from the database and display them.
-    componentDidMount() {
-        this.fetchRows();
-    }
-
-    //Fetch the items from the database that are 
-    //rentals and update the RentalTable's state to display them.
-    fetchRows() {
-
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        //Define our endpoint using the rootURL, the URL section 
-        //that we set in our constructor (like "/rigsheets"), and
-        //the sheetType prop ("Tandems" or "Students")
-        //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection;
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback
-        var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (rowData) {
-                //process the row data we received back
-                self.processRows(rowData);
-                //update our state with these rows to rerender the table
-                self.setState({
-                    rows: rowData
-                });
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-              toast.error(error + "\n" + url);
-            });;
     }
 
     //calls up to the screen change the display on the right
@@ -368,19 +565,18 @@ export default class InventoryScreen extends React.Component {
 
         var display = this.setupDisplay(row);
 
-        this.displayChange(display, row.index);         
+        this.displayChange(display, row.index);
 
         console.log("Selection count: " + count);
         count++;
 
-        console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].manufacturer + " \n brand: " 
-                                            + this.state.rows[selectedIndex].brand + " \n itemdescription: " + this.state.rows[selectedIndex].description 
-                                            + " \n itemType: " + this.state.rows[selectedIndex].item_type);
+        console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].manufacturer + " \n brand: "
+            + this.state.rows[selectedIndex].brand + " \n itemdescription: " + this.state.rows[selectedIndex].description
+            + " \n itemType: " + this.state.rows[selectedIndex].item_type);
     }
 
     // set up the display component, based on Item Type
-    setupDisplay(row)
-    {
+    setupDisplay(row) {
         var display;
         
         // select the type of Inventory Item Display will be shown 
@@ -473,24 +669,23 @@ export default class InventoryScreen extends React.Component {
 
 
     // calls on "ADD" btn click to change right side view to empty field values by default
-    displayAddView()
-    {        
+    displayAddView() {
         console.log("hit displayAddView funct");
         // set up the display component
-        var display = <InventoryDisplayAAD            
+        var display = <InventoryDisplayAAD
             index={""}
             manufacturer={""}
             desc={""}
             isRented={""}
             brand={""}
-            type={""} 
-            changeRowData={""}/>;
+            type={""}
+            changeRowData={""} />;
 
         // this.displayChange(display, row.index);  
-        
+
         this.setState({
             // index: selectedIndex,
-            currentItem: display 
+            currentItem: display
         });
     }
 
