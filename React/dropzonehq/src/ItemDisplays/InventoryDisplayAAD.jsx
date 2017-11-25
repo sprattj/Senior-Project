@@ -340,21 +340,9 @@ export default class InventoryDisplayAAD extends React.Component {
     {
         // TODO: SAVE TO DB, after success update data table view
         
-        console.log("clicked save, index: " + this.props.index);
-        console.log("state: " + this.state);
-        this.props.changeRowData(this.props.index, this.props.item_id, this.state.manufacturer, this.state.description, this.state.is_on_rig,
-                                        this.state.brand, this.state.is_rentable, this.state.lifespan, this.state.item_type, 
-                                        this.state.aad_sn);
-/*         this.props.changeRowData(this.props.index, this.state.manufacturer, this.state.brand, 
-                                    this.state.description, this.state.is_rentable, this.state.is_on_rig,
-                                    this.state.is_available, this.state.item_type, this.state.rig_number,
-                                    this.state.aad, this.state.container, this.state.isTandem, 
-                                    this.state.canopy_on_rig, this.state.jump_count, this.date_of_manufacture,
-                                    this.state.size, this.state.canopy_sn, this.state.next_repack_date,
-                                    this.state.packed_by_employee_id, this.state.ride_count, this.state.container_sn,
-                                    this.state.deployment_timestamp, this.state.aad_sn, this.state.lifespan
-                            ); */
-
+        console.log("clicked save, item_id: " + this.props.item_id);
+        this.props.updateAADRow(this.props.item_id, this.state.manufacturer, this.state.description, this.state.is_on_rig,
+                                        this.state.brand, this.state.is_rentable, this.state.lifespan, this.state.aad_sn);
     }
  
     render() {
