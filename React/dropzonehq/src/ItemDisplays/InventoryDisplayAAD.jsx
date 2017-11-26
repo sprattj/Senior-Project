@@ -16,7 +16,10 @@ export default class InventoryDisplayAAD extends React.Component {
         this.updateAADRow = this.updateAADRow.bind(this);
 
         this.state = {
-            AADInfo: this.props.AADInfo
+            AADInfo: {
+                aad_sn: this.props.AADInfo.aad_sn,
+                lifespan: this.props.AADInfo.lifespan
+            }
         };
     }
 
@@ -38,7 +41,7 @@ export default class InventoryDisplayAAD extends React.Component {
 
     updateAADRow(itemInfo) {
         this.props.updateAADRow(itemInfo, this.state.AADInfo);
-        console.log("CONTAINER STATE AFTER: " + JSON.stringify(this.state.containerInfo));
+        console.log("AAD STATE AFTER: " + JSON.stringify(this.state.AADInfo));
     }
 
     render() {
