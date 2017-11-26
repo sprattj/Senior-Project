@@ -533,6 +533,7 @@ class AllItems(models.Model):
     canopy_on_rig = models.IntegerField()
     canopy_sn = models.CharField(max_length=45)
     container_sn = models.CharField(max_length=45)
+    deployment_timestamp = models.DateTimeField()
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
     is_rentable = models.BooleanField(max_length=4)

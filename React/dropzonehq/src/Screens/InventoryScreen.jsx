@@ -111,7 +111,7 @@ export default class InventoryScreen extends React.Component {
             width: 150
         }, {
             Header: 'Deployment Date',
-            accessor: 'date',
+            accessor: 'deployment_timestamp',
             width: 150
         }];
 

@@ -73,14 +73,6 @@ export default class InventoryDisplayCanopy extends React.Component {
                 <CardBlock>
                     <Row>
                         <InputGroup>
-                            <InputGroupAddon >Canopy Brand: </InputGroupAddon>
-                            <UncontrolledTextInput
-                                onBlur={this.brandChanged}
-                                id="brandID"
-                                defaultText={this.props.canopyInfo.brand}
-                            />
-                        </InputGroup>
-                        <InputGroup>
                             <InputGroupAddon >Canopy Size: </InputGroupAddon>
                             <UncontrolledTextInput
                                 onBlur={this.sizeChanged}

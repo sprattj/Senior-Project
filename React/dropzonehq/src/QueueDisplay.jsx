@@ -15,7 +15,7 @@ export default class QueueDisplay extends React.Component {
                     break;
                 case CLAIM_SEVERITY_CHOICES.NON_CRITICAL.toLowerCase():
                     alertColor = "warning";
-                    alertMsg = "Moderate Issue";
+                    alertMsg = "Moderate Severity Issue";
                     break;
                 case CLAIM_SEVERITY_CHOICES.COSMETIC.toLowerCase():
                     alertColor = "dark";
@@ -24,17 +24,19 @@ export default class QueueDisplay extends React.Component {
             }
         }
 
-
         return (
             <div>
-                <Alert color={alertColor}>{alertMsg}<br />{this.props.description}</Alert>
-                <ul>
-                    <li>Severity: {this.props.severity}</li>
-                    <li>Rig: {this.props.rig_id}</li>
-                    <li>Description: {this.props.description}</li>
-                    <li>Submit Date: {this.props.submit_date}</li>
-                    <li>Due Date: {this.props.due_date}</li>
-                </ul>
+                <h3>Queue Claim Issue</h3>
+                <Alert color={alertColor}>
+                    <h4>Rig {this.props.rig_id}: {alertMsg}</h4>
+                    <br />
+                    <h5>Description:</h5>
+                    <p>{this.props.description}</p>
+                    <br />
+                    <h5>Submit Date: {this.props.submit_date}</h5>
+                    <br />
+                    <h5>Due Date: {this.props.due_date}</h5>
+                </Alert>
             </div>
         );
     }

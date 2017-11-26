@@ -30,7 +30,7 @@ class AllItemSerializer(serializers.HyperlinkedModelSerializer):
         model = AllItems
         fields = ('item_id', 'item_type', 'rig_number', 'aad',
                   'container', 'isTandem', 'canopy_on_rig', 'canopy_sn',
-                  'container_sn', 'aad_sn', 'lifespan', 'is_rentable', 'is_on_rig',
+                  'container_sn', 'aad_sn', 'deployment_timestamp', 'lifespan', 'is_rentable', 'is_on_rig',
                   'is_available', 'manufacturer', 'brand', 'description',
                   'date_of_manufacture', 'size', 'next_repack_date', 'jump_count',
                   'ride_count', 'packed_by_employee_id')
