@@ -9,7 +9,7 @@ DEFAULT_SALT = 100
 
 
 # Helper method for creating a random user pin
-def stringToThree(string=None):
+def string_to_three(string=None):
     if string is None:
         return None
     else:

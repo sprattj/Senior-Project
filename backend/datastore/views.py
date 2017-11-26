@@ -587,7 +587,7 @@ def EmployeeView(request, dropzonePK):
         employees = Employees.objects.filter(dropzone)
         employeeSerializer = EmployeeSerializer()
         emp = employeeSerializer.data(data=employees)
-        return JsonResponse(data=emp, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(data=emp, status=status.HTTP_202_ACCEPTED)
 
     elif request.method == 'POST':
 
@@ -600,13 +600,11 @@ def EmployeeView(request, dropzonePK):
             dev = request.POST['dev']
             if Employees.employee_email_in_use(email) is not None:
                 emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
-                emp.save()
-                while Employees.employee_pin_in_use(emp.pin)  :
-                    pin = Employees.create_random_user_pin(emp.employee_id)
-                    if dev is None :
-                        emp.pin = Employees.pin_to_hash(pin)
-                trole = EmployeeRoles.find_role_auth_level(role)
-                emp.roles = trole
+                if dev is True or None:
+                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
+                else:
+                    emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
+                emp.roles = role
                 emp.save()
                 serializer = EmployeeSerializer(emp)
                 send_mail(
