@@ -596,7 +596,7 @@ def EmployeeView(request, dropzonePK):
             if Employees.employee_email_in_use(email) is not None:
                 emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
                 if dev is True or None:
-                    emp.pin = Employees.create_random_user_pin(emp.pk)
+                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
                 else:
                     emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
                 emp.roles = role
