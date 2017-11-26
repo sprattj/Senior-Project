@@ -166,9 +166,7 @@ class EmployeeRoles(models.Model):
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
 
-    #hard coded return 0 for the failure.  If no role is found get rid
-    def find_role_auth_level(self):
-        roles = EmployeeRoles.objects.values()
+    def get_perms(self):
 
 
     class Meta:
@@ -190,12 +188,15 @@ class Permissions(models.Model):
     permission = models.CharField(max_length=45)
 
     auth_level_choice = (
-        (0, 'Packer'),
-        (1, 'Intructor'),
-        (2, 'Rigger'),
-        (3, 'Admin')
+        ('Packer', 0),
+        ('Instructor', 1),
+        ('Rigger', 2),
+        ('Admin', 3)
     )
-    auth_level = models.IntegerField(choices=auth_level_choice)
+    auth_level = models.IntegerField(choices=auth_level_choice, name='auth_level')
+
+    def get_auth_level(self):
+        return getattr(self, name='auth_level')
 
     class Meta:
         managed = True
@@ -244,8 +245,8 @@ class Employees(models.Model):
         if userPK is None:
             return None
         else:
-            salt = util.stringToThree(random.randint(0, 1000))
-            key = util.stringToThree(str(salt)) + str((int(userPK) % 1000))
+            salt = util.string_to_three(random.randint(0, 1000))
+            key = util.string_to_three(str(salt)) + str((int(userPK) % 1000))
             return key
 
     # Checks if a pin is in use for an Employee.
@@ -253,6 +254,8 @@ class Employees(models.Model):
     @staticmethod
     def employee_pin_in_use(pin=None):
         emp = Employees.objects.values()
+        if pin is None :
+            return None
         for e in emp:
             if Employees.check_employee_pin(pin=pin, employee=e) is True:
                 return e
