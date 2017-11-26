@@ -1,5 +1,4 @@
 import React from 'react';
-import ItemDisplay from './ItemDisplay.jsx';
 import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Card, CardHeader, CardBlock, CardFooter } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';

@@ -14,6 +14,7 @@ body {
 }
 .navbar{
     /*background: #fe4a49;*/
+    background: #FFF !important;
     outline: solid 7px #FFF;
     border-bottom: solid 15px rgb(29, 195, 255);
 }

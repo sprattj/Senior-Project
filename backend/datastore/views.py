@@ -100,7 +100,12 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         canopy = Canopies.objects.get(item_id=item_id)
 
         serializer = CanopySerializer(canopy, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        new_instance = serializer.save()
+
         serializer = ItemSerializer(item, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        new_instance = serializer.save()
 
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)

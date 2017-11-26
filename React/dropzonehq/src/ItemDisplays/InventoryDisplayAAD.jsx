@@ -18,7 +18,6 @@ export default class InventoryDisplayAAD extends React.Component {
         this.state = {
             AADInfo: this.props.AADInfo
         };
-
     }
 
     aad_snChanged(e) {

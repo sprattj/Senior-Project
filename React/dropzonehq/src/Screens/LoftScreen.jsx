@@ -12,7 +12,7 @@ import './LoftScreen.css';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import { rootURL, CLAIM_SEVERITY_CHOICES, CLAIM_STATUS_CHOICES } from '../restInfo.js';
+import { rootURL, CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import { toast } from 'react-toastify';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 
@@ -87,33 +87,6 @@ export default class LoftScreen extends React.Component {
                 />
             </div>
         }
-
-        /*(for (var i = 0; i < 10; i++) {
-            queueItems.push(<QueueListItem
-                key={i}
-                qID={i}
-                selected={false}
-                onClick={this.selectQueueItem}
-                dismiss={this.dismissQueueItem}
-                complete={this.completeQueueItem}
-                severity={"COSMETIC"}
-                rig_id={1}
-                description={"there's a problemo"}
-                submit_date={""}
-                due_date={""} />);
-            warningItems.push(<WarningListItem
-                key={i} warnID={i}
-                selected={false}
-                onClick={this.selectWarning}
-                addToQueue={this.moveClaimToQueue}
-                dismiss={this.dismissClaim}
-                severity={"COSMETIC"}
-                rig_id={1}
-                description={"there's a problemo"}
-                submit_date={""}
-                due_date={""} />);
-        }*/
-        
     }
 
     pinChanged(pin){
@@ -198,7 +171,7 @@ export default class LoftScreen extends React.Component {
     }
 
     populateWarnings(warningData) {
-        console.log("warning data: " + warningData);
+        console.log("warning data: " + JSON.stringify(warningData));
         var warnings = new Map();
         for (var i = 0; i < warningData.length; i++) {
             var nextWarning =
@@ -230,7 +203,6 @@ export default class LoftScreen extends React.Component {
         //grab the current qItems
         var newQItems = new Map(this.state.queueListItems);
 
-
         //if the old selected claim hasn't been deleted
         if(this.state.queueListItems.has(this.state.selectedQClaimID)){
             var oldQItem = newQItems.get(this.state.selectedQClaimID);
@@ -250,7 +222,8 @@ export default class LoftScreen extends React.Component {
         this.setState({
             queueListItems: newQItems,
             selectedQClaimID: newClaimID,
-            activeTab: 1
+            activeTab: 1,
+            queueDisplay: <QueueDisplay {...newItem.props}/>
         });
     }
 
@@ -280,7 +253,8 @@ export default class LoftScreen extends React.Component {
         this.setState({
             warningListItems: newClaims,
             selectedWarnClaimID: newClaimID,
-            activeTab: 2
+            activeTab: 2,
+            warningDisplay: <WarningDisplay {...newClaim.props}/>
         });
     }
 
@@ -528,7 +502,6 @@ export default class LoftScreen extends React.Component {
                             {Array.from(this.state.queueListItems.values())}
                         </QueueList>
                     </Col>
-
                     <Col xs={{ size: 12 }} md={{ size: 6 }}>
                         <Card>
                             <CardHeader>Main View</CardHeader>

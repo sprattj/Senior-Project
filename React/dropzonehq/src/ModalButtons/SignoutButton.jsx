@@ -66,7 +66,7 @@ export default class SignoutButton extends React.Component {
         mainButtonText="Signout Rig"
         modalButtonText="Signout"
         modalTitle="Signout Rig"
-        ID="Signout"
+        ID="SignoutButton"
         modalContent={modalContent}
         popoverTitle="Confirm Signout"
         verify={this.addSignout}
