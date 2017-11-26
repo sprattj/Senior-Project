@@ -20,8 +20,6 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.conf.urls import url
 from django.contrib import admin
-from django.http import HttpRequest
-from django.contrib.auth import views as auth_views
 
 sys.path.append('../')
 
@@ -51,8 +49,8 @@ urlpatterns = [
     url(r'^(?i)claim[s]?/queue[/]?$', ClaimQueueList.as_view()),
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
-    url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')
-    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view())
+    url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base'),
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^login/$', loginDropzone, name='login'),
     url(r'^logout/$', logoutDropzone, name='logout'),
     url(r'^temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
