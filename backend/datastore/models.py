@@ -121,7 +121,6 @@ class DjangoMigrations(models.Model):
 
 # A location that is used as a skydiving drop zone.
 class Dropzones(User):
-
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
@@ -168,12 +167,9 @@ class EmployeeRoles(models.Model):
     role = models.CharField(max_length=45)
 
     #hard coded return 0 for the failure.  If no role is found get rid
-    def find_role_auth_level(role):
-        roles = EmployeeRoles.objects.all()
-        for trole in roles:
-            if trole == role:
-                return trole.auth_level
-        return 0
+    def find_role_auth_level(self):
+        roles = EmployeeRoles.objects.values()
+
 
     class Meta:
         managed = True
@@ -182,7 +178,7 @@ class EmployeeRoles(models.Model):
 
 class EmployeeRolesPermissions(models.Model):
     employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
-    permission = models.ForeignKey(Permissions, on_delete=models.DO_NOTHING)
+    permission = models.ForeignKey('permissions', on_delete=models.DO_NOTHING)
 
     class Meta:
         managed = True
@@ -249,17 +245,16 @@ class Employees(models.Model):
             return None
         else:
             salt = util.stringToThree(random.randint(0, 1000))
-            key = util.stringToThree(str(salt)) + str(userPK % 1000)
+            key = util.stringToThree(str(salt)) + str((int(userPK) % 1000))
             return key
 
     # Checks if a pin is in use for an Employee.
     # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
-
     def employee_pin_in_use(pin=None):
         emp = Employees.objects.values()
-        for e in emp :
-            if Employees.checkEmployeePin(pin=pin, employee=e) is True:
+        for e in emp:
+            if Employees.check_employee_pin(pin=pin, employee=e) is True:
                 return e
         return None
 
@@ -413,7 +408,7 @@ class Rigs(models.Model):
     # PK -> Shares PK from items table
     item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
     # Unique identifier for this rig
-    rig_id = models.AutoField(unique=True)
+    rig_id = models.AutoField(auto_created=True, unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
@@ -473,18 +468,10 @@ class TempUrl(models.Model):
     def get_url_hash(self):
         return self.url_hash
 
-class TempUrlE(models.Model):
-    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
-    employee = models.ForeignKey(Employees, name='employee')
-    expires = models.DateTimeField(name="Expries")
-
-    def get_url_hash(self):
-        return self.url_hash
-
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
-        db_table = 'Temp_Url'
+        managed = True
+        db_table = 'tempurl'
 
 
 # Descriptive view for all canopies in the inventory
