@@ -74,7 +74,7 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Employees
-        fields = ('employee_id', 'first_name', 'last_name', 'email', 'dropzone_id', 'roles')
+        fields = ('first_name', 'last_name', 'email', 'dropzone_id', 'pin', 'roles')
 
 
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):

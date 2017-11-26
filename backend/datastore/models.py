@@ -206,7 +206,7 @@ class Employees(models.Model):
     last_name = models.CharField(max_length=45)
     email = models.EmailField()
     # PK
-    employee_id = models.IntegerField(primary_key=True)
+    employee_id = models.AutoField(primary_key=True)
     # FK -> dropzone_id
     dropzone = models.ForeignKey('Dropzones', models.DO_NOTHING)
     is_active = models.BooleanField(max_length=4)
