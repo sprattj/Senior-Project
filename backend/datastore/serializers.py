@@ -30,10 +30,10 @@ class AllItemSerializer(serializers.HyperlinkedModelSerializer):
         model = AllItems
         fields = ('item_id', 'item_type', 'rig_number', 'aad',
                   'container', 'isTandem', 'canopy_on_rig', 'canopy_sn',
-                  'container_sn', 'aad_sn', 'lifespan', 'is_rentable',
-                  'manufacturer', 'brand', 'description', 'date_of_manufacture',
-                  'size', 'next_repack_date', 'jump_count', 'ride_count',
-                  'packed_by_employee_id')
+                  'container_sn', 'aad_sn', 'lifespan', 'is_rentable', 'is_on_rig',
+                  'is_available', 'manufacturer', 'brand', 'description',
+                  'date_of_manufacture', 'size', 'next_repack_date', 'jump_count',
+                  'ride_count', 'packed_by_employee_id')
 
 
 class CanopySerializer(serializers.HyperlinkedModelSerializer):
@@ -74,7 +74,7 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Employees
-        fields = ('employee_id', 'first_name', 'last_name','email', 'roles')
+        fields = ('employee_id', 'first_name', 'last_name', 'email', 'dropzone_id', 'roles')
 
 
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
@@ -85,16 +85,18 @@ class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
+    rental = serializers.ReadOnlyField()
     class Meta:
         model = ItemsRentals
-        fields = ('item_id', 'rental_id')
+        fields = ('item_id', 'rental_id', 'rental')
 
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
+    rentals = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
     class Meta:
         model = Items
-        fields = ('item_id', 'item_type_id', 'manufacturer',
-                  'brand', 'description', 'is_rentable')
+        fields = ('item_id', 'item_type_id', 'manufacturer', 'brand',
+                  'description', 'is_rentable', 'is_on_rig', 'is_available', 'rentals')
 
 
 class ItemTypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -119,8 +121,11 @@ class ReserveCanopySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RigSerializer(serializers.HyperlinkedModelSerializer):
+    # isrentable = ItemSerializer(read_only=True)
+
     class Meta:
         model = Rigs
+        # , 'isrentable'
         fields = ('item_id', 'rig_id', 'container_id', 'aad_id', 'istandem')
 
 
@@ -129,6 +134,14 @@ class RigAuditTrailSerializer(serializers.HyperlinkedModelSerializer):
         model = RigsAuditTrail
         fields = ('rig_audit_id', 'item_id', 'rig_id', 'container_id',
                   'aad_id', 'description', 'date_of_change')
+
+
+class RigComponentDetailSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = RigComponentDetails
+        fields = ('rig_id', 'main_canopy_size', 'main_canopy_brand',
+                  'reserve_canopy_size', 'reserve_canopy_brand',
+                  'container_brand', 'aad_lifespan')
 
 
 class EmployeeRoleSerializer(serializers.HyperlinkedModelSerializer):
