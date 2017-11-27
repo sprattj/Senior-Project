@@ -201,13 +201,13 @@ class EmployeeList(generics.ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             new_instance = serializer.save()
 
-            '''send_mail(
+            send_mail(
                 subject='DropzoneHQ Employee Pin [NO REPLY]',
                 message='Your new employee pin is ' + pin,
                 from_email='dropzonehqNO-REPLY@dropzonehq.com',
                 recipient_list=[emp.email],
                 fail_silently=False
-            )'''
+            )
 
             data = {'success': 10}
             return JsonResponse(data, status=status.HTTP_202_ACCEPTED)

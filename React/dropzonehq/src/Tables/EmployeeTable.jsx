@@ -45,7 +45,7 @@ export default class EmployeeTable extends React.Component {
         },
         {
           Header: 'Status',
-          accessor: 'status'
+          accessor: 'is_active'
         }
       ],
       rows: [],
@@ -66,7 +66,11 @@ export default class EmployeeTable extends React.Component {
         <EditEmployeeButton
           id={rowData[i].employee_id}
           authorize={this.editEmployee}
-          roles={rowData[i].roles} />
+          roles={rowData[i].roles}
+          firstName={rowData[i].first_name}
+          lastName={rowData[i].last_name}
+          email={rowData[i].email}
+        />
         <EmployeeStatusButton
           id={rowData[i].employee_id}
           toggleEmployeeStatus={this.toggleEmployeeStatus}
@@ -74,7 +78,7 @@ export default class EmployeeTable extends React.Component {
           lastName={rowData[i].last_name}
           status={rowData[i].is_active} />
       </ButtonGroup>;
-      newRows[i].status = rowData[i].is_active;
+      newRows[i].is_active = rowData[i].is_active + "";
       newRows[i].email = rowData[i].email;
       var jobs = "";
       for (var j = 0; j < rowData[i].roles.length; j++) {
@@ -124,9 +128,9 @@ export default class EmployeeTable extends React.Component {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-   // var url = rootURL + this.URLsection + "/";
-   //var url = rootURL + "/dropzone/1/create_employee"
-   var url = rootURL + "/employees"
+    // var url = rootURL + this.URLsection + "/";
+    //var url = rootURL + "/dropzone/1/create_employee"
+    var url = rootURL + "/employees"
     var self = this;
     //var employee_id = (Date.now() % 100000); //TODO
     var status = true;
@@ -134,7 +138,7 @@ export default class EmployeeTable extends React.Component {
       first_name: firstName,
       last_name: lastName,
       email: email,
-      role: jobs.splice(0,1),
+      role: jobs.splice(0, 1),
       dropzone_id: 1, //TODO UUHHHHHHH
       status: status
     };
@@ -158,9 +162,12 @@ export default class EmployeeTable extends React.Component {
         var actionButtons = <ButtonGroup>
           <EditEmployeeButton
             id={response.employee_id}
-            authorize={self.editEmployee} />
+            authorize={self.editEmployee}
+            firstName={response.first_name}
+            lastName={response.last_name}
+            email={response.email} />
           <EmployeeStatusButton
-            employee_id={response.employee_id}
+            id={response.employee_id}
             toggleEmployeeStatus={self.toggleEmployeeStatus}
             firstName={firstName}
             lastName={lastName}
@@ -175,7 +182,12 @@ export default class EmployeeTable extends React.Component {
             jobsString += jobs[i] + ", ";
           }
           if (jobs[i] === "Administrator") {
-            actionButtons = <EditEmployeeButton id={response.employee_id} authorize={self.editEmployee} />;
+            actionButtons = <EditEmployeeButton
+              id={response.employee_id}
+              authorize={self.editEmployee}
+              firstName={response.first_name}
+              lastName={response.last_name}
+              email={response.email} />;
           }
         }
 
@@ -187,7 +199,7 @@ export default class EmployeeTable extends React.Component {
           jobs: jobsString,
           actions: actionButtons,
           rowID: newRowID,
-          status: status
+          is_active: status
         };
 
         newRowID++;
@@ -239,21 +251,15 @@ export default class EmployeeTable extends React.Component {
           }
           return response.json();
         })//when the call succeeds
-        .then(function (rowData) {
+        .then(function (response) {
 
           var newRows = Array.from(self.state.rows);
           for (var i = 0; i < newRows.length; i++) {
             if (newRows[i].employee_id === id) {
-              if (firstName) {
-                newRows[i].first_name = firstName
-              } if (lastName) {
-                newRows[i].last_name = lastName
-              } if (email) {
-                newRows[i].email = email
-              }
-              if (jobs.length > 0) {
-                newRows[i].roles = jobs
-              }
+              newRows[i].firstname = response.first_name;
+              newRows[i].lastname = response.last_name;
+              newRows[i].email = response.email;
+              newRows[i].roles = response.roles;
               break;
             }
           }
@@ -308,13 +314,16 @@ export default class EmployeeTable extends React.Component {
       });
   }
 
-  toggleEmployeeStatus(id) {
+  toggleEmployeeStatus(id, status) {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
     var url = rootURL + this.URLsection + "/" + id + "/";
 
     var self = this;
+    var requestVariables = {
+      is_active: !status
+    }
 
     return fetch(url, {
       method: "PATCH",
@@ -322,7 +331,8 @@ export default class EmployeeTable extends React.Component {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify(requestVariables)
     })//when we get a response back
       .then(function (response) {
         if (response.status >= 400) {
@@ -330,17 +340,30 @@ export default class EmployeeTable extends React.Component {
         }
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (response) {
+        
         var newRows = Array.from(self.state.rows);
         for (var i = 0; i < newRows.length; i++) {
-          if (newRows[i].rowID === id) {
-            if (newRows[i].is_active === true) {
-              newRows[i].is_active = false;
-            } else {
-              newRows[i].is_active = true;
-            }
+          if (newRows[i].employee_id === id) {
+            console.log("what is UP with you right now dude?")
+            newRows[i].is_active = response.is_active + "";
+            newRows[i].actions = <ButtonGroup>
+              <EditEmployeeButton
+                id={response.employee_id}
+                authorize={self.editEmployee}
+                firstName={response.first_name}
+                lastName={response.last_name}
+                email={response.email} />
+              <EmployeeStatusButton
+                id={response.employee_id}
+                toggleEmployeeStatus={self.toggleEmployeeStatus}
+                firstName={response.first_name}
+                lastName={response.last_name}
+                status={response.is_active} />
+            </ButtonGroup>;
           }
         }
+
         self.setState({
           rows: newRows
         })

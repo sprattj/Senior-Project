@@ -2,6 +2,7 @@ import React from 'react';
 import ModalButton from './ModalButton.jsx';
 import Checkbox from '../CheckBox/Checkbox.js';
 import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
+import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 
 export default class EditEmployeeButton extends React.Component {
 
@@ -13,13 +14,13 @@ export default class EditEmployeeButton extends React.Component {
         this.firstNameChanged = this.firstNameChanged.bind(this);
         this.lastNameChanged = this.lastNameChanged.bind(this);
         this.jobsChanged = this.jobsChanged.bind(this);
-        this.email = this.emailChanged.bind(this);
+        this.emailChanged = this.emailChanged.bind(this);
 
 
         this.state = {
-            firstName: '',
-            lastName: '',
-            email: '',
+            firstName: this.props.firstName,
+            lastName: this.props.lastName,
+            email: this.props.email,
             jobs: this.props.roles
         }
     }
@@ -134,17 +135,29 @@ export default class EditEmployeeButton extends React.Component {
         const modalContent = <Form>
             <InputGroup>
                 <InputGroupAddon >First Name: </InputGroupAddon>
-                <Input id="editEmployeeFirstName" type='text' value={this.state.firstName} onChange={this.firstNameChanged} />
+                    <UncontrolledTextInput
+                        onBlur={this.firstNameChanged}
+                        id="editEmployeeFirstName"
+                        defaultText={this.props.firstName}
+                    />
             </InputGroup>
             <br />
             <InputGroup>
                 <InputGroupAddon >Last Name: </InputGroupAddon>
-                <Input id="editEmployeeLastName" type='text' value={this.state.lastName} onChange={this.lastNameChanged} />
+                    <UncontrolledTextInput
+                        onBlur={this.lastNameChanged}
+                        id="editEmployeeLastName"
+                        defaultText={this.props.lastName}
+                    />            
             </InputGroup>
             <br />
             <InputGroup>
                 <InputGroupAddon >Email </InputGroupAddon>
-                <Input id="editEmployeeEmail" type='email' value={this.state.email} onChange={this.emailChanged} />
+                    <UncontrolledTextInput
+                        onBlur={this.emailChanged}
+                        id="editEmployeeEmail"
+                        defaultText={this.props.email}
+                    />               
             </InputGroup>
             <br />
             <Col>
