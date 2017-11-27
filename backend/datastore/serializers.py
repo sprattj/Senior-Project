@@ -70,11 +70,12 @@ class EmployeeSignoutSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    dropzones = DropZoneSerializer()
+    dropzone = serializers.IntegerField(read_only=True)
     roles = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
-
     class Meta:
         model = Employees
-        fields = ('first_name', 'last_name', 'email', 'dropzone_id', 'pin', 'roles')
+        fields = ('first_name', 'last_name', 'email', 'dropzone', 'dropzones', 'pin', 'roles')
 
 
 class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):

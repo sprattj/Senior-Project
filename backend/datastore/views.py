@@ -187,7 +187,7 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
             role = request.POST['role']
             dev = request.POST['dev']
             if Employees.employee_email_in_use(email) is not None:
-                emp = Employees.objects.create(first_name=first, last_name=last, email=email)
+                emp = Employees.objects.create(first_name=first, last_name=last, email=email, dropzone=dropzone)
                 emp.dropzone = request.user
                 if dev is True or None:
                     emp.pin = pin = Employees.create_random_user_pin(emp.pk)
@@ -204,7 +204,7 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
                     fail_silently=False
                 )
                 return JsonResponse(data= serializer.data ,status=201)
-            else :
+            else:
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         except:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
