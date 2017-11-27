@@ -210,9 +210,9 @@ class Employees(models.Model):
     last_name = models.CharField(max_length=45)
     email = models.EmailField()
     # PK
-    employee_id = models.IntegerField(primary_key=True)
+    employee_id = models.AutoField(primary_key=True)
     # FK -> dropzone_id
-    dropzone = models.ForeignKey('Dropzones', models.DO_NOTHING)
+    dropzone_id = models.ForeignKey('Dropzones', models.DO_NOTHING, name='dropzone')
     is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
     # pin Sha hash
@@ -237,8 +237,8 @@ class Employees(models.Model):
         if pin is None:
             return None
         else:
-            salt = 3
-            return BCryptSHA256PasswordHasher().encode(password=pin, salt=salt)
+            salt = "abcdefgh".encode('ascii')
+            return BCryptSHA256PasswordHasher().encode(password=pin, salt=None)
 
     # Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
     @staticmethod
@@ -250,8 +250,10 @@ class Employees(models.Model):
             while do_over:
                 salt = util.string_to_three(str(random.randint(0, 1000)))
                 key = util.string_to_three(salt) + str((int(userPK) % 1000))
-                find_me = Employees.objects.filter(key)
-                find_me_hash = Employees.objects.filter(Employees.pin_to_hash(key))
+                find_me = Employees.objects.filter(pin=key)
+                print(key)
+                #find_me_hash = Employees.objects.filter(pin=Employees.pin_to_hash(key))
+                find_me_hash = None
                 if find_me or find_me_hash is not None:
                     do_over = True
                 else:
@@ -272,8 +274,8 @@ class Employees(models.Model):
 
     # Chcek if the email has been used in the database
     @staticmethod
-    def employee_email_in_use(email=None):
-        use = Employees.objects.filter(email)
+    def employee_email_in_use(email):
+        use = Employees.objects.filter(email=email)
         return use
 
     class Meta:

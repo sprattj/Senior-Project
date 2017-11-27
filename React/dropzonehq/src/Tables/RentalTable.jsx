@@ -275,6 +275,8 @@ export default class RentalTable extends React.Component {
                 //console.log(self.activeRentals);
                 self.addRentalData(self.activeRentals);     //function to attach active rental data to correct this.all item
 
+                console.log("RentalTable: fetchActiveRentals: here is this.activeRentals: ");
+                console.log(self.activeRentals);
                 console.log("RentalTable: fetchActiveRentals: everything has been fetched and sorted, here is the final this.all: ");
                 console.log(self.all);
             })//catch any errors and display them as a toast
@@ -353,11 +355,12 @@ export default class RentalTable extends React.Component {
                 }
                 allCount++;
             }*/
+        console.log(rentalData);
 
-        for (var i = 0; i < this.all.length; i++) {          
-            for (var j = 0; j < rentalData.length; j++) {                
-                if (this.all[i].item_id === rentalData[j].rental_id) {
-                    this.all[i].renter_name = rentalData[j].renter_name;
+        for (var i = 0; i < this.all.length; i++) {             //loop thru all items
+            for (var j = 0; j < rentalData.length; j++) {       //loop thru the active rental array         
+                if (this.all[i].item_id === rentalData[j].item_id) {    //if the this.all item_id matches the item_id returned in the rentalData 
+                    this.all[i].renter_name = rentalData[j].renter_name;    //set those variables in the row of this.all
                     this.all[i].rental_id = rentalData[j].rental_id;                    
                 }
             }
@@ -522,15 +525,14 @@ export default class RentalTable extends React.Component {
                 return response.json();
             })//when the call succeeds
             .then(function (responseData) {
-                for (var i = 0; i < self.all.length; i++) {
-                    if (index === self.all[i].index && !self.all[i].is_available) {
-                        self.all[i].is_available = 0;
-                        self.all[i].renter_name = renter_name;
-                    }
-                }
+                //for (var i = 0; i < self.all.length; i++) {
+                //    if (index === self.all[i].index && !self.all[i].is_available) {
+                //        self.all[i].is_available = 0;
+                //        self.all[i].renter_name = renter_name;
+                //    }
+                //}
                 console.log("RentalTable: rentItem Function");
-                self.getFilteredRows(self.all);
-
+                self.fetchRows(self);   //when the call succeeds rerun the fetches(which will sort the data as well)
             })//catch any errors and display them as a toast
             .catch(function (error) {
                 toast.error(error + "\n" + url);
@@ -561,7 +563,7 @@ export default class RentalTable extends React.Component {
         })//when we get a response back
             .then(function (response) {
                 if (response.status >= 400) {
-                    throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
+                    throw new Error("Return Item Failed. Bad response " + response.status + " from server");
                 }
                 return response.json();
             })//when the call succeeds
@@ -573,7 +575,7 @@ export default class RentalTable extends React.Component {
                 //        self.all[i].renter_name = "";
                 //    }
                 //}
-                self.fetchRows();
+                self.fetchRows(self);   //when the call succeeds rerun the fetches(which will sort the data as well)
             })//catch any errors and display them as a toast
             .catch(function (error) {
                 toast.error(error + "\n" + url);
