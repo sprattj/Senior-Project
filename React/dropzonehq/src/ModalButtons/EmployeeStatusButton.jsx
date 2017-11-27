@@ -9,7 +9,7 @@ export default class EmployeeStatusButton extends React.Component {
 
   }
   toggle() {
-    this.props.toggleEmployeeStatus(this.props.employee_id);
+    this.props.toggleEmployeeStatus(this.props.id);
   }
   
 
@@ -20,7 +20,7 @@ export default class EmployeeStatusButton extends React.Component {
     var btnText = "Activate";
     if(this.props.status === true){
       btnColor = "danger";
-      btnText = "disactive"
+      btnText = "Deactivate"
     }
 
     return (

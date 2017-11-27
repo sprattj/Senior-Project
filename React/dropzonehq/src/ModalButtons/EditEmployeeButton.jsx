@@ -2,6 +2,7 @@ import React from 'react';
 import ModalButton from './ModalButton.jsx';
 import Checkbox from '../CheckBox/Checkbox.js';
 import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
+import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 
 export default class EditEmployeeButton extends React.Component {
 
