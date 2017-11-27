@@ -22,6 +22,15 @@ export default class InventoryDisplayRig extends React.Component {
         };
     }
 
+    componentWillReceiveProps(newProps)
+    {
+        console.log("in componentWillReceiveProps");
+        // force update state 
+        this.setState({
+            rigInfo: newProps.rigInfo
+        })
+    }
+
     rig_numberChanged(e) {
         this.setState({
             rig_number: e.target.value

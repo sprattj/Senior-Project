@@ -10,7 +10,7 @@ import InventoryDisplayAAD from '../ItemDisplays/InventoryDisplayAAD.jsx';
 
 import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
 import PropTypes from 'prop-types';
-import { Row, Col, Card } from 'reactstrap';
+import { Row, Col, Card, ButtonGroup } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import "react-table/react-table.css";
@@ -38,8 +38,10 @@ export default class InventoryScreen extends React.Component {
         this.itemSelected = this.itemSelected.bind(this);
         this.rigSelected = this.rigSelected.bind(this);
         this.canopySelected = this.canopySelected.bind(this);
+        this.reserveCanopySelected = this.reserveCanopySelected.bind(this);
         this.containerSelected = this.containerSelected.bind(this);
         this.aadSelected = this.aadSelected.bind(this);
+
         this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
         this.displayAddView = this.displayAddView.bind(this);
@@ -50,6 +52,12 @@ export default class InventoryScreen extends React.Component {
         this.updateContainerRow = this.updateContainerRow.bind(this);
         this.updateRigRow = this.updateRigRow.bind(this);
 
+
+        this.displayAddContainer = this.displayAddContainer.bind(this);
+        this.displayAddCanopy = this.displayAddCanopy.bind(this);
+        this.addAAD = this.addAAD.bind(this);
+        this.addContainer = this.addContainer.bind(this);
+        this.addCanopy = this.addCanopy.bind(this);
 
         this.all = new Map();
         this.rigs = new Map();
@@ -131,8 +139,8 @@ export default class InventoryScreen extends React.Component {
             { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
             { index: 12, item_id: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
             { index: 13, item_id: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
-            { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" },
-            { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", date: "11/24/2017" }
+            { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", deployment_timestamp: "11/19/2017" },
+            { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", deployment_timestamp: "11/24/2017" }
             ];
 
         this.getFilteredRows(rowData);*/
@@ -198,6 +206,8 @@ export default class InventoryScreen extends React.Component {
             });;
     }
 
+
+
     updateAADRow(itemInfo, AADInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
@@ -230,14 +240,23 @@ export default class InventoryScreen extends React.Component {
             AAD.brand = itemInfo.brand;
             AAD.is_rentable = itemInfo.is_rentable;
             AAD.lifespan = AADInfo.lifespan;
-            AAD.aad_sn = AADInfo.aad_sn;
+            AAD.serial_number = AADInfo.aad_sn;
 
             self.all.set(itemInfo.item_id, AAD);
             self.aads.set(itemInfo.item_id, AAD);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in AAD display
+                self.setState({
+                    rows: Array.from(self.aad.values())
+                })
+            }
+
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -298,9 +317,19 @@ export default class InventoryScreen extends React.Component {
             self.all.set(item_id, reserveCanopy);
             self.canopies.set(item_id, reserveCanopy);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // TODO: CHANGE TO RESERVECANOPIES MAP instead of "all"
+                // must be in reserve_canopy display
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -311,7 +340,7 @@ export default class InventoryScreen extends React.Component {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        console.log("item info in fetch call: " + JSON.stringify(itemInfo));        
+        console.log("item info in fetch call: " + JSON.stringify(itemInfo));
         var url = rootURL + "/canopies/" + itemInfo.item_id;
 
         var self = this;
@@ -349,9 +378,18 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, canopy);
             self.canopies.set(itemInfo.item_id, canopy);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in Canopies display
+                self.setState({
+                    rows: Array.from(self.canopies.values())
+                })
+            }
+
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -397,9 +435,18 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, rig);
             self.rigs.set(itemInfo.item_id, rig);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in Rigs display
+                self.setState({
+                    rows: Array.from(self.rigs.values())
+                })
+            }
+
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -440,9 +487,19 @@ export default class InventoryScreen extends React.Component {
 
             self.all.set(itemInfo.item_id, container);
             self.containers.set(itemInfo.item_id, container);
-            self.setState({
-                rows: Array.from(self.containers.values())
-            })
+
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in Containers display
+                self.setState({
+                    rows: Array.from(self.containers.values())
+                })
+            }
+
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -557,12 +614,16 @@ export default class InventoryScreen extends React.Component {
             brand: row.brand,
             is_rentable: row.is_rentable
         };
+        console.log("itemType: " + row.item_type);
         switch (row.item_type) {
             case ("rig"):
                 display = this.rigSelected(row, itemInfo);
                 break;
             case ("canopy"):
                 display = this.canopySelected(row, itemInfo);
+                break;
+            case ("reserve_canopy"):
+                display = this.reserveCanopySelected(row, itemInfo);
                 break;
             case ("container"):
                 display = this.containerSelected(row, itemInfo);
@@ -588,6 +649,21 @@ export default class InventoryScreen extends React.Component {
     }
 
     canopySelected(row, itemInfo) {
+        var canopyInfo = {
+            rig_id: row.rig_id,
+            canopy_sn: row.canopy_sn,
+            size: row.size,
+            date_of_manufacture: row.date_of_manufacture,
+            jump_count: row.jump_count
+        }
+        return <InventoryDisplayCanopy
+            itemInfo={itemInfo}
+            canopyInfo={canopyInfo}
+            updateCanopyRow={this.updateCanopyRow}
+        />;
+    }
+
+    reserveCanopySelected(row, itemInfo) {
         var canopyInfo = {
             rig_id: row.rig_id,
             canopy_sn: row.canopy_sn,
@@ -630,20 +706,258 @@ export default class InventoryScreen extends React.Component {
     displayAddView() {
         console.log("hit displayAddView funct");
         // set up the display component
+        var AADInfo = {
+            aad_sn: '',
+            lifespan: ''
+        }
+        var itemInfo = {
+            item_id: null,
+            item_type: 'aad',
+            manufacturer: null,
+            description: null,
+            is_on_rig: null,
+            brand: null,
+            is_rentable: true,
+            item_type_id: 16 //TODO update
+        };
         var display = <InventoryDisplayAAD
-            index={""}
-            manufacturer={""}
-            desc={""}
-            isRented={""}
-            brand={""}
-            type={""}
-            changeRowData={""} />;
+            AADInfo={AADInfo}
+            itemInfo={itemInfo}
+            updateAADRow={this.addAAD}
+        />;
 
         // this.displayChange(display, row.index);  
 
         this.setState({
             // index: selectedIndex,
             currentItem: display
+        });
+    }
+
+    displayAddContainer() {
+        console.log("hit displayAddView funct");
+        // set up the display component
+        var containerInfo = {
+            container_sn: null
+        }
+        var itemInfo = {
+            item_id: null,
+            item_type: 'container',
+            manufacturer: null,
+            description: null,
+            is_on_rig: null,
+            brand: null,
+            is_rentable: true,
+            item_type_id: 4 //TODO update
+        };
+        var display = <InventoryDisplayContainer
+            containerInfo={containerInfo}
+            itemInfo={itemInfo}
+            updateContainerRow={this.addContainer}
+        />;
+
+        // this.displayChange(display, row.index);  
+
+        this.setState({
+            // index: selectedIndex,
+            currentItem: display
+        });
+    }
+
+    displayAddCanopy() {
+        var canopyInfo = {
+            rig_id: null,
+            canopy_sn: null,
+            size: null,
+            date_of_manufacture: null,
+            jump_count: null
+        }
+        var itemInfo = {
+            item_id: null,
+            item_type: 'canopy',
+            manufacturer: null,
+            description: null,
+            is_on_rig: null,
+            brand: null,
+            is_rentable: true,
+            item_type_id: 1 //TODO update
+        };
+        var display = <InventoryDisplayCanopy
+            itemInfo={itemInfo}
+            canopyInfo={canopyInfo}
+            updateCanopyRow={this.addCanopy}
+        />;
+
+        // this.displayChange(display, row.index);  
+
+        this.setState({
+            // index: selectedIndex,
+            currentItem: display
+        });
+    }
+
+    addAAD(itemInfo, AADInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/AADs/";
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.lifespan = AADInfo.lifespan;
+        requestVariables.serial_number = AADInfo.aad_sn;
+
+        fetch(url, {
+            method: "POST",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Adding AAD failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var AAD = {};
+            AAD.manufacturer = itemInfo.manufacturer;
+            AAD.description = itemInfo.description;
+            AAD.is_on_rig = itemInfo.is_on_rig;
+            AAD.brand = itemInfo.brand;
+            AAD.is_rentable = itemInfo.is_rentable;
+            AAD.lifespan = AADInfo.lifespan;
+            AAD.serial_number = AADInfo.aad_sn;
+            AAD.item_type = 'aad';
+            self.all.set(responseData.item_id, AAD);
+            self.aads.set(responseData.item_id, AAD);
+
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in AAD display
+                self.setState({
+                    rows: Array.from(self.aads.values())
+                })
+            }
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    addContainer(itemInfo, containerInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/containers/";
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.serial_number = containerInfo.container_sn;
+        requestVariables.pin = this.state.pin;
+
+        fetch(url, {
+            method: "POST",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing container failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var container = {};
+            container.manufacturer = itemInfo.manufacturer;
+            container.description = itemInfo.description;
+            container.is_on_rig = itemInfo.is_on_rig;
+            container.brand = itemInfo.brand;
+            container.is_rentable = itemInfo.is_rentable;
+            container.container_sn = containerInfo.container_sn;
+            container.item_type = 'container'
+            self.all.set(responseData.item_id, container);
+            self.containers.set(responseData.item_id, container);
+
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in Containers display
+                self.setState({
+                    rows: Array.from(self.containers.values())
+                })
+            }
+
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    addCanopy(itemInfo, canopyInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/canopies/";
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.pin = this.state.pin;
+        requestVariables.rig_id = canopyInfo.rig_num;
+        requestVariables.serial_number = canopyInfo.canopy_sn;
+        requestVariables.size = canopyInfo.size;
+        requestVariables.jump_count = canopyInfo.jump_count;
+
+        fetch(url, {
+            method: "POST",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var canopy = {};
+            canopy.manufacturer = itemInfo.manufacturer;
+            canopy.description = itemInfo.description;
+            canopy.is_on_rig = itemInfo.is_on_rig;
+            canopy.brand = itemInfo.brand;
+            canopy.is_rentable = itemInfo.is_rentable;
+            canopy.serial_number = canopyInfo.canopy_sn;
+            canopy.size = canopyInfo.size;
+            canopy.jump_count = canopyInfo.jump_count;
+            canopy.item_type = 'canopy';
+
+            self.all.set(responseData.item_id, canopy);
+            self.canopies.set(responseData.item_id, canopy);
+
+            if (self.state.filter === 'all') {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else {
+                // must be in Canopies display
+                self.setState({
+                    rows: Array.from(self.canopies.values())
+                })
+            }
+
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
         });
     }
 
@@ -655,7 +969,11 @@ export default class InventoryScreen extends React.Component {
             id="InventoryFilterDropdown"
         />;
 
-        var addItemBtn = <AddInventoryItemBtn buttonText={"ADD"} onClick={this.displayAddView} />;
+        var buttons = <div>
+            <AddInventoryItemBtn buttonText={"Add AAD"} onClick={this.displayAddView} />
+            <AddInventoryItemBtn buttonText={"Add Container"} onClick={this.displayAddContainer} />
+            <AddInventoryItemBtn buttonText={"Add Canopy"} onClick={this.displayAddCanopy} />
+        </div>
         return (
             <div>
                 <Row>
@@ -669,7 +987,7 @@ export default class InventoryScreen extends React.Component {
                             columns={this.state.columns}
                             rows={this.state.rows}
                             top={filterDropdown}
-                            bottom={addItemBtn}
+                            bottom={buttons}
                             itemSelected={this.itemSelected}
                         />
                     </Col>

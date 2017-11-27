@@ -22,6 +22,15 @@ export default class InventoryDisplayCanopy extends React.Component {
         };
     }
 
+    componentWillReceiveProps(newProps)
+    {
+        console.log("in componentWillReceiveProps");
+        // force update state 
+        this.setState({
+            canopyInfo: newProps.canopyInfo
+        })
+    }
+
     rig_numberChanged(e) {
         var newCanopyInfo = this.state.canopyInfo;
         newCanopyInfo.rig_number = e.target.value;
