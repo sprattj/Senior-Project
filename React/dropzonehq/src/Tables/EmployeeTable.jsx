@@ -160,7 +160,7 @@ export default class EmployeeTable extends React.Component {
             id={employee_id}
             authorize={self.editEmployee} />
           <EmployeeStatusButton
-            employee_id={employee_id}
+            id={employee_id}
             toggleEmployeeStatus={self.toggleEmployeeStatus}
             firstName={firstName}
             lastName={lastName}
