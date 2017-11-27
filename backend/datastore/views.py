@@ -197,6 +197,7 @@ class EmployeeList(generics.ListCreateAPIView):
             #emp.pin = Employees.pin_to_hash(pin)
             emp.pin = pin
             #emp.roles = role
+            print(role)
             data = {'pin': pin}
             
 
@@ -620,10 +621,10 @@ def get_emp_full_name(employee_id):
 
 def createDropzone(request):
     try:
-        username = request.POST['username']
-        password = request.POST['password']
-        location = request.POST['location']
-        email = request.POST['email']
+        username = request.get.data['username']
+        password = request.get.data['password']
+        location = request.get.data['location']
+        email = request.get.data['email']
         if email or password or location or username is None:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -632,21 +633,23 @@ def createDropzone(request):
                 dropzone.save()
             except:
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-            serializer = DropZoneSerializer(data= dropzone)
-            return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
+            data = {'success': 'True'}
+            return JsonResponse(data=data, status=status.HTTP_201_CREATED)
     except:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
 
 def loginDropzone(request):
     try:
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.get.data['username']
+        password = request.get.data['password']
         dropzone = authenticate(request=request,username=username,password=password)
         if dropzone is None :
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         else:
             login(request, user=dropzone)
+            data = {'success':'True'}
+            return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
     except:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
