@@ -1,8 +1,13 @@
 import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from '../Tables/ItemTable.jsx';
-import EditInventoryItemDisplay from '../ItemDisplays/EditInventoryItemDisplay.jsx';
+
 import BlankItemDisplay from '../ItemDisplays/BlankItemDisplay.jsx';
+import InventoryDisplayRig from '../ItemDisplays/InventoryDisplayRig.jsx';
+import InventoryDisplayCanopy from '../ItemDisplays/InventoryDisplayCanopy.jsx';
+import InventoryDisplayContainer from '../ItemDisplays/InventoryDisplayContainer.jsx';
+import InventoryDisplayAAD from '../ItemDisplays/InventoryDisplayAAD.jsx';
+
 import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
 import PropTypes from 'prop-types';
 import { Row, Col, Card } from 'reactstrap';
@@ -18,7 +23,6 @@ const marginStyle = {
 };
 
 var count = 0;
-var display = <EditInventoryItemDisplay var1={"nothing to"} var2={"see here"} />;
 
 export default class InventoryScreen extends React.Component {
     constructor(props) {
@@ -29,16 +33,39 @@ export default class InventoryScreen extends React.Component {
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
+        this.getFilteredRows = this.getFilteredRows.bind(this);
+
         this.itemSelected = this.itemSelected.bind(this);
+        this.rigSelected = this.rigSelected.bind(this);
+        this.canopySelected = this.canopySelected.bind(this);
+        this.containerSelected = this.containerSelected.bind(this);
+        this.aadSelected = this.aadSelected.bind(this);
+        this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
-        this.changeRowData = this.changeRowData.bind(this);
+        this.displayAddView = this.displayAddView.bind(this);
+        this.resetDisplay = this.resetDisplay.bind(this);
+        this.updateAADRow = this.updateAADRow.bind(this);
+        this.updateCanopyRow = this.updateCanopyRow.bind(this);
+        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
+        this.updateContainerRow = this.updateContainerRow.bind(this);
+        this.updateRigRow = this.updateRigRow.bind(this);
 
 
-        this.all = [];
-        this.rigs = [];
-        this.canopies = [];
-        this.containers = [];
-        this.aad = [];
+        this.all = new Map();
+        this.rigs = new Map();
+        this.canopies = new Map();
+        this.containers = new Map();
+        this.aads = new Map();
+
+        this.columnsAll = [{
+            Header: 'Item manufacturer',
+            accessor: 'manufacturer', // String-based value accessors!
+            width: 150
+        }, {
+            Header: 'Item Description',
+            accessor: 'description',
+            width: 400
+        }];
 
         this.columnsRigs = [{
             Header: 'Main',
@@ -64,7 +91,7 @@ export default class InventoryScreen extends React.Component {
             width: 150
         }, {
             Header: 'Canopy Description',
-            accessor: 'desc',
+            accessor: 'description',
             width: 250
         }];
 
@@ -74,149 +101,49 @@ export default class InventoryScreen extends React.Component {
             width: 150
         }, {
             Header: 'Container Description',
-            accessor: 'desc',
+            accessor: 'description',
             width: 400
         }];
 
         this.columnsAAD = [{
             Header: 'Lifespan',
-            accessor: 'life',
+            accessor: 'lifespan',
             width: 150
         }, {
             Header: 'Deployment Date',
-            accessor: 'date',
+            accessor: 'deployment_timestamp',
             width: 150
         }];
 
         //Test Data to fill the table until we connect to the DB
-        var rowData =
-        [{ index: 0, number: "00", desc: "Red and Black Mirage", isRented: true, renterName: "Edgar", type: "container", brand: "Mirage" },
-        { index: 1, number: "01", desc: "Blue and White Saber 170. Pink and Blue Javelin", isRented: true, renterName: "Frank", type: "rig", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
-        { index: 2, number: "02", desc: "Red and Green Pilot 220. Black and Yellow Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
-        { index: 3, number: "03", desc: "Brown Navigator 190. Black and White Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
-        { index: 4, number: "04", desc: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", isRented: true, renterName: "Sam", type: "rig", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
-        { index: 5, number: "05", desc: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", isRented: true, renterName: "Sue", type: "rig", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
-        { index: 6, number: "06", desc: "Green, Orange, White Navigator 170. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
-        { index: 7, number: "07", desc: "Green, Orange, White Navigator 150. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
-        { index: 8, number: "08", desc: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
-        { index: 9, number: "09", desc: "Black Main in Black Javelin", isRented: false, renterName: "", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 10, number: "10", desc: "Red, White, Yellow Saber2 170. Red Javelin", isRented: true, renterName: "Ralph", type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
-        { index: 11, number: "11", desc: "Blue and Black Main. Blue and Black Mirage", isRented: false, renterName: "", type: "rig", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
-        { index: 12, number: "12", desc: "Red and Black Navigator", isRented: false, renterName: "", type: "canopy", brand: "Navigator", size: "210" },
-        { index: 13, number: "13", desc: "Blue and Black Mirage", isRented: false, renterName: "", type: "container", brand: "Mirage" },
-        { index: 14, number: "14", desc: "Orange and Black Mirage", isRented: false, renterName: "", type: "aad", life: "Mirage", date: "11/19/2017" }
-        
-        ];
+        /*var rowData =
+            [{ index: 0, item_id: 0, manufacturer: "00", description: "Red and Black Mirage", is_rentable: true, isRented: true, item_type: "container", brand: "Mirage" },
+            { index: 1, item_id: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
+            { index: 2, item_id: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
+            { index: 3, item_id: 3, manufacturer: "03", description: "Brown Navigator 190. Black and White Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Mirage" },
+            { index: 4, item_id: 4, manufacturer: "04", description: "Old Yellow and Gray Pilot 240. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sam", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "240", containerBrand: "Javelin" },
+            { index: 5, item_id: 5, manufacturer: "05", description: "Green, Orange, White Navigator 210 fater lines. Brown and Black Javelin", is_rentable: true, isRented: true, brand: "Sue", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "210", containerBrand: "Javelin" },
+            { index: 6, item_id: 6, manufacturer: "06", description: "Green, Orange, White Navigator 170. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "170", containerBrand: "Javelin" },
+            { index: 7, item_id: 7, manufacturer: "07", description: "Green, Orange, White Navigator 150. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "150", containerBrand: "Javelin" },
+            { index: 8, item_id: 8, manufacturer: "08", description: "Green, Yellow, Purple Navigator 190. Brown and Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Navigator", mainSize: "190", containerBrand: "Javelin" },
+            { index: 9, item_id: 9, manufacturer: "09", description: "Black Main in Black Javelin", is_rentable: true, isRented: false, brand: "", item_type: "rig", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+            { index: 10, item_id: 10, manufacturer: "10", description: "Red, White, Yellow Saber2 170. Red Javelin", is_rentable: true, isRented: true, brand: "Ralph", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber2", mainSize: "170", containerBrand: "Javelin" },
+            { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
+            { index: 12, item_id: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
+            { index: 13, item_id: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
+            { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" },
+            { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", date: "11/24/2017" }
+            ];
+
+        this.getFilteredRows(rowData);*/
 
         this.state = {
             filter: "all",
-            columns: [{
-                Header: 'Item Number',
-                accessor: 'number' // String-based value accessors!
-            }, {
-                Header: 'Item Description',
-                accessor: 'desc',
-            }],
-            rows: rowData,
+            columns: this.columnsAll,
+            rows: Array.from(this.all.values()), // rows: mapName.values() instead of rows: rowData
             index: 0,
-            currentItem:  <BlankItemDisplay headerText={"Inventory Item Details"}/>
+            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
         };
-
-        this.getFilteredRows(this.state.rows);
-
-    }
-
-    changeRowData(index, itemNum, itemRenterName, itemDesc, itemType) 
-    {
-        console.log("in change, old values => index: " + index + " itemNum: " + this.state.rows[index].number + " itemRenterName: " 
-                                                        + this.state.rows[index].renterName + " itemDesc: " + this.state.rows[index].desc 
-                                                        + " itemType: " + this.state.rows[index].type);
-        this.state.rows[index].number = itemNum;
-        this.state.rows[index].renterName = itemRenterName;
-        this.state.rows[index].desc = itemDesc;
-        this.state.rows[index].type = itemType; 
-
-        console.log("new values => index: " + index + " itemNum: " + this.state.rows[index].number + " itemRenterName: " 
-                                        + this.state.rows[index].renterName + " itemDesc: " + this.state.rows[index].desc 
-                                        + " itemType: " + this.state.rows[index].type);
-    }
-
-    getFilteredRows(rowData) 
-    {
-        // save everything first
-        this.all = rowData;                                  
-        for (var i = 0; i < rowData.length; i++) 
-        {   
-            if (rowData[i].type === "rig") 
-            {
-                //if the type is rig
-                this.rigs.push(rowData[i]);
-            } 
-            else if (rowData[i].type === "canopy") 
-            {  
-                // if the type is canopy
-                this.canopies.push(rowData[i]);
-            } 
-            else if (rowData[i].type === "container") 
-            { 
-                // if the type is container
-                this.containers.push(rowData[i]);
-            }
-            else if (rowData[i].type === "aad")
-            {
-                // if the type is AAD
-                this.aad.push(rowData[i]);    
-            }
-        }
-    }
-
-
-    //changes the display of the right side of the screen by
-    //taking in a EditInventoryItemDisplay and setting it in the currentItem state
-    displayChange(itemDisplay, index) {
-        if (! (itemDisplay === "")) 
-        {
-            console.log("Inventory Screen-> displayChange> index: " + index);
-            this.setState({
-                currentItem: itemDisplay
-            });
-        } else {
-            console.log("check what 'itemDisplay' is");
-        }
-
-    }
-
-    //for the dropdown    
-    filterChanged(selection) {
-        switch (selection) {
-            case "Show All":
-                this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
-                break;
-            case "Rigs Only":
-                this.setState({ filter: "rig", rows: this.rigs, columns: this.columnsRigs });
-                break;
-            case "Canopies Only":
-                this.setState({ filter: "canopy", rows: this.canopies, columns: this.columnsCanopies });
-                break;
-            case "Containers Only":
-                this.setState({ filter: "container", rows: this.containers, columns: this.columnsContainers });
-                break;
-            case "AADs Only":
-                this.setState({ filter: "aad", rows: this.aad, columns: this.columnsAAD });
-                break;
-            default:
-                this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
-                break;
-        }
-
-        this.resetDisplay();        
-        //this.processRows(this.state.rows, this.state.filter);
-    }
-
-    resetDisplay() {
-        this.setState({
-            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"}/>
-        });
     }
 
     //When this RentalTable component loads on the page, fetch the rows
@@ -234,10 +161,6 @@ export default class InventoryScreen extends React.Component {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        //Define our endpoint using the rootURL, the URL section 
-        //that we set in our constructor (like "/rigsheets"), and
-        //the sheetType prop ("Tandems" or "Students")
-        //(rootURL is imported from our rest info file)
         var url = rootURL + this.URLsection;
 
         //save 'this' so that we can call functions
@@ -261,16 +184,343 @@ export default class InventoryScreen extends React.Component {
                 return response.json();
             })//when the call succeeds
             .then(function (rowData) {
-                //process the row data we received back
-                self.processRows(rowData);
-                //update our state with these rows to rerender the table
+                self.getFilteredRows(rowData);
                 self.setState({
-                    rows: rowData
+                    filter: "all",
+                    columns: self.columnsAll,
+                    rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
+                    index: 0,
+                    currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
                 });
             })//catch any errors and display them as a toast
             .catch(function (error) {
-              toast.error(error + "\n" + url);
+                toast.error(error + "\n" + url);
             });;
+    }
+
+    updateAADRow(itemInfo, AADInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/AADs/" + itemInfo.item_id;
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.lifespan = AADInfo.lifespan;
+        requestVariables.serial_number = AADInfo.aad_sn;
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var AAD = self.all.get(itemInfo.item_id);
+            AAD.manufacturer = itemInfo.manufacturer;
+            AAD.description = itemInfo.description;
+            AAD.is_on_rig = itemInfo.is_on_rig;
+            AAD.brand = itemInfo.brand;
+            AAD.is_rentable = itemInfo.is_rentable;
+            AAD.lifespan = AADInfo.lifespan;
+            AAD.aad_sn = AADInfo.aad_sn;
+
+            self.all.set(itemInfo.item_id, AAD);
+            self.aads.set(itemInfo.item_id, AAD);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    updateReserveCanopyRow(item_id, manufacturer, description, isOnRig, brand,
+        isRentable, rig_id, serial_number, size, date_of_manufacture,
+        jump_count, last_repack_date, next_repack_date, packed_by_employee_id, ride_count) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/canopies/reserve/" + item_id;
+
+        var self = this;
+        var requestVariables = {
+            manufacturer: manufacturer,
+            description: description,
+            is_on_rig: isOnRig,
+            brand: brand,
+            is_rentable: isRentable,
+            rig_id: rig_id,
+            serial_number: serial_number,
+            size: size,
+            date_of_manufacture: date_of_manufacture,
+            jump_count: jump_count,
+            last_repack_date: last_repack_date,
+            next_repack_date: next_repack_date,
+            packed_by_employee_id: packed_by_employee_id,
+            ride_count: ride_count,
+            pin: this.state.pin
+        };
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing reserve canopy failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var reserveCanopy = self.all.get(item_id);
+            reserveCanopy.manufacturer = manufacturer;
+            reserveCanopy.description = description;
+            reserveCanopy.is_on_rig = isOnRig;
+            reserveCanopy.brand = brand;
+            reserveCanopy.is_rentable = isRentable;
+            reserveCanopy.serial_number = serial_number;
+            reserveCanopy.size = size;
+            reserveCanopy.date_of_manufacture = date_of_manufacture;
+            reserveCanopy.jump_count = jump_count;
+
+            self.all.set(item_id, reserveCanopy);
+            self.canopies.set(item_id, reserveCanopy);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+
+    }
+
+    updateCanopyRow(itemInfo, canopyInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        console.log("item info in fetch call: " + JSON.stringify(itemInfo));        
+        var url = rootURL + "/canopies/" + itemInfo.item_id;
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.pin = this.state.pin;
+        requestVariables.rig_id = canopyInfo.rig_num;
+        requestVariables.serial_number = canopyInfo.canopy_sn;
+        requestVariables.size = canopyInfo.size;
+        requestVariables.jump_count = canopyInfo.jump_count;
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var canopy = self.all.get(itemInfo.item_id);
+            canopy.manufacturer = itemInfo.manufacturer;
+            canopy.description = itemInfo.description;
+            canopy.is_on_rig = itemInfo.is_on_rig;
+            canopy.brand = itemInfo.brand;
+            canopy.is_rentable = itemInfo.is_rentable;
+            canopy.serial_number = canopyInfo.canopy_sn;
+            canopy.size = canopyInfo.size;
+            canopy.jump_count = canopyInfo.jump_count;
+
+            self.all.set(itemInfo.item_id, canopy);
+            self.canopies.set(itemInfo.item_id, canopy);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    updateRigRow(itemInfo, rigInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/rigs/" + itemInfo.item_id;
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.aad_id = rigInfo.aad;
+        requestVariables.container_id = rigInfo.container;
+        requestVariables.isTandem = rigInfo.isTandem;
+        requestVariables.pin = this.state.pin;
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing rig failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+
+            var rig = self.all.get(itemInfo.item_id);
+            rig.manufacturer = itemInfo.manufacturer;
+            rig.description = itemInfo.description;
+            rig.brand = itemInfo.brand;
+            rig.is_rentable = itemInfo.isRentable;
+            rig.container_id = rigInfo.container;
+            rig.aad_id = rigInfo.aad;
+            rig.isTandem = rigInfo.isTandem;
+
+            self.all.set(itemInfo.item_id, rig);
+            self.rigs.set(itemInfo.item_id, rig);
+
+            self.setState({
+                rows: Array.from(self.all.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    updateContainerRow(itemInfo, containerInfo) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = rootURL + "/containers/" + itemInfo.item_id;
+
+        var self = this;
+        var requestVariables = itemInfo;
+        requestVariables.serial_number = containerInfo.container_sn;
+        requestVariables.pin = this.state.pin;
+
+        fetch(url, {
+            method: "PATCH",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestVariables)
+        }).then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("Editing container failed. Bad response " + response.status + " from server");
+            }
+            return response.json();
+        }).then(function (responseData) {
+            var container = self.all.get(itemInfo.item_id);
+            container.manufacturer = itemInfo.manufacturer;
+            container.description = itemInfo.description;
+            container.is_on_rig = itemInfo.is_on_rig;
+            container.brand = itemInfo.brand;
+            container.is_rentable = itemInfo.is_rentable;
+            container.container_sn = containerInfo.container_sn;
+
+            self.all.set(itemInfo.item_id, container);
+            self.containers.set(itemInfo.item_id, container);
+            self.setState({
+                rows: Array.from(self.containers.values())
+            })
+        }).catch(function (error) {
+            toast.error(error + "\n" + url);
+        });
+    }
+
+    getFilteredRows(rowData) {
+        this.all = new Map();
+        this.rigs = new Map();
+        this.canopies = new Map();
+        this.containers = new Map();
+        this.aads = new Map();
+
+        // save everything first
+        for (var i = 0; i < rowData.length; i++) {
+            // map row to item_id in that row
+            this.all.set(rowData[i].item_id, rowData[i]);
+            if (rowData[i].item_type === "rig") {
+                //if the type is rig
+                this.rigs.set(rowData[i].item_id, rowData[i]);
+            } else if (rowData[i].item_type === "canopy") {
+                // if the type is canopy
+                this.canopies.set(rowData[i].item_id, rowData[i]);
+            } else if (rowData[i].item_type === "container") {
+                // if the type is container
+                this.containers.set(rowData[i].item_id, rowData[i]);
+            } else if (rowData[i].item_type === "aad") {
+                // if the type is AAD
+                this.aads.set(rowData[i].item_id, rowData[i]);
+            }
+        }
+    }
+
+
+    //changes the display of the right side of the screen by
+    //taking in a EditInventoryItemDisplay and setting it in the currentItem state
+    displayChange(itemDisplay, selectedIndex) {
+        if (!(itemDisplay === "")) {
+            console.log("Inventory Screen-> displayChange> index: " + selectedIndex);
+            this.setState({
+                currentItem: itemDisplay,
+                index: selectedIndex
+            });
+        } else {
+            console.log("check what 'itemDisplay' is");
+        }
+    }
+
+    //for the dropdown    
+    filterChanged(selection) {
+        switch (selection) {
+            case "Show All":
+                this.setState({ filter: "all", rows: Array.from(this.all.values()), columns: this.columnsAll });
+                break;
+            case "Rigs Only":
+                this.setState({ filter: "rig", rows: Array.from(this.rigs.values()), columns: this.columnsRigs });
+                break;
+            case "Canopies Only":
+                this.setState({ filter: "canopy", rows: Array.from(this.canopies.values()), columns: this.columnsCanopies });
+                break;
+            case "Containers Only":
+                this.setState({ filter: "container", rows: Array.from(this.containers.values()), columns: this.columnsContainers });
+                break;
+            case "AADs Only":
+                this.setState({ filter: "aad", rows: Array.from(this.aads.values()), columns: this.columnsAAD });
+                break;
+            default:
+                this.setState({ filter: "all", rows: Array.from(this.all.values()), columns: this.columnsAll });
+                break;
+        }
+
+        this.resetDisplay();
+        //this.processRows(this.state.rows, this.state.filter);
+    }
+
+    resetDisplay() {
+        this.setState({
+            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+        });
     }
 
     //calls up to the screen change the display on the right
@@ -279,23 +529,121 @@ export default class InventoryScreen extends React.Component {
         console.log("selectedIndex: " + selectedIndex);
 
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
-        var display = <EditInventoryItemDisplay            //set up the display component
-            index={row.index}
-            number={row.number}
-            desc={row.desc}
-            isRented={row.isRented}
-            renterName={row.renterName}
-            type={row.type} 
-            changeRowData={this.changeRowData}/>;
 
-        console.log("row: " + row);
-        //this.displayChange(display, row.index);         
+        var display = this.setupDisplay(row);
+
+        this.displayChange(display, row.index);
+
         console.log("Selection count: " + count);
         count++;
 
+        console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].manufacturer + " \n brand: "
+            + this.state.rows[selectedIndex].brand + " \n itemdescription: " + this.state.rows[selectedIndex].description
+            + " \n itemType: " + this.state.rows[selectedIndex].item_type);
+    }
+
+    // set up the display component, based on Item Type
+    setupDisplay(row) {
+        var display;
+
+        // select the type of Inventory Item Display will be shown 
+        // based on the selected item's .item_type
+        var itemInfo = {
+            item_id: row.item_id,
+            item_type: row.item_type,
+            manufacturer: row.manufacturer,
+            description: row.description,
+            is_on_rig: row.is_on_rig,
+            brand: row.brand,
+            is_rentable: row.is_rentable
+        };
+        switch (row.item_type) {
+            case ("rig"):
+                display = this.rigSelected(row, itemInfo);
+                break;
+            case ("canopy"):
+                display = this.canopySelected(row, itemInfo);
+                break;
+            case ("container"):
+                display = this.containerSelected(row, itemInfo);
+                break;
+            case ("aad"):
+                display = this.aadSelected(row, itemInfo);
+                break;
+        }
+        return display;
+    }
+
+    rigSelected(row, itemInfo) {
+        var rigInfo = {
+            container: row.container,
+            aad: row.aad,
+            isTandem: row.isTandem
+        }
+        return <InventoryDisplayRig
+            itemInfo={itemInfo}
+            rigInfo={rigInfo}
+            updateRigRow={this.updateRigRow}
+        />;
+    }
+
+    canopySelected(row, itemInfo) {
+        var canopyInfo = {
+            rig_id: row.rig_id,
+            canopy_sn: row.canopy_sn,
+            size: row.size,
+            date_of_manufacture: row.date_of_manufacture,
+            jump_count: row.jump_count
+        }
+        return <InventoryDisplayCanopy
+            itemInfo={itemInfo}
+            canopyInfo={canopyInfo}
+            updateCanopyRow={this.updateCanopyRow}
+        />;
+    }
+
+    containerSelected(row, itemInfo) {
+        var containerInfo = {
+            container_sn: row.container_sn
+        }
+        return <InventoryDisplayContainer
+            itemInfo={itemInfo}
+            containerInfo={containerInfo}
+            updateContainerRow={this.updateContainerRow}
+        />;
+    }
+
+    aadSelected(row, itemInfo) {
+        var AADInfo = {
+            aad_sn: row.aad_sn,
+            lifespan: row.lifespan
+        }
+        return <InventoryDisplayAAD
+            itemInfo={itemInfo}
+            AADInfo={AADInfo}
+            updateAADRow={this.updateAADRow}
+        />;
+    }
+
+
+    // calls on "ADD" btn click to change right side view to empty field values by default
+    displayAddView() {
+        console.log("hit displayAddView funct");
+        // set up the display component
+        var display = <InventoryDisplayAAD
+            index={""}
+            manufacturer={""}
+            desc={""}
+            isRented={""}
+            brand={""}
+            type={""}
+            changeRowData={""} />;
+
+        // this.displayChange(display, row.index);  
+
         this.setState({
-            index: selectedIndex,
-            currentItem: display 
+            // index: selectedIndex,
+            currentItem: display
         });
     }
 
@@ -307,7 +655,7 @@ export default class InventoryScreen extends React.Component {
             id="InventoryFilterDropdown"
         />;
 
-        var addItemBtn = <AddInventoryItemBtn buttonText={"ADD"} />;
+        var addItemBtn = <AddInventoryItemBtn buttonText={"ADD"} onClick={this.displayAddView} />;
         return (
             <div>
                 <Row>
@@ -326,11 +674,10 @@ export default class InventoryScreen extends React.Component {
                         />
                     </Col>
                     <Col lg={{ size: 5 }}>
-                        <Card body>
+                        <Card>
                             {this.state.currentItem}
                         </Card>
                     </Col>
-
                 </Row>
             </div>
         );

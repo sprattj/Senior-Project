@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'reactstrap';
 import ModalDialog from './ModalDialog.jsx';
 import VerifyPopover from './VerifyPopover.jsx';
-
+import VerifyForm from './VerifyForm.jsx';
 /*
   A PackedWrongRigButton is a button for reporting that an employee
   marked the wrong rig as packed.
@@ -38,19 +38,19 @@ export default class ModalWithVerify extends React.Component {
         });
     }
 
-    verify(){
-        
+    verify() {
+
         //if (this.props.verify){
-            this.props.verify();
-            this.toggleModal();
-            this.togglePopover();
+        this.props.verify();
+        this.toggleModal();
+        this.togglePopover();
         //}
     }
 
     //pass the corresponding onchange methods down to the child components so 
     //we can get their values back here when they are changed
     render() {
-        
+
         return (
             <div>
                 <Button size="lg" color={this.props.mainButtonColor}
@@ -60,19 +60,23 @@ export default class ModalWithVerify extends React.Component {
                     isOpen={this.state.modalOpen}
                     onCancelClick={this.toggleModal}
                     primaryButtonText={this.props.modalButtonText}
-                    onPrimaryClick={this.togglePopover}
+                    onPrimaryClick={this.props.verify}
                     primaryButtonID={this.props.ID}>
-                    {this.props.modalContent}
+                    <div>{this.props.modalContent}
+                        <VerifyForm pinChanged={this.props.pinChanged} />
+                    </div>
                 </ModalDialog>
+            </div>
+        );
+    }
+}
 
-                <VerifyPopover
+/*
+<VerifyPopover
                     isOpen={this.state.popoverOpen}
                     title={this.props.popoverTitle}
                     buttonID={this.props.ID}
                     toggle={this.togglePopover}
                     verify={this.verify}
                     pinChanged={this.props.pinChanged} />
-            </div>
-        );
-    }
-}
+                    */

@@ -21,7 +21,7 @@ import random
 class AutomaticActivationDevices(models.Model):
 
     # item_id PK -> shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     # Date when this AAD was deployed
     deployment_timestamp = models.DateTimeField()
     # Serial number may include digits and letters
@@ -40,7 +40,7 @@ class Canopies(models.Model):
 
     # FOREIGN KEYS
     # item_id PK -> Shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     # rig_id -> what rig this canopy is installed on
     rig = models.ForeignKey('Rigs', models.DO_NOTHING, null=True)
 
@@ -99,7 +99,7 @@ class Claims(models.Model):
 class Containers(models.Model):
 
     # item_id PK -> shares PK from items table
-    item = models.OneToOneField('Items', models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField('Items', on_delete=models.CASCADE, primary_key=True)
     serial_number = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
@@ -121,7 +121,6 @@ class DjangoMigrations(models.Model):
 
 # A location that is used as a skydiving drop zone.
 class Dropzones(User):
-
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
@@ -166,19 +165,40 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
-    auth_level_choice = (
-        (0, 'Packer'),
-        (1, 'Intructor'),
-        (2, 'Rigger'),
-        (3, 'Admin')
-    )
-    auth_level = models.IntegerField(choices=auth_level_choice)
 
     class Meta:
         managed = True
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
 
+class EmployeeRolesPermissions(models.Model):
+    employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
+    permission = models.ForeignKey('permissions', on_delete=models.DO_NOTHING)
+
+    class Meta:
+        managed = True
+        db_table = 'EmployeeRolesPermissions'
+        unique_together = (('employeeRole', 'permission'),)
+        app_label = 'dropZoneHQ'
+
+class Permissions(models.Model):
+    permission = models.CharField(max_length=45)
+
+    auth_level_choice = (
+        ('Packer', '0'),
+        ('Instructor', '1'),
+        ('Rigger', '2'),
+        ('Admin', '3')
+    )
+    auth_level = models.IntegerField(choices=auth_level_choice, name='auth_level')
+
+    def get_auth_level(self):
+        return getattr(self, name='auth_level')
+
+    class Meta:
+        managed = True
+        db_table = 'permissions'
+        app_label = 'dropZoneHQ'
 
 # Employees the work at the drop zone
 class Employees(models.Model):
@@ -201,7 +221,7 @@ class Employees(models.Model):
         if pin or employee is None:
             return None
         else:
-            salt = int(pin[:3])
+            salt = 3
             if BCryptSHA256PasswordHasher().encode(password=pin, salt=salt) == employee.pin:
                 return True
             else:
@@ -213,7 +233,7 @@ class Employees(models.Model):
         if pin is None:
             return None
         else:
-            salt = int(pin[:3])
+            salt = 3
             return BCryptSHA256PasswordHasher().encode(password=pin, salt=salt)
 
     # Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
@@ -222,15 +242,25 @@ class Employees(models.Model):
         if userPK is None:
             return None
         else:
-            salt = util.stringToThree(random.randint(0, 1000))
-            key = util.stringToThree(str(salt)) + str(userPK % 1000)
+            do_over = True
+            while do_over:
+                salt = util.string_to_three(str(random.randint(0, 1000)))
+                key = util.string_to_three(salt) + str((int(userPK) % 1000))
+                find_me = Employees.objects.filter(key)
+                find_me_hash = Employees.objects.filter(Employees.pin_to_hash(key))
+                if find_me or find_me_hash is not None:
+                    do_over = True
+                else:
+                    do_over = False
             return key
 
     # Checks if a pin is in use for an Employee.
     # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
-    def employee_pin_in_use(pin):
-        emp = Employees.objects.all()
+    def employee_pin_in_use(pin=None):
+        emp = Employees.objects.values()
+        if pin is None:
+            return None
         for e in emp:
             if Employees.check_employee_pin(pin=pin, employee=e) is True:
                 return e
@@ -367,7 +397,7 @@ class Rentals(models.Model):
 # A subclass of items and canopies.
 class ReserveCanopies(models.Model):
     # item_id PK -> Shares PK from canopies
-    item = models.OneToOneField(Canopies, models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField(Canopies, on_delete=models.CASCADE, primary_key=True)
 
     last_repack_date = models.DateTimeField()
     next_repack_date = models.DateTimeField()
@@ -386,9 +416,9 @@ class ReserveCanopies(models.Model):
 class Rigs(models.Model):
 
     # PK -> Shares PK from items table
-    item = models.OneToOneField(Items, models.DO_NOTHING, primary_key=True)
+    item = models.OneToOneField(Items, on_delete=models.CASCADE, primary_key=True)
     # Unique identifier for this rig
-    rig_id = models.AutoField(unique=True)
+    rig_id = models.AutoField(auto_created=True, unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
@@ -424,7 +454,7 @@ class RigsAuditTrail(models.Model):
 
 
 class RigComponentDetails(models.Model):
-    rig_id = models.IntegerField()
+    rig_id = models.IntegerField(primary_key=True)
     main_canopy_size = models.CharField(max_length=45)
     main_canopy_brand = models.CharField(max_length=45)
     reserve_canopy_size = models.CharField(max_length=45)
@@ -456,7 +486,8 @@ class Signouts(models.Model):
 
 
 class TempUrl(models.Model):
-    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True)
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
+    dropzone = models.ForeignKey(Dropzones, name='dropzone')
     expires = models.DateTimeField(name="Expries")
 
     def get_url_hash(self):
@@ -464,8 +495,8 @@ class TempUrl(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = False
-        db_table = 'Temp_Url'
+        managed = True
+        db_table = 'tempurl'
 
 
 # Descriptive view for all canopies in the inventory
@@ -502,6 +533,7 @@ class AllItems(models.Model):
     canopy_on_rig = models.IntegerField()
     canopy_sn = models.CharField(max_length=45)
     container_sn = models.CharField(max_length=45)
+    deployment_timestamp = models.DateTimeField()
     aad_sn = models.CharField(max_length=45)
     lifespan = models.CharField(max_length=45)
     is_rentable = models.BooleanField(max_length=4)

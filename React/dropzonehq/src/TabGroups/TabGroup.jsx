@@ -13,16 +13,21 @@ import classnames from 'classnames';
     to be displayed on the active tab.
 */
 export default class TabGroup extends React.Component {
-    
+
     constructor(props) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
-      
-        
+ 
         this.state = {
-            activeTab: 0
+            activeTab: this.props.activeTab
         };
+    }
+
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            activeTab: nextProps.activeTab  
+        })
     }
 
     toggle(tab) {
@@ -36,10 +41,10 @@ export default class TabGroup extends React.Component {
     getNavTabs(tabNames) {
         var tabs = [];
         for (var ndx = 0; ndx < tabNames.length; ndx++) {
-            
+
             var nextTab = (
                 <NavItem key={ndx}>
-                    <NavLink className={classnames({ active: this.state.activeTab === ndx})} onClick={this.toggle.bind(this, ndx)}>
+                    <NavLink className={classnames({ active: this.state.activeTab === ndx })} onClick={this.toggle.bind(this, ndx)}>
                         {tabNames[ndx]}
                     </NavLink>
                 </NavItem>
@@ -54,7 +59,7 @@ export default class TabGroup extends React.Component {
         for (var ndx = 0; ndx < tabContents.length; ndx++) {
             var nextTab = (
                 <TabPane tabId={ndx} key={ndx}>
-                        {tabContents[ndx]}
+                    {tabContents[ndx]}
                 </TabPane>
             );
             tabs.push(nextTab);
