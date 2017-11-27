@@ -14,7 +14,7 @@ export default class EditEmployeeButton extends React.Component {
         this.firstNameChanged = this.firstNameChanged.bind(this);
         this.lastNameChanged = this.lastNameChanged.bind(this);
         this.jobsChanged = this.jobsChanged.bind(this);
-        this.email = this.emailChanged.bind(this);
+        this.emailChanged = this.emailChanged.bind(this);
 
 
         this.state = {

@@ -9,7 +9,7 @@ export default class EmployeeStatusButton extends React.Component {
 
   }
   toggle() {
-    this.props.toggleEmployeeStatus(this.props.id);
+    this.props.toggleEmployeeStatus(this.props.id, this.props.status);
   }
   
 
