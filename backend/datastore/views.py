@@ -100,7 +100,12 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         canopy = Canopies.objects.get(item_id=item_id)
 
         serializer = CanopySerializer(canopy, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        new_instance = serializer.save()
+
         serializer = ItemSerializer(item, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        new_instance = serializer.save()
 
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
@@ -168,15 +173,81 @@ class EmployeeEmployeeRoleDetail(generics.RetrieveUpdateDestroyAPIView, LoginReq
     serializer_class = EmployeeEmployeeRoleSerializer
 
 
-class EmployeeList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeList(generics.ListCreateAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
+
+    def post(self, request, *args, **kwargs):
+        dropzone_id = request.data.get('dropzone_id')
+        email = request.data.get('email')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        role = request.data.get('role')
+        
+        if Employees.employee_email_in_use(email) is not None:
+
+            emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email, dropzone_id=dropzone_id)
+            
+            emp_id = emp.employee_id
+            print(emp_id)
+            pin = Employees.create_random_user_pin(emp_id)
+            #emp.pin = Employees.pin_to_hash(pin)
+            emp.pin = pin
+            #emp.roles = role
+            data = {'pin': pin}
+            
+
+            serializer = EmployeeSerializer(emp, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            new_instance = serializer.save()
+
+            send_mail(
+                subject='DropzoneHQ Employee Pin [NO REPLY]',
+                message='Your new employee pin is ' + pin,
+                from_email='dropzonehqNO-REPLY@dropzonehq.com',
+                recipient_list=[emp.email],
+                fail_silently=False
+            )
+
+            data = {'success': 10}
+            return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
 
 class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
+    def post(self, request):
+
+        try:
+            dropzone = Dropzones.objects.get(request.POST['dropzone'])
+            first = request.POST['first_name']
+            last = request.POST['last_name']
+            email = request.POST['email']
+            role = request.POST['role']
+            dev = request.POST['dev']
+            if Employees.employee_email_in_use(email) is not None:
+                emp = Employees.objects.create(first_name=first, last_name=last, email=email, dropzone=dropzone)
+                emp.dropzone = request.user
+                if dev is True or None:
+                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
+                else:
+                    emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
+                emp.roles = role
+                emp.save()
+                serializer = EmployeeSerializer(emp)
+                send_mail(
+                    subject=util.employeePinTo(),
+                    message=util.createPinResetMessage(pin),
+                    from_email=util.fromEmailString(),
+                    recipient_list=[emp.email],
+                    fail_silently=False
+                )
+                return JsonResponse(data= serializer.data ,status=201)
+            else:
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 class ItemList(generics.ListCreateAPIView, LoginRequiredMixin):
     queryset = Items.objects.all()
@@ -208,13 +279,18 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
     serializer_class = RentalSerializer
 
     def post(self, request, *args, **kwargs):
-        item = Items.objects.get(item_id=request.data.get('item_id'))
+        """
+        print(request.data.get('item')[0])
+        """
+        item = Items.objects.get(item_id=request.data.get('item')[0])
         item_id = item.item_id
 
+        # employee = Employees.objects.get(employee_id=request.data.get('employee')[0])
+        # employee_id = employee.employee_id
+
         rental_id = post_rental(request)
-
+        # post_employee_rental(employee_id, rental_id)
         post_item_rental(item_id, rental_id)
-
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
@@ -501,9 +577,14 @@ def post_rental(request):
     rental_id = rental_id_dict.get("rental_id", "")
     return rental_id
 
+def post_employee_rental(employee_id, rental_id):
+    EmployeesRentals.objects.create(employee_id=employee_id,
+                                    rental_id=rental_id)
+    return
+
 def post_item_rental(item_id, rental_id):
     ItemsRentals.objects.create(item_id=item_id,
-                                     rental_id=rental_id)
+                                rental_id=rental_id)
     return
 
 def patch_emp_signout(employee_id, signout_id):
@@ -567,13 +648,13 @@ def loginDropzone(request):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-@login_required()
+#@login_required()
 def logoutDropzone(request):
     logout(request)
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 
-@login_required()
+
 def EmployeeView(request, dropzonePK):
 
     if request.method == 'GET':
@@ -582,7 +663,7 @@ def EmployeeView(request, dropzonePK):
         employees = Employees.objects.filter(dropzone)
         employeeSerializer = EmployeeSerializer()
         emp = employeeSerializer.data(data=employees)
-        return JsonResponse(data=emp, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(data=emp, status=status.HTTP_202_ACCEPTED)
 
     elif request.method == 'POST':
 
@@ -595,19 +676,17 @@ def EmployeeView(request, dropzonePK):
             dev = request.POST['dev']
             if Employees.employee_email_in_use(email) is not None:
                 emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
-                emp.save()
-                while Employees.employee_pin_in_use(emp.pin)  :
-                    pin = Employees.create_random_user_pin(emp.employee_id)
-                    if dev is None :
-                        emp.pin = Employees.pin_to_hash(pin)
-                trole = EmployeeRoles.find_role_auth_level(role)
-                emp.roles = trole
+                if dev is True or None:
+                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
+                else:
+                    emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
+                emp.roles = role
                 emp.save()
                 serializer = EmployeeSerializer(emp)
                 send_mail(
-                    subject='DropzoneHQ Employee Pin [NO REPLY]',
-                    message='Your new employee pin is ' + pin,
-                    from_email='dropzonehqNO-REPLY@dropzonehq.com',
+                    subject=util.employeePinTo(),
+                    message=util.createPinResetMessage(pin),
+                    from_email=util.fromEmailString(),
                     recipient_list=[emp.email],
                     fail_silently=False
                 )
@@ -620,7 +699,7 @@ def EmployeeView(request, dropzonePK):
 
 
 # authenticate an employee based on their pin and return an http status if the user is authentic
-@login_required()
+#@login_required()
 def authenticateUserPin(request):
     if request.method == 'POST':
 
@@ -694,7 +773,7 @@ def password_reset_dropzone(request):
 
 
 
-@login_required()
+#@login_required()
 def password_reset_employee(request):
     email = None
     try:

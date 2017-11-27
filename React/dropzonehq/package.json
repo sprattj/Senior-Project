@@ -4,8 +4,11 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
     "moment": "^2.19.2",
-    "react": "^16.1.1",    
+    "react": "^16.1.1",
+    "react-addons-css-transition-group": "^16.0.0-alpha.3",
+    "react-addons-transition-group": "^16.0.0-alpha.3",
     "react-big-calendar": "^0.17.0",
     "react-dom": "^16.1.1",
     "react-edit-inline": "^1.0.8",
@@ -14,9 +17,7 @@
     "react-table": "^6.7.4",
     "react-toastify": "^2.2.1",
     "react-transition-group": "^2.2.1",
-    "reactstrap": "^5.0.0-alpha.3",
-	"react-addons-css-transition-group": "^16.0.0-alpha.3",
-    "react-addons-transition-group": "^16.0.0-alpha.3"
+    "reactstrap": "^5.0.0-alpha.3"
   },
   "scripts": {
     "start": "react-scripts start",

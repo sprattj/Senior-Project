@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
-# uncomment when deploying
-# sys.path.insert(0, '/opt/python/current/app')
 from rest_framework.settings import api_settings
 from os.path import abspath, basename, dirname, join, normpath
 
@@ -117,6 +115,10 @@ else:
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -137,6 +139,8 @@ AUTH_PASSWORD_VALIDATORS = [
 #Login URL
 LOGIN_URL = 'login/'
 
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/emails'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

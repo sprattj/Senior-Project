@@ -20,8 +20,6 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.conf.urls import url
 from django.contrib import admin
-from django.http import HttpRequest
-from django.contrib.auth import views as auth_views
 
 sys.path.append('../')
 
@@ -56,18 +54,21 @@ urlpatterns = [
     url(r'^(?i)rental[s]?/active[/]?$', ActiveRentalList.as_view()),
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
-	url(r'^(?i)rig_info[/]?', RigComponentDetailList.as_view()),
+    url(r'^(?i)rig_info[/]?', RigComponentDetailList.as_view()),
     url(r'^(?i)claim[s]?[/]?$', ClaimList.as_view()),
     url(r'^(?i)claim[s]?/warnings[/]?$', ClaimWarningList.as_view()),
     url(r'^(?i)claim[s]?/queue[/]?$', ClaimQueueList.as_view()),
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
+    url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
+    url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
     url(r'^(?i)login/$', loginDropzone, name='login'),
     url(r'^(?i)logout/$', logoutDropzone, name='logout'),
     url(r'^(?i)temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
     url(r'^(?i)reset/$', password_reset_dropzone, name='password_reset'),
-    url(r'^(?i)reset_employee/$',password_reset_employee, name='pin reset'),
-    url(r'^(?i)create_dropzone/$',createDropzone,name='create_dropzone'),
-    url(r'^(?i)dropzone/(?P<pk>[0-9]+)/create_employee/$',EmployeeView,name='create_employee'),
+    url(r'^(?i)reset_employee/$', password_reset_employee, name='pin reset'),
+    url(r'^(?i)create_dropzone/$', createDropzone, name='create_dropzone'),
+    url(r'^(?i)dropzone/(?P<pk>[0-9]+)/create_employee/$', EmployeeView, name='create_employee'),
     url(r'^(?i)auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
     url(r'^(?i)auth_name_dropzone/', authenticateNameDropzone, name='authenticate_name_dropzone')
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

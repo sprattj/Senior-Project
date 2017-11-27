@@ -9,13 +9,13 @@ DEFAULT_SALT = 100
 
 
 # Helper method for creating a random user pin
-def stringToThree(string=None):
+def string_to_three(string=None):
     if string is None:
         return None
     else:
-        for x in (3 - len(string)):
+        while len(string) < 3:
             string = '0' + string
-        return string
+        return str(string)
 
 
 def randomHotdog():
@@ -40,7 +40,7 @@ def fromEmailString():
     return 'dropzonehqNO-REPLY@dropzonehq.com'
 
 def employeePinTo():
-    return 'Employee Pin [DropzoneHQ NO REPLY]'
+    return 'DropzoneHQ Employee Pin [DropzoneHQ NO REPLY]'
 def employeePinResetTo():
     return 'Employee Pin Reset [DropzoneHQ NO REPLY]'
 

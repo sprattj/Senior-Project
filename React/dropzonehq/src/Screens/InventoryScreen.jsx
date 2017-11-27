@@ -23,7 +23,6 @@ const marginStyle = {
 };
 
 var count = 0;
-var display; //= <EditInventoryItemDisplay var1={"nothing to"} var2={"see here"} />;
 
 export default class InventoryScreen extends React.Component {
     constructor(props) {
@@ -119,7 +118,7 @@ export default class InventoryScreen extends React.Component {
         }];
 
         //Test Data to fill the table until we connect to the DB
-        var rowData =
+        /*var rowData =
             [{ index: 0, item_id: 0, manufacturer: "00", description: "Red and Black Mirage", is_rentable: true, isRented: true, item_type: "container", brand: "Mirage" },
             { index: 1, item_id: 1, manufacturer: "01", description: "Blue and White Saber 170. Pink and Blue Javelin", is_rentable: true, isRented: true, brand: "Frank", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Saber", mainSize: "170", containerBrand: "Javelin" },
             { index: 2, item_id: 2, manufacturer: "02", description: "Red and Green Pilot 220. Black and Yellow Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "220", containerBrand: "Mirage" },
@@ -138,7 +137,7 @@ export default class InventoryScreen extends React.Component {
             { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", deployment_timestamp: "11/24/2017" }
             ];
 
-        this.getFilteredRows(rowData);
+        this.getFilteredRows(rowData);*/
 
         this.state = {
             filter: "all",
@@ -339,6 +338,7 @@ export default class InventoryScreen extends React.Component {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
+        console.log("item info in fetch call: " + JSON.stringify(itemInfo));        
         var url = rootURL + "/canopies/" + itemInfo.item_id;
 
         var self = this;
@@ -754,7 +754,7 @@ export default class InventoryScreen extends React.Component {
                         />
                     </Col>
                     <Col lg={{ size: 5 }}>
-                        <Card body>
+                        <Card>
                             {this.state.currentItem}
                         </Card>
                     </Col>
