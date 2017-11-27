@@ -60,7 +60,6 @@ urlpatterns = [
     url(r'^(?i)claim[s]?/queue[/]?$', ClaimQueueList.as_view()),
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
-    url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base'),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)login/$', loginDropzone, name='login'),
     url(r'^(?i)logout/$', logoutDropzone, name='logout'),

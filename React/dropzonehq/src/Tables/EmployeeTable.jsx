@@ -124,19 +124,19 @@ export default class EmployeeTable extends React.Component {
     require('isomorphic-fetch');
     require('es6-promise').polyfill();
 
-    var url = rootURL + this.URLsection + "/";
-
+   // var url = rootURL + this.URLsection + "/";
+   //var url = rootURL + "/dropzone/1/create_employee"
+   var url = rootURL + "/employees"
     var self = this;
-    var employee_id = (Date.now() % 100000); //TODO
+    //var employee_id = (Date.now() % 100000); //TODO
     var status = true;
     var requestVariables = {
-      employee_id: employee_id,
       first_name: firstName,
       last_name: lastName,
       email: email,
-      roles: jobs,
-      status: status,
-      dropzone_id: 1 //TODO
+      role: jobs.splice(0,1),
+      dropzone_id: 1, //TODO UUHHHHHHH
+      status: status
     };
     fetch(url, {
       method: "POST",
@@ -153,14 +153,14 @@ export default class EmployeeTable extends React.Component {
         }
         return response.json();
       })//when the call succeeds
-      .then(function (rowData) {
+      .then(function (response) {
         var jobsString = "";
         var actionButtons = <ButtonGroup>
           <EditEmployeeButton
-            id={employee_id}
+            id={response.employee_id}
             authorize={self.editEmployee} />
           <EmployeeStatusButton
-            employee_id={employee_id}
+            employee_id={response.employee_id}
             toggleEmployeeStatus={self.toggleEmployeeStatus}
             firstName={firstName}
             lastName={lastName}
@@ -175,12 +175,12 @@ export default class EmployeeTable extends React.Component {
             jobsString += jobs[i] + ", ";
           }
           if (jobs[i] === "Administrator") {
-            actionButtons = <EditEmployeeButton id={employee_id} authorize={self.editEmployee} />;
+            actionButtons = <EditEmployeeButton id={response.employee_id} authorize={self.editEmployee} />;
           }
         }
 
         var row = {
-          employee_id: employee_id,
+          employee_id: response.employee_id,
           firstname: firstName,
           lastname: lastName,
           email: email,

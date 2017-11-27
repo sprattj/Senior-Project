@@ -13,9 +13,9 @@ def string_to_three(string=None):
     if string is None:
         return None
     else:
-        for x in (3 - len(string)):
+        while len(string) < 3:
             string = '0' + string
-        return string
+        return str(string)
 
 
 def randomHotdog():
