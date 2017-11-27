@@ -17,9 +17,9 @@ export default class EditEmployeeButton extends React.Component {
 
 
         this.state = {
-            firstName: '',
-            lastName: '',
-            email: '',
+            firstName: this.props.firstName,
+            lastName: this.props.lastName,
+            email: this.props.email,
             jobs: this.props.roles
         }
     }
@@ -134,17 +134,29 @@ export default class EditEmployeeButton extends React.Component {
         const modalContent = <Form>
             <InputGroup>
                 <InputGroupAddon >First Name: </InputGroupAddon>
-                <Input id="editEmployeeFirstName" type='text' value={this.state.firstName} onChange={this.firstNameChanged} />
+                    <UncontrolledTextInput
+                        onBlur={this.firstNameChanged}
+                        id="editEmployeeFirstName"
+                        defaultText={this.props.firstName}
+                    />
             </InputGroup>
             <br />
             <InputGroup>
                 <InputGroupAddon >Last Name: </InputGroupAddon>
-                <Input id="editEmployeeLastName" type='text' value={this.state.lastName} onChange={this.lastNameChanged} />
+                    <UncontrolledTextInput
+                        onBlur={this.lastNameChanged}
+                        id="editEmployeeLastName"
+                        defaultText={this.props.lastName}
+                    />            
             </InputGroup>
             <br />
             <InputGroup>
                 <InputGroupAddon >Email </InputGroupAddon>
-                <Input id="editEmployeeEmail" type='email' value={this.state.email} onChange={this.emailChanged} />
+                    <UncontrolledTextInput
+                        onBlur={this.emailChanged}
+                        id="editEmployeeEmail"
+                        defaultText={this.props.email}
+                    />               
             </InputGroup>
             <br />
             <Col>
