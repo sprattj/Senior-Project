@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base'),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
+    url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
     url(r'^(?i)login/$', loginDropzone, name='login'),
     url(r'^(?i)logout/$', logoutDropzone, name='logout'),
     url(r'^(?i)temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
