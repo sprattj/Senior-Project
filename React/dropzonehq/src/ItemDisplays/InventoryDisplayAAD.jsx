@@ -21,6 +21,15 @@ export default class InventoryDisplayAAD extends React.Component {
 
     }
 
+    componentWillReceiveProps(newProps)
+    {
+        console.log("in componentWillReceiveProps");
+        // force update state 
+        this.setState({
+            AADInfo: newProps.AADInfo
+        })
+    }
+
     aad_snChanged(e) {
         var newAADInfo = this.state.AADInfo;
         newAADInfo.aad_sn = e.target.value;
@@ -39,7 +48,7 @@ export default class InventoryDisplayAAD extends React.Component {
 
     updateAADRow(itemInfo) {
         this.props.updateAADRow(itemInfo, this.state.AADInfo);
-        console.log("CONTAINER STATE AFTER: " + JSON.stringify(this.state.containerInfo));
+        console.log("CONTAINER STATE AFTER: " + JSON.stringify(this.state.AADInfo));
     }
 
     render() {
@@ -57,13 +66,13 @@ export default class InventoryDisplayAAD extends React.Component {
                             />
                         </InputGroup>
                         <InputGroup>
-                                <InputGroupAddon >AAD Serial#: </InputGroupAddon>
-                                <UncontrolledTextInput
-                                    onBlur={this.aad_snChanged}
-                                    id="aad_snID"
-                                    defaultText={this.props.AADInfo.aad_sn}
-                                />
-                            </InputGroup>
+                            <InputGroupAddon >AAD Serial#: </InputGroupAddon>
+                            <UncontrolledTextInput
+                                onBlur={this.aad_snChanged}
+                                id="aad_snID"
+                                defaultText={this.props.AADInfo.aad_sn}
+                            />
+                        </InputGroup>
                     </Row>
                     <InventoryDisplayItem
                         updateItemInfo={this.updateAADRow}

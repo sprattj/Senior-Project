@@ -39,8 +39,10 @@ export default class InventoryScreen extends React.Component {
         this.itemSelected = this.itemSelected.bind(this);
         this.rigSelected = this.rigSelected.bind(this);
         this.canopySelected = this.canopySelected.bind(this);
+        this.reserveCanopySelected = this.reserveCanopySelected.bind(this);
         this.containerSelected = this.containerSelected.bind(this);
         this.aadSelected = this.aadSelected.bind(this);
+
         this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
         this.displayAddView = this.displayAddView.bind(this);
@@ -112,7 +114,7 @@ export default class InventoryScreen extends React.Component {
             width: 150
         }, {
             Header: 'Deployment Date',
-            accessor: 'date',
+            accessor: 'deployment_timestamp',
             width: 150
         }];
 
@@ -132,8 +134,8 @@ export default class InventoryScreen extends React.Component {
             { index: 11, item_id: 11, manufacturer: "11", description: "Blue and Black Main. Blue and Black Mirage", is_rentable: true, isRented: false, brand: "", item_type: "rig", reserve_canopy_brand: "rc brand 1", main_canopy_brand: "mc brand", mainBrand: "Pilot", mainSize: "190", containerBrand: "Mirage" },
             { index: 12, item_id: 12, manufacturer: "12", description: "Red and Black Navigator", is_rentable: true, isRented: false, item_type: "canopy", brand: "Navigator", size: "210" },
             { index: 13, item_id: 13, manufacturer: "13", description: "Blue and Black Mirage", is_rentable: true, isRented: false, item_type: "container", brand: "Mirage" },
-            { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", date: "11/19/2017" },
-            { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", date: "11/24/2017" }
+            { index: 14, item_id: 14, manufacturer: "14", description: "Orange and Black Mirage", is_rentable: true, isRented: false, item_type: "aad", brand: "theBrand", lifespan: "Mirage", deployment_timestamp: "11/19/2017" },
+            { index: 15, item_id: 15, manufacturer: "15", description: "Cyan and Black", is_rentable: true, isRented: false, item_type: "aad", brand: "Zoey's brand", lifespan: "Apple", deployment_timestamp: "11/24/2017" }
             ];
 
         this.getFilteredRows(rowData);
@@ -199,6 +201,8 @@ export default class InventoryScreen extends React.Component {
             });;
     }
 
+    
+
     updateAADRow(itemInfo, AADInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
@@ -231,14 +235,25 @@ export default class InventoryScreen extends React.Component {
             AAD.brand = itemInfo.brand;
             AAD.is_rentable = itemInfo.is_rentable;
             AAD.lifespan = AADInfo.lifespan;
-            AAD.aad_sn = AADInfo.aad_sn;
+            AAD.serial_number = AADInfo.aad_sn;
 
             self.all.set(itemInfo.item_id, AAD);
             self.aads.set(itemInfo.item_id, AAD);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all')
+            {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else 
+            {
+                // must be in AAD display
+                self.setState({
+                    rows: Array.from(self.aad.values())
+                })
+            }
+
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -299,9 +314,21 @@ export default class InventoryScreen extends React.Component {
             self.all.set(item_id, reserveCanopy);
             self.canopies.set(item_id, reserveCanopy);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all')
+            {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })      
+            }
+            else
+            {
+                // TODO: CHANGE TO RESERVECANOPIES MAP instead of "all"
+                // must be in reserve_canopy display
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })  
+            }
+          
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -349,9 +376,20 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, canopy);
             self.canopies.set(itemInfo.item_id, canopy);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all')
+            {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })           
+            }
+            else
+            {
+                // must be in Canopies display
+                self.setState({
+                    rows: Array.from(self.canopies.values())
+                })
+            }
+            
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -397,9 +435,20 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, rig);
             self.rigs.set(itemInfo.item_id, rig);
 
-            self.setState({
-                rows: Array.from(self.all.values())
-            })
+            if (self.state.filter === 'all')
+            {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else
+            {
+                // must be in Rigs display
+                self.setState({
+                    rows: Array.from(self.rigs.values())
+                })
+            }
+            
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -440,9 +489,21 @@ export default class InventoryScreen extends React.Component {
 
             self.all.set(itemInfo.item_id, container);
             self.containers.set(itemInfo.item_id, container);
-            self.setState({
-                rows: Array.from(self.containers.values())
-            })
+            
+            if (self.state.filter === 'all')
+            {
+                self.setState({
+                    rows: Array.from(self.all.values())
+                })
+            }
+            else
+            {
+                // must be in Containers display
+                self.setState({
+                    rows: Array.from(self.containers.values())
+                })
+            }
+            
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
@@ -557,6 +618,7 @@ export default class InventoryScreen extends React.Component {
             brand: row.brand,
             is_rentable: row.is_rentable
         };
+        console.log("itemType: " + row.item_type);
         switch (row.item_type) {
             case ("rig"):
                 display = this.rigSelected(row, itemInfo);
@@ -564,6 +626,9 @@ export default class InventoryScreen extends React.Component {
             case ("canopy"):
                 display = this.canopySelected(row, itemInfo);
                 break;
+            case ("reserve_canopy"):
+                display = this.reserveCanopySelected(row, itemInfo);
+                break;    
             case ("container"):
                 display = this.containerSelected(row, itemInfo);
                 break;
@@ -588,6 +653,21 @@ export default class InventoryScreen extends React.Component {
     }
 
     canopySelected(row, itemInfo) {
+        var canopyInfo = {
+            rig_id: row.rig_id,
+            canopy_sn: row.canopy_sn,
+            size: row.size,
+            date_of_manufacture: row.date_of_manufacture,
+            jump_count: row.jump_count
+        }
+        return <InventoryDisplayCanopy
+            itemInfo={itemInfo}
+            canopyInfo={canopyInfo}
+            updateCanopyRow={this.updateCanopyRow}
+        />;
+    }
+
+    reserveCanopySelected(row, itemInfo) {
         var canopyInfo = {
             rig_id: row.rig_id,
             canopy_sn: row.canopy_sn,

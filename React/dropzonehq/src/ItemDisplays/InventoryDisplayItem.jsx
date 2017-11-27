@@ -3,6 +3,9 @@ import ItemDisplay from './ItemDisplay.jsx';
 import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Button } from 'reactstrap';
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
+import UnControlledSelectDDL from '../UnControlledSelectDDL.jsx';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
 
 export default class InventoryDisplayItem extends React.Component {
     constructor(props) {
@@ -19,6 +22,11 @@ export default class InventoryDisplayItem extends React.Component {
 
         this.state = this.props.defaultItemInfo; 
         
+        /* var options = [
+            { value: 'true', label: 'Is Rentable' },
+            { value: 'false', label: 'Is NOT Rentable' }
+        ]; */
+
         console.log("ITEM.STATE CONSTRUCTOR: " + JSON.stringify(this.state));
     }
 
@@ -31,6 +39,8 @@ export default class InventoryDisplayItem extends React.Component {
             is_on_rig: this.props.defaultItemInfo.is_on_rig,
             is_available: this.props.defaultItemInfo.is_available
         })
+
+        console.log("is_rentable: " + this.state.is_rentable + " is_on_rig: " + this.state.is_on_rig);
     }
 
     manufacturerChanged(e) {
@@ -51,16 +61,35 @@ export default class InventoryDisplayItem extends React.Component {
         });
     }
 
+    // THIS was using Select from link (react-select)
+    handle_is_rentableChanged = (selectedOption) => {
+        this.setState({ is_rentable: selectedOption });
+        console.log("is_rentable: " + this.state.is_rentable.value);
+        console.log(`Selected: ${selectedOption.label}`);
+    }
+
+    // CURRENTLY using UnControlledSelectDDL
     is_rentableChanged(e) {
+        console.log("in is_rentableChanged e:" + e.target.value);
         this.setState({
-            is_rentable: e.target.value
+            is_rentable: e.target.value === "true" ? true : false
         });
+        console.log("is_rentable: " + this.state.is_rentable);
+
+  /*       // THIS ATTEMPT IS FOR SELECT ELEMENT ONLY 
+        var selectObj = document.getElementById("is_rentableID");
+        console.log("selectObj: " + selectObj + " curr value: " + selectObj.value);
+        // set selected value
+        document.getElementById("is_rentableID").value = this.state.is_rentable;
+        console.log("select value: " + document.getElementById("is_rentableID").value); */
     }
 
     is_on_rigChanged(e) {
+        console.log("in is_on_rigChange e:" + e.target.value);
         this.setState({
-            is_on_rig: e.target.value
+            is_on_rig: e.target.value === "true" ? true : false
         });
+        console.log("is_on_rig: " + this.state.is_on_rig);
     }
 
     is_availableChanged(e) {
@@ -105,14 +134,22 @@ export default class InventoryDisplayItem extends React.Component {
                     </InputGroup>
                     <InputGroup>
                         <InputGroupAddon >Rentable: </InputGroupAddon>
-                        <Input type="select"
-                            value={this.props.defaultItemInfo.is_rentable}
+                        {/* <select
+                            // value={this.props.defaultItemInfo.is_rentable}
+                            defaultValue={this.props.defaultItemInfo.is_rentable}
                             onChange={this.is_rentableChanged}
+                            id="is_rentableID" >
+                        
+                            <option value={true}>Is on a rig</option>
+                            <option value={false}>NOT on a rig</option>
+                           
+                        </select> */}
+                        <UnControlledSelectDDL 
+                            defaultValue={this.props.defaultItemInfo.is_rentable}
                             id="is_rentableID"
-                        >
-                            <option value={true}>Is rentable</option>
-                            <option value={false}>Is NOT rentable</option>
-                        </Input>
+                            onChange={this.is_rentableChanged}
+                            // options={this.options}
+                            />
                     </InputGroup>
                 </Row>
                 <Row>
@@ -126,10 +163,11 @@ export default class InventoryDisplayItem extends React.Component {
                             <option value={true}>Is on a rig</option>
                             <option value={false}>NOT on a rig</option>
                         </Input>
+
                     </InputGroup>
                 </Row>
                 <Row>
-                    <Button size="lg" color="primary" onClick={this.updateItemInfo}>Edit</Button>
+                    <Button size="lg" color="primary" onClick={this.updateItemInfo}>Save</Button>
                 </Row>
             </div>
         );
