@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
+    url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
     url(r'^(?i)login/$', loginDropzone, name='login'),
     url(r'^(?i)logout/$', logoutDropzone, name='logout'),
     url(r'^(?i)temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
