@@ -279,13 +279,18 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
     serializer_class = RentalSerializer
 
     def post(self, request, *args, **kwargs):
-        item = Items.objects.get(item_id=request.data.get('item_id'))
+        """
+        print(request.data.get('item')[0])
+        """
+        item = Items.objects.get(item_id=request.data.get('item')[0])
         item_id = item.item_id
 
+        # employee = Employees.objects.get(employee_id=request.data.get('employee')[0])
+        # employee_id = employee.employee_id
+
         rental_id = post_rental(request)
-
+        # post_employee_rental(employee_id, rental_id)
         post_item_rental(item_id, rental_id)
-
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
@@ -572,9 +577,14 @@ def post_rental(request):
     rental_id = rental_id_dict.get("rental_id", "")
     return rental_id
 
+def post_employee_rental(employee_id, rental_id):
+    EmployeesRentals.objects.create(employee_id=employee_id,
+                                    rental_id=rental_id)
+    return
+
 def post_item_rental(item_id, rental_id):
     ItemsRentals.objects.create(item_id=item_id,
-                                     rental_id=rental_id)
+                                rental_id=rental_id)
     return
 
 def patch_emp_signout(employee_id, signout_id):
