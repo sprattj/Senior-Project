@@ -4,8 +4,6 @@ import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Button }
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import UnControlledSelectDDL from '../UnControlledSelectDDL.jsx';
-import Select from 'react-select';
-import 'react-select/dist/react-select.css';
 
 export default class InventoryDisplayItem extends React.Component {
     constructor(props) {

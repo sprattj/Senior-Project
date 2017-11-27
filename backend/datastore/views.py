@@ -24,19 +24,20 @@ class AADList(generics.ListCreateAPIView, LoginRequiredMixin):
         is_available = request.data.get('is_rentable')
         serial_number = request.data.get('serial_number')
         lifespan = request.data.get('lifespan')
-        item_id = Items.objects.create(item_type_id=item_type_id,
+        item = Items.objects.create(item_type_id=item_type_id,
                             manufacturer=manufacturer,
                             brand=brand,
                             description=description,
                             is_rentable=is_rentable,
-                            is_rented=False,
+                            is_available=is_available,
                             is_on_rig=False)
+        item_id = item.item_id
         #TODO take deployment timestamp as a value?
         AutomaticActivationDevices.objects.create(item_id=item_id,
                                 deployment_timestamp=datetime.datetime.now(),
                                 lifespan=lifespan,
                                 serial_number=serial_number)
-        data = {'success': True}
+        data = {'item_id': item_id, 'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
@@ -73,20 +74,21 @@ class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
         serial_number = request.data.get('serial_number')
         size = request.data.get('size')
         date_of_manufacture = request.data.get('date_of_manufacture')
-        item_id = Items.objects.create(item_type_id=item_type_id,
+        item = Items.objects.create(item_type_id=item_type_id,
                             manufacturer=manufacturer,
                             brand=brand,
                             description=description,
                             is_rentable=is_rentable,
-                            is_rented=False,
+                            is_available=is_available,
                             is_on_rig=False)
+        item_id = item.item_id
         Canopies.objects.create(item_id=item_id,
                                 rig_id=None,
                                 serial_number=serial_number,
                                 size=size,
                                 date_of_manufacture=date_of_manufacture,
                                 jump_count=0)
-        data = {'success': True}
+        data = {'item_id': item_id, 'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
@@ -123,13 +125,14 @@ class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
         is_rentable = request.data.get('is_rentable')
         is_available = request.data.get('is_rentable')
         serial_number = request.data.get('serial_number')
-        item_id = Items.objects.create(item_type_id=item_type_id,
+        item = Items.objects.create(item_type_id=item_type_id,
                             manufacturer=manufacturer,
                             brand=brand,
                             description=description,
                             is_rentable=is_rentable,
-                            is_rented=False,
+                            is_available=is_available,
                             is_on_rig=False)
+        item_id = item.item_id
         Containers.objects.create(item_id=item_id,
                                 serial_number=serial_number)
         data = {'success': True}
