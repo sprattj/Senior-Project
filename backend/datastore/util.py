@@ -40,7 +40,7 @@ def fromEmailString():
     return 'dropzonehqNO-REPLY@dropzonehq.com'
 
 def employeePinTo():
-    return 'Employee Pin [DropzoneHQ NO REPLY]'
+    return 'DropzoneHQ Employee Pin [DropzoneHQ NO REPLY]'
 def employeePinResetTo():
     return 'Employee Pin Reset [DropzoneHQ NO REPLY]'
 
