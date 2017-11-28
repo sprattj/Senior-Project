@@ -282,9 +282,9 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         item = Items.objects.get(item_id=request.data.get('item_id'))
         item_id = item.item_id
 
-        rental_id = data.get_rental(request)
+        rental_id = post_rental(request)
 
-        data.get_item_rental(item_id, rental_id)
+        post_item_rental(item_id, rental_id)
 
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
