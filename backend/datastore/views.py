@@ -748,7 +748,7 @@ def password_reset_dropzone(request):
 
 def loginDropzone(request):
     try:
-        username = request.data.get['username']
+        username = str(request.data.get['email']).split('@')[0]
         password = request.data.get['password']
         dropzone = authenticate(request=request, username=username, password=password)
         if dropzone is None:
