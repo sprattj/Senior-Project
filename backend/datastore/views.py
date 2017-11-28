@@ -183,7 +183,7 @@ class EmployeeList(generics.ListCreateAPIView):
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
         role = request.data.get('role')
-        
+        print(role)
         if Employees.employee_email_in_use(email) is not None:
 
             emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email, dropzone_id=dropzone_id)
@@ -209,7 +209,7 @@ class EmployeeList(generics.ListCreateAPIView):
                 fail_silently=False
             )
 
-            data = {'success': 10}
+            data = {'success': True}
             return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
 
@@ -220,12 +220,12 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     def post(self, request):
 
         try:
-            dropzone = Dropzones.objects.get(request.POST['dropzone'])
-            first = request.POST['first_name']
-            last = request.POST['last_name']
-            email = request.POST['email']
-            role = request.POST['role']
-            dev = request.POST['dev']
+            dropzone = Dropzones.objects.get(request.data.get['dropzone'])
+            first = request.data.get['first_name']
+            last = request.data.get['last_name']
+            email = request.data.get['email']
+            role = request.data.get['role']
+            dev = request.data.get['dev']
             if Employees.employee_email_in_use(email) is not None:
                 emp = Employees.objects.create(first_name=first, last_name=last, email=email, dropzone=dropzone)
                 emp.dropzone = request.user
@@ -282,9 +282,9 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         item = Items.objects.get(item_id=request.data.get('item_id'))
         item_id = item.item_id
 
-        rental_id = post_rental(request)
+        rental_id = data.get_rental(request)
 
-        post_item_rental(item_id, rental_id)
+        data.get_item_rental(item_id, rental_id)
 
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
@@ -605,43 +605,27 @@ def get_emp_full_name(employee_id):
     return emp_name
 
 
-def createDropzone(request):
-    try:
-        username = request.POST['username']
-        password = request.POST['password']
-        location = request.POST['location']
-        email = request.POST['email']
-        if email or password or location or username is None:
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else:
-            try:
-                dropzone = Dropzones.objects.create_user(username=username, password=password, email=email, location=location)
-                dropzone.save()
-            except:
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-            serializer = DropZoneSerializer(data= dropzone)
-            return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
-    except:
-        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+class DropzoneCreate(generics.ListCreateAPIView):
+    queryset= Dropzones.objects.all()
+    serializer_class = DropZoneSerializer
 
-
-def loginDropzone(request):
-    try:
-        username = request.POST['username']
-        password = request.POST['password']
-        dropzone = authenticate(request=request,username=username,password=password)
-        if dropzone is None :
+    def post(seld, request, *args, **kwargs):
+        try:
+            password = request.data.get['password']
+            email = request.data.get['email']
+            username = str(email).split('@')[0]
+            if email or password is None:
+                return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            else:
+                try:
+                    dropzone = Dropzones.objects.create_user(username=username, password=password, email=email)
+                    dropzone.save()
+                except:
+                    return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+                data = {'success': True}
+                return JsonResponse(data=data, status=status.HTTP_201_CREATED)
+        except:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        else:
-            login(request, user=dropzone)
-    except:
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-#@login_required()
-def logoutDropzone(request):
-    logout(request)
-    return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 
 
@@ -659,11 +643,11 @@ def EmployeeView(request, dropzonePK):
 
         try:
             dropzone = Dropzones.objects.get(dropzonePK)
-            first = request.POST['first_name']
-            last = request.POST['last_name']
-            email = request.POST['email']
-            role = request.POST['role']
-            dev = request.POST['dev']
+            first = request.data.get['first_name']
+            last = request.data.get['last_name']
+            email = request.data.get['email']
+            role = request.data.get['role']
+            dev = request.data.get['dev']
             if Employees.employee_email_in_use(email) is not None:
                 emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
                 if dev is True or None:
@@ -695,7 +679,7 @@ def authenticateUserPin(request):
 
         # the way our pin works sets the user primary as their last 3 digits
         try:
-            pin = request.POST['pin']
+            pin = request.data.get['pin']
 
             if pin is None:
                 return HttpResponse(status=status.HTTP_204_NO_CONTENT)
@@ -729,7 +713,7 @@ def authenticateDropzone(request):
 # return a user object if the username is found
 # else return None
 def authenticateNameDropzone(request):
-    name = request.POST['name']
+    name = request.data.get['name']
     if name is None:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -743,7 +727,7 @@ def authenticateNameDropzone(request):
 def password_reset_dropzone(request):
     email = None
     try:
-        email = request.POST['email']
+        email = request.data.get['email']
     except:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
@@ -762,12 +746,29 @@ def password_reset_dropzone(request):
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
 
+def loginDropzone(request):
+    try:
+        username = request.data.get['username']
+        password = request.data.get['password']
+        dropzone = authenticate(request=request, username=username, password=password)
+        if dropzone is None:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            login(request, user=dropzone)
+    except:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+#@login_required()
+def logoutDropzone(request):
+    logout(request)
+    return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
 
 #@login_required()
 def password_reset_employee(request):
     email = None
     try:
-        email = request.POST['email']
+        email = request.data.get['email']
     except:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
@@ -792,7 +793,7 @@ def reset_url_dropzone(request, hash=None):
         reset = TempUrl.objects.get(hash)
         if reset is not None :
             dropzone = reset.dropzone
-            Dropzones.set_password(dropzone, request.POST['password'])
+            Dropzones.set_password(dropzone, request.data.get['password'])
             Dropzones.save(dropzone)
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else :

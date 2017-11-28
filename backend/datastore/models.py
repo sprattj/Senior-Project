@@ -166,6 +166,9 @@ class EmployeeRoles(models.Model):
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
 
+    #def create_many_to_many(self, ):
+
+
     class Meta:
         managed = True
         db_table = 'employee_roles'
