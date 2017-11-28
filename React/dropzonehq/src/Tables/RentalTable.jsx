@@ -355,11 +355,11 @@ export default class RentalTable extends React.Component {
                 }
                 allCount++;
             }*/
-        console.log(rentalData);
+        console.log("rentalData: " + rentalData);
 
         for (var i = 0; i < this.all.length; i++) {             //loop thru all items
             for (var j = 0; j < rentalData.length; j++) {       //loop thru the active rental array         
-                if (this.all[i].item_id === rentalData[j].item_id) {    //if the this.all item_id matches the item_id returned in the rentalData 
+                if (this.all[i].item_id === rentalData[j].item[0]) {    //if the this.all item_id matches the item_id returned in the rentalData 
                     this.all[i].renter_name = rentalData[j].renter_name;    //set those variables in the row of this.all
                     this.all[i].rental_id = rentalData[j].rental_id;                    
                 }
@@ -410,10 +410,13 @@ export default class RentalTable extends React.Component {
         var row = this.state.rows[selectedIndex];   //use the selectedIndex to find the row in the rows state
         var rentalButton;                           //variable Rent or Return button shows if Available or Rented         
 
+        console.log("selectedIndex: " + selectedIndex);
+        console.log("itemID: " + row.item_id);
         if (row.is_available) {     //if the item is rented set the rentalButton var to Return
             rentalButton = <RentButton pinChanged={this.pinChanged} buttonText={"Rent"} rent={this.rentItem} 
                                         index={selectedIndex} item_id={row.item_id} />;
         } else {                //if the item isnt rented set the rentalButton var to Rent
+            console.log("row rentalID: " + row.rental_id);
             rentalButton = <ReturnButton pinChanged={this.pinChanged} buttonText={"Return"} return={this.returnItem} 
                                             index={selectedIndex} item_id={row.item_id} rental_id={row.rental_id} />;
         }
