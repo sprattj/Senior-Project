@@ -5,6 +5,7 @@
 """
 
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from .models import *
 
@@ -87,6 +88,7 @@ class EmployeeVsSignoutSerializer(serializers.HyperlinkedModelSerializer):
 
 class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
     rental = serializers.ReadOnlyField()
+
     class Meta:
         model = ItemsRentals
         fields = ('item_id', 'rental_id', 'rental')
@@ -94,6 +96,7 @@ class ItemRentalSerializer(serializers.HyperlinkedModelSerializer):
 
 class ItemSerializer(serializers.HyperlinkedModelSerializer):
     rentals = EmployeeEmployeeRoleSerializer(many=True, read_only=True)
+
     class Meta:
         model = Items
         fields = ('item_id', 'item_type_id', 'manufacturer', 'brand',
@@ -108,10 +111,13 @@ class ItemTypeSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RentalSerializer(serializers.HyperlinkedModelSerializer):
+    item = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    employee = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Rentals
         fields = ('rental_id', 'renter_name',
-                  'rental_date', 'returned_date')
+                  'rental_date', 'returned_date', 'item', 'employee')
 
 
 class ReserveCanopySerializer(serializers.HyperlinkedModelSerializer):

@@ -121,6 +121,7 @@ class DjangoMigrations(models.Model):
 
 # A location that is used as a skydiving drop zone.
 class Dropzones(User):
+
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
@@ -201,6 +202,7 @@ class Permissions(models.Model):
         managed = True
         db_table = 'permissions'
         app_label = 'dropZoneHQ'
+
 
 # Employees the work at the drop zone
 class Employees(models.Model):
@@ -390,7 +392,8 @@ class Rentals(models.Model):
     # Date the gear was returned to the drop zone.
     returned_date = models.DateTimeField(blank=True, null=True)
 
-    items = models.ManyToManyField('Items', through='ItemsRentals')
+    item = models.ManyToManyField('Items', through='ItemsRentals')
+    employee = models.ManyToManyField('Employees', through='EmployeesRentals')
 
     class Meta:
         managed = True

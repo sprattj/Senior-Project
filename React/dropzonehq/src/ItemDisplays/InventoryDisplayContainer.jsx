@@ -17,6 +17,15 @@ export default class InventoryDisplayContainer extends React.Component {
         };
     }
 
+    componentWillReceiveProps(newProps)
+    {
+        console.log("in componentWillReceiveProps");
+        // force update state 
+        this.setState({
+            containerInfo: newProps.containerInfo
+        })
+    }
+
     container_snChanged(e) {
         var containerInfo = {
             container_sn: e.target.value

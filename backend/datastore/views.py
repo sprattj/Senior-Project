@@ -24,19 +24,20 @@ class AADList(generics.ListCreateAPIView, LoginRequiredMixin):
         is_available = request.data.get('is_rentable')
         serial_number = request.data.get('serial_number')
         lifespan = request.data.get('lifespan')
-        item_id = Items.objects.create(item_type_id=item_type_id,
+        item = Items.objects.create(item_type_id=item_type_id,
                             manufacturer=manufacturer,
                             brand=brand,
                             description=description,
                             is_rentable=is_rentable,
-                            is_rented=False,
+                            is_available=is_available,
                             is_on_rig=False)
+        item_id = item.item_id
         #TODO take deployment timestamp as a value?
         AutomaticActivationDevices.objects.create(item_id=item_id,
                                 deployment_timestamp=datetime.datetime.now(),
                                 lifespan=lifespan,
                                 serial_number=serial_number)
-        data = {'success': True}
+        data = {'item_id': item_id, 'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
@@ -73,20 +74,21 @@ class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
         serial_number = request.data.get('serial_number')
         size = request.data.get('size')
         date_of_manufacture = request.data.get('date_of_manufacture')
-        item_id = Items.objects.create(item_type_id=item_type_id,
+        item = Items.objects.create(item_type_id=item_type_id,
                             manufacturer=manufacturer,
                             brand=brand,
                             description=description,
                             is_rentable=is_rentable,
-                            is_rented=False,
+                            is_available=is_available,
                             is_on_rig=False)
+        item_id = item.item_id
         Canopies.objects.create(item_id=item_id,
                                 rig_id=None,
                                 serial_number=serial_number,
                                 size=size,
                                 date_of_manufacture=date_of_manufacture,
                                 jump_count=0)
-        data = {'success': True}
+        data = {'item_id': item_id, 'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
@@ -123,13 +125,14 @@ class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
         is_rentable = request.data.get('is_rentable')
         is_available = request.data.get('is_rentable')
         serial_number = request.data.get('serial_number')
-        item_id = Items.objects.create(item_type_id=item_type_id,
+        item = Items.objects.create(item_type_id=item_type_id,
                             manufacturer=manufacturer,
                             brand=brand,
                             description=description,
                             is_rentable=is_rentable,
-                            is_rented=False,
+                            is_available=is_available,
                             is_on_rig=False)
+        item_id = item.item_id
         Containers.objects.create(item_id=item_id,
                                 serial_number=serial_number)
         data = {'success': True}
@@ -194,6 +197,7 @@ class EmployeeList(generics.ListCreateAPIView):
             #emp.pin = Employees.pin_to_hash(pin)
             emp.pin = pin
             #emp.roles = role
+            print(role)
             data = {'pin': pin}
             
 
@@ -283,13 +287,18 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
     serializer_class = RentalSerializer
 
     def post(self, request, *args, **kwargs):
-        item = Items.objects.get(item_id=request.data.get('item_id'))
+        """
+        print(request.data.get('item')[0])
+        """
+        item = Items.objects.get(item_id=request.data.get('item')[0])
         item_id = item.item_id
 
+        # employee = Employees.objects.get(employee_id=request.data.get('employee')[0])
+        # employee_id = employee.employee_id
+
         rental_id = post_rental(request)
-
+        # post_employee_rental(employee_id, rental_id)
         post_item_rental(item_id, rental_id)
-
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
@@ -576,9 +585,14 @@ def post_rental(request):
     rental_id = rental_id_dict.get("rental_id", "")
     return rental_id
 
+def post_employee_rental(employee_id, rental_id):
+    EmployeesRentals.objects.create(employee_id=employee_id,
+                                    rental_id=rental_id)
+    return
+
 def post_item_rental(item_id, rental_id):
     ItemsRentals.objects.create(item_id=item_id,
-                                     rental_id=rental_id)
+                                rental_id=rental_id)
     return
 
 def patch_emp_signout(employee_id, signout_id):

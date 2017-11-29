@@ -54,7 +54,7 @@ urlpatterns = [
     url(r'^(?i)rental[s]?/active[/]?$', ActiveRentalList.as_view()),
     url(r'^(?i)rental[s]?/(?P<pk>[0-9]+)[/]?$', RentalDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
-	url(r'^(?i)rig_info[/]?', RigComponentDetailList.as_view()),
+    url(r'^(?i)rig_info[/]?', RigComponentDetailList.as_view()),
     url(r'^(?i)claim[s]?[/]?$', ClaimList.as_view()),
     url(r'^(?i)claim[s]?/warnings[/]?$', ClaimWarningList.as_view()),
     url(r'^(?i)claim[s]?/queue[/]?$', ClaimQueueList.as_view()),
