@@ -201,6 +201,11 @@ class EmployeeList(generics.ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             new_instance = serializer.save()
 
+            mail = util.MailClient()
+            mail.send_mail(recipient=emp.email,
+                           subject='DropzoneHQ Employee Pin [NO REPLY]',
+                           body='Your new employee pin is ' + pin)
+            """
             send_mail(
                 subject='DropzoneHQ Employee Pin [NO REPLY]',
                 message='Your new employee pin is ' + pin,
@@ -208,7 +213,7 @@ class EmployeeList(generics.ListCreateAPIView):
                 recipient_list=[emp.email],
                 fail_silently=False
             )
-
+            """
             data = {'success': True}
             return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
@@ -217,37 +222,36 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
+        dropzone_id = request.data.get('dropzone_id')
+        email = request.data.get('email')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        role = request.data.get('role')
+        print(role)
+        if Employees.employee_email_in_use(email) is not None:
+            emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email,
+                                           dropzone_id=dropzone_id)
 
-        try:
-            dropzone = Dropzones.objects.get(request.data.get['dropzone'])
-            first = request.data.get['first_name']
-            last = request.data.get['last_name']
-            email = request.data.get['email']
-            role = request.data.get['role']
-            dev = request.data.get['dev']
-            if Employees.employee_email_in_use(email) is not None:
-                emp = Employees.objects.create(first_name=first, last_name=last, email=email, dropzone=dropzone)
-                emp.dropzone = request.user
-                if dev is True or None:
-                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
-                else:
-                    emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
-                emp.roles = role
-                emp.save()
-                serializer = EmployeeSerializer(emp)
-                send_mail(
-                    subject=util.employeePinTo(),
-                    message=util.createPinResetMessage(pin),
-                    from_email=util.fromEmailString(),
-                    recipient_list=[emp.email],
-                    fail_silently=False
-                )
-                return JsonResponse(data= serializer.data ,status=201)
-            else:
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            emp_id = emp.employee_id
+            print(emp_id)
+            pin = Employees.create_random_user_pin(emp_id)
+            # emp.pin = Employees.pin_to_hash(pin)
+            emp.pin = pin
+            # emp.roles = role
+            data = {'pin': pin}
+
+            serializer = EmployeeSerializer(emp, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            new_instance = serializer.save()
+
+            recipient = emp.email
+            mail = util.MailClient()
+            mail.send_mail(recipient=recipient,
+                           subject='DropzoneHQ Employee Pin [NO REPLY]',
+                           body='Your new employee pin is ' + pin)
+            data = {'success': True}
+            return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
 class ItemList(generics.ListCreateAPIView, LoginRequiredMixin):
     queryset = Items.objects.all()
@@ -787,6 +791,7 @@ def password_reset_employee(request):
             fail_silently=False
         )
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
 
 def reset_url_dropzone(request, hash=None):
     try:

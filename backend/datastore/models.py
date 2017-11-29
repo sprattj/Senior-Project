@@ -166,13 +166,11 @@ class EmployeeRoles(models.Model):
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
 
-    #def create_many_to_many(self, ):
-
-
     class Meta:
         managed = True
         db_table = 'employee_roles'
         app_label = 'dropZoneHQ'
+
 
 class EmployeeRolesPermissions(models.Model):
     employeeRole = models.ForeignKey(EmployeeRoles, on_delete=models.DO_NOTHING)
@@ -183,6 +181,7 @@ class EmployeeRolesPermissions(models.Model):
         db_table = 'EmployeeRolesPermissions'
         unique_together = (('employeeRole', 'permission'),)
         app_label = 'dropZoneHQ'
+
 
 class Permissions(models.Model):
     permission = models.CharField(max_length=45)
@@ -241,14 +240,14 @@ class Employees(models.Model):
 
     # Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
     @staticmethod
-    def create_random_user_pin(userPK=None):
-        if userPK is None:
+    def create_random_user_pin(user_pk=None):
+        if user_pk is None:
             return None
         else:
             do_over = True
             while do_over:
                 salt = util.string_to_three(str(random.randint(0, 1000)))
-                key = util.string_to_three(salt) + str((int(userPK) % 1000))
+                key = util.string_to_three(salt) + str((int(user_pk) % 1000))
                 find_me = Employees.objects.filter(pin=key)
                 print(key)
                 #find_me_hash = Employees.objects.filter(pin=Employees.pin_to_hash(key))

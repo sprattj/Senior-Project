@@ -1,5 +1,6 @@
 import random
-from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
+import boto3
+#from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 
 #Dont Look At This
 hotdog = 'Dd#12jR@lqe@J%^&rgq!R!$Tpn:Q>E<H:oGkkSVWgkhqB%B$ukmH%^LASDkaushdwl;mfwf12AWF<:%>46ASGWsd;lfl>$%F>@Rlmgfwo;emcvo>!"egDQWEDasdQ>"D"?@hoiwgQWDWK)sc"?:Po'
@@ -47,3 +48,39 @@ def employeePinResetTo():
 def createPinResetMessage(pin=None):
     return "Your new pin is " + pin + ".  Please use this when you do any actions on dropzonehq.com"
 
+class MailClient(object):
+
+    def __init__(self):
+        self.client = boto3.client('ses')
+
+    def send_mail(self,recipient,subject,body):
+        response = self.client.send_email(
+            Source='DropzoneNOReply@dropzonehq.com',
+            Destination={
+                'ToAddresses': [
+                    recipient,
+                ],
+                'CcAddresses': [
+                    'turnerp5@students.rowan.edu',
+                ],
+            },
+            Message={
+                'Subject': {
+                    'Data': subject,
+                },
+                'Body': {
+                    'Text': {
+                        'Data': body,
+                    },
+                }
+            },
+            ReplyToAddresses=[
+                'DropzoneNOReply@dropzone.com',
+            ],
+            Tags=[
+                {
+                    'Name': 'DropzoneHQ',
+                    'Value': 'DropzoneHQ'
+                },
+            ],
+        )
