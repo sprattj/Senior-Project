@@ -185,19 +185,25 @@ class EmployeeList(generics.ListCreateAPIView):
         email = request.data.get('email')
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
-        role = request.data.get('role')
-        print(role)
+        roles = request.data.get('roles')
+        #take out not for proper settings
+        #todo take out not
         if Employees.employee_email_in_use(email) is not None:
-
             emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email, dropzone_id=dropzone_id)
-            
             emp_id = emp.employee_id
-            print(emp_id)
             pin = Employees.create_random_user_pin(emp_id)
             #emp.pin = Employees.pin_to_hash(pin)
             emp.pin = pin
-            #emp.roles = role
-            print(role)
+            if roles is not None:
+                for role in roles:
+                    exsisting_role = EmployeeRoles.objects.filter(role=role).first()
+                    if not exsisting_role:
+                        exsisting_role = EmployeeRoles.objects.create(role=role)
+                        role_id = exsisting_role.role_id
+                        exsisting_role.save()
+                    emperole = EmployeesEmployeeRoles.objects.create(employee=emp, role=exsisting_role)
+                    emperole.save()
+                    emp.save()
             data = {'pin': pin}
             
 
@@ -227,21 +233,35 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     serializer_class = EmployeeSerializer
 
     def post(self, request, *args, **kwargs):
+        print("in the right method")
         dropzone_id = request.data.get('dropzone_id')
         email = request.data.get('email')
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
-        role = request.data.get('role')
-        print(role)
+        roles = request.data.get('roles')
+        print(roles)
         if Employees.employee_email_in_use(email) is not None:
-            emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email,
-                                           dropzone_id=dropzone_id)
+            emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email, dropzone_id=dropzone_id)
 
             emp_id = emp.employee_id
-            print(emp_id)
             pin = Employees.create_random_user_pin(emp_id)
             # emp.pin = Employees.pin_to_hash(pin)
             emp.pin = pin
+            for role in roles:
+                print ('in role for')
+                role_id = role.get('role_id')
+                print (role_id)
+                role = EmployeeRoles.objects.get(role_id)
+                print(role)
+                if role is None:
+                    trole = EmployeeRoles.objects.create(role=role.get('role'))
+                    role_id = trole.role_id
+                    trole.save()
+                emperole = EmployeesEmployeeRoles.objects.create(employee=emp_id, role=role_id)
+                emperole.save()
+                emp.roles.add(role)
+                emp.save()
+
             # emp.roles = role
             data = {'pin': pin}
 

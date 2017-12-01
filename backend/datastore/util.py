@@ -1,6 +1,6 @@
 import random
 import boto3
-#from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 
 #Dont Look At This
 hotdog = 'Dd#12jR@lqe@J%^&rgq!R!$Tpn:Q>E<H:oGkkSVWgkhqB%B$ukmH%^LASDkaushdwl;mfwf12AWF<:%>46ASGWsd;lfl>$%F>@Rlmgfwo;emcvo>!"egDQWEDasdQ>"D"?@hoiwgQWDWK)sc"?:Po'

@@ -155,6 +155,7 @@ class Dropzones(User):
             return None
 
     class Meta:
+        proxy = True
         managed = True
         db_table = 'dropzones'
         app_label = 'dropZoneHQ'
@@ -166,6 +167,12 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
+
+    def role_exsists(self, role):
+        try:
+            return Dropzones.objects.filter(role)
+        except:
+            return None
 
     class Meta:
         managed = True
@@ -218,6 +225,7 @@ class Employees(models.Model):
     # pin Sha hash
     pin = models.CharField(max_length=45, blank=True)
     employment_date = models.DateTimeField(auto_now_add=True)
+
 
     # check is the pin of an employee matches the pin given
     @staticmethod
