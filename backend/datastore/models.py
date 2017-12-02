@@ -491,7 +491,7 @@ class RigComponentDetails(models.Model):
     aad_lifespan = models.CharField(max_length=45)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'rig_component_details'
         app_label = 'dropZoneHQ'
 
@@ -546,7 +546,7 @@ class AllCanopies(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'all_canopies'
 
 
@@ -579,7 +579,7 @@ class AllItems(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'all_items'
 
 
@@ -595,7 +595,7 @@ class EmployeesVsSignouts(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'all_employees_vs_signouts'
 
 
@@ -610,7 +610,7 @@ class EmployeesVsSignoutsStudent(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'employees_vs_signouts_student'
 
 
@@ -625,5 +625,5 @@ class EmployeesVsSignoutsTandem(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'employees_vs_signouts_tandem'
