@@ -53,8 +53,8 @@ export default class UnControlledSelectDDL extends React.Component{
                     onChange = {this.props.onChange}
                     defaultValue = {this.props.defaultValue}
                 >
-                    <option value={true}>Is Rentable</option>
-                    <option value={false}>Is NOT Rentable</option>
+                    <option value="true">{this.props.options[0].text}</option>
+                    <option value="false">{this.props.options[1].text}</option>
                 </select>
             </div>
         );

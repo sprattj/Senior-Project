@@ -245,7 +245,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, AAD);
             self.aads.set(itemInfo.item_id, AAD);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -317,7 +317,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(item_id, reserveCanopy);
             self.canopies.set(item_id, reserveCanopy);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -378,7 +378,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, canopy);
             self.canopies.set(itemInfo.item_id, canopy);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -435,7 +435,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, rig);
             self.rigs.set(itemInfo.item_id, rig);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -488,7 +488,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(itemInfo.item_id, container);
             self.containers.set(itemInfo.item_id, container);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -735,7 +735,7 @@ export default class InventoryScreen extends React.Component {
     }
 
     displayAddContainer() {
-        console.log("hit displayAddView funct");
+        console.log("hit displayAddContainer funct");
         // set up the display component
         var containerInfo = {
             container_sn: null
@@ -833,7 +833,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(responseData.item_id, AAD);
             self.aads.set(responseData.item_id, AAD);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -885,7 +885,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(responseData.item_id, container);
             self.containers.set(responseData.item_id, container);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
@@ -944,7 +944,7 @@ export default class InventoryScreen extends React.Component {
             self.all.set(responseData.item_id, canopy);
             self.canopies.set(responseData.item_id, canopy);
 
-            if (self.state.filter === 'all') {
+            if (self.state.filter === "all") {
                 self.setState({
                     rows: Array.from(self.all.values())
                 })
