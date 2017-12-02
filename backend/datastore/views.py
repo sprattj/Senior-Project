@@ -470,20 +470,24 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView, LoginRequiredMixi
 
     def post(self, request, *args, **kwargs):
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        employee_id = employee.employee_id
-        rig_id = request.data.get('rig_id')
-        load_number = request.data.get('load_number')
-        '''
-        employee = Employees.employee_pin_in_use(request.data.get('pin'))
-        employee_id = employee.employee_id
-        '''
-        jumpmaster = get_emp_full_name(employee_id)
-        signout_id = post_signout(request)
+        if Employees.check_employee_role(employee, 'instructor'):
+            employee_id = employee.employee_id
+            rig_id = request.data.get('rig_id')
+            load_number = request.data.get('load_number')
+            '''
+            employee = Employees.employee_pin_in_use(request.data.get('pin'))
+            employee_id = employee.employee_id
+            '''
+            jumpmaster = get_emp_full_name(employee_id)
+            signout_id = post_signout(request)
 
-        post_emp_signout(employee_id, signout_id)
-        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
-                    'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
-        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+            post_emp_signout(employee_id, signout_id)
+            ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
+                        'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
+            return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
     queryset = EmployeesVsSignoutsStudent.objects.all()
@@ -492,14 +496,17 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView, Logi
     def patch(self, request, *args, **kwargs):
         # employee = Employees.employee_pin_in_use(request.data.get('pin'))
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        signout_id = self.kwargs.get('pk')
-        employee_id = employee.employee_id
+        if Employees.check_employee_role(employee,'packer'):
+            signout_id = self.kwargs.get('pk')
+            employee_id = employee.employee_id
+            patch_emp_signout(employee_id, signout_id)
 
-        patch_emp_signout(employee_id, signout_id)
-
-        packed_by = get_emp_full_name(employee_id)
-        data = {'packer_id': employee_id, 'packed_by': packed_by}
-        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+            packed_by = get_emp_full_name(employee_id)
+            data = {'packer_id': employee_id, 'packed_by': packed_by}
+            return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         signout_id = self.kwargs.get('pk')
@@ -517,20 +524,24 @@ class EmployeeVsSignoutTandemList(generics.ListCreateAPIView, LoginRequiredMixin
 
     def post(self, request, *args, **kwargs):
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        employee_id = employee.employee_id
-        rig_id = request.data.get('rig_id')
-        load_number = request.data.get('load_number')
-        '''
-        employee = Employees.employee_pin_in_use(request.data.get('pin'))
-        employee_id = employee.employee_id
-        '''
-        jumpmaster = get_emp_full_name(employee_id)
-        signout_id = post_signout(request)
+        if Employees.check_employee_role(employee, 'instructor'):
+            employee_id = employee.employee_id
+            rig_id = request.data.get('rig_id')
+            load_number = request.data.get('load_number')
+            '''
+            employee = Employees.employee_pin_in_use(request.data.get('pin'))
+            employee_id = employee.employee_id
+            '''
+            jumpmaster = get_emp_full_name(employee_id)
+            signout_id = post_signout(request)
 
-        post_emp_signout(employee_id, signout_id)
-        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
-                    'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
-        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+            post_emp_signout(employee_id, signout_id)
+            ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
+                        'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
+            return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
@@ -540,14 +551,18 @@ class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView, Login
     def patch(self, request, *args, **kwargs):
         # employee = Employees.employee_pin_in_use(request.data.get('pin'))
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        signout_id = self.kwargs.get('pk')
-        employee_id = employee.employee_id
+        if Employees.check_employee_role(employee, 'packer'):
+            signout_id = self.kwargs.get('pk')
+            employee_id = employee.employee_id
 
-        patch_emp_signout(employee_id, signout_id)
+            patch_emp_signout(employee_id, signout_id)
 
-        packed_by = get_emp_full_name(employee_id)
-        data = {'packer_id': employee_id, 'packed_by': packed_by}
-        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+            packed_by = get_emp_full_name(employee_id)
+            data = {'packer_id': employee_id, 'packed_by': packed_by}
+            return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 
 def post_signout(request):

@@ -231,6 +231,19 @@ class Employees(models.Model):
             else:
                 return False
 
+    @staticmethod
+    def check_employee_role_based_pin(pin, role):
+        return Employees.check_employee_role(Employees.objects.get(pin=pin),role)
+
+
+    @staticmethod
+    def check_employee_role(employee, role):
+        eroles = list(employee.roles_set.all())
+        for trole in eroles:
+            if trole.role == role:
+                return True
+        return False
+
     # hash a pin to a value
     @staticmethod
     def pin_to_hash(pin):
