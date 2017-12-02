@@ -505,6 +505,20 @@ class Signouts(models.Model):
         db_table = 'signouts'
 
 
+class TempUrl(models.Model):
+    url_hash = models.CharField(name="Url", blank=False, max_length=45, unique=True, primary_key=True)
+    dropzone = models.ForeignKey(Dropzones, name='dropzone')
+    expires = models.DateTimeField(name="Expries")
+
+    def get_url_hash(self):
+        return self.url_hash
+
+    class Meta:
+        app_label = 'dropZoneHQ'
+        managed = True
+        db_table = 'tempurl'
+
+
 # Descriptive view for all canopies in the inventory
 class AllCanopies(models.Model):
     item_id = models.IntegerField(primary_key=True)

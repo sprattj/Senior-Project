@@ -3,7 +3,6 @@ from django.http import JsonResponse, HttpResponse
 from .serializers import *
 from . import util
 from backend.datastore.models import *
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model, login, logout, authenticate
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
