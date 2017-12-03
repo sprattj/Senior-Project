@@ -1,4 +1,32 @@
-import React from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: InventoryScreen.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: InventoryScreen.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
 import FilterDropdown from '../Dropdowns/FilterDropdown.jsx';
 import ItemTable from '../Tables/ItemTable.jsx';
 
@@ -156,7 +184,7 @@ export default class InventoryScreen extends React.Component {
             columns: this.columnsAll,
             rows: Array.from(this.all.values()), // rows: mapName.values() instead of rows: rowData
             index: 0,
-            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+            currentItem: &lt;BlankItemDisplay headerText={"Inventory Item Details"} />
         };
     }
 
@@ -182,7 +210,7 @@ export default class InventoryScreen extends React.Component {
                 columns: self.columnsAll,
                 rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
                 index: 0,
-                currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+                currentItem: &lt;BlankItemDisplay headerText={"Inventory Item Details"} />
             });
         };
         var handler = new RequestHandler();
@@ -196,8 +224,8 @@ export default class InventoryScreen extends React.Component {
     ////////////////CONTAINER REQUESTS/////////////////////
     /**
      * Edit a container on the frontend and backend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} containerInfo - the fields&values from the Container needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} containerInfo - the fields&amp;values from the Container needed for this request.
      */
     updateContainerRow(itemInfo, containerInfo) {
         //isPatch = true
@@ -206,8 +234,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Add a new container to the backend and display it on the frontend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} containerInfo - the fields&values from the Container needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} containerInfo - the fields&amp;values from the Container needed for this request.
      */
     addContainer(itemInfo, containerInfo) {
         //isPatch = false
@@ -216,8 +244,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Make a post or patch request for a container
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} containerInfo - the fields&values from the Container needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} containerInfo - the fields&amp;values from the Container needed for this request.
      * @param {boolean} isPatch - true if this is a patch, false if it is a post.
      */
     containerPatchPost(itemInfo, containerInfo, isPatch) {
@@ -232,8 +260,8 @@ export default class InventoryScreen extends React.Component {
     ////////////////CANOPY REQUESTS/////////////////////
     /**
      * Edit a canopy on the frontend and backend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} canopyInfo - the fields&values from the canopy needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&amp;values from the canopy needed for this request.
      */
     updateCanopyRow(itemInfo, canopyInfo) {
         //isPatch = true
@@ -242,8 +270,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Add a new canopy to the backend and display it on the frontend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} canopyInfo - the fields&values from the canopy needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&amp;values from the canopy needed for this request.
      */
     addCanopy(itemInfo, canopyInfo) {
         //isPatch = false
@@ -252,8 +280,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Make a post or patch request for a canopy
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} canopyInfo - the fields&values from the canopy needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&amp;values from the canopy needed for this request.
      * @param {boolean} isPatch - true if this is a patch, false if it is a post.
      */
     canopyPatchPost(itemInfo, canopyInfo, isPatch) {
@@ -268,8 +296,8 @@ export default class InventoryScreen extends React.Component {
     ////////////////AAD REQUESTS/////////////////////
     /**
      * Edit an AAD on the frontend and backend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} AADInfo - the fields&values from the AAD needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} AADInfo - the fields&amp;values from the AAD needed for this request.
      */
     updateAADRow(itemInfo, AADInfo) {
         //isPatch = true
@@ -278,8 +306,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Add a new AAD to the backend and display it on the frontend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} AADInfo - the fields&values from the AAD needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} AADInfo - the fields&amp;values from the AAD needed for this request.
      */
     addAAD(itemInfo, AADInfo) {
         //isPatch = false
@@ -288,8 +316,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Make a post or patch request for an AAD
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} AADInfo - the fields&values from the AAD needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} AADInfo - the fields&amp;values from the AAD needed for this request.
      * @param {boolean} isPatch - true if this is a patch, false if it is a post.
      */
     AADPatchPost(itemInfo, AADInfo, isPatch) {
@@ -305,8 +333,8 @@ export default class InventoryScreen extends React.Component {
     ////////////////RIG REQUESTS/////////////////////
     /**
      * Edit a rig on the frontend and backend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} rigInfo - the fields&values from the rig needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} rigInfo - the fields&amp;values from the rig needed for this request.
      */
     updateRigRow(itemInfo, rigInfo) {
         //isPatch = true
@@ -315,8 +343,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Add a new rig to the backend and display it on the frontend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} rigInfo - the fields&values from the rig needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} rigInfo - the fields&amp;values from the rig needed for this request.
      */
     addRig(itemInfo, rigInfo) {
         //isPatch = false
@@ -325,8 +353,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Make a put or patch request for an rig
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} canopyInfo - the fields&values from the rig needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&amp;values from the rig needed for this request.
      * @param {boolean} isPatch - true if this is a patch, false if it is a post.
      */
     rigPatchPost(itemInfo, rigInfo, isPatch) {
@@ -341,8 +369,8 @@ export default class InventoryScreen extends React.Component {
     ////////////////RESERVE REQUESTS/////////////////////
     /**
      * Edit a reserve canopy on the frontend and backend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} reserveInfo - the fields&values from the reserve canopy needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} reserveInfo - the fields&amp;values from the reserve canopy needed for this request.
      */
     updateReserveCanopyRow(itemInfo, reserveInfo) {
         //isPatch = true
@@ -351,8 +379,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Add a new reserve canopy to the backend and display it on the frontend.
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} reserveInfo - the fields&values from the reserve canopy needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} reserveInfo - the fields&amp;values from the reserve canopy needed for this request.
      */
     addReserveCanopy(itemInfo, reserveInfo) {
         //isPatch = false
@@ -361,8 +389,8 @@ export default class InventoryScreen extends React.Component {
 
     /**
      * Make a put or patch request for an reserve canopy
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
-     * @param {Object} reserveInfo - the fields&values from canopy and reserve canopy needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request
+     * @param {Object} reserveInfo - the fields&amp;values from canopy and reserve canopy needed for this request.
      * @param {boolean} isPatch - true if this is a patch, false if it is a post.
      */
     reserveCanopyPatchPost(itemInfo, reserveInfo, isPatch) {
@@ -379,8 +407,8 @@ export default class InventoryScreen extends React.Component {
     /**
      * Handle a patch or a post for an item
      * @param {string} itemType - the type of item that is being patched/posted
-     * @param {Object} itemInfo - the fields&values from Item needed to perform this request.
-     * @param {Object} specificInfo - the fields&values from the [itemType] subclass needed for this request.
+     * @param {Object} itemInfo - the fields&amp;values from Item needed to perform this request.
+     * @param {Object} specificInfo - the fields&amp;values from the [itemType] subclass needed for this request.
      * @param {boolean} isPatch - true if this request is a patch, false if it is a post.
      */
     itemPatchPost(itemType, itemInfo, specificInfo, isPatch) {
@@ -503,7 +531,7 @@ export default class InventoryScreen extends React.Component {
     getFilteredRows(rowData) {
         this.initMaps();
         // loop through the JSON data
-        for (var i = 0; i < rowData.length; i++) {
+        for (var i = 0; i &lt; rowData.length; i++) {
             //save everything to all first
             this.all.set(rowData[i].item_id, rowData[i]);
             //if the row has an item type
@@ -570,7 +598,7 @@ export default class InventoryScreen extends React.Component {
      */
     resetDisplay() {
         this.setState({
-            currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+            currentItem: &lt;BlankItemDisplay headerText={"Inventory Item Details"} />
         });
     }
 
@@ -650,7 +678,7 @@ export default class InventoryScreen extends React.Component {
             aad: row.aad,
             isTandem: row.isTandem
         }
-        return <InventoryDisplayRig
+        return &lt;InventoryDisplayRig
             itemInfo={itemInfo}
             rigInfo={rigInfo}
             updateRigRow={this.updateRigRow}
@@ -670,7 +698,7 @@ export default class InventoryScreen extends React.Component {
             date_of_manufacture: row.date_of_manufacture,
             jump_count: row.jump_count
         }
-        return <InventoryDisplayCanopy
+        return &lt;InventoryDisplayCanopy
             itemInfo={itemInfo}
             canopyInfo={canopyInfo}
             updateCanopyRow={this.updateCanopyRow}
@@ -689,7 +717,7 @@ export default class InventoryScreen extends React.Component {
             date_of_manufacture: row.date_of_manufacture,
             jump_count: row.jump_count
         }
-        return <InventoryDisplayCanopy
+        return &lt;InventoryDisplayCanopy
             itemInfo={itemInfo}
             canopyInfo={canopyInfo}
             updateCanopyRow={this.updateCanopyRow}
@@ -705,7 +733,7 @@ export default class InventoryScreen extends React.Component {
         var containerInfo = {
             container_sn: row.container_sn
         }
-        return <InventoryDisplayContainer
+        return &lt;InventoryDisplayContainer
             itemInfo={itemInfo}
             containerInfo={containerInfo}
             updateContainerRow={this.updateContainerRow}
@@ -722,7 +750,7 @@ export default class InventoryScreen extends React.Component {
             aad_sn: row.aad_sn,
             lifespan: row.lifespan
         }
-        return <InventoryDisplayAAD
+        return &lt;InventoryDisplayAAD
             itemInfo={itemInfo}
             AADInfo={AADInfo}
             updateAADRow={this.updateAADRow}
@@ -751,7 +779,7 @@ export default class InventoryScreen extends React.Component {
             is_rentable: true,
             item_type_id: 16 //TODO update
         };
-        var display = <InventoryDisplayAAD
+        var display = &lt;InventoryDisplayAAD
             AADInfo={AADInfo}
             itemInfo={itemInfo}
             updateAADRow={this.addAAD}
@@ -784,7 +812,7 @@ export default class InventoryScreen extends React.Component {
             is_rentable: true,
             item_type_id: 4 //TODO update
         };
-        var display = <InventoryDisplayContainer
+        var display = &lt;InventoryDisplayContainer
             containerInfo={containerInfo}
             itemInfo={itemInfo}
             updateContainerRow={this.addContainer}
@@ -819,7 +847,7 @@ export default class InventoryScreen extends React.Component {
             is_rentable: true,
             item_type_id: 1 //TODO update
         };
-        var display = <InventoryDisplayCanopy
+        var display = &lt;InventoryDisplayCanopy
             itemInfo={itemInfo}
             canopyInfo={canopyInfo}
             updateCanopyRow={this.addCanopy}
@@ -834,42 +862,64 @@ export default class InventoryScreen extends React.Component {
     }
 
     render() {
-        var filterDropdown = <FilterDropdown
+        var filterDropdown = &lt;FilterDropdown
             onChange={this.filterChanged}
             labelText="Inventory Item Filters:"
             id="InventoryFilterDropdown"
         />;
 
-        var buttons = <div>
-            <AddInventoryItemBtn buttonText={"Add AAD"} onClick={this.displayAddView} />
-            <AddInventoryItemBtn buttonText={"Add Container"} onClick={this.displayAddContainer} />
-            <AddInventoryItemBtn buttonText={"Add Canopy"} onClick={this.displayAddCanopy} />
-        </div>
+        var buttons = &lt;div>
+            &lt;AddInventoryItemBtn buttonText={"Add AAD"} onClick={this.displayAddView} />
+            &lt;AddInventoryItemBtn buttonText={"Add Container"} onClick={this.displayAddContainer} />
+            &lt;AddInventoryItemBtn buttonText={"Add Canopy"} onClick={this.displayAddCanopy} />
+        &lt;/div>
         return (
-            <div>
-                <Row>
-                    <Col lg={{ size: 12 }}>
-                        <DropzoneHQNav />
-                    </Col>
-                </Row>
-                <Row style={marginStyle}>
-                    <Col lg={{ size: 5, offset: 1 }}>
-                        <ItemTable
+            &lt;div>
+                &lt;Row>
+                    &lt;Col lg={{ size: 12 }}>
+                        &lt;DropzoneHQNav />
+                    &lt;/Col>
+                &lt;/Row>
+                &lt;Row style={marginStyle}>
+                    &lt;Col lg={{ size: 5, offset: 1 }}>
+                        &lt;ItemTable
                             columns={this.state.columns}
                             rows={this.state.rows}
                             top={filterDropdown}
                             bottom={buttons}
                             itemSelected={this.itemSelected}
                         />
-                    </Col>
-                    <Col lg={{ size: 5 }}>
-                        <Card>
+                    &lt;/Col>
+                    &lt;Col lg={{ size: 5 }}>
+                        &lt;Card>
                             {this.state.currentItem}
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+                        &lt;/Card>
+                    &lt;/Col>
+                &lt;/Row>
+            &lt;/div>
         );
     }
 
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-InventoryScreen.html">InventoryScreen</a></li><li><a href="module-LoftScreen.html">LoftScreen</a></li></ul><h3>Classes</h3><ul><li><a href="module-InventoryScreen.html">InventoryScreen</a></li><li><a href="module-LoftScreen.html">LoftScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 03 2017 17:16:12 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
