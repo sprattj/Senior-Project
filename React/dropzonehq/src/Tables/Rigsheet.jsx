@@ -4,6 +4,7 @@ import TableSheet from './TableSheet.jsx';
 import PackButton from '../ModalButtons/PackButton.jsx';
 import SignoutButton from '../ModalButtons/SignoutButton.jsx';
 import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 /* 
   A Rigsheet contains all signouts for one rig type.
@@ -16,11 +17,9 @@ export default class Rigsheet extends React.Component {
     //it shouldn't be part of state. Save it in a class variable.
     this.URLsection = "rigsheets/";
 
-    //Bind all methods that are passed down so that they can
-    //be called via this.methodName in child components
-    this.pinChanged = this.pinChanged.bind(this);
-    this.packRow = this.packRow.bind(this);
-    this.addSignout = this.addSignout.bind(this);
+    //create a new binder and bind all of the methods in this class
+    var binder = new Binder();
+    binder.bindAll(this, Rigsheet);
 
     //The TandemRigsheet state keeps track of the table columns,
     //the table rows, and the username/password entered when verifying
@@ -194,6 +193,10 @@ export default class Rigsheet extends React.Component {
 }
 
 Rigsheet.propTypes = {
-  sheetType: PropTypes.string.isRequired, //the text in the header of the rigsheet
-  //children: PropTypes.arrayOf(RigsheetRow).isRequired //an array of rigsheet rows
+  sheetType: PropTypes.string.isRequired, //the type of sheet for endpoints
+  title: PropTypes.string //the text in the header of the rigsheet
 }
+
+Rigsheet.defaultProps = {
+  title: "Signouts"
+};

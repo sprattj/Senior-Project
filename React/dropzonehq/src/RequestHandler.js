@@ -22,8 +22,8 @@ export default class RequestHandler {
                 "Content-Type": "application/json"
             }
         };
-        //if it's not a GET method, pass the variables in
-        if(method.toUpperCase() !== "GET"){
+        //if there are variables and it's not a GET method, pass the variables in
+        if(variables && method.toUpperCase() !== "GET"){
             data.body = JSON.stringify(variables)
         }
         
@@ -62,5 +62,9 @@ export default class RequestHandler {
 
     delete = function (endpoint, variables, successMsg, errorMsg, callback) {
         this.makeRequest(endpoint, "DELETE", variables, successMsg, errorMsg, callback);
+    }
+
+    delete = function (endpoint, successMsg, errorMsg, callback) {
+        this.makeRequest(endpoint, "DELETE", {}, successMsg, errorMsg, callback);
     }
 }

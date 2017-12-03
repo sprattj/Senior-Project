@@ -42,6 +42,7 @@ SiteNavbar.propTypes = {
   brandText: PropTypes.string.isRequired, //the brand text of the nav
   brandLink: PropTypes.string.isRequired, //what the brand text links to
   brandImage: PropTypes.string
-  //children: PropTypes.arrayOf(PropTypes.instanceOf(NavItem)).isRequired //the children of a SiteNavbar must be Reactstrap Navitems.
+  //children: PropTypes.arrayOf(PropTypes.instanceOf(NavItem)).isRequired 
+  //the children of a SiteNavbar must be Reactstrap Navitems.
 }
 
