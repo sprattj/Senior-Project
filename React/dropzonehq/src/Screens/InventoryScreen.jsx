@@ -15,6 +15,7 @@ import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import "react-table/react-table.css";
 
 import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 const marginStyle = {
     marginTop: 25,
@@ -42,6 +43,8 @@ const ITEM_TYPE_ACCESSORS = {
     [ITEM_TYPES.RESERVE]: "reserves"
 }
 
+
+
 export default class InventoryScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -49,61 +52,13 @@ export default class InventoryScreen extends React.Component {
         //it shouldn't be part of state. Save it in a class variable.
         this.URLsection = "items/";
 
-        //this.toggleRented = this.toggleRented.bind(this);
-        this.filterChanged = this.filterChanged.bind(this);
-        this.getFilteredRows = this.getFilteredRows.bind(this);
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, InventoryScreen);
 
-
-        this.containerSelected = this.containerSelected.bind(this);
-        this.addContainer = this.addContainer.bind(this);
-        this.updateContainerRow = this.updateContainerRow.bind(this);
-        this.containerRequest = this.containerRequest.bind(this);
-
-        this.aadSelected = this.aadSelected.bind(this);
-        this.addAAD = this.addAAD.bind(this);
-        this.updateAADRow = this.updateAADRow.bind(this);
-        this.AADRequest = this.AADRequest.bind(this);
-
-        this.canopySelected = this.canopySelected.bind(this);
-        this.addCanopy = this.addCanopy.bind(this);
-        this.updateCanopyRow = this.updateCanopyRow.bind(this);
-        this.canopyRequest = this.canopyRequest.bind(this);
-
-        this.rigSelected = this.rigSelected.bind(this);
-        this.addRig = this.addRig.bind(this);
-        this.updateRigRow = this.updateRigRow.bind(this);
-        this.rigRequest = this.rigRequest.bind(this);
-
-        this.reserveCanopySelected = this.reserveCanopySelected.bind(this);
-        this.addReserveCanopy = this.addReserveCanopy.bind(this);
-        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
-        this.reserveCanopyRequest = this.reserveCanopyRequest.bind(this);
-
-
-        this.itemSelected = this.itemSelected.bind(this);
-
-
-        this.setupDisplay = this.setupDisplay.bind(this);
-        this.displayChange = this.displayChange.bind(this);
-        this.displayAddView = this.displayAddView.bind(this);
-        this.resetDisplay = this.resetDisplay.bind(this);
-        this.updateAADRow = this.updateAADRow.bind(this);
-        this.updateCanopyRow = this.updateCanopyRow.bind(this);
-        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
-
-
-        this.getCombinedItem = this.getCombinedItem.bind(this);
-
-        this.displayAddContainer = this.displayAddContainer.bind(this);
-        this.displayAddCanopy = this.displayAddCanopy.bind(this);
-
-        this.all = new Map();
-        this.rigs = new Map();
-        this.canopies = new Map();
-        this.containers = new Map();
-        this.aads = new Map();
-        this.reserves = new Map();
-
+        //initialize the maps of different item types
+        this.initMaps();
+        
         this.columnsAll = [{
             Header: 'Item manufacturer',
             accessor: 'manufacturer', // String-based value accessors!
@@ -409,13 +364,17 @@ export default class InventoryScreen extends React.Component {
         handler.makeRequest(endpoint, method, variables, successMsg, errorMsg, callback);
     }
 
-    getFilteredRows(rowData) {
+    initMaps(){
         this.all = new Map();
         this.rigs = new Map();
-        this.canopies = new Map();
+        this.canopies = new Map(); 
         this.containers = new Map();
         this.aads = new Map();
         this.reserves = new Map();
+    }
+
+    getFilteredRows(rowData) {
+        this.initMaps();
         // save everything first
         for (var i = 0; i < rowData.length; i++) {
             this.all.set(rowData[i].item_id, rowData[i]);
