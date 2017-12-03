@@ -323,7 +323,7 @@ export default class LoftScreen extends React.Component {
    * @param {Object} claimData - A JSON containing the info for one queue claim.
    */
     addItemToQueueFromJSON(claimData) {
-        var newQueueListItem = this.queueListItemFromJSON(qItemData);
+        var newQueueListItem = this.queueListItemFromJSON(claimData);
         this.addQueueListItemToList(newQueueListItem);
     }
 
