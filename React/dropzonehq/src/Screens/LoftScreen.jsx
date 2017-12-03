@@ -14,6 +14,8 @@ import moment from 'moment';
 import { CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
+
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
@@ -24,27 +26,10 @@ export default class LoftScreen extends React.Component {
         super(props);
 
         this.URLsection = "claims/";
-        this.pinChanged = this.getClaims.bind(this);
-        
-        this.getClaims = this.getClaims.bind(this);
-        this.getQueueItems = this.getQueueItems.bind(this);
-        this.populateQueue = this.populateQueue.bind(this);
-        this.addQueueItem = this.addQueueItem.bind(this);
-        this.selectQueueItem = this.selectQueueItem.bind(this);
-        this.dismissQueueItem = this.dismissQueueItem.bind(this);
-        this.completeQueueItem = this.completeQueueItem.bind(this);
-        this.addItemToQueueFromJSON = this.addItemToQueueFromJSON.bind(this);
 
-        this.getWarnings = this.getWarnings.bind(this);
-        this.populateWarnings = this.populateWarnings.bind(this);
-        this.addWarning = this.addWarning.bind(this);
-        this.selectWarning = this.selectWarning.bind(this);
-        this.dismissClaim = this.dismissClaim.bind(this);
-        this.moveClaimToQueue = this.moveClaimToQueue.bind(this);
-        this.addClaimToListFromJSON = this.addClaimToListFromJSON.bind(this);
-
-        this.dismiss = this.dismiss.bind(this);
-        this.removeClaim = this.removeClaim.bind(this);
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, LoftScreen);
 
         var queueItems = new Map();
         var warningItems = new Map();

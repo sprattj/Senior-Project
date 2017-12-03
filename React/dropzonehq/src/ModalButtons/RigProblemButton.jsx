@@ -4,6 +4,7 @@ import RigDropdown from '../Dropdowns/RigDropdown.jsx';
 import ProblemTypesDropdown from '../Dropdowns/ProblemTypesDropdown.jsx';
 import TextArea from '../TextInputs/TextArea.jsx';
 import ModalWithVerify from '../ModalWithVerify.jsx';
+import Binder from '../Binder.js';
 /*
 
 */
@@ -12,13 +13,9 @@ export default class RigProblemButton extends React.Component {
   constructor(props) {
     super(props);
 
-    //bind our onchange methods so they can be passed properly 
-    //with this.methodName from the onChange props in render
-    this.textChanged = this.textChanged.bind(this);
-    this.rigChanged = this.rigChanged.bind(this);
-    this.problemChanged = this.problemChanged.bind(this);
-    this.verify = this.verify.bind(this);
-    this.pinChanged = this.pinChanged.bind(this);
+    //creater a new binder and bind all of the methods in this class
+    var binder = new Binder();
+    binder.bindAll(this, RigProblemButton);
 
     //keep state for the values of the components in this modal
     this.state = {
@@ -29,7 +26,7 @@ export default class RigProblemButton extends React.Component {
     }
   }
 
-  verify(){
+  verify() {
     this.props.verify(this.state.rig_id, this.state.severity, this.state.description)
   }
 
@@ -53,7 +50,7 @@ export default class RigProblemButton extends React.Component {
   }
 
   //update pin
-  pinChanged(id, pin){
+  pinChanged(id, pin) {
     this.setState({
       pin: pin
     })
