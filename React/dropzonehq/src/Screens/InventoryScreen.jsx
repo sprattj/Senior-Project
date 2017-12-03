@@ -24,23 +24,64 @@ const marginStyle = {
 
 var count = 0;
 
+const ITEM_TYPES = {
+    CANOPY: "canopy",
+    CONTAINER: "container",
+    AAD: "aad",
+    RIG: "rig",
+    RESERVE: "reserve",
+    RESERVE_CANOPY: "reserve_canopy"
+}
+
+const ITEM_TYPE_ACCESSORS = {
+    [ITEM_TYPES.CANOPY]: "canopies",
+    [ITEM_TYPES.CONTAINER]: "containers",
+    [ITEM_TYPES.AAD]: "aads",
+    [ITEM_TYPES.RIG]: "rigs",
+    [ITEM_TYPES.RESERVE_CANOPY]: "reserves",
+    [ITEM_TYPES.RESERVE]: "reserves"
+}
+
 export default class InventoryScreen extends React.Component {
     constructor(props) {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/items";
+        this.URLsection = "items/";
 
         //this.toggleRented = this.toggleRented.bind(this);
         this.filterChanged = this.filterChanged.bind(this);
         this.getFilteredRows = this.getFilteredRows.bind(this);
 
-        this.itemSelected = this.itemSelected.bind(this);
-        this.rigSelected = this.rigSelected.bind(this);
-        this.canopySelected = this.canopySelected.bind(this);
-        this.reserveCanopySelected = this.reserveCanopySelected.bind(this);
+
         this.containerSelected = this.containerSelected.bind(this);
+        this.addContainer = this.addContainer.bind(this);
+        this.updateContainerRow = this.updateContainerRow.bind(this);
+        this.containerRequest = this.containerRequest.bind(this);
+
         this.aadSelected = this.aadSelected.bind(this);
+        this.addAAD = this.addAAD.bind(this);
+        this.updateAADRow = this.updateAADRow.bind(this);
+        this.AADRequest = this.AADRequest.bind(this);
+
+        this.canopySelected = this.canopySelected.bind(this);
+        this.addCanopy = this.addCanopy.bind(this);
+        this.updateCanopyRow = this.updateCanopyRow.bind(this);
+        this.canopyRequest = this.canopyRequest.bind(this);
+
+        this.rigSelected = this.rigSelected.bind(this);
+        this.addRig = this.addRig.bind(this);
+        this.updateRigRow = this.updateRigRow.bind(this);
+        this.rigRequest = this.rigRequest.bind(this);
+
+        this.reserveCanopySelected = this.reserveCanopySelected.bind(this);
+        this.addReserveCanopy = this.addReserveCanopy.bind(this);
+        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
+        this.reserveCanopyRequest = this.reserveCanopyRequest.bind(this);
+
+
+        this.itemSelected = this.itemSelected.bind(this);
+
 
         this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
@@ -49,21 +90,19 @@ export default class InventoryScreen extends React.Component {
         this.updateAADRow = this.updateAADRow.bind(this);
         this.updateCanopyRow = this.updateCanopyRow.bind(this);
         this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
-        this.updateContainerRow = this.updateContainerRow.bind(this);
-        this.updateRigRow = this.updateRigRow.bind(this);
 
+
+        this.getCombinedItem = this.getCombinedItem.bind(this);
 
         this.displayAddContainer = this.displayAddContainer.bind(this);
         this.displayAddCanopy = this.displayAddCanopy.bind(this);
-        this.addAAD = this.addAAD.bind(this);
-        this.addContainer = this.addContainer.bind(this);
-        this.addCanopy = this.addCanopy.bind(this);
 
         this.all = new Map();
         this.rigs = new Map();
         this.canopies = new Map();
         this.containers = new Map();
         this.aads = new Map();
+        this.reserves = new Map();
 
         this.columnsAll = [{
             Header: 'Item manufacturer',
@@ -181,226 +220,193 @@ export default class InventoryScreen extends React.Component {
         handler.get(endpoint, successMsg, errorMsg, callback);
     }
 
-
-
-    updateAADRow(itemInfo, AADInfo) {
-
-        var endpoint = "AADs/" + itemInfo.item_id;
-        var self = this;
-        var variables = itemInfo;
-        variables.lifespan = AADInfo.lifespan;
-        variables.serial_number = AADInfo.aad_sn;
-        var successMsg = "Successfully edited AAD info.";
-        var errorMsg = "Editing AAD " + itemInfo.item_id + " failed.";
-        var callback = function (responseData) {
-            var AAD = self.all.get(itemInfo.item_id);
-            AAD.manufacturer = itemInfo.manufacturer;
-            AAD.description = itemInfo.description;
-            AAD.is_on_rig = itemInfo.is_on_rig;
-            AAD.brand = itemInfo.brand;
-            AAD.is_rentable = itemInfo.is_rentable;
-            AAD.lifespan = AADInfo.lifespan;
-            AAD.serial_number = AADInfo.aad_sn;
-
-            self.all.set(itemInfo.item_id, AAD);
-            self.aads.set(itemInfo.item_id, AAD);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in AAD display
-                self.setState({
-                    rows: Array.from(self.aad.values())
-                })
-            }
-        }
-
-        var handler = new RequestHandler();
-        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
-    updateReserveCanopyRow(item_id, manufacturer, description, isOnRig, brand,
-        isRentable, rig_id, serial_number, size, date_of_manufacture,
-        jump_count, last_repack_date, next_repack_date, packed_by_employee_id, ride_count) {
-
-        var endpoint = "canopies/reserve/" + item_id;
-        var self = this;
-        var variables = {
-            manufacturer: manufacturer,
-            description: description,
-            is_on_rig: isOnRig,
-            brand: brand,
-            is_rentable: isRentable,
-            rig_id: rig_id,
-            serial_number: serial_number,
-            size: size,
-            date_of_manufacture: date_of_manufacture,
-            jump_count: jump_count,
-            last_repack_date: last_repack_date,
-            next_repack_date: next_repack_date,
-            packed_by_employee_id: packed_by_employee_id,
-            ride_count: ride_count,
-            pin: this.state.pin
-        };
-
-        var successMsg = "Successfully edited reserve canopy info.";
-        var errorMsg = "Editing reserve canopy " + item_id + " failed.";
-        var callback = function (responseData) {
-            var reserveCanopy = self.all.get(item_id);
-            reserveCanopy.manufacturer = manufacturer;
-            reserveCanopy.description = description;
-            reserveCanopy.is_on_rig = isOnRig;
-            reserveCanopy.brand = brand;
-            reserveCanopy.is_rentable = isRentable;
-            reserveCanopy.serial_number = serial_number;
-            reserveCanopy.size = size;
-            reserveCanopy.date_of_manufacture = date_of_manufacture;
-            reserveCanopy.jump_count = jump_count;
-
-            self.all.set(item_id, reserveCanopy);
-            self.canopies.set(item_id, reserveCanopy);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // TODO: CHANGE TO RESERVECANOPIES MAP instead of "all"
-                // must be in reserve_canopy display
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-        };
-        var handler = new RequestHandler();
-        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
-    updateCanopyRow(itemInfo, canopyInfo) {
-        console.log("item info in fetch call: " + JSON.stringify(itemInfo));
-        var endpoint = "canopies/" + itemInfo.item_id;
-        var self = this;
-        var variables = itemInfo;
-        variables.pin = this.state.pin;
-        variables.rig_id = canopyInfo.rig_num;
-        variables.serial_number = canopyInfo.canopy_sn;
-        variables.size = canopyInfo.size;
-        variables.jump_count = canopyInfo.jump_count;
-        var successMsg = "Successfully edited canopy info.";
-        var errorMsg = "Editing canopy " + itemInfo.item_id + " failed.";
-        var callback = function (responseData) {
-            var canopy = self.all.get(itemInfo.item_id);
-            canopy.manufacturer = itemInfo.manufacturer;
-            canopy.description = itemInfo.description;
-            canopy.is_on_rig = itemInfo.is_on_rig;
-            canopy.brand = itemInfo.brand;
-            canopy.is_rentable = itemInfo.is_rentable;
-            canopy.serial_number = canopyInfo.canopy_sn;
-            canopy.size = canopyInfo.size;
-            canopy.jump_count = canopyInfo.jump_count;
-
-            self.all.set(itemInfo.item_id, canopy);
-            self.canopies.set(itemInfo.item_id, canopy);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Canopies display
-                self.setState({
-                    rows: Array.from(self.canopies.values())
-                })
-            }
-        }
-
-        var handler = new RequestHandler();
-        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
-    updateRigRow(itemInfo, rigInfo) {
-        var endpoint = "rigs/" + itemInfo.item_id;
-        var self = this;
-        var variables = itemInfo;
-        variables.aad_id = rigInfo.aad;
-        variables.container_id = rigInfo.container;
-        variables.isTandem = rigInfo.isTandem;
-        variables.pin = this.state.pin;
-        var successMsg = "Successfully edited rig info.";
-        var errorMsg = "Editing rig " + itemInfo.item_id + " failed.";
-        var callback = function (responseData) {
-
-            var rig = self.all.get(itemInfo.item_id);
-            rig.manufacturer = itemInfo.manufacturer;
-            rig.description = itemInfo.description;
-            rig.brand = itemInfo.brand;
-            rig.is_rentable = itemInfo.isRentable;
-            rig.container_id = rigInfo.container;
-            rig.aad_id = rigInfo.aad;
-            rig.isTandem = rigInfo.isTandem;
-
-            self.all.set(itemInfo.item_id, rig);
-            self.rigs.set(itemInfo.item_id, rig);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Rigs display
-                self.setState({
-                    rows: Array.from(self.rigs.values())
-                })
-            }
-        };
-
-        var handler = new RequestHandler();
-        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
+    ////////////////CONTAINER REQUESTS/////////////////////
+    ////////////////CONTAINER REQUESTS/////////////////////
+    ////////////////CONTAINER REQUESTS/////////////////////
     updateContainerRow(itemInfo, containerInfo) {
-        var endpoint = "containers/" + itemInfo.item_id;
+        //isPatch = true
+        this.containerRequest(itemInfo, containerInfo, true);
+    }
+
+    addContainer(itemInfo, containerInfo) {
+        //isPatch = false
+        this.containerRequest(itemInfo, containerInfo, false);
+    }
+
+    containerRequest(itemInfo, containerInfo, isPatch) {
+        //item type is container
+        this.itemPatchPost(ITEM_TYPES.CONTAINER, itemInfo, containerInfo, isPatch)
+    }
+
+    ////////////////CANOPY REQUESTS/////////////////////
+    ////////////////CANOPY REQUESTS/////////////////////
+    ////////////////CANOPY REQUESTS/////////////////////
+    updateCanopyRow(itemInfo, canopyInfo) {
+        //isPatch = true
+        this.canopyRequest(itemInfo, canopyInfo, true);
+    }
+
+    addCanopy(itemInfo, canopyInfo) {
+        //isPatch = false
+        this.canopyRequest(itemInfo, canopyInfo, false);
+    }
+
+    canopyRequest(itemInfo, canopyInfo, isPatch) {
+        //item type is canopy
+        this.itemPatchPost(ITEM_TYPES.CANOPY, itemInfo, canopyInfo, isPatch)
+    }
+
+    ////////////////AAD REQUESTS/////////////////////
+    ////////////////AAD REQUESTS/////////////////////
+    ////////////////AAD REQUESTS/////////////////////
+    updateAADRow(itemInfo, AADInfo) {
+        //isPatch = true
+        this.AADRequest(itemInfo, AADInfo, true);
+    }
+
+    addAAD(itemInfo, AADInfo) {
+        //isPatch = false
+        this.AADRequest(itemInfo, AADInfo, false);
+    }
+
+    AADRequest(itemInfo, AADInfo, isPatch) {
+        //item type is AAD
+        this.itemPatchPost(ITEM_TYPES.AAD, itemInfo, AADInfo, isPatch)
+    }
+
+
+    ////////////////RIG REQUESTS/////////////////////
+    ////////////////RIG REQUESTS/////////////////////
+    ////////////////RIG REQUESTS/////////////////////
+    updateRigRow(itemInfo, rigInfo) {
+        //isPatch = true
+        this.rigRequest(itemInfo, rigInfo, true);
+    }
+
+    addRig(itemInfo, rigInfo) {
+        //isPatch = false
+        this.rigRequest(itemInfo, rigInfo, false);
+    }
+
+    rigRequest(itemInfo, rigInfo, isPatch) {
+        //item type is RIG
+        this.itemPatchPost(ITEM_TYPES.RIG, itemInfo, rigInfo, isPatch)
+    }
+
+
+    ////////////////RESERVE REQUESTS/////////////////////
+    ////////////////RESERVE REQUESTS/////////////////////
+    ////////////////RESERVE REQUESTS/////////////////////
+    updateReserveCanopyRow(itemInfo, reserveInfo) {
+        //isPatch = true
+        this.reserveRequest(itemInfo, reserveInfo, true);
+    }
+
+    addReserveCanopy(itemInfo, reserveInfo) {
+        //isPatch = false
+        this.reserveRequest(itemInfo, reserveInfo, false);
+    }
+
+    reserveCanopyRequest(itemInfo, reserveInfo, isPatch) {
+        //item type is reserve
+        this.itemPatchPost(ITEM_TYPES.RESERVE, itemInfo, reserveInfo, isPatch)
+    }
+
+
+    //////////GENERIC REQUEST METHODS///////////
+    //////////GENERIC REQUEST METHODS///////////
+    //////////GENERIC REQUEST METHODS///////////
+    itemPatchPost(itemType, itemInfo, specificInfo, isPatch) {
+        var combinedItemInfo = this.getCombinedItem(itemType, itemInfo, specificInfo);
+        this.handleItemPatchPost(combinedItemInfo, itemType, isPatch);
+    }
+
+    //take an item type and an object that has the info from 
+    //the item and an object that has info from the item subclass tables. 
+    //Return one combined object whose names are compatible with the specific
+    //variables needed for requests (i.e. canopy_sn becomes serial_number).
+    getCombinedItem(itemType, genericInfo, specificInfo) {
+        //start with the info from Item
+        var combined = genericInfo;
+        //merge all of the attributes from the subclass in
+        Object.assign(combined, specificInfo);
+        //add item type
+        combined.item_type = itemType;
+        //add any fields with their other name
+        switch (itemType) {
+            case ITEM_TYPES.AAD:
+                //combined.lifespan = specificInfo.lifespan;
+                combined.serial_number = specificInfo.aad_sn;
+                break;
+            case ITEM_TYPES.CANOPY || ITEM_TYPES.RESERVE_CANOPY:
+                combined.serial_number = specificInfo.canopy_sn;
+                //combined.size = specificInfo.size;
+                //combined.jump_count = specificInfo.jump_count;
+                break;
+            case ITEM_TYPES.RESERVE_CANOPY:
+                combined.rig_id = specificInfo.rig_id;
+                combined.date_of_manufacture = specificInfo.date_of_manufacture;
+                combined.last_repack_date = specificInfo.last_repack_date;
+                combined.next_repack_date = specificInfo.next_repack_date;
+                combined.packed_by_employee_id = specificInfo.packed_by_employee_id;
+                //combined.ride_count = specificInfo.ride_count;
+                break;
+            case ITEM_TYPES.CONTAINER:
+                combined.serial_number = specificInfo.container_sn;
+                break;
+            case ITEM_TYPES.RIG:
+                combined.aad_id = specificInfo.aad;
+                combined.container_id = specificInfo.container;
+                //combined.isTandem = specificInfo.isTandem;
+                break;
+            default:
+                break;
+        }
+        return combined;
+    }
+
+    /** 
+     * Make a patch or a post to update or add an item. Item and variables passed/determined
+     * from the single combined item object, the itemtype.
+    * @param Object combinedItemInfo - an object that has both (1) the fields of Item and 
+        (2) the fields of the 'subclass' that matches this item's type (i.e. canopy, aad, etc.)
+        This is used as the request variables object.
+    * @param String itemType - the type of the item
+    * @param boolean isPatch - true if this request is a patch, false if it is a post
+    */
+    handleItemPatchPost(combinedItemInfo, itemType, isPatch) {
+        var itemTypeAccessor = ITEM_TYPE_ACCESSORS[itemType];
+        var endpoint = itemTypeAccessor + "/";
+        var successMsg = itemType + " added successfully.";
+        var errorMsg = "Problem adding " + itemType + ".";
+
+        if (isPatch) {
+            var item_id = combinedItemInfo.item_id;
+            endpoint = endpoint + item_id;
+            successMsg = "Successfully edited " + itemType + " info.";
+            errorMsg = "Editing " + itemType + "  " + item_id + " failed.";
+        }
         var self = this;
-
-        var variables = itemInfo;
-        variables.serial_number = containerInfo.container_sn;
+        var variables = combinedItemInfo;
         variables.pin = this.state.pin;
-
-        var successMsg = "Successfully edited rig info.";
-        var errorMsg = "Editing rig " + itemInfo.item_id + " failed.";
         var callback = function (responseData) {
-            var container = self.all.get(itemInfo.item_id);
-            container.manufacturer = itemInfo.manufacturer;
-            container.description = itemInfo.description;
-            container.is_on_rig = itemInfo.is_on_rig;
-            container.brand = itemInfo.brand;
-            container.is_rentable = itemInfo.is_rentable;
-            container.container_sn = containerInfo.container_sn;
+            var item_id = responseData.item_id;
+            //take any of the fields that have 2 possible names depending on context
+            //and add the ones that are missing
+            var rowItem = combinedItemInfo;//self.getCombinedItem(itemType, combinedItemInfo, combinedItemInfo);
+            rowItem.item_id = item_id;
+            self.all.set(item_id, rowItem);
+            self[itemTypeAccessor].set(item_id, rowItem);
 
-            self.all.set(itemInfo.item_id, container);
-            self.containers.set(itemInfo.item_id, container);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Containers display
-                self.setState({
-                    rows: Array.from(self.containers.values())
-                })
-            }
+            var newRows = (self.state.filter === "all" ? self.all.values() : self[itemTypeAccessor].values());
+            self.setState({
+                rows: Array.from(newRows)
+            });
         };
 
+        var method = (isPatch ? "PATCH" : "POST");
         var handler = new RequestHandler();
-        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
+        handler.makeRequest(endpoint, method, variables, successMsg, errorMsg, callback);
     }
 
     getFilteredRows(rowData) {
@@ -409,24 +415,12 @@ export default class InventoryScreen extends React.Component {
         this.canopies = new Map();
         this.containers = new Map();
         this.aads = new Map();
-
+        this.reserves = new Map();
         // save everything first
         for (var i = 0; i < rowData.length; i++) {
-            // map row to item_id in that row
             this.all.set(rowData[i].item_id, rowData[i]);
-            if (rowData[i].item_type === "rig") {
-                //if the type is rig
-                this.rigs.set(rowData[i].item_id, rowData[i]);
-            } else if (rowData[i].item_type === "canopy") {
-                // if the type is canopy
-                this.canopies.set(rowData[i].item_id, rowData[i]);
-            } else if (rowData[i].item_type === "container") {
-                // if the type is container
-                this.containers.set(rowData[i].item_id, rowData[i]);
-            } else if (rowData[i].item_type === "aad") {
-                // if the type is AAD
-                this.aads.set(rowData[i].item_id, rowData[i]);
-            }
+            var accessor = ITEM_TYPE_ACCESSORS[rowData[i].item_type];
+            this[accessor].set(rowData[i].item_id, rowData[i]);
         }
     }
 
@@ -547,6 +541,7 @@ export default class InventoryScreen extends React.Component {
     }
 
     canopySelected(row, itemInfo) {
+
         var canopyInfo = {
             rig_id: row.rig_id,
             canopy_sn: row.canopy_sn,
@@ -693,129 +688,6 @@ export default class InventoryScreen extends React.Component {
             currentItem: display
         });
     }
-
-    addAAD(itemInfo, AADInfo) {
-        var endpoint = "AADs/"
-        var self = this;
-        var variables = itemInfo;
-        variables.lifespan = AADInfo.lifespan;
-        variables.serial_number = AADInfo.aad_sn;
-        var successMsg = "AAD added successfully.";
-        var errorMsg = "Problem adding AAD.";
-        var callback = function (responseData) {
-            var AAD = {};
-            AAD.manufacturer = itemInfo.manufacturer;
-            AAD.description = itemInfo.description;
-            AAD.is_on_rig = itemInfo.is_on_rig;
-            AAD.brand = itemInfo.brand;
-            AAD.is_rentable = itemInfo.is_rentable;
-            AAD.lifespan = AADInfo.lifespan;
-            AAD.serial_number = AADInfo.aad_sn;
-            AAD.item_type = 'aad';
-            self.all.set(responseData.item_id, AAD);
-            self.aads.set(responseData.item_id, AAD);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in AAD display
-                self.setState({
-                    rows: Array.from(self.aads.values())
-                })
-            }
-        };
-        //make the request via handler
-        var handler = new RequestHandler();
-        handler.post(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
-    addContainer(itemInfo, containerInfo) {
-
-        var endpoint = "containers/";
-        var self = this;
-        var variables = itemInfo;
-        variables.serial_number = containerInfo.container_sn;
-        variables.pin = this.state.pin;
-
-        var successMsg = "Container added successfully.";
-        var errorMsg = "Problem adding container.";
-        var callback = function (responseData) {
-            var container = {};
-            container.manufacturer = itemInfo.manufacturer;
-            container.description = itemInfo.description;
-            container.is_on_rig = itemInfo.is_on_rig;
-            container.brand = itemInfo.brand;
-            container.is_rentable = itemInfo.is_rentable;
-            container.container_sn = containerInfo.container_sn;
-            container.item_type = 'container'
-            self.all.set(responseData.item_id, container);
-            self.containers.set(responseData.item_id, container);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Containers display
-                self.setState({
-                    rows: Array.from(self.containers.values())
-                })
-            }
-        }
-
-        //make the request via handler
-        var handler = new RequestHandler();
-        handler.post(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
-    addCanopy(itemInfo, canopyInfo) {
-
-        var endpoint = "canopies/";
-        var self = this;
-        var variables = itemInfo;
-        variables.pin = this.state.pin;
-        variables.rig_id = canopyInfo.rig_num;
-        variables.serial_number = canopyInfo.canopy_sn;
-        variables.size = canopyInfo.size;
-        variables.jump_count = canopyInfo.jump_count;
-        var successMsg = "Canopy added successfully.";
-        var errorMsg = "Problem adding canopy.";
-        var callback = function (responseData) {
-            var canopy = {};
-            canopy.manufacturer = itemInfo.manufacturer;
-            canopy.description = itemInfo.description;
-            canopy.is_on_rig = itemInfo.is_on_rig;
-            canopy.brand = itemInfo.brand;
-            canopy.is_rentable = itemInfo.is_rentable;
-            canopy.serial_number = canopyInfo.canopy_sn;
-            canopy.size = canopyInfo.size;
-            canopy.jump_count = canopyInfo.jump_count;
-            canopy.item_type = 'canopy';
-
-            self.all.set(responseData.item_id, canopy);
-            self.canopies.set(responseData.item_id, canopy);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Canopies display
-                self.setState({
-                    rows: Array.from(self.canopies.values())
-                })
-            }
-        }
-        //make the request via handler
-        var handler = new RequestHandler();
-        handler.post(endpoint, variables, successMsg, errorMsg, callback);
-    }
-
 
     render() {
         var filterDropdown = <FilterDropdown
