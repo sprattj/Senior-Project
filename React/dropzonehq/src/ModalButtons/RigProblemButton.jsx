@@ -18,12 +18,14 @@ export default class RigProblemButton extends React.Component {
     this.rigChanged = this.rigChanged.bind(this);
     this.problemChanged = this.problemChanged.bind(this);
     this.verify = this.verify.bind(this);
-    
+    this.pinChanged = this.pinChanged.bind(this);
+
     //keep state for the values of the components in this modal
     this.state = {
       description: 'Input text here..',
       rig_id: 0,
-      severity: 'CRITICAL'
+      severity: 'CRITICAL',
+      pin: 0
     }
   }
 
@@ -50,6 +52,13 @@ export default class RigProblemButton extends React.Component {
     })
   }
 
+  //update pin
+  pinChanged(id, pin){
+    this.setState({
+      pin: pin
+    })
+  }
+
   //pass the corresponding onchange methods down to the child components so 
   //we can get their values back here when they are changed
   render() {
@@ -67,7 +76,7 @@ export default class RigProblemButton extends React.Component {
         modalContent={modalContent}
         popoverTitle="Confirm Report"
         verify={this.verify}
-        pinChanged={this.props.pinChanged}
+        pinChanged={this.pinChanged}
       />
     );
   }
