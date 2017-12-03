@@ -1,7 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 import TabGroup from '../TabGroups/TabGroup.jsx';
-import 'bootstrap/dist/css/bootstrap.css';
 import QueueDisplay from '../QueueDisplay.jsx';
 import QueueList from '../Lists/QueueList.jsx';
 import QueueListItem from '../Lists/QueueListItem.jsx';
@@ -12,9 +11,10 @@ import './LoftScreen.css';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import { rootURL, CLAIM_STATUS_CHOICES } from '../restInfo.js';
-import { toast } from 'react-toastify';
+import { CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
+import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 // Setup the localizer by providing the moment (or globalize) Object
 // to the correct localizer.
@@ -25,28 +25,11 @@ export default class LoftScreen extends React.Component {
     constructor(props) {
         super(props);
 
-        this.URLsection = "/claims";
-        this.pinChanged = this.getClaims.bind(this);
-        
-        this.getClaims = this.getClaims.bind(this);
-        this.getQueueItems = this.getQueueItems.bind(this);
-        this.populateQueue = this.populateQueue.bind(this);
-        this.addQueueItem = this.addQueueItem.bind(this);
-        this.selectQueueItem = this.selectQueueItem.bind(this);
-        this.dismissQueueItem = this.dismissQueueItem.bind(this);
-        this.completeQueueItem = this.completeQueueItem.bind(this);
-        this.addItemToQueueFromJSON = this.addItemToQueueFromJSON.bind(this);
+        this.URLsection = "claims/";
 
-        this.getWarnings = this.getWarnings.bind(this);
-        this.populateWarnings = this.populateWarnings.bind(this);
-        this.addWarning = this.addWarning.bind(this);
-        this.selectWarning = this.selectWarning.bind(this);
-        this.dismissClaim = this.dismissClaim.bind(this);
-        this.moveClaimToQueue = this.moveClaimToQueue.bind(this);
-        this.addClaimToListFromJSON = this.addClaimToListFromJSON.bind(this);
-
-        this.dismiss = this.dismiss.bind(this);
-        this.removeClaim = this.removeClaim.bind(this);
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, LoftScreen);
 
         var queueItems = new Map();
         var warningItems = new Map();
@@ -93,7 +76,9 @@ export default class LoftScreen extends React.Component {
         this.pin = pin;
         //TODO does this stop the recalling of componentdidmount?
     }
+
     componentDidMount() {
+        console.log("in component did mount");
         this.getQueueItems();
         this.getWarnings();
     }
@@ -111,38 +96,15 @@ export default class LoftScreen extends React.Component {
     }
 
     getClaims(isQueue) {
-        console.log("GETTING CLAIMS THIS SHOULDN'T HAPPEN LIKE THAT MUCH");
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var endpoint = "warnings";
-        if (isQueue) {
-            endpoint = "queue";
-        }
-        var url = rootURL + this.URLsection + "/" + endpoint;
-        var self = this;
+        var callback = (isQueue ? this.populateQueue : this.populateWarnings);
+        var endpoint = (isQueue ? "Queue" : "Warnings" );
+        var errorMsg = "Getting " + endpoint + " failed.";
+        var successMsg = endpoint + " loaded successfully.";
+        endpoint = this.URLsection + endpoint + "/";
 
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Getting " + endpoint + " failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-            if (isQueue) {
-                self.populateQueue(responseData);
-            } else {
-                self.populateWarnings(responseData);
-            }
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
     }
     //Populate frontend from json data
     //////////////////////////////////////////////////////////
@@ -261,95 +223,66 @@ export default class LoftScreen extends React.Component {
     //Changing status of claims
     //////////////////////////////////////////////////////////
     moveClaimToQueue(claim_id) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + this.URLsection + "/" + claim_id;
-
-        var self = this;
-        var requestVariables = {
+        var endpoint = this.URLsection + claim_id + "/";
+        var errorMsg = "Moving claim failed.";
+        var successMsg = "Claim updated successfully.";
+        var variables = {
             status: CLAIM_STATUS_CHOICES.IN_PROGRESS
         };
 
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Queueing claim failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-            var oldClaim = self.state.warningListItems.get(claim_id);
-            var newNdx = self.state.queueListItems.length;
+        var callback = function (responseData) {
+            var oldClaim = this.state.warningListItems.get(responseData.claim_id);
             var newQItem = <QueueListItem
                 {...oldClaim.props}
                 key={claim_id}
                 selected={false}
-                onClick={self.selectQueueItem}
-                complete={self.completeQueueItem}
-                dismiss={self.dismissQueueItem}
+                onClick={this.selectQueueItem}
+                complete={this.completeQueueItem}
+                dismiss={this.dismissQueueItem}
             />
-            var newClaims = new Map(self.state.warningListItems);
+            var newClaims = new Map(this.state.warningListItems);
             newClaims.delete(claim_id);
-            var newQItems = new Map(self.state.queueListItems);
+            var newQItems = new Map(this.state.queueListItems);
             newQItems.set(claim_id, newQItem);
-            self.setState({
+            this.setState({
                 warningListItems: newClaims,
                 queueListItems: newQItems
             });
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        };
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     removeClaim(claim_id, isInQueue, endStatus) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + this.URLsection + "/" + claim_id;
-
-        var self = this;
-        var requestVariables = {
+        var endpoint = this.URLsection + claim_id + "/";
+        var variables = {
             status: endStatus
         };
+        var successMsg = "Item dismissed.";
+        var errorMsg = "Dismissing item failed.";
+        var self = this;
+    
+        var callback = function (){
+            var nextList = (isInQueue ? self.state.queueListItems : self.state.warningListItems);
+            var nextMap = new Map(nextList);
+            nextMap.delete(claim_id);
 
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Dismissing item failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
             if (isInQueue) {
-                var newQItems = new Map(self.state.queueListItems)
-                newQItems.delete(claim_id);
                 self.setState({
-                    queueListItems: newQItems
+                    queueListItems: nextMap
                 });
             } else {
-                var newClaims = new Map(self.state.warningListItems)                
-                newClaims.delete(claim_id);
                 self.setState({
-                    warningListItems: newClaims
+                    warningListItems: nextMap
                 });
             }
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        };
+
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
+
     dismiss(claim_id, isInQueue) {
         this.removeClaim(claim_id, isInQueue, "DISMISSED");
     }
@@ -373,49 +306,21 @@ export default class LoftScreen extends React.Component {
     //////////////////////////////////////////////////////////
     //add a claim to the database and the view
     addClaim(rig_id, severity, description, isQueueItem) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + this.URLsection + "/";
-
-        var status = "";
-        if (isQueueItem) {
-            status = CLAIM_STATUS_CHOICES.IN_PROGRESS
-        } else {
-            status = CLAIM_STATUS_CHOICES.PENDING
-        }
-
-        var self = this;
-        var requestVariables = {
+        var endpoint = this.URLsection;
+        var status = (isQueueItem ? CLAIM_STATUS_CHOICES.IN_PROGRESS : CLAIM_STATUS_CHOICES.PENDING);
+        var callback = (isQueueItem ? this.addItemToQueueFromJSON : this.addClaimToListFromJSON);
+        var variables = {
             rig_id: rig_id,
             severity: severity,
             status: status,
             description: description
         };
+        var errorMsg = "Adding claim failed.";
+        var successMsg = "Claim reported successfully.";
 
-        fetch(url, {
-            method: "POST",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Adding item failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-            if (isQueueItem) {
-                self.addItemToQueueFromJSON(responseData);
-            } else {
-                self.addClaimToListFromJSON(responseData);
-            }
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
-        console.log("clicked add queue item")
+        var handler = new RequestHandler();
+        handler.post(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     //add a queue item to the database and the view

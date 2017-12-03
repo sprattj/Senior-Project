@@ -1,9 +1,8 @@
 import React from 'react';
 import { Container, Row, Col, Card, CardHeader, CardBlock, ListGroup, ListGroupItem } from 'reactstrap';
 import RigProblemButton from './ModalButtons/RigProblemButton.jsx';
-import { rootURL, CLAIM_STATUS_CHOICES, CLAIM_SEVERITY_CHOICES } from './restInfo.js';
-import { toast } from 'react-toastify';
-
+import { CLAIM_STATUS_CHOICES, CLAIM_SEVERITY_CHOICES } from './restInfo.js';
+import RequestHandler from './RequestHandler.js';
 /*
 
 */
@@ -13,22 +12,19 @@ export default class RigAlertsContainer extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/claims";
+        this.URLsection = "claims/";
 
         //Bind all methods that are passed down so that they can
         //be called via this.methodName in child components
         this.pinChanged = this.pinChanged.bind(this);
         this.reportRigIssue = this.reportRigIssue.bind(this);
-
-        var alertData = [{ severity: "CRITICAL", description: "Rig S9 has a tear on its container" },
-        { severity: "COSMETIC", description: "Rig S4 has a tear on its container" },
-        { severity: "NON-CRITICAL", description: "Rig S1 has this warning listed for it. Uh oh!" }];//get row data from ajax
-        var alerts = this.alertListFromJSON(alertData);
+        this.alertFromJSON = this.alertFromJSON.bind(this);
+        this.alertListFromJSON = this.alertListFromJSON.bind(this);
 
         this.state = {
             username: '',
             password: '',
-            alerts: alerts
+            alerts: ''
         }
     }
 
@@ -54,115 +50,74 @@ export default class RigAlertsContainer extends React.Component {
     //of the modal that the RigProblemButton creates.
     reportRigIssue(rig_id, severity, description) {
 
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + this.URLsection;
-
+        var endpoint = this.URLsection;
         var self = this;
-        var requestVariables = {
+        var variables = {
             rig_id: rig_id,
             severity: severity,
             description: description,
             status: CLAIM_STATUS_CHOICES.PENDING
         };
-        fetch(url, {
-            method: "POST",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        })//when we get a response back
-            .then(function (response) {
-                if (response.status >= 400) {
-                    throw new Error("Adding report failed. Bad response " + response.status + " from server.");
-                }
-                return response.json();
-            })//when the call succeeds
-            .then(function (rowData) {
-                //create a new alert for the list
-                var message = "Rig " + rig_id + ": " + description;
-                var itemColor = self.getSeverityColor(severity);
-                var alert = <ListGroupItem key={self.state.alerts.length + 1}
-                    color={itemColor}>{message}</ListGroupItem>
 
-                //grab the current alerts
-                var newAlerts = Array.from(self.state.alerts);
-                //add our new alert
-                newAlerts.push(alert);
-                //update the state with the new alerts so it rerenders
-                self.setState({
-                    alerts: newAlerts
-                })
-            }).catch(function (error) {
-                toast.error(error + "\n" + url);
-                return false;
-            });
+        var errorMsg = "Adding claim failed.";
+        var successMsg = "Claim reported successfully.";
+
+        var callback = function (responseData) {
+            //create a new alert for the list
+            var nextKey = self.state.alerts.length + 1;
+            var alert = self.alertFromJSON(responseData, nextKey);
+
+            //grab the current alerts
+            var newAlerts = Array.from(self.state.alerts);
+            //add our new alert
+            newAlerts.push(alert);
+            //update the state with the new alerts so it rerenders
+            self.setState({
+                alerts: newAlerts
+            })
+        };
+
+        //make the request via handler
+        var handler = new RequestHandler();
+        handler.post(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     //Fetch the reports for rigs from the database and 
     //update the state to display them.
     fetchAlerts() {
 
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        //Define our endpoint using the rootURL, the URL section 
-        //that we set in our constructor (like "/rigsheets"), and
-        //the sheetType prop ("Tandems" or "Students")
-        //(rootURL is imported from our rest info file)
-        var url = rootURL + this.URLsection + "/warnings";
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback
+        // endpoint like /claims/warnings
+        var endpoint = this.URLsection + "warnings/";
         var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Fetching alerts failed. Bad response " + response.status + " from server.");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (responseData) {
-                //process the row data we received back
-                self.alertListFromJSON(responseData);
-                //update our state with these rows to rerender the table
-                self.setState({
-                    alerts: self.alertListFromJSON(responseData)
-                });
-            }).catch(function (error) {
-                toast.error(error + "\n" + url);
-                return false;
+        var callback = function (responseData) {
+            //process the row data we received back
+            self.alertListFromJSON(responseData);
+            //update our state with these rows to rerender the table
+            self.setState({
+                alerts: self.alertListFromJSON(responseData)
             });
+        };
+        var successMsg = "Fetched active rig issues info.";
+        var errorMsg = "Problem fetching active rig issue info.";
+
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
+    }
+
+    alertFromJSON(responseJSON, key){
+        var itemColor = this.getSeverityColor(responseJSON.severity);
+        var nextAlert = <ListGroupItem
+            key={key}
+            color={itemColor}>
+            Rig {responseJSON.rig_id}: {responseJSON.description}
+        </ListGroupItem>
+        return nextAlert;
     }
 
     alertListFromJSON(claimsJSON) {
         var alerts = [];
         for (var i = 0; i < claimsJSON.length; i++) {
-            var itemColor = this.getSeverityColor(claimsJSON[i].severity);
-            var nextAlert = <ListGroupItem
-                key={i}
-                color={itemColor}>
-                Rig {claimsJSON[i].rig_id}: {claimsJSON[i].description}
-            </ListGroupItem>
+            var nextAlert = this.alertFromJSON(claimsJSON[i], i);
             alerts.unshift(nextAlert);
         }
         return alerts;

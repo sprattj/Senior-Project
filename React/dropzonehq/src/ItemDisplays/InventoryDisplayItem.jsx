@@ -4,6 +4,7 @@ import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Button }
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import UnControlledSelectDDL from '../UnControlledSelectDDL.jsx';
+import Binder from '../Binder.js';
 
 
 var rentalOptions = [
@@ -20,18 +21,12 @@ export default class InventoryDisplayItem extends React.Component {
     constructor(props) {
         super(props);
 
-        this.manufacturerChanged = this.manufacturerChanged.bind(this);
-        this.brandChanged = this.brandChanged.bind(this);
-        this.descriptionChanged = this.descriptionChanged.bind(this);
-        this.is_rentableChanged = this.is_rentableChanged.bind(this);
-        this.is_on_rigChanged = this.is_on_rigChanged.bind(this);
-        this.is_availableChanged = this.is_availableChanged.bind(this);
-
-        this.updateItemInfo = this.updateItemInfo.bind(this);
+        //create a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, InventoryDisplayItem);
 
         this.state = this.props.defaultItemInfo; 
         
-
         console.log("ITEM.STATE CONSTRUCTOR: " + JSON.stringify(this.state));
     }
 

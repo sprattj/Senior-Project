@@ -7,10 +7,9 @@ import RentalDisplayContainer from '../ItemDisplays/RentalDisplayContainer.jsx';
 import ReturnButton from '../Buttons/ReturnButton.jsx';
 import RentButton from '../ModalButtons/RentButton.jsx';
 import { Row, Col } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
-import { toast } from 'react-toastify';
 import moment from 'moment';
 import "react-table/react-table.css";
+import RequestHandler from '../RequestHandler.js';
 
 
 var display = "";
@@ -19,7 +18,7 @@ export default class RentalTable extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/rental-items";
+        this.URLsection = "rental-items/";
 
         //method binding-
         this.processRows = this.processRows.bind(this);
@@ -152,137 +151,46 @@ export default class RentalTable extends React.Component {
 
     //Fetch all the items from the database
     fetchRows(self) {
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        //Define our endpoint using the rootURL, the URL section 
-        //that we set in our constructor
-        var url = rootURL + this.URLsection;
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback
-        //var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (allRentableItems) {
-                //console.log("RentalTable: fetchRows: first line of successful fetchRows, next line is response, following is self.all:");
-                //console.log(allRentableItems);
-
-                self.all = allRentableItems;
-                //console.log(self.all);
-                self.sortFetchRows(self.all);
-
-                //console.log("RentalTable: fetchRows: next fetchRigInfo");
-                self.fetchRigInfo(self);        //call next fetch
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });
+        var endpoint = this.URLsection
+        var successMsg = "Fetched all rental data.";
+        var errorMsg = "Problem fetching rental data.";
+        var callback = function (allRentableItems) {
+            self.all = allRentableItems;
+            self.sortFetchRows(self.all);
+            self.fetchRigInfo(self);        //call next fetch
+        }
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
     }
 
     //Fetch the info from the database of everything
     //attached to all rigs    
     fetchRigInfo(self) {
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        //Define our endpoint using the rootURL, the URL section 
-        //that we set in our constructor (like "/rigsheets"), and
-        //the sheetType prop ("Tandems" or "Students")
-        //(rootURL is imported from our rest info file)
-        var url = rootURL + "/rig_info";
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback-------------
-        //var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (response) {
-                //console.log("RentalTable: first line of successful fetchRigInfo: next line is response, following is rigsInfo:");
-                //console.log(response);
-
-                self.rigsInfo = response;            //set the array for the rigInfo view to be the result
-                //console.log(self.rigsInfo);
-                self.addRigData(self.rigsInfo);     //function to attach rigsInfo to correct this.all item
-
-                //console.log("RentalTable: fetchRows: next fetchActiveRentals");
-                self.fetchActiveRentals(self);      //call next fetchActiveRentals
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });
+        var endpoint = "rig_info/";
+        var successMsg = "Fetched rig data.";
+        var errorMsg = "Problem fetching rig data.";
+        var callback = function (response) {
+            self.rigsInfo = response;            //set the array for the rigInfo view to be the result
+            self.addRigData(self.rigsInfo);     //function to attach rigsInfo to correct this.all item
+            self.fetchActiveRentals(self);      //call next fetchActiveRentals
+        }
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
     }
 
     //Fetch the info from the database of all the 
     //rentals on the rentals table in db
     fetchActiveRentals(self) {
-        var url = rootURL + "/rentals/active";
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (response) {
-                //console.log("RentalTable: fetchActiveRentals: first line of successful fetchActiveRentals: next line is response, following is activeRentals:");
-                //console.log(response);
-
-                self.activeRentals = response;              //set the array for the rigInfo view to be the result
-                //console.log(self.activeRentals);
-                self.addRentalData(self.activeRentals);     //function to attach active rental data to correct this.all item
-
-                console.log("RentalTable: fetchActiveRentals: here is this.activeRentals: ");
-                console.log(self.activeRentals);
-                console.log("RentalTable: fetchActiveRentals: everything has been fetched and sorted, here is the final this.all: ");
-                console.log(self.all);
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });
+        var endpoint = "rentals/active/"
+        var successMsg = "Fetched data for active rentals.";
+        var errorMsg = "Problem fetching active rentals.";
+        var callback = function (response) {
+            self.activeRentals = response;              //set the array for the rigInfo view to be the result
+            self.addRentalData(self.activeRentals);     //function to attach active rental data to correct this.all item
+        }
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
     }
 
     /* ***************************************************************************************************************************************************************
@@ -498,98 +406,53 @@ export default class RentalTable extends React.Component {
     }
 
     rentItem(index, renter_name, item_id) {
-        console.log("RentalTable: rentItem: index: " + index + ". item_id: " + item_id +
-                        ". renter_name: " + renter_name);
-        
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + "/rentals/";
-
+        var endpoint =  "rentals/";
         var self = this;
-        var requestVariables = {
+        var variables = {
             pin: '222222',
             item_id: item_id,
             renter_name: renter_name
         };
-        fetch(url, {
-            method: "POST",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        })//when we get a response back
-            .then(function (response) {
-                if (response.status >= 400) {
-                    throw new Error("Rent Item Failed. Bad response " + response.status + " from server");
-                }
-                return response.json();
-            })//when the call succeeds
-            .then(function (responseData) {
-                //for (var i = 0; i < self.all.length; i++) {
-                //    if (index === self.all[i].index && !self.all[i].is_available) {
-                //        self.all[i].is_available = 0;
-                //        self.all[i].renter_name = renter_name;
-                //    }
-                //}
-                console.log("RentalTable: rentItem Function");
-                self.fetchRows(self);   //when the call succeeds rerun the fetches(which will sort the data as well)
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });  
+        var successMsg = "Item rented successfully.";
+        var errorMsg = "Renting item failed.";
+        var callback = function (responseData) {
+            console.log("RentalTable: rentItem callback");
+            self.fetchRows(self);   //when the call succeeds rerun the fetches(which will sort the data as well)
+        };
+        //make the request via handler
+        var handler = new RequestHandler();
+        handler.post(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     returnItem(index, rental_id) {
-        console.log("RentalTable: returnItem: index: " + index + ". rental_id: " + rental_id);
-        
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + "/rentals/" + rental_id;
-
+        var endpoint = "rentals/" + rental_id;
+        var successMsg = "Item rental " + rental_id + " returned.";
+        var errorMsg = "Problem returning rental " + rental_id + ".";
         var self = this;
-        var requestVariables = {
+        var variables = {
             pin: '222222',
             returned_date: moment()
         };
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        })//when we get a response back
-            .then(function (response) {
-                if (response.status >= 400) {
-                    throw new Error("Return Item Failed. Bad response " + response.status + " from server");
-                }
-                return response.json();
-            })//when the call succeeds
-            .then(function (responseData) {
-                console.log("RentalTable: returnItem Function: index passed in: " + index);
-                //for (var i = 0; i < self.all.length; i++) {
-                //     if (index === self.all[i].index && !self.all[i].is_available) {
-                //        self.all[i].is_available = 1;
-                //        self.all[i].renter_name = "";
-                //    }
-                //}
-                self.fetchRows(self);   //when the call succeeds rerun the fetches(which will sort the data as well)
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            }); 
+    
+        var callback = function (responseData) {
+            console.log("RentalTable: returnItem Function: index passed in: " + index);
+            //for (var i = 0; i < self.all.length; i++) {
+            //     if (index === self.all[i].index && !self.all[i].is_available) {
+            //        self.all[i].is_available = 1;
+            //        self.all[i].renter_name = "";
+            //    }
+            //}
+            self.fetchRows(self);   //when the call succeeds rerun the fetches(which will sort the data as well)
+        }
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     pinChanged(id, pin) {
         this.setState({
             pin: pin
         })
-        console.log("RentalTable: pinChanged: pin is now: "  + this.state.pin);
     }
 
     /* ***************************************************************************************************************************************************************

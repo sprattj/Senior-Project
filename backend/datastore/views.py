@@ -285,7 +285,7 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         """
         print(request.data.get('item')[0])
         """
-        item = Items.objects.get(item_id=request.data.get('item')[0])
+        item = Items.objects.get(item_id=request.data.get('item_id'))
         item_id = item.item_id
 
         # employee = Employees.objects.get(employee_id=request.data.get('employee')[0])

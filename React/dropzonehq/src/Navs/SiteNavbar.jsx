@@ -23,7 +23,7 @@ export default class SiteNavbar extends React.Component {
   }
   render() {
     return (
-      <Navbar color="faded" light expand="lg" toggleable={true}>
+      <Navbar color="faded" light expand="lg">
         <NavbarBrand href={this.props.brandLink}>
           <img src={this.props.brandImage}  alt="logo" />
           <h1>{this.props.brandText}</h1></NavbarBrand>
@@ -42,6 +42,7 @@ SiteNavbar.propTypes = {
   brandText: PropTypes.string.isRequired, //the brand text of the nav
   brandLink: PropTypes.string.isRequired, //what the brand text links to
   brandImage: PropTypes.string
-  //children: PropTypes.arrayOf(PropTypes.instanceOf(NavItem)).isRequired //the children of a SiteNavbar must be Reactstrap Navitems.
+  //children: PropTypes.arrayOf(PropTypes.instanceOf(NavItem)).isRequired 
+  //the children of a SiteNavbar must be Reactstrap Navitems.
 }
 
