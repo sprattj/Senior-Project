@@ -1,4 +1,32 @@
-import React from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: LoftScreen.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: LoftScreen.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 import TabGroup from '../TabGroups/TabGroup.jsx';
 import QueueDisplay from '../QueueDisplay.jsx';
@@ -59,15 +87,15 @@ export default class LoftScreen extends React.Component {
             selectedQClaimID: DEFAULT_SELECTED_CLAIM_ID,
             selectedWarnClaimID: DEFAULT_SELECTED_CLAIM_ID,
             activeTab: 0,
-            queueDisplay: <QueueDisplay />,
-            warningDisplay: <WarningDisplay />,
-            scheduleDisplay: <div>
-                <BigCalendar
+            queueDisplay: &lt;QueueDisplay />,
+            warningDisplay: &lt;WarningDisplay />,
+            scheduleDisplay: &lt;div>
+                &lt;BigCalendar
                     events={myEventsList}
                     startAccessor='startDate'
                     endAccessor='endDate'
                 />
-            </div>
+            &lt;/div>
         }
     }
 
@@ -136,7 +164,7 @@ export default class LoftScreen extends React.Component {
      * @param {Object} queueData - the JSON response of all queue claims 
      */
     populateQueue(queueData) {
-        for (var i = 0; i < queueData.length; i++) {
+        for (var i = 0; i &lt; queueData.length; i++) {
             this.addItemToQueueFromJSON(queueData[i]);
         }
     }
@@ -147,7 +175,7 @@ export default class LoftScreen extends React.Component {
      * @param {Object} queueData - the JSON response of all queue claims 
      */
     populateWarnings(warningData) {
-        for (var i = 0; i < warningData.length; i++) {
+        for (var i = 0; i &lt; warningData.length; i++) {
             this.addWarningToListFromJSON(warningData[i]);
         }
     }
@@ -188,8 +216,8 @@ export default class LoftScreen extends React.Component {
      */
     getListItemWithSelectVal(listItem, isSelected, isQueue) {
         var oldProps = listItem.props;
-        var changedListItem = (isQueue ? <QueueListItem {...oldProps} selected={isSelected} />
-            : <WarningListItem {...oldProps} selected={isSelected} />);
+        var changedListItem = (isQueue ? &lt;QueueListItem {...oldProps} selected={isSelected} />
+            : &lt;WarningListItem {...oldProps} selected={isSelected} />);
         return changedListItem;
     }
 
@@ -231,8 +259,8 @@ export default class LoftScreen extends React.Component {
         newClaimsMap.set(selectedClaimID, selectedListItem);
 
         //create a new display from this selected claim (based on whether it's queue or warning)
-        var newDisplay = (isQueue ? <QueueDisplay {...newClaim.props} />
-            : <WarningDisplay {...newClaim.props} />);
+        var newDisplay = (isQueue ? &lt;QueueDisplay {...newClaim.props} />
+            : &lt;WarningDisplay {...newClaim.props} />);
 
         //update the state to deselect old item, select new item, and show display for new
         //item on the right.
@@ -400,8 +428,8 @@ export default class LoftScreen extends React.Component {
             submit_date: claimData.submit_date,
             due_date: claimData.due_date
         }
-        var newClaim = (isQueue ? <QueueListItem {...newProps} complete={this.completeQueueItem} />
-            : <WarningListItem {...newProps} addToQueue={this.moveClaimToQueue} />);
+        var newClaim = (isQueue ? &lt;QueueListItem {...newProps} complete={this.completeQueueItem} />
+            : &lt;WarningListItem {...newProps} addToQueue={this.moveClaimToQueue} />);
         return newClaim;
     }
 
@@ -481,7 +509,7 @@ export default class LoftScreen extends React.Component {
         var self = this;
         var callback = function (responseData) {
             var oldClaim = self.state.warningListItems.get(responseData.claim_id);
-            var newQItem = <QueueListItem
+            var newQItem = &lt;QueueListItem
                 {...oldClaim.props}
                 key={claim_id}
                 selected={false}
@@ -510,33 +538,55 @@ export default class LoftScreen extends React.Component {
         this.state.queueDisplay,
         this.state.warningDisplay];
         return (
-            <div>
-                <Row>
-                    <Col lg={{ size: 12 }}>
-                        <DropzoneHQNav />
-                    </Col>
-                </Row>
-                <Row className="viewport">
-                    <Col xs={{ size: 6 }} md={{ size: 3 }}>
-                        <WarningList pinChanged={this.pinChanged} addWarning={this.addWarning}>
+            &lt;div>
+                &lt;Row>
+                    &lt;Col lg={{ size: 12 }}>
+                        &lt;DropzoneHQNav />
+                    &lt;/Col>
+                &lt;/Row>
+                &lt;Row className="viewport">
+                    &lt;Col xs={{ size: 6 }} md={{ size: 3 }}>
+                        &lt;WarningList pinChanged={this.pinChanged} addWarning={this.addWarning}>
                             {Array.from(this.state.warningListItems.values())}
-                        </WarningList>
-                    </Col>
-                    <Col xs={{ size: 6 }} md={{ size: 3 }}>
-                        <QueueList addQueueItem={this.addQueueItem}>
+                        &lt;/WarningList>
+                    &lt;/Col>
+                    &lt;Col xs={{ size: 6 }} md={{ size: 3 }}>
+                        &lt;QueueList addQueueItem={this.addQueueItem}>
                             {Array.from(this.state.queueListItems.values())}
-                        </QueueList>
-                    </Col>
-                    <Col xs={{ size: 12 }} md={{ size: 6 }}>
-                        <Card>
-                            <CardHeader>Main View</CardHeader>
-                            <CardBlock className="main_view">
-                                <TabGroup activeTab={this.state.activeTab} tabHeaders={tabHeaders} tabContents={tabContents} />
-                            </CardBlock>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+                        &lt;/QueueList>
+                    &lt;/Col>
+                    &lt;Col xs={{ size: 12 }} md={{ size: 6 }}>
+                        &lt;Card>
+                            &lt;CardHeader>Main View&lt;/CardHeader>
+                            &lt;CardBlock className="main_view">
+                                &lt;TabGroup activeTab={this.state.activeTab} tabHeaders={tabHeaders} tabContents={tabContents} />
+                            &lt;/CardBlock>
+                        &lt;/Card>
+                    &lt;/Col>
+                &lt;/Row>
+            &lt;/div>
         );
     }
-};
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-InventoryScreen.html">InventoryScreen</a></li><li><a href="module-LoftScreen.html">LoftScreen</a></li></ul><h3>Classes</h3><ul><li><a href="module-InventoryScreen.html">InventoryScreen</a></li><li><a href="module-LoftScreen.html">LoftScreen</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Dec 03 2017 17:16:12 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
