@@ -1,7 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, CardHeader, CardBlock } from 'reactstrap';
 import TabGroup from '../TabGroups/TabGroup.jsx';
-import 'bootstrap/dist/css/bootstrap.css';
 import QueueDisplay from '../QueueDisplay.jsx';
 import QueueList from '../Lists/QueueList.jsx';
 import QueueListItem from '../Lists/QueueListItem.jsx';
@@ -12,8 +11,7 @@ import './LoftScreen.css';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment';
-import { rootURL, CLAIM_STATUS_CHOICES } from '../restInfo.js';
-import { toast } from 'react-toastify';
+import { CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import RequestHandler from '../RequestHandler.js';
 // Setup the localizer by providing the moment (or globalize) Object
@@ -243,14 +241,12 @@ export default class LoftScreen extends React.Component {
         var endpoint = this.URLsection + claim_id + "/";
         var errorMsg = "Moving claim failed.";
         var successMsg = "Claim updated successfully.";
-        var self = this;
         var variables = {
             status: CLAIM_STATUS_CHOICES.IN_PROGRESS
         };
 
         var callback = function (responseData) {
             var oldClaim = this.state.warningListItems.get(responseData.claim_id);
-            var newNdx = this.state.queueListItems.length;
             var newQItem = <QueueListItem
                 {...oldClaim.props}
                 key={claim_id}

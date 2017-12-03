@@ -10,11 +10,11 @@ import InventoryDisplayAAD from '../ItemDisplays/InventoryDisplayAAD.jsx';
 
 import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
 import PropTypes from 'prop-types';
-import { Row, Col, Card, ButtonGroup } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
+import { Row, Col, Card } from 'reactstrap';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import "react-table/react-table.css";
-import { toast } from 'react-toastify';
+
+import RequestHandler from '../RequestHandler.js';
 
 const marginStyle = {
     marginTop: 25,
@@ -163,76 +163,36 @@ export default class InventoryScreen extends React.Component {
     //Fetch the items from the database that are 
     //rentals and update the RentalTable's state to display them.
     fetchRows() {
-
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + this.URLsection;
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback
+        var endpoint = this.URLsection
         var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (rowData) {
-                self.getFilteredRows(rowData);
-                self.setState({
-                    filter: "all",
-                    columns: self.columnsAll,
-                    rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
-                    index: 0,
-                    currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
-                });
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });;
+        var successMsg = "Fetched inventory data.";
+        var errorMsg = "Problem fetching inventory data.";
+        var callback = function (rowData) {
+            self.getFilteredRows(rowData);
+            self.setState({
+                filter: "all",
+                columns: self.columnsAll,
+                rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
+                index: 0,
+                currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+            });
+        };
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
     }
 
 
 
     updateAADRow(itemInfo, AADInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + "/AADs/" + itemInfo.item_id;
-
+        var endpoint = "AADs/" + itemInfo.item_id;
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.lifespan = AADInfo.lifespan;
-        requestVariables.serial_number = AADInfo.aad_sn;
-
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing AAD failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var variables = itemInfo;
+        variables.lifespan = AADInfo.lifespan;
+        variables.serial_number = AADInfo.aad_sn;
+        var successMsg = "Successfully edited AAD info.";
+        var errorMsg = "Editing AAD " + itemInfo.item_id + " failed.";
+        var callback = function (responseData) {
             var AAD = self.all.get(itemInfo.item_id);
             AAD.manufacturer = itemInfo.manufacturer;
             AAD.description = itemInfo.description;
@@ -256,22 +216,19 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.aad.values())
                 })
             }
+        }
 
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     updateReserveCanopyRow(item_id, manufacturer, description, isOnRig, brand,
         isRentable, rig_id, serial_number, size, date_of_manufacture,
         jump_count, last_repack_date, next_repack_date, packed_by_employee_id, ride_count) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + "/canopies/reserve/" + item_id;
-
+        var endpoint = "canopies/reserve/" + item_id;
         var self = this;
-        var requestVariables = {
+        var variables = {
             manufacturer: manufacturer,
             description: description,
             is_on_rig: isOnRig,
@@ -289,20 +246,9 @@ export default class InventoryScreen extends React.Component {
             pin: this.state.pin
         };
 
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing reserve canopy failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var successMsg = "Successfully edited reserve canopy info.";
+        var errorMsg = "Editing reserve canopy " + item_id + " failed.";
+        var callback = function (responseData) {
             var reserveCanopy = self.all.get(item_id);
             reserveCanopy.manufacturer = manufacturer;
             reserveCanopy.description = description;
@@ -329,42 +275,24 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.all.values())
                 })
             }
-
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
-
+        };
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     updateCanopyRow(itemInfo, canopyInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
         console.log("item info in fetch call: " + JSON.stringify(itemInfo));
-        var url = rootURL + "/canopies/" + itemInfo.item_id;
-
+        var endpoint = "canopies/" + itemInfo.item_id;
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.pin = this.state.pin;
-        requestVariables.rig_id = canopyInfo.rig_num;
-        requestVariables.serial_number = canopyInfo.canopy_sn;
-        requestVariables.size = canopyInfo.size;
-        requestVariables.jump_count = canopyInfo.jump_count;
-
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var variables = itemInfo;
+        variables.pin = this.state.pin;
+        variables.rig_id = canopyInfo.rig_num;
+        variables.serial_number = canopyInfo.canopy_sn;
+        variables.size = canopyInfo.size;
+        variables.jump_count = canopyInfo.jump_count;
+        var successMsg = "Successfully edited canopy info.";
+        var errorMsg = "Editing canopy " + itemInfo.item_id + " failed.";
+        var callback = function (responseData) {
             var canopy = self.all.get(itemInfo.item_id);
             canopy.manufacturer = itemInfo.manufacturer;
             canopy.description = itemInfo.description;
@@ -389,39 +317,23 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.canopies.values())
                 })
             }
+        }
 
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     updateRigRow(itemInfo, rigInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + "/rigs/" + itemInfo.item_id;
-
+        var endpoint = "rigs/" + itemInfo.item_id;
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.aad_id = rigInfo.aad;
-        requestVariables.container_id = rigInfo.container;
-        requestVariables.isTandem = rigInfo.isTandem;
-        requestVariables.pin = this.state.pin;
-
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing rig failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var variables = itemInfo;
+        variables.aad_id = rigInfo.aad;
+        variables.container_id = rigInfo.container;
+        variables.isTandem = rigInfo.isTandem;
+        variables.pin = this.state.pin;
+        var successMsg = "Successfully edited rig info.";
+        var errorMsg = "Editing rig " + itemInfo.item_id + " failed.";
+        var callback = function (responseData) {
 
             var rig = self.all.get(itemInfo.item_id);
             rig.manufacturer = itemInfo.manufacturer;
@@ -446,37 +358,23 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.rigs.values())
                 })
             }
+        };
 
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     updateContainerRow(itemInfo, containerInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + "/containers/" + itemInfo.item_id;
-
+        var endpoint = "containers/" + itemInfo.item_id;
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.serial_number = containerInfo.container_sn;
-        requestVariables.pin = this.state.pin;
 
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing container failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var variables = itemInfo;
+        variables.serial_number = containerInfo.container_sn;
+        variables.pin = this.state.pin;
+
+        var successMsg = "Successfully edited rig info.";
+        var errorMsg = "Editing rig " + itemInfo.item_id + " failed.";
+        var callback = function (responseData) {
             var container = self.all.get(itemInfo.item_id);
             container.manufacturer = itemInfo.manufacturer;
             container.description = itemInfo.description;
@@ -499,10 +397,10 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.containers.values())
                 })
             }
+        };
 
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        var handler = new RequestHandler();
+        handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     getFilteredRows(rowData) {
@@ -797,30 +695,14 @@ export default class InventoryScreen extends React.Component {
     }
 
     addAAD(itemInfo, AADInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + "/AADs/";
-
+        var endpoint = "AADs/"
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.lifespan = AADInfo.lifespan;
-        requestVariables.serial_number = AADInfo.aad_sn;
-
-        fetch(url, {
-            method: "POST",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Adding AAD failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var variables = itemInfo;
+        variables.lifespan = AADInfo.lifespan;
+        variables.serial_number = AADInfo.aad_sn;
+        var successMsg = "AAD added successfully.";
+        var errorMsg = "Problem adding AAD.";
+        var callback = function (responseData) {
             var AAD = {};
             AAD.manufacturer = itemInfo.manufacturer;
             AAD.description = itemInfo.description;
@@ -844,36 +726,23 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.aads.values())
                 })
             }
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        };
+        //make the request via handler
+        var handler = new RequestHandler();
+        handler.post(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     addContainer(itemInfo, containerInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + "/containers/";
-
+        var endpoint = "containers/";
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.serial_number = containerInfo.container_sn;
-        requestVariables.pin = this.state.pin;
+        var variables = itemInfo;
+        variables.serial_number = containerInfo.container_sn;
+        variables.pin = this.state.pin;
 
-        fetch(url, {
-            method: "POST",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing container failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var successMsg = "Container added successfully.";
+        var errorMsg = "Problem adding container.";
+        var callback = function (responseData) {
             var container = {};
             container.manufacturer = itemInfo.manufacturer;
             container.description = itemInfo.description;
@@ -896,40 +765,26 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.containers.values())
                 })
             }
+        }
 
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        //make the request via handler
+        var handler = new RequestHandler();
+        handler.post(endpoint, variables, successMsg, errorMsg, callback);
     }
 
     addCanopy(itemInfo, canopyInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
 
-        var url = rootURL + "/canopies/";
-
+        var endpoint = "canopies/";
         var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.pin = this.state.pin;
-        requestVariables.rig_id = canopyInfo.rig_num;
-        requestVariables.serial_number = canopyInfo.canopy_sn;
-        requestVariables.size = canopyInfo.size;
-        requestVariables.jump_count = canopyInfo.jump_count;
-
-        fetch(url, {
-            method: "POST",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
+        var variables = itemInfo;
+        variables.pin = this.state.pin;
+        variables.rig_id = canopyInfo.rig_num;
+        variables.serial_number = canopyInfo.canopy_sn;
+        variables.size = canopyInfo.size;
+        variables.jump_count = canopyInfo.jump_count;
+        var successMsg = "Canopy added successfully.";
+        var errorMsg = "Problem adding canopy.";
+        var callback = function (responseData) {
             var canopy = {};
             canopy.manufacturer = itemInfo.manufacturer;
             canopy.description = itemInfo.description;
@@ -955,10 +810,10 @@ export default class InventoryScreen extends React.Component {
                     rows: Array.from(self.canopies.values())
                 })
             }
-
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
+        }
+        //make the request via handler
+        var handler = new RequestHandler();
+        handler.post(endpoint, variables, successMsg, errorMsg, callback);
     }
 
 
