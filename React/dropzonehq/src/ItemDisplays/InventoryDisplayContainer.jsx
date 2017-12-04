@@ -19,7 +19,7 @@ export default class InventoryDisplayContainer extends React.Component {
 
     componentWillReceiveProps(newProps)
     {
-        console.log("in componentWillReceiveProps");
+        console.log("in componentWillReceiveProps (InvDisplayContainer)");
         // force update state 
         this.setState({
             containerInfo: newProps.containerInfo
@@ -36,6 +36,7 @@ export default class InventoryDisplayContainer extends React.Component {
     }
 
     updateContainerRow(itemInfo) {
+        console.log("updateContainerRow: " + JSON.stringify(itemInfo));
         var containerInfo = this.state.containerInfo;
         this.props.updateContainerRow(itemInfo, containerInfo);
 

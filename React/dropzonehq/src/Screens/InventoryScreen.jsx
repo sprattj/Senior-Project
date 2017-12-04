@@ -19,7 +19,6 @@ import { toast } from 'react-toastify';
 const marginStyle = {
     marginTop: 25,
     marginBottom: 25
-
 };
 
 var count = 0;
@@ -52,7 +51,6 @@ export default class InventoryScreen extends React.Component {
         this.updateContainerRow = this.updateContainerRow.bind(this);
         this.updateRigRow = this.updateRigRow.bind(this);
 
-
         this.displayAddContainer = this.displayAddContainer.bind(this);
         this.displayAddCanopy = this.displayAddCanopy.bind(this);
         this.addAAD = this.addAAD.bind(this);
@@ -67,7 +65,7 @@ export default class InventoryScreen extends React.Component {
 
         this.columnsAll = [{
             Header: 'Item manufacturer',
-            accessor: 'manufacturer', // String-based value accessors!
+            accessor: 'manufacturer',                       // String-based value accessors!
             width: 150
         }, {
             Header: 'Item Description',
@@ -456,6 +454,8 @@ export default class InventoryScreen extends React.Component {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
+        console.log("item_id: " + itemInfo.item_id);
+        
         var url = rootURL + "/containers/" + itemInfo.item_id;
 
         var self = this;
@@ -589,14 +589,15 @@ export default class InventoryScreen extends React.Component {
 
         var display = this.setupDisplay(row);
 
-        this.displayChange(display, row.index);
+        this.displayChange(display, selectedIndex);
 
         console.log("Selection count: " + count);
         count++;
 
         console.log("selected values => index: " + selectedIndex + " \n itemNum: " + this.state.rows[selectedIndex].manufacturer + " \n brand: "
             + this.state.rows[selectedIndex].brand + " \n itemdescription: " + this.state.rows[selectedIndex].description
-            + " \n itemType: " + this.state.rows[selectedIndex].item_type);
+            + " \n itemType: " + this.state.rows[selectedIndex].item_type
+            + " \n is_rentable: " + this.state.rows[selectedIndex].is_rentable);
     }
 
     // set up the display component, based on Item Type
