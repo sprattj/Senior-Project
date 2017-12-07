@@ -74,9 +74,7 @@ urlpatterns = [
         name='dropzone_password_reset_confirm'),
     url(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='dropzone_password_reset_complete'),
     url(r'^(?i)reset_employee/$', password_reset_employee, name='pin reset'),
-    url(r'^(?i)dropzone/(?P<pk>[0-9]+)/create_employee/$', EmployeeView, name='create_employee'),
-    url(r'^(?i)auth_employee/$', authenticateUserPin, name='authenticate_user_pin'),
-    url(r'^(?i)auth_name_dropzone/$', authenticateNameDropzone, name='authenticate_name_dropzone'),
+    url(r'^(?i)auth_employee/$', AuthenticateEmployeePin.as_view(), name='authenticate_user_pin'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += [
     url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')

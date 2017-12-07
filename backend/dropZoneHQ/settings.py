@@ -142,19 +142,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#not abu
-#AUTH_USER_MODEL = 'dropZoneHQ.Dropzones'
-
 #Login URL
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = '/'
-
-if 'RDS_DB_NAME' in os.environ:
-    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = '/emails'
-
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
