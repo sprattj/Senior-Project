@@ -142,7 +142,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'dropZoneHQ.Dropzones'
+#not abu
+#AUTH_USER_MODEL = 'dropZoneHQ.Dropzones'
 
 #Login URL
 LOGIN_URL = 'login/'

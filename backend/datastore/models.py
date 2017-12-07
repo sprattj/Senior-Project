@@ -223,7 +223,7 @@ class Employees(models.Model):
     is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
     # pin Sha hash
-    pin = models.CharField(max_length=45, blank=True)
+    pin = models.CharField(max_length=45, blank=True, unique=True)
     employment_date = models.DateTimeField(auto_now_add=True)
 
 
