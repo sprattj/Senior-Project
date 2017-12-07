@@ -186,44 +186,31 @@ class EmployeeList(generics.ListCreateAPIView):
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
         roles = request.data.get('roles')
-        #take out not for proper settings
-        #todo take out not
-        if Employees.employee_email_in_use(email) is not None:
+        #todo ADD NOT
+        if Employees.employee_email_in_use(email):
             emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email, dropzone_id=dropzone_id)
             emp_id = emp.employee_id
             pin = Employees.create_random_user_pin(emp_id)
-            #emp.pin = Employees.pin_to_hash(pin)
-            emp.pin = pin
+            emp.pin = Employees.pin_to_hash(pin)
             if roles is not None:
                 for role in roles:
                     exsisting_role = EmployeeRoles.objects.filter(role=role).first()
                     if not exsisting_role:
                         exsisting_role = EmployeeRoles.objects.create(role=role)
-                        role_id = exsisting_role.role_id
                         exsisting_role.save()
                     emperole = EmployeesEmployeeRoles.objects.create(employee=emp, role=exsisting_role)
                     emperole.save()
                     emp.save()
             data = {'pin': pin}
-            
 
             serializer = EmployeeSerializer(emp, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
-            new_instance = serializer.save()
+            serializer.save()
 
             mail = util.MailClient()
             mail.send_mail(recipient=emp.email,
                            subject='DropzoneHQ Employee Pin [NO REPLY]',
                            body='Your new employee pin is ' + pin)
-            """
-            send_mail(
-                subject='DropzoneHQ Employee Pin [NO REPLY]',
-                message='Your new employee pin is ' + pin,
-                from_email='dropzonehqNO-REPLY@dropzonehq.com',
-                recipient_list=[emp.email],
-                fail_silently=False
-            )
-            """
             data = {'success': True}
             return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
@@ -690,9 +677,9 @@ class AuthenticateEmployeePin(View, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
         pin = request.data.get['pin']
         employee = Employees.objects.filter(pin)
-        if employee.exists() :
+        if employee.exists():
             employee = employee.first()
-            request.session['id'] = employee.employee_id
+            request.session['id'] = util.sign(employee.employee_id, 16)
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
