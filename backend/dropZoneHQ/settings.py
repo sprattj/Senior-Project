@@ -99,6 +99,13 @@ if 'RDS_DB_NAME' in os.environ:
             'skip-ssl',
         }
     }
+elif True:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'ebdb',
+        }
+    }
 else:
     DATABASES = {
         'default': {
