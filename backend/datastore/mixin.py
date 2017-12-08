@@ -1,7 +1,6 @@
 #File for all custom Mixins
 
 from rest_framework import status
-from backend.datastore import util
 from backend.datastore import models
 from django.http import HttpResponse
 
@@ -11,7 +10,7 @@ class CheckCookieMixin(object):
     def check_cookie(self, cookie):
         return True
 
-    def cookie_check_failed(self, request, *args, **kwargs):
+    def cookie_check_failed(self):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     def dispatch(self, request, *args, **kwargs):
@@ -25,7 +24,7 @@ class RoleCookieRequiredMixin(CheckCookieMixin):
     role = None
 
     def check_cookie(self, cookie):
-        if not models.Employees.check_employee_role_based_pin_hash(cookie, role):
+        if not models.Employees.check_employee_role_based_pin_hash(cookie, self.role):
             return self.cookie_check_failed()
         else:
             return True
