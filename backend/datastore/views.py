@@ -4,6 +4,7 @@ from .serializers import *
 from .serializers import *
 from . import util
 from backend.datastore.models import *
+from backend.datastore import mixin
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -676,10 +677,9 @@ class AuthenticateEmployeePin(View, LoginRequiredMixin):
     #check pin return cookie
     def post(self, request, *args, **kwargs):
         pin = request.data.get['pin']
-        employee = Employees.objects.filter(pin)
+        employee = Employees.objects.filter(Employees.pin_to_hash(pin))
         if employee.exists():
-            employee = employee.first()
-            request.session['id'] = util.sign(employee.employee_id, 16)
+            request.session['id'] = pin
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)

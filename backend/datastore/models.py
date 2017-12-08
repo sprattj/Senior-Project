@@ -232,10 +232,15 @@ class Employees(models.Model):
     def check_employee_pin(pin, employee):
         return util.verify(cookie=pin, cookie_hash=employee.pin, length=8)
 
-    #given a pin
+    #given a hashed pin check if the employee has a role
     @staticmethod
     def check_employee_role_based_pin(pin, role):
-        return Employees.check_employee_role(Employees.objects.get(pin=pin),role)
+        return Employees.check_employee_role(Employees.objects.filter(pin=pin).first(), role)
+
+    # given a pin that is not hashed check if the employee has a role
+    @staticmethod
+    def check_employee_role_based_pin_hash(pin, role):
+        return Employees.check_employee_role_based_pin(Employees.pin_to_hash(pin), role)
 
     #for a specific employee check if the role matches their role
     @staticmethod

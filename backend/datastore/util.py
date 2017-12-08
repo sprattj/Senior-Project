@@ -41,15 +41,21 @@ def employeePinResetTo():
 def createPinResetMessage(pin=None):
     return "Your new pin is " + pin + ".  Please use this when you do any actions on dropzonehq.com"
 
-
+#sign a cookie
+#in our case we will be doing this for the pin of employees
 def sign(cookie, length):
     cookie_hash = blake2b(digest_size=length, key=settings.SECRET_KEY)
     cookie_hash.update(cookie)
     return cookie_hash.hexdigest()
 
+#verify the hashed pin againt employee hashed pin
+#used for testing
+def verify_hashed(cookie_hash, cookie_hash2):
+    return compare_digest(cookie_hash, cookie_hash2)
 
+#verify that a cookie that is given matches the hashed cookie
 def verify(cookie, cookie_hash, length):
-    return compare_digest(cookie, sign(cookie_hash, length))
+    return compare_digest(sign(cookie, length), cookie_hash)
 
 class MailClient(object):
 
