@@ -5,7 +5,7 @@ import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import UnControlledSelectDDL from '../UnControlledSelectDDL.jsx';
 import Binder from '../Binder.js';
-
+import 'bootstrap/dist/css/bootstrap.css';
 
 var rentalOptions = [
     { text: "Is Rentable" },
@@ -25,8 +25,8 @@ export default class InventoryDisplayItem extends React.Component {
         var binder = new Binder();
         binder.bindAll(this, InventoryDisplayItem);
 
-        this.state = this.props.defaultItemInfo; 
-        
+        this.state = this.props.defaultItemInfo;
+
         console.log("ITEM.STATE CONSTRUCTOR: " + JSON.stringify(this.state));
     }
 
@@ -43,8 +43,7 @@ export default class InventoryDisplayItem extends React.Component {
         console.log("is_rentable: " + this.state.is_rentable + " is_on_rig: " + this.state.is_on_rig);
     }
 
-    componentWillReceiveProps(newProps)
-    {
+    componentWillReceiveProps(newProps) {
 
     }
 
@@ -83,12 +82,12 @@ export default class InventoryDisplayItem extends React.Component {
         });
         console.log("after setState is_rentable: " + this.state.is_rentable);
 
-  /*       // THIS ATTEMPT IS FOR SELECT ELEMENT ONLY 
-        var selectObj = document.getElementById("is_rentableID");
-        console.log("selectObj: " + selectObj + " curr value: " + selectObj.value);
-        // set selected value
-        document.getElementById("is_rentableID").value = this.state.is_rentable;
-        console.log("select value: " + document.getElementById("is_rentableID").value); */
+        /*       // THIS ATTEMPT IS FOR SELECT ELEMENT ONLY 
+              var selectObj = document.getElementById("is_rentableID");
+              console.log("selectObj: " + selectObj + " curr value: " + selectObj.value);
+              // set selected value
+              document.getElementById("is_rentableID").value = this.state.is_rentable;
+              console.log("select value: " + document.getElementById("is_rentableID").value); */
     }
 
     is_on_rigChanged(e) {
@@ -114,6 +113,9 @@ export default class InventoryDisplayItem extends React.Component {
         return (
             <div>
                 <Row>
+
+        <input class="form-check-input" type="checkbox" /> Rentable
+
                     <InputGroup>
                         <InputGroupAddon > Manufacturer: </InputGroupAddon>
                         <UncontrolledTextInput
@@ -140,33 +142,15 @@ export default class InventoryDisplayItem extends React.Component {
                             defaultText={this.props.defaultItemInfo.description}
                         />
                     </InputGroup>
-                    <InputGroup>
-                        <InputGroupAddon >Rentable: </InputGroupAddon>
-                        {/* <select
-                            // value={this.props.defaultItemInfo.is_rentable}
-                            defaultValue={this.props.defaultItemInfo.is_rentable}
-                            onChange={this.is_rentableChanged}
-                            id="is_rentableID" >
-                        
-                            <option value={true}>Is on a rig</option>
-                            <option value={false}>NOT on a rig</option>
-                           
-                        </select> */}
-                        <UnControlledSelectDDL 
-                            defaultValue={this.props.defaultItemInfo.is_rentable}// ? "true" : "false"}
-                            id="is_rentableID"
-                            onChange={this.is_rentableChanged }
-                            options={rentalOptions}
-                            />
-                    </InputGroup>
+
                 </Row>
                 <Row>
                     <InputGroup>
                         <InputGroupAddon >On a Rig: </InputGroupAddon>
-                        <UnControlledSelectDDL 
+                        <UnControlledSelectDDL
                             defaultValue={this.props.defaultItemInfo.is_on_rig}// ? "true" : "false"}
                             id="is_on_rigID"
-                            onChange={this.is_on_rigChanged }
+                            onChange={this.is_on_rigChanged}
                             options={rigOptions}
                         />
 
