@@ -1,12 +1,10 @@
 import React from 'react';
 import StatDisplay from './StatDisplay.jsx';
 import { Row, Col } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
 
 export default class TandemInstructorStatDisplay extends React.Component {
     constructor(props) {
-        super(props);
-        
+        super(props);        
     } 
 
     render() {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, InputGroup, InputGroupAddon, Card, CardBlock } from 'reactstrap';
+import { Form, Card, CardBlock } from 'reactstrap';
 import ModalButton from './ModalButton.jsx';
 import BioStatDisplay from '../StatDisplays/BioStatDisplay.jsx';
 import TandemInstructorStatDisplay from '../StatDisplays/TandemInstructorStatDisplay.jsx';

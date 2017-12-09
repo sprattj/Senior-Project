@@ -1,7 +1,6 @@
 import React from 'react';
 import StatDisplay from './StatDisplay.jsx';
 import { Row, Col } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
 
 export default class AFPInstructorStatDisplay extends React.Component {
     constructor(props) {
