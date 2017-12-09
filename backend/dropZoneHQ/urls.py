@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 sys.path.append('../')
 
@@ -62,15 +63,18 @@ urlpatterns = [
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
-    url(r'^(?i)login/$', loginDropzone, name='login'),
-    url(r'^(?i)logout/$', logoutDropzone, name='logout'),
-    url(r'^(?i)temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
-    url(r'^(?i)reset/$', password_reset_dropzone, name='password_reset'),
+    url(r'^(?i)login/$', auth_views.LoginView.as_view(), name='login'),
+    url(r'^(?i)logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    url(r'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
+    url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='dropzone_password_change_done',),
+    url(r'^password_reset', auth_views.PasswordResetView.as_view(), name='dropzone_password_reset'),
+    url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='dropzone_password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.PasswordResetConfirmView.as_view(),
+        name='dropzone_password_reset_confirm'),
+    url(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='dropzone_password_reset_complete'),
     url(r'^(?i)reset_employee/$', password_reset_employee, name='pin reset'),
-    url(r'^(?i)create_dropzone/$', createDropzone, name='create_dropzone'),
-    url(r'^(?i)dropzone/(?P<pk>[0-9]+)/create_employee/$', EmployeeView, name='create_employee'),
-    url(r'^(?i)auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
-    url(r'^(?i)auth_name_dropzone/', authenticateNameDropzone, name='authenticate_name_dropzone')
+    url(r'^(?i)auth_employee/$', AuthenticateEmployeePin.as_view(), name='authenticate_user_pin'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += [
     url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')

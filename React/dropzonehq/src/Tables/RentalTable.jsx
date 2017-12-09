@@ -10,6 +10,7 @@ import { Row, Col } from 'reactstrap';
 import moment from 'moment';
 import "react-table/react-table.css";
 import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 
 var display = "";
@@ -21,7 +22,6 @@ export default class RentalTable extends React.Component {
         this.URLsection = "rental-items/";
 
         //method binding-
-        this.processRows = this.processRows.bind(this);
 
         this.fetchRows = this.fetchRows.bind(this);
         this.fetchRigInfo = this.fetchRigInfo.bind(this);
@@ -41,7 +41,9 @@ export default class RentalTable extends React.Component {
         this.returnItem = this.returnItem.bind(this);
         this.pinChanged = this.pinChanged.bind(this);
 
-        this.testFunc = this.testFunc.bind(this);
+        //create a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, RentalTable);
         //method binding end-
 
         //variable arrays--
@@ -59,7 +61,7 @@ export default class RentalTable extends React.Component {
         this.aads = [];             //all aads returned from fetchRows
 
         //variable arrays end--
-       
+
         //column variables---
         this.columnsAll = [{
             Header: 'Item Type',
@@ -110,13 +112,6 @@ export default class RentalTable extends React.Component {
         }];
         //column variables end---
 
-        //FETCHROWS DATA RESPONSES
-        //item_id: (int), manufacturer: (string), brand: (string), description: (string), is_rentable: (0 or 1 boolean), item_type: (string), rig_number: (int), aad: (int), container: (int), isTandem: (0 or 1 boolean), canopy_on_rig: (0 or 1 boolean), 
-        //jump_count: (int), date_of_manufacture: (dateTime), size: (int), canopy_sn: (string),
-        //next_repack_date: (dateTime), packed_by_employee_id: (int), ride_count: (int),
-        //container_sn: (string),
-        //deployment_timestamp: (timeStamp), aad_sn: (string), lifespan: (string)
-
         this.state = {
             filter: "all",
             columns: this.columnsAll,
@@ -124,6 +119,7 @@ export default class RentalTable extends React.Component {
             index: 0,
             pin: ''
         };
+
     }//constructor end
 
     //When this RentalTable component loads on the page, fetch the rows
@@ -135,19 +131,18 @@ export default class RentalTable extends React.Component {
     componentDidMount() {
     }
 
-    //idk if this is used anymore here? might need for itemTable but im not sure 
-    processRows(rowData) {        
-        this.setState({
-            filter: "all",
-            columns: this.columnsAll,
-            rows: this.all
-        });
-    }
-
     /* ***************************************************************************************************************************************************************
        **************************************************************************FETCHING***************************************************************************** 
        ***************************************************************************************************************************************************************
     */
+
+    //FETCHROWS DATA RESPONSES
+    //item_id: (int), manufacturer: (string), brand: (string), description: (string), is_rentable: (0 or 1 boolean), item_type: (string), rig_number: (int), aad: (int), container: (int), isTandem: (0 or 1 boolean), canopy_on_rig: (0 or 1 boolean), 
+    //jump_count: (int), date_of_manufacture: (dateTime), size: (int), canopy_sn: (string),
+    //next_repack_date: (dateTime), packed_by_employee_id: (int), ride_count: (int),
+    //container_sn: (string),
+    //deployment_timestamp: (timeStamp), aad_sn: (string), lifespan: (string)
+
 
     //Fetch all the items from the database
     fetchRows(self) {
@@ -208,7 +203,7 @@ export default class RentalTable extends React.Component {
         this.setState({ rows: this.all, columns: this.columnsAll });
     }
 
-    //Takes the whole set of data given from db call and split it into the types so the split doesnt
+    //Takes the whole set of data given from db call and split it into the 4 types so the split doesnt
     //need to take place more than once after each db call not when filter is selected
     getFilteredRows(rowData) {
         //reset the arrays so we're not pushing onto old data below
@@ -234,7 +229,7 @@ export default class RentalTable extends React.Component {
     //to the "rig_id" that comes from the the Rig Info View
     addRigData(rigData) {
         for (var i = 0; i < this.all.length; i++) {
-            for(var j = 0; j < rigData.length; j++) {
+            for (var j = 0; j < rigData.length; j++) {
                 if (this.all[i].rig_number === rigData[j].rig_id) {
                     this.all[i].main_canopy_size = rigData[j].main_canopy_size;
                     this.all[i].main_canopy_brand = rigData[j].main_canopy_brand;
@@ -249,27 +244,12 @@ export default class RentalTable extends React.Component {
 
     //This method loops through this.all and compairs the "item_id" from Rental Items View
     //to the "rental_id" that comes from the the Rentals View
-    addRentalData(rentalData) {
-        /*var count = 0;
-        while (count < rentalData.length) {
-            var allCount = 0;
-            var activeV = rentalData[count].item_id;
-            while (allCount < this.all.length && this.all[allCount].item_id <= activeV) {
-                if (this.all[allCount].item_id === activeV) {
-                    this.all[allCount].renter_name = rentalData[count].renter_name;
-                    this.all[allCount].rental_id = rentalData[count].rental_id;
-                    count++;
-                    activeV = rentalData[count];
-                }
-                allCount++;
-            }*/
-        console.log("rentalData: " + rentalData);
-
-        for (var i = 0; i < this.all.length; i++) {             //loop thru all items
-            for (var j = 0; j < rentalData.length; j++) {       //loop thru the active rental array         
-                if (this.all[i].item_id === rentalData[j].item[0]) {    //if the this.all item_id matches the item_id returned in the rentalData 
+    addRentalData(rentalData) {        
+        for (var i = 0; i < this.all.length; i++) {                         //loop thru all items
+            for (var j = 0; j < rentalData.length; j++) {                   //loop thru the active rental array         
+                if (this.all[i].item_id === rentalData[j].item[0]) {        //if the this.all item_id matches the item_id returned in the rentalData 
                     this.all[i].renter_name = rentalData[j].renter_name;    //set those variables in the row of this.all
-                    this.all[i].rental_id = rentalData[j].rental_id;                    
+                    this.all[i].rental_id = rentalData[j].rental_id;
                 }
             }
         }
@@ -284,6 +264,12 @@ export default class RentalTable extends React.Component {
        **************************************************************************CHANGING*****************************************************************************      
        ***************************************************************************************************************************************************************
     */
+
+    pinChanged(id, pin) {
+        this.setState({
+            pin: pin
+        })
+    }
 
     //When a selection is made on FilterDropdown this function should 
     //be called to change the values on the RentalTable 
@@ -304,8 +290,7 @@ export default class RentalTable extends React.Component {
             default:
                 this.setState({ filter: "all", rows: this.all, columns: this.columnsAll });
                 break;
-        }
-        //reset colors in the TABLE-----------------------------------------------------TODO
+        }        
         this.props.resetDisplay();
     }
 
@@ -321,12 +306,12 @@ export default class RentalTable extends React.Component {
         console.log("selectedIndex: " + selectedIndex);
         console.log("itemID: " + row.item_id);
         if (row.is_available) {     //if the item is rented set the rentalButton var to Return
-            rentalButton = <RentButton pinChanged={this.pinChanged} buttonText={"Rent"} rent={this.rentItem} 
-                                        index={selectedIndex} item_id={row.item_id} />;
+            rentalButton = <RentButton pinChanged={this.pinChanged} buttonText={"Rent"} rent={this.rentItem}
+                index={selectedIndex} item_id={row.item_id} />;
         } else {                //if the item isnt rented set the rentalButton var to Rent
             console.log("row rentalID: " + row.rental_id);
-            rentalButton = <ReturnButton pinChanged={this.pinChanged} buttonText={"Return"} return={this.returnItem} 
-                                            index={selectedIndex} item_id={row.item_id} rental_id={row.rental_id} />;
+            rentalButton = <ReturnButton pinChanged={this.pinChanged} buttonText={"Return"} return={this.returnItem}
+                index={selectedIndex} item_id={row.item_id} rental_id={row.rental_id} />;
         }
 
         //select the type of Rental Item Display will be shown based on the selected item's .item_type
@@ -342,6 +327,8 @@ export default class RentalTable extends React.Component {
             case ("container"):
                 this.containerSelected(row, rentalButton);
                 break;
+            default:
+            break;
         }
         this.props.displayChange(display, row.index);          //pass it up thru props method call
     }
@@ -360,6 +347,7 @@ export default class RentalTable extends React.Component {
             }
         }
 
+        //create the display to show on the side
         display = <RentalDisplayRig
             item_id={row.item_id}
             is_available={row.is_available}
@@ -405,8 +393,9 @@ export default class RentalTable extends React.Component {
         />;
     }
 
+
     rentItem(index, renter_name, item_id) {
-        var endpoint =  "rentals/";
+        var endpoint = "rentals/";
         var self = this;
         var variables = {
             pin: '222222',
@@ -434,7 +423,7 @@ export default class RentalTable extends React.Component {
             pin: '222222',
             returned_date: moment()
         };
-    
+
         var callback = function (responseData) {
             console.log("RentalTable: returnItem Function: index passed in: " + index);
             //for (var i = 0; i < self.all.length; i++) {
@@ -448,12 +437,7 @@ export default class RentalTable extends React.Component {
         var handler = new RequestHandler();
         handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
-
-    pinChanged(id, pin) {
-        this.setState({
-            pin: pin
-        })
-    }
+    
 
     /* ***************************************************************************************************************************************************************
        *************************************************************************CHANGING END**************************************************************************       

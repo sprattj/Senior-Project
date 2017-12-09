@@ -3,6 +3,7 @@ import TableSheet from './TableSheet.jsx';
 import EditEmployeeButton from '../ModalButtons/EditEmployeeButton.jsx';
 import EmployeeStatusButton from '../ModalButtons/EmployeeStatusButton.jsx';
 import AddEmployeeButton from '../ModalButtons/AddEmployeeButton.jsx';
+import StatButton from '../ModalButtons/StatButton.jsx';
 import { ButtonGroup } from 'reactstrap';
 import RequestHandler from '../RequestHandler.js';
 import Binder from '../Binder.js';
@@ -45,13 +46,14 @@ export default class EmployeeTable extends React.Component {
         }
       ],
       rows: [],
-      rowID: 0
+      rowID: 0,
+      employeeInfo: []
     };
   }
 
   //Process the rows that are passed in to fill in the missing
   //"Packed By" data with a PackButton
-  processRows(rowData) {
+  processRows(rowData, employeeInfo) {
     var newRows = [];
     for (var i = 0; i < rowData.length; i++) {
       newRows[i] = {}
@@ -72,7 +74,26 @@ export default class EmployeeTable extends React.Component {
           toggleEmployeeStatus={this.toggleEmployeeStatus}
           firstName={rowData[i].first_name}
           lastName={rowData[i].last_name}
-          status={rowData[i].is_active} />
+          status={rowData[i].is_active}
+        />
+
+        <StatButton
+          id={rowData[i].employee_id}
+          firstName={rowData[i].first_name}
+          lastName={rowData[i].last_name}
+          tandemJumpsToday={employeeInfo[i].tandemJumpsToday}
+          tandemJumpsWeek={employeeInfo[i].tandemJumpsWeek}
+          tandemJumpsMonth={employeeInfo[i].tandemJumpsMonth}
+          tandemJumpsYear={employeeInfo[i].tandemJumpsYear}
+          AFPJumpsToday={employeeInfo[i].AFPJumpsToday}
+          AFPJumpsWeek={employeeInfo[i].AFPJumpsWeek}
+          AFPJumpsMonth={employeeInfo[i].AFPJumpsMonth}
+          AFPJumpsYear={employeeInfo[i].AFPJumpsYear}
+          tandemPackedToday={employeeInfo[i].PackedToday}
+          tandemPackedWeek={employeeInfo[i].PackedWeek}
+          tandemPackedMonth={employeeInfo[i].PackedMonth}
+          tandemPackedYear={employeeInfo[i].PackedYear}
+        />
       </ButtonGroup>;
       newRows[i].is_active = rowData[i].is_active + "";
       newRows[i].email = rowData[i].email;
@@ -90,7 +111,7 @@ export default class EmployeeTable extends React.Component {
 
 
   componentDidMount() {
-    this.fetchRows();
+    this.fetchStats();
   }
 
   fetchRows() {
@@ -102,11 +123,27 @@ export default class EmployeeTable extends React.Component {
     var successMsg = "Fetched employee data.";
     var errorMsg = "Problem fetching employee data.";
     var callback = function (rowData) {
-      var newRows = self.processRows(rowData);
+      var newRows = self.processRows(rowData, self.state.employeeInfo);
       self.setState({
         rows: newRows
       });
     };
+
+    var handler = new RequestHandler();
+    handler.get(endpoint, successMsg, errorMsg, callback);
+  }
+
+  //Method call to retrieve statistics, store them in the state, and call fetchRows()
+  fetchStats() {
+    var endpoint = ""                                                     //put in the employee stat endpoint
+    //save 'this' so we can reference it in callback
+    var self = this;
+    var successMsg = "Fetched employee data.";
+    var errorMsg = "Problem fetching employee data.";
+    var callback =  function (rowData) {
+      self.setState({employeeInfo: rowData});
+      this.fetchRows();
+    }    
 
     var handler = new RequestHandler();
     handler.get(endpoint, successMsg, errorMsg, callback);
@@ -256,7 +293,7 @@ export default class EmployeeTable extends React.Component {
   }
 
   toggleEmployeeStatus(id, status) {
-    
+
     var endpoint = this.URLsection + id + "/";
     var self = this;
     var variables = {
@@ -294,6 +331,8 @@ export default class EmployeeTable extends React.Component {
       return true;
     };
   }
+
+
 
   render() {
     return (
