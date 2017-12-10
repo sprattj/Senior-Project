@@ -139,6 +139,7 @@ class ContainerList(LoginRequiredMixin, generics.ListCreateAPIView):
         data = {'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
+
 class ContainerDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
@@ -218,6 +219,7 @@ class EmployeeList(LoginRequiredMixin, generics.ListCreateAPIView):
 class EmployeeDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
+
 
 class ItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Items.objects.all()
@@ -464,6 +466,7 @@ class EmployeeVsSignoutStudentList(LoginRequiredMixin, generics.ListCreateAPIVie
             data = {'success': False}
             return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
+
 class EmployeeVsSignoutStudentDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
@@ -559,6 +562,7 @@ def post_emp_signout(employee_id, signout_id):
                                      timestamp=datetime.datetime.now())
     return
 
+
 def post_rental(request):
     renter_name = request.data.get('renter_name')
 
@@ -570,15 +574,18 @@ def post_rental(request):
     rental_id = rental_id_dict.get("rental_id", "")
     return rental_id
 
+
 def post_employee_rental(employee_id, rental_id):
     EmployeesRentals.objects.create(employee_id=employee_id,
                                     rental_id=rental_id)
     return
 
+
 def post_item_rental(item_id, rental_id):
     ItemsRentals.objects.create(item_id=item_id,
                                 rental_id=rental_id)
     return
+
 
 def patch_emp_signout(employee_id, signout_id):
     EmployeesSignouts.objects.create(signout_id=signout_id,
@@ -629,8 +636,6 @@ class DropzoneCreate(generics.ListCreateAPIView):
                 return JsonResponse(data=data, status=status.HTTP_201_CREATED)
         except:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 # authenticate an employee based on their pin and return an http status if the user is authentic
@@ -701,9 +706,10 @@ def logoutDropzone(request):
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 '''
 
+
 class password_reset_employee(LoginRequiredMixin, View):
 
-    def post(request):
+    def post(self, request):
         email = None
         try:
             email = request.data.get['email']
