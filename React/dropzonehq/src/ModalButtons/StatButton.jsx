@@ -5,6 +5,7 @@ import BioStatDisplay from '../StatDisplays/BioStatDisplay.jsx';
 import TandemInstructorStatDisplay from '../StatDisplays/TandemInstructorStatDisplay.jsx';
 import AFPInstructorStatDisplay from '../StatDisplays/AFPInstructorStatDisplay.jsx';
 import PackingStatDisplay from '../StatDisplays/PackingStatDisplay.jsx';
+import RequestHandler from '../RequestHandler.js';
 
 
 
@@ -17,7 +18,23 @@ export default class StatButton extends React.Component {
 
     toggle() {
         this.props.toggleEmployeeStatus(this.props.id, this.props.status);
-      }
+    }
+
+    //Method call to retrieve statistics, store them in the state, and call fetchRows()
+    fetchStats(id) {
+        var endpoint = "employees/" + id;
+        //save 'this' so we can reference it in callback
+        var self = this;
+        var successMsg = "Fetched employee data.";
+        var errorMsg = "Problem fetching employee data.";
+        var callback = function (rowData) {
+            self.setState({ employeeInfo: rowData });
+            this.fetchRows();
+        }
+
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
+    }
 
 
     render() {
@@ -26,26 +43,26 @@ export default class StatButton extends React.Component {
                 <Card>
                     <CardBlock>
                         <BioStatDisplay firstName={this.props.firstName}
-                        lastName={this.props.lastName}
+                            lastName={this.props.lastName}
                         />
 
-                        <TandemInstructorStatDisplay 
-                        tandemJumpsToday={this.props.tandemJumpsToday}
-                        tandemJumpsWeek={this.props.tandemJumpsWeek}
-                        tandemJumpsMonth={this.props.tandemJumpsMonth}
-                        tandemJumpsYear={this.props.tandemJumpsYear}/>
+                        <TandemInstructorStatDisplay
+                            tandemJumpsToday={this.props.tandemJumpsToday}
+                            tandemJumpsWeek={this.props.tandemJumpsWeek}
+                            tandemJumpsMonth={this.props.tandemJumpsMonth}
+                            tandemJumpsYear={this.props.tandemJumpsYear} />
 
-                        <AFPInstructorStatDisplay 
-                        AFPJumpsToday={this.props.AFPJumpsToday}
-                        AFPJumpsWeek={this.props.AFPJumpsWeek}
-                        AFPJumpsMonth={this.props.AFPJumpsMonth}
-                        AFPJumpsYear={this.props.AFPJumpsYear}/>
+                        <AFPInstructorStatDisplay
+                            AFPJumpsToday={this.props.AFPJumpsToday}
+                            AFPJumpsWeek={this.props.AFPJumpsWeek}
+                            AFPJumpsMonth={this.props.AFPJumpsMonth}
+                            AFPJumpsYear={this.props.AFPJumpsYear} />
 
-                        <PackingStatDisplay 
-                        tandemPackedToday={this.props.tandemPackedToday}
-                        tandemPackedWeek={this.props.tandemPackedWeek}
-                        tandemPackedMonth={this.props.tandemPackedMonth}
-                        tandemPackedYear={this.props.tandemPackedYear}/>
+                        <PackingStatDisplay
+                            tandemPackedToday={this.props.tandemPackedToday}
+                            tandemPackedWeek={this.props.tandemPackedWeek}
+                            tandemPackedMonth={this.props.tandemPackedMonth}
+                            tandemPackedYear={this.props.tandemPackedYear} />
                     </CardBlock>
                 </Card>
             </Form>;
