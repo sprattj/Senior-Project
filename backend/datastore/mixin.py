@@ -11,7 +11,7 @@ class CheckCookieMixin(object):
     def check_cookie(self, cookie):
         return True
 
-
+    @staticmethod
     def cookie_check_failed(self):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
