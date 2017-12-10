@@ -78,9 +78,9 @@ export default class MainView extends React.Component {
                         <Route path='/create-dropzone' component={CreateDropzoneScreen} />
                         <Route path='/employee-info' render={() => this.renderRequireLogin('employee-info', <EmployeeInfoScreen/>)}/>
                         <Route path='/employee-management' render={() => this.renderRequireLogin('employee-management', <EmployeeAdminScreen/>)}/>
-                        <Route path='/rental-menu' render={() => this.renderRequireLogin('/rental-menu', <RentalScreen/>)} />
+                        <Route path='/rental-menu' render={() => this.renderRequireLogin('rental-menu', <RentalScreen/>)} />
                         <Route path='/rig-sheets' component={SheetsScreen} onEnter={this.requireAuth} />
-                        <Route path='/inventory-menu' render={() => this.renderRequireLogin('/inventory-menu', <InventoryScreen/>)} />
+                        <Route path='/inventory-menu' render={() => this.renderRequireLogin('inventory-menu', <InventoryScreen/>)} />
                         <Route path='/loft-menu' render={() => this.renderRequireLogin('loft-menu', <LoftScreen/>)} />
                         <Route path='*' exact={true} component={NotFoundScreen} />
                     </Switch>
