@@ -705,7 +705,8 @@ class LoginDropzone(View):
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 class LogoutDropzone(View):
-    def logoutDropzone(request):
+
+    def post(request):
         logout(request)
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
