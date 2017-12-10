@@ -15,6 +15,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
 import random
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 # An item used on a rig that automatically deploys a parachute at a certain altitude
