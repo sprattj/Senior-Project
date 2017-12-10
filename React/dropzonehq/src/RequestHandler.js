@@ -8,6 +8,56 @@ export default class RequestHandler {
         this.rootURL = "http://127.0.0.1:8000/";
     }
     
+    makeRequest(endpoint, method, variables, onResponse) {
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = this.rootURL + endpoint;
+        
+        var data = {
+            method: method,
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        };
+        //if there are variables and it's not a GET method, pass the variables in
+        if(variables && method.toUpperCase() !== "GET"){
+            data.body = JSON.stringify(variables)
+        }
+        
+        fetch(url, data)
+        .then(function (response) {
+            onResponse(response);
+        });
+    }
+
+     //Methods for each type of request for readability and clarity
+     get = function (endpoint, callback) {
+        this.makeRequest(endpoint, "GET", {}, callback);
+    }
+
+    post = function (endpoint, variables, callback) {
+        this.makeRequest(endpoint, "POST", variables, callback);
+    }
+
+    patch = function (endpoint, variables, callback) {
+        this.makeRequest(endpoint, "PATCH", variables, callback);
+    }
+
+    put = function (endpoint, variables, callback) {
+        this.makeRequest(endpoint, "PUT", variables, callback);
+    }
+
+    delete = function (endpoint, variables, callback) {
+        this.makeRequest(endpoint, "DELETE", variables, callback);
+    }
+
+    delete = function (endpoint, callback) {
+        this.makeRequest(endpoint, "DELETE", {}, callback);
+    }
+
     makeRequest(endpoint, method, variables, successMsg, errorMsg, callback) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();

@@ -152,6 +152,7 @@ export default class InventoryScreen extends React.Component {
         this.getFilteredRows(rowData);*/
 
         this.state = {
+            redirect: false,
             filter: "all",
             columns: this.columnsAll,
             rows: Array.from(this.all.values()), // rows: mapName.values() instead of rows: rowData

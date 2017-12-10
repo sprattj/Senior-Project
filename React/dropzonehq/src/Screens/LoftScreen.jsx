@@ -13,6 +13,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import RequestHandler from '../RequestHandler.js';
+import { toast } from 'react-toastify';
 import Binder from '../Binder.js';
 import moment from 'moment';
 // Setup the localizer by providing the moment (or globalize) Object
@@ -54,6 +55,7 @@ export default class LoftScreen extends React.Component {
 
         this.pin = 222222; //TODO
         this.state = {
+            redirect: false,
             queueListItems: queueItems,
             warningListItems: warningItems,
             selectedQClaimID: DEFAULT_SELECTED_CLAIM_ID,
@@ -117,14 +119,26 @@ export default class LoftScreen extends React.Component {
      */
     getClaims(isQueue) {
 
-        var callback = (isQueue ? this.populateQueue : this.populateWarnings);
+        var onSuccess = (isQueue ? this.populateQueue : this.populateWarnings);
+        var onResponse = function(response){
+            if(response.status === 403){
+                self.setState({
+                    redirect: true
+                });
+            }else if(response.status > 400){
+                toast.error("Error fetching claim data.");
+            }else{
+                onSuccess(response.json());
+            }
+        };
+        
         var endpoint = (isQueue ? "Queue" : "Warnings");
         var errorMsg = "Getting " + endpoint + " failed.";
         var successMsg = endpoint + " loaded successfully.";
         endpoint = this.URLsection + endpoint + "/";
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.get(endpoint, onResponse);
     }
 
     /////DISPLAY AFTER FETCH/////
@@ -505,6 +519,9 @@ export default class LoftScreen extends React.Component {
     //Rendering
     //////////////////////////////////////////////////////////
     render() {
+        if(this.state.redirect){
+            return <Redirect to="/verify-PIN/loft-menu"/>
+        }
         var tabHeaders = ['Schedule', 'Queue', 'Warnings'];
         var tabContents = [this.state.scheduleDisplay,
         this.state.queueDisplay,
