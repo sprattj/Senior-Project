@@ -120,8 +120,9 @@ class DjangoMigrations(models.Model):
 
 
 # A location that is used as a skydiving drop zone.
-class Dropzones(User):
+class Dropzones(models.Model):
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
