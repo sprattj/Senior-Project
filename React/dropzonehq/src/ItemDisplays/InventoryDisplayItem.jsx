@@ -61,9 +61,10 @@ export default class InventoryDisplayItem extends React.Component {
 
     componentWillReceiveProps(newProps)
     {
-        console.log("in componentWillReceiveProps (InvDisplayItem) newProps: " + JSON.stringify(newProps));
+        console.log("in componentWillReceiveProps (InvDisplayItem) newProps: " + JSON.stringify(newProps) + "\n");
 
         this.setState({
+            item_id: newProps.defaultItemInfo.item_id,
             manufacturer: newProps.defaultItemInfo.manufacturer,
             brand: newProps.defaultItemInfo.brand,
             description: newProps.defaultItemInfo.description,

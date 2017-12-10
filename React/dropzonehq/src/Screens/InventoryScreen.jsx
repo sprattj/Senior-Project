@@ -210,6 +210,8 @@ export default class InventoryScreen extends React.Component {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
+        console.log("item_id: " + itemInfo.item_id);
+
         var url = rootURL + "/AADs/" + itemInfo.item_id;
 
         var self = this;
@@ -251,7 +253,7 @@ export default class InventoryScreen extends React.Component {
             else {
                 // must be in AAD display
                 self.setState({
-                    rows: Array.from(self.aad.values())
+                    rows: Array.from(self.aads.values())
                 })
             }
 
@@ -455,7 +457,7 @@ export default class InventoryScreen extends React.Component {
         require('es6-promise').polyfill();
 
         console.log("item_id: " + itemInfo.item_id);
-        
+
         var url = rootURL + "/containers/" + itemInfo.item_id;
 
         var self = this;
