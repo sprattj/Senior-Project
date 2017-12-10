@@ -1,12 +1,12 @@
 from rest_framework import generics, status
 from django.http import JsonResponse, HttpResponse
 from .serializers import *
-from .serializers import *
 from . import util
 from backend.datastore.models import *
 from backend.datastore import mixin
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth import views as auth_views
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 import datetime
@@ -689,11 +689,10 @@ def password_reset_dropzone(request):
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 '''
 
-
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginDropzone(View):
 
-
-    def post(request):
+    def post(self, request):
         try:
             username = str(request.data.get['username'])
             password = request.data.get['password']
@@ -708,7 +707,7 @@ class LoginDropzone(View):
 
 class LogoutDropzone(View):
 
-    def post(request):
+    def post(self, request):
         logout(request)
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
