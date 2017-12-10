@@ -4,6 +4,7 @@ from rest_framework import status
 from backend.datastore import models
 from django.http import HttpResponse
 
+
 #Base cookie checker, used for abstraction otherwise not super useful
 class CheckCookieMixin(object):
 
@@ -30,6 +31,7 @@ class RoleCookieRequiredMixin(CheckCookieMixin):
             return False
         else:
             return True
+
 
 #check the set of roles given and return get if one of them is correct
 class RoleArrayCookieRequiredMixin(RoleCookieRequiredMixin):
