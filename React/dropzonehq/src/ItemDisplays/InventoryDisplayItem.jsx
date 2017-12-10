@@ -99,7 +99,6 @@ export default class InventoryDisplayItem extends React.Component {
         console.log(`Selected: ${selectedOption.label}`);
     } */
 
-    // CURRENTLY using UnControlledSelectDDL
     is_rentableChanged(e) {
         console.log("in is_rentableChanged new value:" + e.target.checked);
         console.log("passed in props for is_rentable: " + this.props.defaultItemInfo.is_rentable);
@@ -135,29 +134,32 @@ export default class InventoryDisplayItem extends React.Component {
                 <Row>
                     <InputGroup>
                         <InputGroupAddon > Manufacturer: </InputGroupAddon>
-                        <UncontrolledTextInput
+                        {/* <UncontrolledTextInput
                             onBlur={this.manufacturerChanged}
                             id="manufacturerID"
                             defaultText={this.props.defaultItemInfo.manufacturer}
-                        />
+                        /> */}
+                        <input type="text" value={this.state.manufacturer} onChange={this.manufacturerChanged}  />
                     </InputGroup>
                     <InputGroup>
                         <InputGroupAddon >Brand: </InputGroupAddon>
-                        <UncontrolledTextInput
+                        {/* <UncontrolledTextInput
                             onBlur={this.brandChanged}
                             id="brandID"
                             defaultText={this.props.defaultItemInfo.brand}
-                        />
+                        /> */}
+                        <input type="text" value={this.state.brand} onChange={this.brandChanged}  />
                     </InputGroup>
                 </Row>
                 <Row>
                     <InputGroup>
                         <InputGroupAddon >Description: </InputGroupAddon>
-                        <UncontrolledTextInput
+                        {/* <UncontrolledTextInput
                             onBlur={this.descriptionChanged}
                             id="descriptionID"
                             defaultText={this.props.defaultItemInfo.description}
-                        />
+                        /> */}
+                        <input type="text" value={this.state.description} onChange={this.descriptionChanged}  />
                     </InputGroup>
                     <InputGroup>
                         <InputGroupAddon >Rentable: </InputGroupAddon>

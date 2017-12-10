@@ -83,11 +83,12 @@ export default class InventoryDisplayCanopy extends React.Component {
                     <Row>
                         <InputGroup>
                             <InputGroupAddon >Canopy Size: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.sizeChanged}
                                 id="sizeID"
                                 defaultText={this.props.canopyInfo.size}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.canopyInfo.size} onChange={this.sizeChanged}  />
                         </InputGroup>
                     </Row>
                     <InventoryDisplayItem

@@ -26,12 +26,20 @@ export default class InventoryDisplayContainer extends React.Component {
         })
     }
 
-    container_snChanged(e) {
-        var containerInfo = {
+    container_snChanged(e) 
+    {
+        console.log("in container_snChanged: ");
+/*         var containerInfo = {
             container_sn: e.target.value
         }
         this.setState({
             containerInfo: containerInfo
+        }); */
+
+        var newContainerInfo = this.state.containerInfo;
+        newContainerInfo.container_sn = e.target.value;
+        this.setState({
+            containerInfo: newContainerInfo
         });
     }
 
@@ -51,11 +59,12 @@ export default class InventoryDisplayContainer extends React.Component {
                     <Row>
                         <InputGroup>
                             <InputGroupAddon >Container Serial: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.container_snChanged}
                                 id="containerSerialID"
                                 defaultText={this.props.containerInfo.container_sn}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.containerInfo.container_sn} onChange={this.container_snChanged}  />
                         </InputGroup>
                     </Row>
                     <InventoryDisplayItem

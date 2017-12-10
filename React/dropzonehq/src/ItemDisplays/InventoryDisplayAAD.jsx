@@ -29,7 +29,9 @@ export default class InventoryDisplayAAD extends React.Component {
         })
     }
 
-    aad_snChanged(e) {
+    aad_snChanged(e) 
+    {
+        console.log("in aad_snChanged: ");
         var newAADInfo = this.state.AADInfo;
         newAADInfo.aad_sn = e.target.value;
         this.setState({
@@ -37,7 +39,9 @@ export default class InventoryDisplayAAD extends React.Component {
         });
     }
 
-    lifespanChanged(e) {
+    lifespanChanged(e) 
+    {
+        console.log("in lifespanChanged: ");
         var newAADInfo = this.state.AADInfo;
         newAADInfo.lifespan = e.target.value;
         this.setState({
@@ -59,19 +63,21 @@ export default class InventoryDisplayAAD extends React.Component {
                     <Row>
                         <InputGroup>
                             <InputGroupAddon >AAD Lifespan: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.lifespanChanged}
                                 id="lifespanID"
                                 defaultText={this.props.AADInfo.lifespan}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.AADInfo.lifespan} onChange={this.lifespanChanged}  />
                         </InputGroup>
                         <InputGroup>
                             <InputGroupAddon >AAD Serial#: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.aad_snChanged}
                                 id="aad_snID"
                                 defaultText={this.props.AADInfo.aad_sn}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.AADInfo.aad_sn} onChange={this.aad_snChanged}  />
                         </InputGroup>
                     </Row>
                     <InventoryDisplayItem
