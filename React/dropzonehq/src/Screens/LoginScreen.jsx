@@ -1,7 +1,9 @@
 import React from 'react';
-import { Container, Button, Input, Row, Col, InputGroup, InputGroupAddon, Alert } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Modal, ModalHeader, ModalBody, Container, Button, Input, Row, Col, InputGroup, InputGroupAddon, Alert } from 'reactstrap';
+import { Link, Redirect } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Binder from '../Binder.js';
+import RequestHandler from '../RequestHandler.js';
 
 export default class LoginScreen extends React.Component {
 
@@ -11,20 +13,16 @@ export default class LoginScreen extends React.Component {
         var binder = new Binder();
         binder.bindAll(this, LoginScreen);
 
-        this.updateEmail = this.updateEmail.bind(this);
-        this.updatePassword = this.updatePassword.bind(this);
-        this.submit = this.submit.bind(this);
-
         this.state = {
-            email: "",
+            username: "",
             password: "",
             warning: ""
         }
     }
 
-    updateEmail(e) {
+    updateUsername(e) {
         this.setState({
-            email: e.target.value
+            username: e.target.value
         });
     }
 
@@ -38,17 +36,51 @@ export default class LoginScreen extends React.Component {
         var warning;
         if (this.state.password === "") {
             warning = <Alert color="danger">Please enter a password.</Alert>;
-        } else if (this.state.email === "") {
-            warning = <Alert color="danger">Please enter a valid email.</Alert>;
+        } else if (this.state.username === "") {
+            warning = <Alert color="danger">Please enter a valid username.</Alert>;
         } else {
             warning = ""
         }
         this.setState({
             warning: warning
-        })
+        });
+
+        var endpoint = "login/";
+        var self = this;
+        var variables = {
+            username: this.state.username,
+            password: this.state.password
+        };
+        var onResponse = function(response) {
+            if (response.status > 400) {
+                toast.error("Error signing in.");
+            } else {
+    
+            }
+            return response.text().then(
+                function (responseData) {
+                    self.setState({
+                        modalHTML: responseData,
+                        modalOpen: true
+                    });
+                }
+            )
+        }
+
+        var handler = new RequestHandler();
+        handler.getNoToast(endpoint, onResponse);
     }
 
+
     render() {
+        if (this.state.modalOpen) {
+            var content = <div dangerouslySetInnerHTML={{__html: this.state.modalHTML}}></div>
+            return content;
+        }
+        if (this.state.redirect) {
+            //redirect to the url that was specified in the target part of this url
+            return <Redirect to={'/' + this.props.match.params.target} />
+        }
         return (
             <Container id="main_body">
                 <Row>
@@ -58,8 +90,8 @@ export default class LoginScreen extends React.Component {
                     <Col className="mainscreen_col" xs={{ size: 12, offset: 0 }} sm={{ size: 10, offset: 1 }} md={{ size: 8, offset: 2 }} lg={{ size: 6, offset: 3 }}>
                         <h1>Dropzone Login</h1>
                         <InputGroup>
-                            <InputGroupAddon>Dropzone Email: </InputGroupAddon>
-                            <Input type='email' onChange={this.updateEmail} />
+                            <InputGroupAddon>Dropzone Username: </InputGroupAddon>
+                            <Input type='text' onChange={this.updateUsername} />
                         </InputGroup>
                         <InputGroup>
                             <InputGroupAddon>Dropzone Password: </InputGroupAddon>

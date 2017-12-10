@@ -13,6 +13,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CLAIM_STATUS_CHOICES } from '../restInfo.js';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import RequestHandler from '../RequestHandler.js';
+import { Redirect } from 'react-router';
 import { toast } from 'react-toastify';
 import Binder from '../Binder.js';
 import moment from 'moment';
@@ -120,6 +121,7 @@ export default class LoftScreen extends React.Component {
     getClaims(isQueue) {
 
         var onSuccess = (isQueue ? this.populateQueue : this.populateWarnings);
+        var self = this;
         var onResponse = function(response){
             if(response.status === 403){
                 self.setState({

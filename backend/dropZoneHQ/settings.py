@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
+
 from rest_framework.settings import api_settings
 from os.path import abspath, basename, dirname, join, normpath
 
@@ -153,13 +154,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-# STATIC_ROOT = 'static'
-# STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     #   'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 STATIC_URL = '/static/'  
-STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
-STATICFILES_DIRS = ()  
+#STATIC_ROOT = normpath(join(SITE_ROOT, 'static'))  
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)

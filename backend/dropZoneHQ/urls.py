@@ -63,7 +63,7 @@ urlpatterns = [
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
-    url(r'^(?i)login/$', auth_views.LoginView.as_view(), name='login'),
+    url(r'^(?i)login/$', auth_views.login, {'template_name': 'admin/login.html'}),
     url(r'^(?i)logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
     url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='dropzone_password_change_done',),
@@ -77,5 +77,5 @@ urlpatterns = [
     url(r'^(?i)auth_employee/$', AuthenticateEmployeePin.as_view(), name='authenticate_user_pin'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += [
-    url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')
+    url(r'^.*$', TemplateView.as_view(template_name="index.html"), name='base')
     ]

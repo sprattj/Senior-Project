@@ -8,7 +8,7 @@ export default class RequestHandler {
         this.rootURL = "http://127.0.0.1:8000/";
     }
     
-    makeRequest(endpoint, method, variables, onResponse) {
+    makeRequestNoToast(endpoint, method, variables, onResponse) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -18,8 +18,6 @@ export default class RequestHandler {
             method: method,
             mode: 'CORS',
             headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
             }
         };
         //if there are variables and it's not a GET method, pass the variables in
@@ -34,28 +32,28 @@ export default class RequestHandler {
     }
 
      //Methods for each type of request for readability and clarity
-     get = function (endpoint, callback) {
-        this.makeRequest(endpoint, "GET", {}, callback);
+     getNoToast = function (endpoint, callback) {
+        this.makeRequestNoToast(endpoint, "GET", {}, callback);
     }
 
-    post = function (endpoint, variables, callback) {
-        this.makeRequest(endpoint, "POST", variables, callback);
+    postNoToast= function (endpoint, variables, callback) {
+        this.makeRequestNoToast(endpoint, "POST", variables, callback);
     }
 
-    patch = function (endpoint, variables, callback) {
-        this.makeRequest(endpoint, "PATCH", variables, callback);
+    patchNoToast = function (endpoint, variables, callback) {
+        this.makeRequestNoToast(endpoint, "PATCH", variables, callback);
     }
 
-    put = function (endpoint, variables, callback) {
-        this.makeRequest(endpoint, "PUT", variables, callback);
+    putNoToast = function (endpoint, variables, callback) {
+        this.makeRequestNoToast(endpoint, "PUT", variables, callback);
     }
 
-    delete = function (endpoint, variables, callback) {
-        this.makeRequest(endpoint, "DELETE", variables, callback);
+    deleteNoToast = function (endpoint, variables, callback) {
+        this.makeRequestNoToast(endpoint, "DELETE", variables, callback);
     }
 
-    delete = function (endpoint, callback) {
-        this.makeRequest(endpoint, "DELETE", {}, callback);
+    deleteNoToast = function (endpoint, callback) {
+        this.makeRequestNoToast(endpoint, "DELETE", {}, callback);
     }
 
     makeRequest(endpoint, method, variables, successMsg, errorMsg, callback) {
