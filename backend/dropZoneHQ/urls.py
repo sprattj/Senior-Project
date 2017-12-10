@@ -63,8 +63,8 @@ urlpatterns = [
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
-    url(r'^(?i)login/$', auth_views.LoginView.as_view(), name='login'),
-    url(r'^(?i)logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    url(r'^(?i)login/$', LoginDropzone.as_view(), name='login'),
+    url(r'^(?i)logout/$', LogoutDropzone.as_view(), name='logout'),
     url(r'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
     url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='dropzone_password_change_done',),
     url(r'^password_reset', auth_views.PasswordResetView.as_view(), name='dropzone_password_reset'),
@@ -73,7 +73,7 @@ urlpatterns = [
         auth_views.PasswordResetConfirmView.as_view(),
         name='dropzone_password_reset_confirm'),
     url(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='dropzone_password_reset_complete'),
-    url(r'^(?i)reset_employee/$', password_reset_employee, name='pin reset'),
+    url(r'^(?i)reset_employee/$', PasswordResetEmployee.as_view(), name='pin reset'),
     url(r'^(?i)auth_employee/$', AuthenticateEmployeePin.as_view(), name='authenticate_user_pin'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += [
