@@ -34,6 +34,7 @@ export default class InventoryDisplayItem extends React.Component {
         this.state = 
         {
             item_id: this.props.defaultItemInfo.item_id,
+            item_type_id: this.props.defaultItemInfo.item_type_id,
             manufacturer: this.props.defaultItemInfo.manufacturer,
             brand: this.props.defaultItemInfo.brand,
             description: this.props.defaultItemInfo.description,
@@ -65,6 +66,7 @@ export default class InventoryDisplayItem extends React.Component {
 
         this.setState({
             item_id: newProps.defaultItemInfo.item_id,
+            item_type_id: newProps.defaultItemInfo.item_type_id,            
             manufacturer: newProps.defaultItemInfo.manufacturer,
             brand: newProps.defaultItemInfo.brand,
             description: newProps.defaultItemInfo.description,

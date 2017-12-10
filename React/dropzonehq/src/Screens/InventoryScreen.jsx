@@ -23,6 +23,14 @@ const marginStyle = {
 
 var count = 0;
 
+// values coming from Item_types table in db
+const AAD_ITEM_TYPE_ID = 16;
+const CANOPY_ITEM_TYPE_ID = 1;
+const CONTAINER_ITEM_TYPE_ID = 4;
+const RIG_ITEM_TYPE_ID = 3;
+// const RESERVE_CANOPY_ITEM_TYPE_ID = 2;
+
+
 export default class InventoryScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -43,7 +51,7 @@ export default class InventoryScreen extends React.Component {
 
         this.setupDisplay = this.setupDisplay.bind(this);
         this.displayChange = this.displayChange.bind(this);
-        this.displayAddView = this.displayAddView.bind(this);
+        this.displayAddAADView = this.displayAddAADView.bind(this);
         this.resetDisplay = this.resetDisplay.bind(this);
         this.updateAADRow = this.updateAADRow.bind(this);
         this.updateCanopyRow = this.updateCanopyRow.bind(this);
@@ -56,6 +64,9 @@ export default class InventoryScreen extends React.Component {
         this.addAAD = this.addAAD.bind(this);
         this.addContainer = this.addContainer.bind(this);
         this.addCanopy = this.addCanopy.bind(this);
+   
+        this.addItemfilterChanged = this.addItemfilterChanged.bind(this);     
+        this.setDefaultItemInfoDetails = this.setDefaultItemInfoDetails.bind(this);
 
         this.all = new Map();
         this.rigs = new Map();
@@ -704,25 +715,36 @@ export default class InventoryScreen extends React.Component {
         />;
     }
 
+    setDefaultItemInfoDetails(itemType, itemTypeID)
+    {
+        var itemInfo = 
+        {
+            item_id: "",
+            item_type: itemType,
+            manufacturer: "",
+            description: "",
+            is_on_rig: false,
+            brand: "",
+            is_rentable: true,
+            item_type_id: itemTypeID
+        };
+
+        return itemInfo;
+    }
 
     // calls on "ADD" btn click to change right side view to empty field values by default
-    displayAddView() {
-        console.log("hit displayAddView funct");
+    displayAddAADView(itemType, itemTypeID) 
+    {
+        console.log("hit displayAddAADView funct");
         // set up the display component
-        var AADInfo = {
-            aad_sn: '',
-            lifespan: ''
+        var AADInfo = 
+        {
+            aad_sn: "",
+            lifespan: ""
         }
-        var itemInfo = {
-            item_id: null,
-            item_type: 'aad',
-            manufacturer: null,
-            description: null,
-            is_on_rig: null,
-            brand: null,
-            is_rentable: true,
-            item_type_id: 16 //TODO update
-        };
+
+        var itemInfo = this.setDefaultItemInfoDetails(itemType, itemTypeID);
+
         var display = <InventoryDisplayAAD
             AADInfo={AADInfo}
             itemInfo={itemInfo}
@@ -737,22 +759,17 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    displayAddContainer() {
+    displayAddContainer(itemType, itemTypeID) 
+    {
         console.log("hit displayAddContainer funct");
         // set up the display component
-        var containerInfo = {
-            container_sn: null
+        var containerInfo = 
+        {
+            container_sn: ""
         }
-        var itemInfo = {
-            item_id: null,
-            item_type: 'container',
-            manufacturer: null,
-            description: null,
-            is_on_rig: null,
-            brand: null,
-            is_rentable: true,
-            item_type_id: 4 //TODO update
-        };
+
+        var itemInfo = this.setDefaultItemInfoDetails(itemType, itemTypeID);
+
         var display = <InventoryDisplayContainer
             containerInfo={containerInfo}
             itemInfo={itemInfo}
@@ -767,24 +784,19 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    displayAddCanopy() {
-        var canopyInfo = {
-            rig_id: null,
-            canopy_sn: null,
-            size: null,
-            date_of_manufacture: null,
-            jump_count: null
+    displayAddCanopy(itemType, itemTypeID) 
+    {
+        var canopyInfo = 
+        {
+            rig_id: "",
+            canopy_sn: "",
+            size: "",
+            date_of_manufacture: "",
+            jump_count: ""
         }
-        var itemInfo = {
-            item_id: null,
-            item_type: 'canopy',
-            manufacturer: null,
-            description: null,
-            is_on_rig: null,
-            brand: null,
-            is_rentable: true,
-            item_type_id: 1 //TODO update
-        };
+        
+        var itemInfo = this.setDefaultItemInfoDetails(itemType, itemTypeID);
+
         var display = <InventoryDisplayCanopy
             itemInfo={itemInfo}
             canopyInfo={canopyInfo}
@@ -804,6 +816,8 @@ export default class InventoryScreen extends React.Component {
         require('es6-promise').polyfill();
 
         var url = rootURL + "/AADs/";
+
+        console.log("in addAAD: itemInfo.item_type_id: " + itemInfo.item_type_id);
 
         var self = this;
         var requestVariables = itemInfo;
@@ -835,6 +849,18 @@ export default class InventoryScreen extends React.Component {
             AAD.item_type = 'aad';
             self.all.set(responseData.item_id, AAD);
             self.aads.set(responseData.item_id, AAD);
+
+            // FOR DEBUGGING:
+            var size = self.all.size;
+            var allIter = self.all.values();
+            if (size > 0)
+            {
+                for (var i = 0; i < size; i++)
+                {
+                    console.log("all types map: " + i + " element: " + allIter.next().value);
+                    // console.log("aads map: " + self.aads);
+                }       
+            }
 
             if (self.state.filter === "all") {
                 self.setState({
@@ -964,6 +990,31 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
+    addItemfilterChanged(selection)
+    {
+        console.log("in addItemfilterChanged " );
+        switch (selection) 
+        {
+            case "Select Item type":
+                this.resetDisplay();
+                break;
+            case "Add Rig":
+                // TODO create displayAddRig(itemType, itemTypeID) function
+                break;
+            case "Add Canopy":
+                this.displayAddCanopy('canopy', CANOPY_ITEM_TYPE_ID);
+                break;
+            case "Add Container":
+                this.displayAddContainer('container', CONTAINER_ITEM_TYPE_ID);
+                break;
+            case "Add AAD":
+                this.displayAddAADView('aad', AAD_ITEM_TYPE_ID);
+                break;
+            default:
+                this.resetDisplay();
+                break;
+        }        
+    }
 
     render() {
         var filterDropdown = <FilterDropdown
@@ -973,9 +1024,13 @@ export default class InventoryScreen extends React.Component {
         />;
 
         var buttons = <div>
-            <AddInventoryItemBtn buttonText={"Add AAD"} onClick={this.displayAddView} />
+{/*             <AddInventoryItemBtn buttonText={"Add AAD"} onClick={this.displayAddAADView} />
             <AddInventoryItemBtn buttonText={"Add Container"} onClick={this.displayAddContainer} />
             <AddInventoryItemBtn buttonText={"Add Canopy"} onClick={this.displayAddCanopy} />
+            <AddInventoryItemBtn buttonText={"Add Item"} onClick={this.displayAddItem} /> */}
+
+            <FilterDropdown onChange={this.addItemfilterChanged} labelText="Add Item:"
+                            id="InventoryAddItemFilterDropdown" />
         </div>
         return (
             <div>
