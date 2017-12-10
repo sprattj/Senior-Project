@@ -623,12 +623,13 @@ class DropzoneCreate(generics.ListCreateAPIView):
         try:
             password = request.data.get['password']
             email = request.data.get['email']
-            username = str(email).split('@')[0]
+            username = request.data.get['username']
             if email or password is None:
                 return HttpResponse(status=status.HTTP_204_NO_CONTENT)
             else:
                 try:
-                    dropzone = Dropzones.objects.create_user(username=username, password=password, email=email)
+                    user = User.objects.create_user(username=username, email=email, password=password)
+                    dropzone = Dropzones.objects.create_user()
                     dropzone.save()
                 except:
                     return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
@@ -694,13 +695,14 @@ class LoginDropzone(View):
 
     def post(request):
         try:
-            username = str(request.data.get['email']).split('@')[0]
+            username = str(request.data.get['username'])
             password = request.data.get['password']
             dropzone = authenticate(request=request, username=username, password=password)
             if dropzone is None:
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
             else:
                 login(request, user=dropzone)
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
         except:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
