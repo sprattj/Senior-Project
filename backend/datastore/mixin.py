@@ -28,3 +28,9 @@ class RoleCookieRequiredMixin(CheckCookieMixin):
             return self.cookie_check_failed()
         else:
             return True
+
+class RoleArrayCookieRequiredMixin(RoleCookieRequiredMixin):
+
+    def check_cookie(self, cookie):
+        for r in role:
+            super.check_cookie()
