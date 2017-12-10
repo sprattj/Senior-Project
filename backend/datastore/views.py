@@ -686,28 +686,32 @@ def password_reset_dropzone(request):
                                  from_email=util.fromEmailString())
         except:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-
-
-def loginDropzone(request):
-    try:
-        username = str(request.data.get['email']).split('@')[0]
-        password = request.data.get['password']
-        dropzone = authenticate(request=request, username=username, password=password)
-        if dropzone is None:
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        else:
-            login(request, user=dropzone)
-    except:
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-#@login_required()
-def logoutDropzone(request):
-    logout(request)
-    return HttpResponse(status=status.HTTP_202_ACCEPTED)
 '''
 
 
-class password_reset_employee(LoginRequiredMixin, View):
+class LoginDropzone(View):
+
+
+    def post(request):
+        try:
+            username = str(request.data.get['email']).split('@')[0]
+            password = request.data.get['password']
+            dropzone = authenticate(request=request, username=username, password=password)
+            if dropzone is None:
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                login(request, user=dropzone)
+        except:
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+class LogoutDropzone(View):
+
+    def post(request):
+        logout(request)
+        return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+
+class PasswordResetEmployee(LoginRequiredMixin, View):
 
     def post(self, request):
         email = None
