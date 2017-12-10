@@ -79,8 +79,8 @@ class Claims(models.Model):
     status = models.CharField(max_length=12, choices=STATUS_CHOICES)
     # Description of the problem that needs to be serviced.
     description = models.CharField(max_length=45, blank=True, null=True)
-    submitter = models.OneToOneField('Employees', models.DO_NOTHING)
-    handler = models.OneToOneField('Employees', models.DO_NOTHING)
+    submitter = models.OneToOneField('Employees', models.DO_NOTHING, related_name='claim_submitter')
+    handler = models.OneToOneField('Employees', models.DO_NOTHING, related_name='claim_handler')
     
     # Date the claim was submitted
     submit_date = models.DateField(blank=True, null=True)
@@ -401,7 +401,7 @@ class Rentals(models.Model):
     # Date the gear was returned to the drop zone.
     returned_date = models.DateTimeField(blank=True, null=True)
 
-    item = models.ManyToManyField('Items', through='ItemsRentals')
+    item = models.ManyToManyField('Items', related_name='rental_item', through='ItemsRentals')
     employee = models.ManyToManyField('Employees', through='EmployeesRentals')
 
     class Meta:
@@ -434,13 +434,26 @@ class Rigs(models.Model):
     # PK -> Shares PK from items table
     item = models.OneToOneField(Items, on_delete=models.CASCADE, primary_key=True)
     # Unique identifier for this rig
-    rig_id = models.AutoField(auto_created=True, unique=True)
+    rig_id = models.IntegerField(auto_created=True, unique=True, default=1)
+    #rig_id = models.AutoField(auto_created=True, unique=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
     istandem = models.CharField(db_column='isTandem', max_length=4)
     # isrentable = models.BooleanField('Items')
 
+    #define a save function to get around django forcing auto fields to be primary keys
+    def save(self, *args, **kwargs):
+        # This means that the model isn't saved to the database yet
+        if self._state.adding:
+            # Get the maximum display_id value from the database
+            last_id = self.objects.all().aggregate(largest=models.Max('rig_id'))['largest']
+
+            # aggregate can return None! Check it first.
+            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
+            if last_id is not None:
+                self.rig_id = last_id + 1
+        super(Rigs, self).save(*args, **kwargs)
     class Meta:
         managed = True
         db_table = 'rigs'

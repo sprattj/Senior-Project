@@ -650,7 +650,7 @@ class DropzoneCreate(generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
-    def post(seld, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
             password = request.data.get['password']
             email = request.data.get['email']

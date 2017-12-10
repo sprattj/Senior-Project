@@ -15,25 +15,25 @@ export default class DropzoneHQNav extends React.Component {
             <SiteNavbar brandImage={"http://svgshare.com/i/3vT.svg"}
                 brandText="Dropzone HQ" brandLink="#">
                 <NavItem className="dzhq_nav_item">
-                        <Link to='/dropzone-home'>Home</Link>
+                        <Link to='/verify-pin/dropzone-home'>Home</Link>
                 </NavItem>
                         <NavItem className="dzhq_nav_item">
-                <Link to='/employee-info'>Stats</Link>
+                <Link to='/verify-pin/employee-info'>Stats</Link>
                 </NavItem>
                 <NavItem className="dzhq_nav_item">
-                        <Link to='/employee-management'>Employee Admin</Link>
+                        <Link to='/verify-pin/employee-management'>Employee Admin</Link>
                 </NavItem>
                 <NavItem className="dzhq_nav_item">
-                        <Link to='/rental-menu'>Rentals</Link>
+                        <Link to='/verify-pin/rental-menu'>Rentals</Link>
                 </NavItem>
                 <NavItem className="dzhq_nav_item">
                         <Link to='/rig-sheets'>Rigsheets</Link>
                 </NavItem>
                 <NavItem className="dzhq_nav_item">
-                        <Link to='/inventory-menu'>Inventory</Link>
+                        <Link to='/verify-pin/inventory-menu'>Inventory</Link>
                 </NavItem>
                 <NavItem className="dzhq_nav_item">
-                        <Link to='/loft-menu'>Loft</Link>
+                        <Link to='/verify-pin/loft-menu'>Loft</Link>
                 </NavItem>
             </SiteNavbar >
         );

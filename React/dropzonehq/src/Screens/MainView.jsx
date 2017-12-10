@@ -15,7 +15,7 @@ import LoginScreen from './LoginScreen.jsx';
 import PasswordResetScreen from './PasswordResetScreen.jsx';
 import LandingScreen from './LandingScreen.jsx';
 import NotFoundScreen from './NotFoundScreen.jsx';
-
+import VerifyPINScreen from './VerifyPINScreen.jsx';
 /*
     MainView is the main wrapper component to decide what to render.
     It has a state "currentScreen" that holds Screens to render and can be 
@@ -42,6 +42,7 @@ export default class MainView extends React.Component {
                     <Switch>
                         <Route exact path='/' component={MainScreen} />
                         <Route path='/main-menu' component={MainScreen} />
+                        <Route path='/verify-pin/:target' component={VerifyPINScreen} />
                         <Route path='/dropzone-home' component={LandingScreen}/>
                         <Route path='/login' component={LoginScreen} />
                         <Route path='/reset' component={PasswordResetScreen} />
