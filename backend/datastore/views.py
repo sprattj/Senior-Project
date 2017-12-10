@@ -647,7 +647,7 @@ class AuthenticateEmployeePin(LoginRequiredMixin, View):
         pin = request.data.get['pin']
         employee = Employees.objects.filter(Employees.pin_to_hash(pin))
         if employee.exists():
-            request.session['id'] = pin
+            request.session['pin'] = pin
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
