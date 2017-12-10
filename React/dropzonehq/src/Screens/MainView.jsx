@@ -73,7 +73,7 @@ export default class MainView extends React.Component {
                         <Route path='/main-menu' component={MainScreen} />
                         <Route path='/verify-pin/:target' component={VerifyPINScreen}/>
                         <Route path='/dropzone-home' component={LandingScreen} onEnter={this.requireAuth} />
-                        <Route path='/login/' component={LoginScreen} />
+                        <Route path='/login/:target' component={LoginScreen} />
                         <Route path='/reset' component={PasswordResetScreen} />
                         <Route path='/create-dropzone' component={CreateDropzoneScreen} />
                         <Route path='/employee-info' render={() => this.renderRequireLogin('employee-info', <EmployeeInfoScreen/>)}/>

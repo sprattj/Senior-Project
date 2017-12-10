@@ -54,32 +54,26 @@ export default class LoginScreen extends React.Component {
         var onResponse = function(response) {
             if (response.status > 400) {
                 toast.error("Error signing in.");
-            } else {
-    
+            } else if (response.status === 202) {
+                self.setState({
+                    redirect: true
+                });
             }
-            return response.text().then(
-                function (responseData) {
-                    self.setState({
-                        modalHTML: responseData,
-                        modalOpen: true
-                    });
-                }
-            )
         }
 
         var handler = new RequestHandler();
-        handler.getNoToast(endpoint, onResponse);
+        handler.postNoToast(endpoint, onResponse);
     }
 
 
     render() {
-        if (this.state.modalOpen) {
-            var content = <div dangerouslySetInnerHTML={{__html: this.state.modalHTML}}></div>
-            return content;
-        }
+        //redirect to the url that was specified in the target part of this url
         if (this.state.redirect) {
-            //redirect to the url that was specified in the target part of this url
-            return <Redirect to={'/' + this.props.match.params.target} />
+            if(this.props.match.params.target !== ""){
+                return <Redirect to={'/' + this.props.match.params.target} />
+            }else{
+                return <Redirect to={'/dropzone-home'} />                
+            }
         }
         return (
             <Container id="main_body">
