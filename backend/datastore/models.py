@@ -81,8 +81,8 @@ class Claims(models.Model):
     status = models.CharField(max_length=12, choices=STATUS_CHOICES)
     # Description of the problem that needs to be serviced.
     description = models.CharField(max_length=45, blank=True, null=True)
-    submitter = models.OneToOneField('Employees', models.DO_NOTHING)
-    handler = models.OneToOneField('Employees', models.DO_NOTHING)
+    submitter = models.OneToOneField('Employees', models.DO_NOTHING, related_name='employee_submitter')
+    handler = models.OneToOneField('Employees', models.DO_NOTHING, related_name= 'employee_handler')
     
     # Date the claim was submitted
     submit_date = models.DateField(blank=True, null=True)
@@ -412,7 +412,7 @@ class Rentals(models.Model):
     # Date the gear was returned to the drop zone.
     returned_date = models.DateTimeField(blank=True, null=True)
 
-    item = models.ManyToManyField('Items', through='ItemsRentals')
+    item = models.ManyToManyField('Items', through='ItemsRentals', related_name='item_rental')
     employee = models.ManyToManyField('Employees', through='EmployeesRentals')
 
     class Meta:
@@ -443,9 +443,9 @@ class ReserveCanopies(models.Model):
 class Rigs(models.Model):
 
     # PK -> Shares PK from items table
-    item = models.OneToOneField(Items, on_delete=models.CASCADE, primary_key=True)
+    item = models.OneToOneField(Items, on_delete=models.CASCADE)
     # Unique identifier for this rig
-    rig_id = models.AutoField(auto_created=True, unique=True)
+    rig_id = models.AutoField(auto_created=True, unique=True, primary_key=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
