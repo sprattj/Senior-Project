@@ -128,6 +128,15 @@ class Dropzones(models.Model):
     # The location of the drop zone
     location = models.CharField(unique=True, max_length=45)
 
+    @receiver(post_save, sender=User)
+    def create_user_profile(self, sender, instance, created, **kwargs):
+        if created:
+            Dropzones.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(self, sender, instance, **kwargs):
+        instance.dropzone.save()
+
     def get_dropzone(self, pk=None):
         try:
             return Dropzones.objects.get(pk)
