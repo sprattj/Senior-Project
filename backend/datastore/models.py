@@ -165,7 +165,6 @@ class Dropzones(models.Model):
             return None
 
     class Meta:
-        proxy = True
         managed = True
         db_table = 'dropzones'
         app_label = 'dropZoneHQ'
