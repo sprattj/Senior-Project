@@ -755,7 +755,7 @@ class PasswordResetEmployee(LoginRequiredMixin, View):
 class CheckSession(View):
 
     def get(self, request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
