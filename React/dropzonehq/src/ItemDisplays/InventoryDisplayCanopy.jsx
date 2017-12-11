@@ -4,15 +4,18 @@ import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Card, Ca
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import InventoryDisplayItem from './InventoryDisplayItem';
-import Binder from '../Binder.js';
 
 export default class InventoryDisplayCanopy extends React.Component {
     constructor(props) {
         super(props);
 
-        //create a new binder and bind all of the methods in this class
-        var binder = new Binder();
-        binder.bindAll(this, InventoryDisplayCanopy);
+        this.rig_numberChanged = this.rig_numberChanged.bind(this);
+        this.jump_countChanged = this.jump_countChanged.bind(this);
+        this.date_of_manufactureChanged = this.date_of_manufactureChanged.bind(this);
+        this.sizeChanged = this.sizeChanged.bind(this);
+        this.canopy_snChanged = this.canopy_snChanged.bind(this);
+
+        this.updateCanopyRow = this.updateCanopyRow.bind(this);
 
         this.state = {
             canopyInfo: this.props.canopyInfo
@@ -80,11 +83,12 @@ export default class InventoryDisplayCanopy extends React.Component {
                     <Row>
                         <InputGroup>
                             <InputGroupAddon >Canopy Size: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.sizeChanged}
                                 id="sizeID"
                                 defaultText={this.props.canopyInfo.size}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.canopyInfo.size} onChange={this.sizeChanged}  />
                         </InputGroup>
                     </Row>
                     <InventoryDisplayItem

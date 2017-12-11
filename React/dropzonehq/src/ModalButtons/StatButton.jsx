@@ -28,10 +28,18 @@ export default class StatButton extends React.Component {
             monthly_jump_count: 0,
             weekly_jump_count: 0
         }
+
+        this.fetchTotalTandems(this.props.id);
+        this.fetchTandemsWeek(this.props.id);
+        this.fetchTandemsMonth(this.props.id);
+        this.fetchTandemsYear(this.props.id);
+        this.fetchPacksWeek(this.props.id);
+        this.fetchPacksMonth(this.props.id);
+        this.fetchPacksYear(this.props.id);
     }
 
     toggle() {
-        this.props.toggleEmployeeStatus(this.props.id, this.props.status);
+        
     }
 
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
@@ -39,7 +47,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/total_tandem_count/" + self.props.id;
+        var endpoint = "stats/total_tandem_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -55,7 +63,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/yearly_jump_count/" + self.props.id;
+        var endpoint = "stats/yearly_jump_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -71,7 +79,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/monthly_jump_count/" + self.props.id;
+        var endpoint = "stats/monthly_jump_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -87,7 +95,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/weekly_jump_count/" + self.props.id;
+        var endpoint = "stats/weekly_jump_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -103,7 +111,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/yearly_pack_count/" + self.props.id;
+        var endpoint = "stats/yearly_pack_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -119,7 +127,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/monthly_pack_count/" + self.props.id;
+        var endpoint = "stats/monthly_pack_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -135,7 +143,7 @@ export default class StatButton extends React.Component {
         
         //save 'this' so we can reference it in callback
         var self = this;
-        var endpoint = "stats/weekly_pack_count/" + self.props.id;
+        var endpoint = "stats/weekly_pack_count/" + id;
         var successMsg = "Fetched employee data.";
         var errorMsg = "Problem fetching employee data.";
         var callback = function (rowData) {
@@ -168,16 +176,14 @@ export default class StatButton extends React.Component {
                         />
 
                         <TandemInstructorStatDisplay
-                            tandemJumpsToday={this.state.employeeInfo.tandemJumpsToday}
-                            tandemJumpsWeek={this.state.employeeInfo.tandemJumpsWeek}
-                            tandemJumpsMonth={this.state.employeeInfo.tandemJumpsMonth}
-                            tandemJumpsYear={this.state.employeeInfo.tandemJumpsYear} />
+                            tandemJumpsWeek={this.weekly_jump_count}
+                            tandemJumpsMonth={this.monthly_jump_count}
+                            tandemJumpsYear={this.yearly_tandem_count} />
 
                         <PackingStatDisplay
-                            tandemPackedToday={this.state.employeeInfo.tandemPackedToday}
-                            tandemPackedWeek={this.state.employeeInfo.tandemPackedWeek}
-                            tandemPackedMonth={this.state.employeeInfo.tandemPackedMonth}
-                            tandemPackedYear={this.state.employeeInfo.tandemPackedYear} />
+                            tandemPackedWeek={this.weekly_pack_count}
+                            tandemPackedMonth={this.monthly_pack_count}
+                            tandemPackedYear={this.yearly_pack_count} />
                     </CardBlock>
                 </Card>
             </Form>;

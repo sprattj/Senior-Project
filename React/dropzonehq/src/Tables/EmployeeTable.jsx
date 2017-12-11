@@ -3,6 +3,7 @@ import TableSheet from './TableSheet.jsx';
 import EditEmployeeButton from '../ModalButtons/EditEmployeeButton.jsx';
 import EmployeeStatusButton from '../ModalButtons/EmployeeStatusButton.jsx';
 import AddEmployeeButton from '../ModalButtons/AddEmployeeButton.jsx';
+import StatButton from '../ModalButtons/StatButton';
 import { ButtonGroup } from 'reactstrap';
 import RequestHandler from '../RequestHandler.js';
 import Binder from '../Binder.js';
@@ -73,6 +74,12 @@ export default class EmployeeTable extends React.Component {
           firstName={rowData[i].first_name}
           lastName={rowData[i].last_name}
           status={rowData[i].is_active} />
+
+        <StatButton
+          firstName={rowData[i].first_name}
+          lastName={rowData[i].last_name}
+          id={rowData[i].employee_id} />
+          
       </ButtonGroup>;
       newRows[i].is_active = rowData[i].is_active + "";
       newRows[i].email = rowData[i].email;

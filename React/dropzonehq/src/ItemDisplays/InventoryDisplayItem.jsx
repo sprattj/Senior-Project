@@ -4,8 +4,9 @@ import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Button }
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import UnControlledSelectDDL from '../UnControlledSelectDDL.jsx';
-import Binder from '../Binder.js';
-
+import Checkbox from '../CheckBox/Checkbox.js';
+import 'bootstrap/dist/css/bootstrap.css';
+import "../Checkboxes.css"; 
 
 var rentalOptions = [
     { text: "Is Rentable" },
@@ -21,16 +22,32 @@ export default class InventoryDisplayItem extends React.Component {
     constructor(props) {
         super(props);
 
-        //create a new binder and bind all of the methods in this class
-        var binder = new Binder();
-        binder.bindAll(this, InventoryDisplayItem);
+        this.manufacturerChanged = this.manufacturerChanged.bind(this);
+        this.brandChanged = this.brandChanged.bind(this);
+        this.descriptionChanged = this.descriptionChanged.bind(this);
+        this.is_rentableChanged = this.is_rentableChanged.bind(this);
+        this.is_on_rigChanged = this.is_on_rigChanged.bind(this);
+        this.is_availableChanged = this.is_availableChanged.bind(this);
 
-        this.state = this.props.defaultItemInfo; 
-        
+        this.updateItemInfo = this.updateItemInfo.bind(this);
+        this.deleteItemInfo = this.deleteItemInfo.bind(this);
+
+        this.state = 
+        {
+            item_id: this.props.defaultItemInfo.item_id,
+            item_type_id: this.props.defaultItemInfo.item_type_id,
+            manufacturer: this.props.defaultItemInfo.manufacturer,
+            brand: this.props.defaultItemInfo.brand,
+            description: this.props.defaultItemInfo.description,
+            is_rentable: this.props.defaultItemInfo.is_rentable,
+            is_on_rig: this.props.defaultItemInfo.is_on_rig,
+            is_available: this.props.defaultItemInfo.is_available
+        }
+
         console.log("ITEM.STATE CONSTRUCTOR: " + JSON.stringify(this.state));
     }
 
-    componentDidMount() {
+ /*    componentDidMount() {
         this.setState({
             manufacturer: this.props.defaultItemInfo.manufacturer,
             brand: this.props.defaultItemInfo.brand,
@@ -40,12 +57,24 @@ export default class InventoryDisplayItem extends React.Component {
             is_available: this.props.defaultItemInfo.is_available
         })
 
+        console.log("in componentDidMount (InvDisplayItem)");
         console.log("is_rentable: " + this.state.is_rentable + " is_on_rig: " + this.state.is_on_rig);
-    }
+    } */
 
     componentWillReceiveProps(newProps)
     {
+        console.log("in componentWillReceiveProps (InvDisplayItem) newProps: " + JSON.stringify(newProps) + "\n");
 
+        this.setState({
+            item_id: newProps.defaultItemInfo.item_id,
+            item_type_id: newProps.defaultItemInfo.item_type_id,            
+            manufacturer: newProps.defaultItemInfo.manufacturer,
+            brand: newProps.defaultItemInfo.brand,
+            description: newProps.defaultItemInfo.description,
+            is_rentable: newProps.defaultItemInfo.is_rentable,
+            is_on_rig: newProps.defaultItemInfo.is_on_rig,
+            is_available: newProps.defaultItemInfo.is_available
+        }) 
     }
 
     manufacturerChanged(e) {
@@ -67,34 +96,26 @@ export default class InventoryDisplayItem extends React.Component {
     }
 
     // THIS was using Select from link (react-select)
-    handle_is_rentableChanged = (selectedOption) => {
+/*     handle_is_rentableChanged = (selectedOption) => {
         this.setState({ is_rentable: selectedOption });
         console.log("is_rentable: " + this.state.is_rentable.value);
         console.log(`Selected: ${selectedOption.label}`);
-    }
+    } */
 
-    // CURRENTLY using UnControlledSelectDDL
     is_rentableChanged(e) {
-        console.log("in is_rentableChanged new value:" + e.target.value);
+        console.log("in is_rentableChanged new value:" + e.target.checked);
         console.log("passed in props for is_rentable: " + this.props.defaultItemInfo.is_rentable);
         console.log("current is_rentable: " + this.state.is_rentable);
         this.setState({
-            is_rentable: e.target.value // === "true" ? false : true
+            is_rentable: e.target.checked
         });
         console.log("after setState is_rentable: " + this.state.is_rentable);
-
-  /*       // THIS ATTEMPT IS FOR SELECT ELEMENT ONLY 
-        var selectObj = document.getElementById("is_rentableID");
-        console.log("selectObj: " + selectObj + " curr value: " + selectObj.value);
-        // set selected value
-        document.getElementById("is_rentableID").value = this.state.is_rentable;
-        console.log("select value: " + document.getElementById("is_rentableID").value); */
     }
 
     is_on_rigChanged(e) {
-        console.log("in is_on_rigChange e:" + e.target.value);
+        console.log("in is_on_rigChange e:" + e.target.checked);
         this.setState({
-            is_on_rig: e.target.value === "true" ? true : false
+            is_on_rig: e.target.checked
         });
         console.log("is_on_rig: " + this.state.is_on_rig);
     }
@@ -110,35 +131,44 @@ export default class InventoryDisplayItem extends React.Component {
         console.log("on Save: is_rentable: " + this.state.is_rentable);
     }
 
+    deleteItemInfo()
+    {
+        console.log("clicked delete");
+        this.props.deleteItemInfo(this.state.item_id);
+    }
+
     render() {
         return (
-            <div>
+            <div className="form-check mb-2 mr-sm-2 mb-sm-0">
                 <Row>
                     <InputGroup>
                         <InputGroupAddon > Manufacturer: </InputGroupAddon>
-                        <UncontrolledTextInput
+                        {/* <UncontrolledTextInput
                             onBlur={this.manufacturerChanged}
                             id="manufacturerID"
                             defaultText={this.props.defaultItemInfo.manufacturer}
-                        />
+                        /> */}
+                        <input type="text" value={this.state.manufacturer} onChange={this.manufacturerChanged}  />
                     </InputGroup>
                     <InputGroup>
                         <InputGroupAddon >Brand: </InputGroupAddon>
-                        <UncontrolledTextInput
+                        {/* <UncontrolledTextInput
                             onBlur={this.brandChanged}
                             id="brandID"
                             defaultText={this.props.defaultItemInfo.brand}
-                        />
+                        /> */}
+                        <input type="text" value={this.state.brand} onChange={this.brandChanged}  />
                     </InputGroup>
                 </Row>
                 <Row>
                     <InputGroup>
                         <InputGroupAddon >Description: </InputGroupAddon>
-                        <UncontrolledTextInput
+                        {/* <UncontrolledTextInput
                             onBlur={this.descriptionChanged}
                             id="descriptionID"
                             defaultText={this.props.defaultItemInfo.description}
-                        />
+                        /> */}
+                        <input type="text" value={this.state.description} onChange={this.descriptionChanged}  />
                     </InputGroup>
                     <InputGroup>
                         <InputGroupAddon >Rentable: </InputGroupAddon>
@@ -152,28 +182,40 @@ export default class InventoryDisplayItem extends React.Component {
                             <option value={false}>NOT on a rig</option>
                            
                         </select> */}
-                        <UnControlledSelectDDL 
+                        {/* <UnControlledSelectDDL 
                             defaultValue={this.props.defaultItemInfo.is_rentable}// ? "true" : "false"}
                             id="is_rentableID"
                             onChange={this.is_rentableChanged }
                             options={rentalOptions}
+                            /> */}
+                        <label className="form-check-label">
+                            <input type="checkbox" className="form-check-input" checked={this.state.is_rentable} onChange={this.is_rentableChanged}  
                             />
+                        </label>
+                      {/*   <div className="[ btn-group ]">       
+                            <label htmlFor="fancy-checkbox-info" className="[ btn btn-info ]">
+                                <span className="[ glyphicon glyphicon-ok ]"></span>
+                                <span> </span>
+                            </label>
+                            <label htmlFor="fancy-checkbox-info" className="[ btn btn-default active ]">
+                                Info Checkbox
+                            </label>
+                        </div>    */}
                     </InputGroup>
                 </Row>
                 <Row>
                     <InputGroup>
                         <InputGroupAddon >On a Rig: </InputGroupAddon>
-                        <UnControlledSelectDDL 
-                            defaultValue={this.props.defaultItemInfo.is_on_rig}// ? "true" : "false"}
-                            id="is_on_rigID"
-                            onChange={this.is_on_rigChanged }
-                            options={rigOptions}
-                        />
-
+                        <label className="form-check-label">
+                            <input type="checkbox" className="form-check-input" checked={this.state.is_on_rig} onChange={this.is_on_rigChanged}  
+                            />
+                        </label>
                     </InputGroup>
                 </Row>
                 <Row>
                     <Button size="lg" color="primary" onClick={this.updateItemInfo}>Save</Button>
+
+                    <Button size="lg" color="primary" onClick={this.deleteItemInfo}>Delete</Button>
                 </Row>
             </div>
         );
