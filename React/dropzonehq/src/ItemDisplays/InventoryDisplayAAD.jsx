@@ -22,7 +22,7 @@ export default class InventoryDisplayAAD extends React.Component {
 
     componentWillReceiveProps(newProps)
     {
-        console.log("in componentWillReceiveProps (InvDisplayAAD)");
+        console.log("in componentWillReceiveProps (InvDisplayAAD)" + JSON.stringify(newProps) + "\n");
         // force update state 
         this.setState({
             AADInfo: newProps.AADInfo

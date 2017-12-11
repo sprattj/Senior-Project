@@ -223,6 +223,9 @@ export default class InventoryScreen extends React.Component {
 
         console.log("item_id: " + itemInfo.item_id);
 
+        console.log("-----aad lifespan: " + AADInfo.lifespan);
+        console.log("-----aad sn: " + AADInfo.aad_sn);
+
         var url = rootURL + "/AADs/" + itemInfo.item_id;
 
         var self = this;
@@ -266,6 +269,18 @@ export default class InventoryScreen extends React.Component {
                 self.setState({
                     rows: Array.from(self.aads.values())
                 })
+            }
+
+            // FOR DEBUGGING:
+            var size = self.all.size;
+            var allIter = self.all.values();
+            if (size > 0)
+            {
+                for (var i = 0; i < size; i++)
+                {
+                    console.log("all types map: " + i + " element: " + JSON.stringify(allIter.next().value));
+                    // console.log("aads map: " + self.aads);
+                }       
             }
 
         }).catch(function (error) {
