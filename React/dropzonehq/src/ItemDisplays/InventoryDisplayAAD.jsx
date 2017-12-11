@@ -5,15 +5,15 @@ import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import SaveItemDetailsBtn from '../Buttons/SaveItemDetailsBtn.jsx';
 import InventoryDisplayItem from './InventoryDisplayItem.jsx';
+import Binder from '../Binder.js';
 
 export default class InventoryDisplayAAD extends React.Component {
     constructor(props) {
         super(props);
 
-        this.aad_snChanged = this.aad_snChanged.bind(this);
-        this.lifespanChanged = this.lifespanChanged.bind(this);
-
-        this.updateAADRow = this.updateAADRow.bind(this);
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, InventoryDisplayAAD);
 
         this.state = {
             AADInfo: this.props.AADInfo

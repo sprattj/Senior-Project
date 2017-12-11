@@ -1,6 +1,5 @@
 import React from 'react';
 import TableSheet from './TableSheet.jsx';
-import { rootURL } from '../restInfo.js';
 
 //a generic table to show just a brief description of the items to be clicked and
 //have their info be displayed on a larger section elsewhere on screen.
@@ -9,9 +8,6 @@ import { rootURL } from '../restInfo.js';
 export default class ItemTable extends React.Component {
     constructor(props) {
         super(props);
-        //since the URL section is not directly related to rendering,
-        //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "";
 
         this.RowProps = this.RowProps.bind(this);
         this.clickedFunction = this.clickedFunction.bind(this);

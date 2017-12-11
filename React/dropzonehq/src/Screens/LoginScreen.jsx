@@ -1,11 +1,16 @@
 import React from 'react';
 import { Container, Button, Input, Row, Col, InputGroup, InputGroupAddon, Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import Binder from '../Binder.js';
 
 export default class LoginScreen extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, LoginScreen);
+
         this.updateEmail = this.updateEmail.bind(this);
         this.updatePassword = this.updatePassword.bind(this);
         this.submit = this.submit.bind(this);
@@ -17,25 +22,25 @@ export default class LoginScreen extends React.Component {
         }
     }
 
-    updateEmail(e){
+    updateEmail(e) {
         this.setState({
             email: e.target.value
         });
     }
 
-    updatePassword(e){
+    updatePassword(e) {
         this.setState({
             password: e.target.value
         })
     }
 
-    submit(){
+    submit() {
         var warning;
-        if(this.state.password === ""){
+        if (this.state.password === "") {
             warning = <Alert color="danger">Please enter a password.</Alert>;
-        }else if(this.state.email === ""){
+        } else if (this.state.email === "") {
             warning = <Alert color="danger">Please enter a valid email.</Alert>;
-        }else{
+        } else {
             warning = ""
         }
         this.setState({
@@ -54,18 +59,18 @@ export default class LoginScreen extends React.Component {
                         <h1>Dropzone Login</h1>
                         <InputGroup>
                             <InputGroupAddon>Dropzone Email: </InputGroupAddon>
-                            <Input type='email' onChange={this.updateEmail}/>
+                            <Input type='email' onChange={this.updateEmail} />
                         </InputGroup>
                         <InputGroup>
                             <InputGroupAddon>Dropzone Password: </InputGroupAddon>
-                            <Input type='password' onChange={this.updatePassword}/>
+                            <Input type='password' onChange={this.updatePassword} />
                         </InputGroup>
                         <Button className="btn_transparent" size="lg" onClick={this.submit}>Login</Button>
                         <Link to='/main-menu'><Button className="btn_transparent" size="lg">Back to Main</Button></Link>
                     </Col>
                     <Col className="mainscreen_col" xs={{ size: 12, offset: 0 }} sm={{ size: 10, offset: 1 }} md={{ size: 8, offset: 2 }} lg={{ size: 6, offset: 3 }}>
                         {this.state.warning}
-                    </Col> 
+                    </Col>
                 </Row>
             </Container>
         );

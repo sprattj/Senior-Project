@@ -9,12 +9,12 @@ import InventoryDisplayContainer from '../ItemDisplays/InventoryDisplayContainer
 import InventoryDisplayAAD from '../ItemDisplays/InventoryDisplayAAD.jsx';
 
 import AddInventoryItemBtn from '../Buttons/AddInventoryItemBtn.jsx';
-import PropTypes from 'prop-types';
-import { Row, Col, Card, ButtonGroup } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
+import { Row, Col, Card } from 'reactstrap';
 import DropzoneHQNav from '../Navs/DropzoneHQNav.jsx';
 import "react-table/react-table.css";
-import { toast } from 'react-toastify';
+
+import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 const marginStyle = {
     marginTop: 25,
@@ -36,43 +36,14 @@ export default class InventoryScreen extends React.Component {
         super(props);
         //since the URL section is not directly related to rendering,
         //it shouldn't be part of state. Save it in a class variable.
-        this.URLsection = "/items";
+        this.URLsection = "items/";
 
-        //this.toggleRented = this.toggleRented.bind(this);
-        this.filterChanged = this.filterChanged.bind(this);
-        this.getFilteredRows = this.getFilteredRows.bind(this);
+        //create a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, InventoryScreen);
 
-        this.itemSelected = this.itemSelected.bind(this);
-        this.rigSelected = this.rigSelected.bind(this);
-        this.canopySelected = this.canopySelected.bind(this);
-        this.reserveCanopySelected = this.reserveCanopySelected.bind(this);
-        this.containerSelected = this.containerSelected.bind(this);
-        this.aadSelected = this.aadSelected.bind(this);
-
-        this.setupDisplay = this.setupDisplay.bind(this);
-        this.displayChange = this.displayChange.bind(this);
-        this.displayAddAADView = this.displayAddAADView.bind(this);
-        this.resetDisplay = this.resetDisplay.bind(this);
-        this.updateAADRow = this.updateAADRow.bind(this);
-        this.updateCanopyRow = this.updateCanopyRow.bind(this);
-        this.updateReserveCanopyRow = this.updateReserveCanopyRow.bind(this);
-        this.updateContainerRow = this.updateContainerRow.bind(this);
-        this.updateRigRow = this.updateRigRow.bind(this);
-
-        this.displayAddContainer = this.displayAddContainer.bind(this);
-        this.displayAddCanopy = this.displayAddCanopy.bind(this);
-        this.addAAD = this.addAAD.bind(this);
-        this.addContainer = this.addContainer.bind(this);
-        this.addCanopy = this.addCanopy.bind(this);
-   
-        this.addItemfilterChanged = this.addItemfilterChanged.bind(this);     
-        this.setDefaultItemInfoDetails = this.setDefaultItemInfoDetails.bind(this);
-
-        this.all = new Map();
-        this.rigs = new Map();
-        this.canopies = new Map();
-        this.containers = new Map();
-        this.aads = new Map();
+        //initialize the maps of different item types
+        this.initMaps();
 
         this.columnsAll = [{
             Header: 'Item manufacturer',
@@ -163,58 +134,49 @@ export default class InventoryScreen extends React.Component {
         };
     }
 
-    //When this RentalTable component loads on the page, fetch the rows
+    //When this InventoryScreen component loads on the page, fetch the rows
     //from the database and display them.
     componentDidMount() {
         this.fetchRows();
     }
 
-    //Fetch the items from the database that are 
-    //rentals and update the RentalTable's state to display them.
+    /**
+     * Fetch the rows of item data from the all items endpoint
+     * and update the ItemTable's state to display them.
+     */
     fetchRows() {
-
-        //make sure we have the packages required to
-        //make a fetch call (maybe not needed)
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + this.URLsection;
-
-        //save 'this' so that we can call functions
-        //inside the fetch() callback
+        var endpoint = this.URLsection
         var self = this;
-
-        //fetch from the specified URL, to GET the data
-        //we need. Enable CORS so we can access from localhost.
-        fetch(url, {
-            method: "GET",
-            mode: 'CORS'
-        })//when we get a response back
-            .then(function (response) {
-                //check to see if the call we made failed
-                //if it failed, throw an error and stop.
-                if (response.status >= 400) {
-                    throw new Error("Bad response from server");
-                }
-                //if it didn't fail, process the data we got back
-                //into JSON format
-                return response.json();
-            })//when the call succeeds
-            .then(function (rowData) {
-                self.getFilteredRows(rowData);
-                self.setState({
-                    filter: "all",
-                    columns: self.columnsAll,
-                    rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
-                    index: 0,
-                    currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
-                });
-            })//catch any errors and display them as a toast
-            .catch(function (error) {
-                toast.error(error + "\n" + url);
-            });;
+        var successMsg = "Fetched inventory data.";
+        var errorMsg = "Problem fetching inventory data.";
+        var callback = function (rowData) {
+            self.getFilteredRows(rowData);
+            self.setState({
+                filter: "all",
+                columns: self.columnsAll,
+                rows: Array.from(self.all.values()), // rows: mapName.values() instead of rows: rowData
+                index: 0,
+                currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
+            });
+        };
+        var handler = new RequestHandler();
+        handler.get(endpoint, successMsg, errorMsg, callback);
     }
 
+    ////////////////CONTAINER REQUESTS/////////////////////
+    ////////////////CONTAINER REQUESTS/////////////////////
+    ////////////////CONTAINER REQUESTS/////////////////////
+    ////////////////CONTAINER REQUESTS/////////////////////
+    ////////////////CONTAINER REQUESTS/////////////////////
+    /**
+     * Edit a container on the frontend and backend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} containerInfo - the fields&values from the Container needed for this request.
+     */
+    updateContainerRow(itemInfo, containerInfo) {
+        //isPatch = true
+        this.containerPatchPost(itemInfo, containerInfo, true);
+    }
 
 
     updateAADRow(itemInfo, AADInfo) {
@@ -286,283 +248,328 @@ export default class InventoryScreen extends React.Component {
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
+    } 
+    /**
+     * Add a new container to the backend and display it on the frontend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} containerInfo - the fields&values from the Container needed for this request.
+     */
+    addContainer(itemInfo, containerInfo) {
+        //isPatch = false
+        this.containerPatchPost(itemInfo, containerInfo, false);
     }
 
-    updateReserveCanopyRow(item_id, manufacturer, description, isOnRig, brand,
-        isRentable, rig_id, serial_number, size, date_of_manufacture,
-        jump_count, last_repack_date, next_repack_date, packed_by_employee_id, ride_count) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
+    /**
+     * Make a post or patch request for a container
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} containerInfo - the fields&values from the Container needed for this request.
+     * @param {boolean} isPatch - true if this is a patch, false if it is a post.
+     */
+    containerPatchPost(itemInfo, containerInfo, isPatch) {
+        //item type is container
+        this.itemPatchPost(ITEM_TYPES.CONTAINER, itemInfo, containerInfo, isPatch)
+    }
 
-        var url = rootURL + "/canopies/reserve/" + item_id;
+    ////////////////CANOPY REQUESTS/////////////////////
+    ////////////////CANOPY REQUESTS/////////////////////
+    ////////////////CANOPY REQUESTS/////////////////////
+    ////////////////CANOPY REQUESTS/////////////////////
+    ////////////////CANOPY REQUESTS/////////////////////
+    /**
+     * Edit a canopy on the frontend and backend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&values from the canopy needed for this request.
+     */
+    updateCanopyRow(itemInfo, canopyInfo) {
+        //isPatch = true
+        this.canopyPatchPost(itemInfo, canopyInfo, true);
+    }
 
+    /**
+     * Add a new canopy to the backend and display it on the frontend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&values from the canopy needed for this request.
+     */
+    addCanopy(itemInfo, canopyInfo) {
+        //isPatch = false
+        this.canopyPatchPost(itemInfo, canopyInfo, false);
+    }
+
+    /**
+     * Make a post or patch request for a canopy
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&values from the canopy needed for this request.
+     * @param {boolean} isPatch - true if this is a patch, false if it is a post.
+     */
+    canopyPatchPost(itemInfo, canopyInfo, isPatch) {
+        //item type is canopy
+        this.itemPatchPost(ITEM_TYPES.CANOPY, itemInfo, canopyInfo, isPatch)
+    }
+
+    ////////////////AAD REQUESTS/////////////////////
+    ////////////////AAD REQUESTS/////////////////////
+    ////////////////AAD REQUESTS/////////////////////
+    ////////////////AAD REQUESTS/////////////////////
+    ////////////////AAD REQUESTS/////////////////////
+    /**
+     * Edit an AAD on the frontend and backend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} AADInfo - the fields&values from the AAD needed for this request.
+     */
+    updateAADRow(itemInfo, AADInfo) {
+        //isPatch = true
+        this.AADPatchPost(itemInfo, AADInfo, true);
+    }
+
+    /**
+     * Add a new AAD to the backend and display it on the frontend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} AADInfo - the fields&values from the AAD needed for this request.
+     */
+    addAAD(itemInfo, AADInfo) {
+        //isPatch = false
+        this.AADPatchPost(itemInfo, AADInfo, false);
+    }
+
+    /**
+     * Make a post or patch request for an AAD
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} AADInfo - the fields&values from the AAD needed for this request.
+     * @param {boolean} isPatch - true if this is a patch, false if it is a post.
+     */
+    AADPatchPost(itemInfo, AADInfo, isPatch) {
+        //item type is AAD
+        this.itemPatchPost(ITEM_TYPES.AAD, itemInfo, AADInfo, isPatch)
+    }
+
+
+    ////////////////RIG REQUESTS/////////////////////
+    ////////////////RIG REQUESTS/////////////////////
+    ////////////////RIG REQUESTS/////////////////////
+    ////////////////RIG REQUESTS/////////////////////
+    ////////////////RIG REQUESTS/////////////////////
+    /**
+     * Edit a rig on the frontend and backend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} rigInfo - the fields&values from the rig needed for this request.
+     */
+    updateRigRow(itemInfo, rigInfo) {
+        //isPatch = true
+        this.rigPatchPost(itemInfo, rigInfo, true);
+    }
+
+    /**
+     * Add a new rig to the backend and display it on the frontend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} rigInfo - the fields&values from the rig needed for this request.
+     */
+    addRig(itemInfo, rigInfo) {
+        //isPatch = false
+        this.rigPatchPost(itemInfo, rigInfo, false);
+    }
+
+    /**
+     * Make a put or patch request for an rig
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} canopyInfo - the fields&values from the rig needed for this request.
+     * @param {boolean} isPatch - true if this is a patch, false if it is a post.
+     */
+    rigPatchPost(itemInfo, rigInfo, isPatch) {
+        //item type is RIG
+        this.itemPatchPost(ITEM_TYPES.RIG, itemInfo, rigInfo, isPatch)
+    }
+
+    ////////////////RESERVE REQUESTS/////////////////////
+    ////////////////RESERVE REQUESTS/////////////////////
+    ////////////////RESERVE REQUESTS/////////////////////
+    ////////////////RESERVE REQUESTS/////////////////////
+    ////////////////RESERVE REQUESTS/////////////////////
+    /**
+     * Edit a reserve canopy on the frontend and backend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} reserveInfo - the fields&values from the reserve canopy needed for this request.
+     */
+    updateReserveCanopyRow(itemInfo, reserveInfo) {
+        //isPatch = true
+        this.reserveRequest(itemInfo, reserveInfo, true);
+    }
+
+    /**
+     * Add a new reserve canopy to the backend and display it on the frontend.
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} reserveInfo - the fields&values from the reserve canopy needed for this request.
+     */
+    addReserveCanopy(itemInfo, reserveInfo) {
+        //isPatch = false
+        this.reserveRequest(itemInfo, reserveInfo, false);
+    }
+
+    /**
+     * Make a put or patch request for an reserve canopy
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request
+     * @param {Object} reserveInfo - the fields&values from canopy and reserve canopy needed for this request.
+     * @param {boolean} isPatch - true if this is a patch, false if it is a post.
+     */
+    reserveCanopyPatchPost(itemInfo, reserveInfo, isPatch) {
+        //item type is reserve
+        this.itemPatchPost(ITEM_TYPES.RESERVE, itemInfo, reserveInfo, isPatch)
+    }
+
+    //////////GENERIC REQUEST METHODS///////////
+    //////////GENERIC REQUEST METHODS///////////
+    //////////GENERIC REQUEST METHODS///////////
+    //////////GENERIC REQUEST METHODS///////////
+    //////////GENERIC REQUEST METHODS///////////
+
+    /**
+     * Handle a patch or a post for an item
+     * @param {string} itemType - the type of item that is being patched/posted
+     * @param {Object} itemInfo - the fields&values from Item needed to perform this request.
+     * @param {Object} specificInfo - the fields&values from the [itemType] subclass needed for this request.
+     * @param {boolean} isPatch - true if this request is a patch, false if it is a post.
+     */
+    itemPatchPost(itemType, itemInfo, specificInfo, isPatch) {
+        var combinedItemInfo = this.getCombinedItem(itemType, itemInfo, specificInfo);
+        this.handleItemPatchPost(combinedItemInfo, itemType, isPatch);
+    }
+
+        // IS THIS HERE ALREADY?
+        // var url = rootURL + "/containers/" + itemInfo.item_id;
+    //
+    /**
+     * Take an item type and 2 objects (one for item fields, one for subclass fields). Combine
+     * them and return a version whose attribute names work with requests (all items view has 
+     * different names than are needed for endpoint inserts)
+     * @param {string} itemType - the type of item subclass whose specific fields are in specificInfo
+     * @param {Object} genericInfo - an object that has the info from the item table.
+     * @param {Object} specificInfo - an object that has info from the specific item subclass.
+     * @return - one combined object whose accessor names are compatible with the specific
+     * variables needed for requests (i.e. canopy_sn becomes serial_number).
+     */
+    getCombinedItem(itemType, genericInfo, specificInfo) {
+        //start with the info from Item
+        var combined = genericInfo;
+        //merge all of the attributes from the subclass in
+        Object.assign(combined, specificInfo);
+        //add item type
+        combined.item_type = itemType;
+        //add any fields with their other name
+        switch (itemType) {
+            case ITEM_TYPES.AAD:
+                //combined.lifespan = specificInfo.lifespan;
+                combined.serial_number = specificInfo.aad_sn;
+                break;
+            case ITEM_TYPES.CANOPY || ITEM_TYPES.RESERVE_CANOPY:
+                combined.serial_number = specificInfo.canopy_sn;
+                //combined.size = specificInfo.size;
+                //combined.jump_count = specificInfo.jump_count;
+                break;
+            case ITEM_TYPES.RESERVE_CANOPY:
+                combined.rig_id = specificInfo.rig_id;
+                combined.date_of_manufacture = specificInfo.date_of_manufacture;
+                combined.last_repack_date = specificInfo.last_repack_date;
+                combined.next_repack_date = specificInfo.next_repack_date;
+                combined.packed_by_employee_id = specificInfo.packed_by_employee_id;
+                //combined.ride_count = specificInfo.ride_count;
+                break;
+            case ITEM_TYPES.CONTAINER:
+                combined.serial_number = specificInfo.container_sn;
+                break;
+            case ITEM_TYPES.RIG:
+                combined.aad_id = specificInfo.aad;
+                combined.container_id = specificInfo.container;
+                //combined.isTandem = specificInfo.isTandem;
+                break;
+            default:
+                break;
+        }
+        return combined;
+    }
+
+    /** 
+     * Make a patch or a post to update or add an item. Item and variables passed/determined
+     * from the single combined item object, the itemtype.
+    * @param {Object} combinedItemInfo - an object that has both (1) the fields of Item and 
+        (2) the fields of the 'subclass' that matches this item's type (i.e. canopy, aad, etc.)
+        This is used as the request variables object.
+    * @param {string} itemType - the type of the item
+    * @param {boolean} isPatch - true if this request is a patch, false if it is a post
+    */
+    handleItemPatchPost(combinedItemInfo, itemType, isPatch) {
+        var itemTypeAccessor = ITEM_TYPE_ACCESSORS[itemType];
+        var endpoint = itemTypeAccessor + "/";
+        var successMsg = itemType + " added successfully.";
+        var errorMsg = "Problem adding " + itemType + ".";
+
+        if (isPatch) {
+            var item_id = combinedItemInfo.item_id;
+            endpoint = endpoint + item_id;
+            successMsg = "Successfully edited " + itemType + " info.";
+            errorMsg = "Editing " + itemType + "  " + item_id + " failed.";
+        }
         var self = this;
-        var requestVariables = {
-            manufacturer: manufacturer,
-            description: description,
-            is_on_rig: isOnRig,
-            brand: brand,
-            is_rentable: isRentable,
-            rig_id: rig_id,
-            serial_number: serial_number,
-            size: size,
-            date_of_manufacture: date_of_manufacture,
-            jump_count: jump_count,
-            last_repack_date: last_repack_date,
-            next_repack_date: next_repack_date,
-            packed_by_employee_id: packed_by_employee_id,
-            ride_count: ride_count,
-            pin: this.state.pin
+        var variables = combinedItemInfo;
+        variables.pin = this.state.pin;
+        var callback = function (responseData) {
+            var item_id = responseData.item_id;
+            //take any of the fields that have 2 possible names depending on context
+            //and add the ones that are missing
+            var rowItem = combinedItemInfo;//self.getCombinedItem(itemType, combinedItemInfo, combinedItemInfo);
+            rowItem.item_id = item_id;
+            self.all.set(item_id, rowItem);
+            self[itemTypeAccessor].set(item_id, rowItem);
+
+            var newRows = (self.state.filter === "all" ? self.all.values() : self[itemTypeAccessor].values());
+            self.setState({
+                rows: Array.from(newRows)
+            });
         };
 
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing reserve canopy failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-            var reserveCanopy = self.all.get(item_id);
-            reserveCanopy.manufacturer = manufacturer;
-            reserveCanopy.description = description;
-            reserveCanopy.is_on_rig = isOnRig;
-            reserveCanopy.brand = brand;
-            reserveCanopy.is_rentable = isRentable;
-            reserveCanopy.serial_number = serial_number;
-            reserveCanopy.size = size;
-            reserveCanopy.date_of_manufacture = date_of_manufacture;
-            reserveCanopy.jump_count = jump_count;
-
-            self.all.set(item_id, reserveCanopy);
-            self.canopies.set(item_id, reserveCanopy);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // TODO: CHANGE TO RESERVECANOPIES MAP instead of "all"
-                // must be in reserve_canopy display
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
-
+        var method = (isPatch ? "PATCH" : "POST");
+        var handler = new RequestHandler();
+        handler.makeRequest(endpoint, method, variables, successMsg, errorMsg, callback);
     }
 
-    updateCanopyRow(itemInfo, canopyInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        console.log("item info in fetch call: " + JSON.stringify(itemInfo));
-        var url = rootURL + "/canopies/" + itemInfo.item_id;
-
-        var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.pin = this.state.pin;
-        requestVariables.rig_id = canopyInfo.rig_num;
-        requestVariables.serial_number = canopyInfo.canopy_sn;
-        requestVariables.size = canopyInfo.size;
-        requestVariables.jump_count = canopyInfo.jump_count;
-
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing canopy failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-            var canopy = self.all.get(itemInfo.item_id);
-            canopy.manufacturer = itemInfo.manufacturer;
-            canopy.description = itemInfo.description;
-            canopy.is_on_rig = itemInfo.is_on_rig;
-            canopy.brand = itemInfo.brand;
-            canopy.is_rentable = itemInfo.is_rentable;
-            canopy.serial_number = canopyInfo.canopy_sn;
-            canopy.size = canopyInfo.size;
-            canopy.jump_count = canopyInfo.jump_count;
-
-            self.all.set(itemInfo.item_id, canopy);
-            self.canopies.set(itemInfo.item_id, canopy);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Canopies display
-                self.setState({
-                    rows: Array.from(self.canopies.values())
-                })
-            }
-
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
-    }
-
-    updateRigRow(itemInfo, rigInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        var url = rootURL + "/rigs/" + itemInfo.item_id;
-
-        var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.aad_id = rigInfo.aad;
-        requestVariables.container_id = rigInfo.container;
-        requestVariables.isTandem = rigInfo.isTandem;
-        requestVariables.pin = this.state.pin;
-
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing rig failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-
-            var rig = self.all.get(itemInfo.item_id);
-            rig.manufacturer = itemInfo.manufacturer;
-            rig.description = itemInfo.description;
-            rig.brand = itemInfo.brand;
-            rig.is_rentable = itemInfo.isRentable;
-            rig.container_id = rigInfo.container;
-            rig.aad_id = rigInfo.aad;
-            rig.isTandem = rigInfo.isTandem;
-
-            self.all.set(itemInfo.item_id, rig);
-            self.rigs.set(itemInfo.item_id, rig);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Rigs display
-                self.setState({
-                    rows: Array.from(self.rigs.values())
-                })
-            }
-
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
-    }
-
-    updateContainerRow(itemInfo, containerInfo) {
-        require('isomorphic-fetch');
-        require('es6-promise').polyfill();
-
-        console.log("item_id: " + itemInfo.item_id);
-
-        var url = rootURL + "/containers/" + itemInfo.item_id;
-
-        var self = this;
-        var requestVariables = itemInfo;
-        requestVariables.serial_number = containerInfo.container_sn;
-        requestVariables.pin = this.state.pin;
-
-        fetch(url, {
-            method: "PATCH",
-            mode: 'CORS',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(requestVariables)
-        }).then(function (response) {
-            if (response.status >= 400) {
-                throw new Error("Editing container failed. Bad response " + response.status + " from server");
-            }
-            return response.json();
-        }).then(function (responseData) {
-            var container = self.all.get(itemInfo.item_id);
-            container.manufacturer = itemInfo.manufacturer;
-            container.description = itemInfo.description;
-            container.is_on_rig = itemInfo.is_on_rig;
-            container.brand = itemInfo.brand;
-            container.is_rentable = itemInfo.is_rentable;
-            container.container_sn = containerInfo.container_sn;
-
-            self.all.set(itemInfo.item_id, container);
-            self.containers.set(itemInfo.item_id, container);
-
-            if (self.state.filter === "all") {
-                self.setState({
-                    rows: Array.from(self.all.values())
-                })
-            }
-            else {
-                // must be in Containers display
-                self.setState({
-                    rows: Array.from(self.containers.values())
-                })
-            }
-
-        }).catch(function (error) {
-            toast.error(error + "\n" + url);
-        });
-    }
-
-    getFilteredRows(rowData) {
+    /**
+     * Initialize the maps that hold different inventory item types.
+     */
+    initMaps() {
         this.all = new Map();
         this.rigs = new Map();
         this.canopies = new Map();
         this.containers = new Map();
         this.aads = new Map();
+        this.reserves = new Map();
+    }
 
-        // save everything first
+    /**
+     * 
+     * @param {Object} rowData - A JSON response from the all items endpoint. Each row
+     * contains info about all types of items, with nulls where not applicable. 
+     */
+    getFilteredRows(rowData) {
+        this.initMaps();
+        // loop through the JSON data
         for (var i = 0; i < rowData.length; i++) {
-            // map row to item_id in that row
+            //save everything to all first
             this.all.set(rowData[i].item_id, rowData[i]);
-            if (rowData[i].item_type === "rig") {
-                //if the type is rig
-                this.rigs.set(rowData[i].item_id, rowData[i]);
-            } else if (rowData[i].item_type === "canopy") {
-                // if the type is canopy
-                this.canopies.set(rowData[i].item_id, rowData[i]);
-            } else if (rowData[i].item_type === "container") {
-                // if the type is container
-                this.containers.set(rowData[i].item_id, rowData[i]);
-            } else if (rowData[i].item_type === "aad") {
-                // if the type is AAD
-                this.aads.set(rowData[i].item_id, rowData[i]);
+            //if the row has an item type
+            if (rowData[i].item_type) {
+                //use that item type to grab the corresponding field accessor
+                var accessor = ITEM_TYPE_ACCESSORS[rowData[i].item_type];
+                //use this accessor to access the corresponding map (i.e. this['rigs'].set(...))
+                this[accessor].set(rowData[i].item_id, rowData[i]);
             }
         }
     }
 
 
-    //changes the display of the right side of the screen by
-    //taking in a EditInventoryItemDisplay and setting it in the currentItem state
+    /**
+     * Changes the display of the right side of the screen by
+     * taking in an EditInventoryItemDisplay and setting it in the currentItem state.
+     * @param {EditInventoryItemDisplay} itemDisplay - the EditInventoryItemDisplay to display
+     * @param {int} selectedIndex - The index of the row that was just clicked
+     */
     displayChange(itemDisplay, selectedIndex) {
         if (!(itemDisplay === "")) {
             console.log("Inventory Screen-> displayChange> index: " + selectedIndex);
@@ -575,7 +582,10 @@ export default class InventoryScreen extends React.Component {
         }
     }
 
-    //for the dropdown    
+    /**
+     * Update the rows and columns in the table based on the table's filter dropdown.
+     * @param {string} selection - The text of the filter that was selected. 
+     */
     filterChanged(selection) {
         switch (selection) {
             case "Show All":
@@ -602,13 +612,19 @@ export default class InventoryScreen extends React.Component {
         //this.processRows(this.state.rows, this.state.filter);
     }
 
+    /**
+     * Reset the right hand item display to a blank display.
+     */
     resetDisplay() {
         this.setState({
             currentItem: <BlankItemDisplay headerText={"Inventory Item Details"} />
         });
     }
 
-    //calls up to the screen change the display on the right
+    /**
+     * Changes the display on the right side of the screen when an item row is clicked.
+     * @param {int} selectedIndex - the index of the row in the table that was selected 
+     */
     itemSelected(selectedIndex) {
 
         console.log("selectedIndex: " + selectedIndex);
@@ -628,7 +644,11 @@ export default class InventoryScreen extends React.Component {
             + " \n is_rentable: " + this.state.rows[selectedIndex].is_rentable);
     }
 
-    // set up the display component, based on Item Type
+    /**
+     * Finds the item type from the given row and calls the correct method
+     * to display the detail display for that item type.
+     * @param {Object} row - The row of the inventory table to show a display for.
+     */
     setupDisplay(row) {
         var display;
 
@@ -660,10 +680,18 @@ export default class InventoryScreen extends React.Component {
             case ("aad"):
                 display = this.aadSelected(row, itemInfo);
                 break;
+            default:
+                console.error("Setup display did not recognize the item type " + row.item_type);
+                break;
         }
         return display;
     }
 
+    /**
+     * Update the detail display on the inventory screen to show a rig display.
+     * @param {Object} row - the row of the all items view to display info for 
+     * @param {Object} itemInfo - an object containing the fields in the row that are in the Item table.
+     */
     rigSelected(row, itemInfo) {
         var rigInfo = {
             container: row.container,
@@ -676,8 +704,13 @@ export default class InventoryScreen extends React.Component {
             updateRigRow={this.updateRigRow}
         />;
     }
-
+    /**
+    * Update the detail display on the inventory screen to show a canopy display.
+    * @param {Object} row - the row of the all items view to display info for 
+    * @param {Object} itemInfo - an object containing the fields in the row that are in the Item table.
+    */
     canopySelected(row, itemInfo) {
+
         var canopyInfo = {
             rig_id: row.rig_id,
             canopy_sn: row.canopy_sn,
@@ -691,7 +724,11 @@ export default class InventoryScreen extends React.Component {
             updateCanopyRow={this.updateCanopyRow}
         />;
     }
-
+    /**
+    * Update the detail display on the inventory screen to show a reserve canopy display.
+    * @param {Object} row - the row of the all items view to display info for 
+    * @param {Object} itemInfo - an object containing the fields in the row that are in the Item table.
+    */
     reserveCanopySelected(row, itemInfo) {
         var canopyInfo = {
             rig_id: row.rig_id,
@@ -707,6 +744,11 @@ export default class InventoryScreen extends React.Component {
         />;
     }
 
+    /**
+    * Update the detail display on the inventory screen to show a container display.
+    * @param {Object} row - the row of the all items view to display info for 
+    * @param {Object} itemInfo - an object containing the fields in the row that are in the Item table.
+    */
     containerSelected(row, itemInfo) {
         var containerInfo = {
             container_sn: row.container_sn
@@ -718,6 +760,11 @@ export default class InventoryScreen extends React.Component {
         />;
     }
 
+    /**
+     * Update the detail display on the inventory screen to show an AAD display.
+     * @param {Object} row - the row of the all items view to display info for 
+     * @param {Object} itemInfo - an object containing the fields in the row that are in the Item table.
+     */
     aadSelected(row, itemInfo) {
         var AADInfo = {
             aad_sn: row.aad_sn,

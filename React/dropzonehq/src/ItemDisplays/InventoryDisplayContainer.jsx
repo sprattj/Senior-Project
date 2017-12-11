@@ -3,14 +3,16 @@ import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Card, Ca
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import InventoryDisplayItem from './InventoryDisplayItem.jsx';
+import Binder from '../Binder.js';
 
 export default class InventoryDisplayContainer extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.container_snChanged = this.container_snChanged.bind(this);
-        this.updateContainerRow = this.updateContainerRow.bind(this);
+        //create a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, InventoryDisplayContainer);
 
         this.state = {
             containerInfo: this.props.containerInfo

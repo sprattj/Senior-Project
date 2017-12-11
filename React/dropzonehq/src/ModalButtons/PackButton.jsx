@@ -12,6 +12,7 @@ export default class PackButton extends React.Component {
 
   constructor(props) {
     super(props);
+    
     //bind our onchange methods so they can be passed properly 
     //with this.methodName from the onChange props in render
     this.toggleVerifyModal = this.toggleVerifyModal.bind(this);

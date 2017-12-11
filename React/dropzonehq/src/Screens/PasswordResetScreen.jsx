@@ -1,14 +1,16 @@
 import React from 'react';
 import { Container, Button, Input, Row, Col, InputGroup, InputGroupAddon, Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import Binder from '../Binder.js';
 
 export default class PasswordResetScreen extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
-        this.submit = this.submit.bind(this);
-        this.updateEmail = this.updateEmail.bind(this);
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, PasswordResetScreen);
 
         this.state = {
             email: "",
@@ -16,17 +18,17 @@ export default class PasswordResetScreen extends React.Component {
         }
     }
 
-    updateEmail(e){
+    updateEmail(e) {
         this.setState({
             email: e.target.value
         });
     }
 
-    submit(){
+    submit() {
         var warning;
-        if(this.state.email === ""){
+        if (this.state.email === "") {
             warning = <Alert color="danger">Please enter a valid email.</Alert>;
-        }else{
+        } else {
             warning = ""
         }
         this.setState({
@@ -51,7 +53,7 @@ export default class PasswordResetScreen extends React.Component {
                     </Col>
                     <Col className="mainscreen_col" xs={{ size: 12, offset: 0 }} sm={{ size: 10, offset: 1 }} md={{ size: 8, offset: 2 }} lg={{ size: 6, offset: 3 }}>
                         {this.state.warning}
-                    </Col> 
+                    </Col>
                 </Row>
             </Container>
         );
