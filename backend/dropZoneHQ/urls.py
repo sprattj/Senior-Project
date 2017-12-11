@@ -65,7 +65,7 @@ urlpatterns = [
     url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
     url(r'^(?i)login/$', LoginDropzone.as_view(), name='login'),
     url(r'^(?i)logout/$', LogoutDropzone.as_view(), name='logout'),
-    url(fr'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
+    url(r'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
     url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='dropzone_password_change_done',),
     url(r'^password_reset', auth_views.PasswordResetView.as_view(), name='dropzone_password_reset'),
     url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='dropzone_password_reset_done'),
