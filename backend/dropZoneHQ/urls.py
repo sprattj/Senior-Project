@@ -61,7 +61,7 @@ urlpatterns = [
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
-    url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
+    url(r'^(?i)dropzones-detail/$', DropzoneDetail.as_view()),
     url(r'^(?i)login/$', loginDropzone, name='login'),
     url(r'^(?i)logout/$', logoutDropzone, name='logout'),
     url(r'^(?i)temp_reset/(?P<hash>\w+)/$', reset_url_dropzone, name="password_reset_temp"),
@@ -70,7 +70,15 @@ urlpatterns = [
     url(r'^(?i)create_dropzone/$', createDropzone, name='create_dropzone'),
     url(r'^(?i)dropzone/(?P<pk>[0-9]+)/create_employee/$', EmployeeView, name='create_employee'),
     url(r'^(?i)auth_employee/', authenticateUserPin, name='authenticate_user_pin'),
-    url(r'^(?i)auth_name_dropzone/', authenticateNameDropzone, name='authenticate_name_dropzone')
+    url(r'^(?i)auth_name_dropzone/', authenticateNameDropzone, name='authenticate_name_dropzone'),
+    url(r'^(?i)stat[s]?/total_tandem_count/(?P<pk>[0-9]+)[/]?S', EmpTandemCount.as_view()),
+    url(r'^(?i)stat[s]?/total_student_count/(?P<pk>[0-9]+)[/]?S', EmpStudentCount.as_view()),
+    url(r'^(?i)stat[s]?/yearly_jump_count/(?P<pk>[0-9]+)[/]?$', EmpYearlyJumpCount.as_view()),
+    url(r'^(?i)stat[s]?/monthly_jump_count/(?P<pk>[0-9]+)[/]?$', EmpMonthlyJumpCount.as_view()),
+    url(r'^(?i)stat[s]?/weekly_jump_count/(?P<pk>[0-9]+)[/]?$', EmpWeeklyJumpCount.as_view()),
+    url(r'^(?i)stat[s]?/yearly_pack_count/(?P<pk>[0-9]+[/]?$)', EmpYearlyPackCount.as_view()),
+    url(r'^(?i)stat[s]?/monthly_pack_count/(?P<pk>[0-9]+[/]?$)', EmpMonthlyPackCount.as_view()),
+    url(r'^(?i)stat[s]?/weekly_pack_count/(?P<pk>[0-9]+[/]?$)', EmpWeeklyPackCount.as_view())
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += [
     url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')

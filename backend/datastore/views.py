@@ -154,7 +154,6 @@ class ContainerDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin)
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
         
-        
 
 class DropzoneList(generics.ListCreateAPIView, LoginRequiredMixin):
     queryset = Dropzones.objects.all()
@@ -246,11 +245,14 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
                     recipient_list=[emp.email],
                     fail_silently=False
                 )
-                return JsonResponse(data= serializer.data ,status=201)
+                return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         except:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 class ItemList(generics.ListCreateAPIView, LoginRequiredMixin):
     queryset = Items.objects.all()
@@ -285,8 +287,13 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         """
         print(request.data.get('item')[0])
         """
+        item = Items.objects.get(item_id=request.data.get('item_id'))
+        item_id = item.item_id
+        '''
         item = Items.objects.get(item_id=request.data.get('item')[0])
         item_id = item.item_id
+        print(item_id)
+        '''
 
         # employee = Employees.objects.get(employee_id=request.data.get('employee')[0])
         # employee_id = employee.employee_id
@@ -569,6 +576,7 @@ def post_emp_signout(employee_id, signout_id):
                                      timestamp=datetime.datetime.now())
     return
 
+
 def post_rental(request):
     renter_name = request.data.get('renter_name')
 
@@ -580,15 +588,18 @@ def post_rental(request):
     rental_id = rental_id_dict.get("rental_id", "")
     return rental_id
 
+
 def post_employee_rental(employee_id, rental_id):
     EmployeesRentals.objects.create(employee_id=employee_id,
                                     rental_id=rental_id)
     return
 
+
 def post_item_rental(item_id, rental_id):
     ItemsRentals.objects.create(item_id=item_id,
                                 rental_id=rental_id)
     return
+
 
 def patch_emp_signout(employee_id, signout_id):
     EmployeesSignouts.objects.create(signout_id=signout_id,
@@ -597,19 +608,96 @@ def patch_emp_signout(employee_id, signout_id):
                                      timestamp=datetime.datetime.now())
     return
 
-'''
-data = {'employee_id': employee_id, 'signout_id': signout_id, 'packed_signout': EmployeesSignouts.PACKED,
-        'timestamp': datetime.datetime.now()}
-print(data)
 
-serializer = EmployeeSignoutSerializer(data=data)
-print(serializer.get_fields())
-if serializer.is_valid():
-    print(serializer.validated_data)
-    # serializer.save()
-    return
-print(serializer.is_valid())
-'''
+class EmpTandemCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        tjump_count = EmployeesVsSignoutsTandem.objects.filter(jumpmaster_id=employee_id).count()
+        return JsonResponse(data=tjump_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpStudentCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        sjump_count = EmployeesVsSignoutsStudent.objects.filter(jumpmaster_id=self.kwargs.get('pk')).count()
+        return JsonResponse(data=sjump_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpYearlyJumpCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=365)
+        jump_count = get_jump_count(employee_id=employee_id, start_date=start_date, end_date=end_date)
+        return JsonResponse(data=jump_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpMonthlyJumpCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=30)
+        jump_count = get_jump_count(employee_id, start_date, end_date)
+        return JsonResponse(data=jump_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpWeeklyJumpCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=7)
+        jump_count = get_jump_count(employee_id=employee_id, start_date=start_date, end_date=end_date)
+        return JsonResponse(data=jump_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpWeeklyPackCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        # TODO start_date needs to be gathered from request -- format?
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=7)
+        pack_count = get_pack_count(self.kwargs.get('pk'), start_date, end_date)
+        return JsonResponse(data=pack_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpMonthlyPackCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        # TODO start_date needs to be gathered from request -- format?
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=30)
+        pack_count = get_pack_count(self.kwargs.get('pk'), start_date, end_date)
+        return JsonResponse(data=pack_count, status=status.HTTP_200_OK, safe=False)
+
+
+class EmpYearlyPackCount(generics.RetrieveAPIView):
+
+    def get(self, request, *args, **kwargs):
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=365)
+        pack_count = get_pack_count(self.kwargs.get('pk'), start_date, end_date)
+        return JsonResponse(data=pack_count, status=status.HTTP_200_OK, safe=False)
+
+
+def get_jump_count(employee_id, start_date, end_date):
+
+    jump_count = EmployeesSignouts.objects.filter(employee_id=employee_id,
+                                                  timestamp__lte=start_date,
+                                                  timestamp__gte=end_date,
+                                                  packed_signout=EmployeesSignouts.SIGNOUT).count()
+    return jump_count
+
+
+def get_pack_count(employee_id, start_date, end_date):
+    pack_count = EmployeesSignouts.objects.filter(employee_id=employee_id,
+                                                  timestamp__lte=start_date,
+                                                  timestamp__gte=end_date,
+                                                  packed_signout=EmployeesSignouts.PACKED).count()
+    return pack_count
 
 
 def get_emp_full_name(employee_id):
