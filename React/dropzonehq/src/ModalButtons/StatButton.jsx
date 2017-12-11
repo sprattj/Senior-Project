@@ -6,6 +6,7 @@ import TandemInstructorStatDisplay from '../StatDisplays/TandemInstructorStatDis
 import AFPInstructorStatDisplay from '../StatDisplays/AFPInstructorStatDisplay.jsx';
 import PackingStatDisplay from '../StatDisplays/PackingStatDisplay.jsx';
 import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 
 
@@ -13,8 +14,10 @@ export default class StatButton extends React.Component {
 
     constructor(props) {
         super(props);
-        this.toggle = this.toggle.bind(this);
-
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, RentalScreen);
+        
         this.state = {
             total_tandem_count: 0,
             total_student_count: 0,
