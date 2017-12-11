@@ -12,7 +12,6 @@ from django.views import View
 import datetime
 
 
-
 class AADList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
@@ -230,40 +229,6 @@ class EmployeeDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, gen
     role = ['admin']
 
 
-        try:
-            dropzone = Dropzones.objects.get(request.POST['dropzone'])
-            first = request.POST['first_name']
-            last = request.POST['last_name']
-            email = request.POST['email']
-            role = request.POST['role']
-            dev = request.POST['dev']
-            if Employees.employee_email_in_use(email) is not None:
-                emp = Employees.objects.create(first_name=first, last_name=last, email=email, dropzone=dropzone)
-                emp.dropzone = request.user
-                if dev is True or None:
-                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
-                else:
-                    emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
-                emp.roles = role
-                emp.save()
-                serializer = EmployeeSerializer(emp)
-                send_mail(
-                    subject=util.employeePinTo(),
-                    message=util.createPinResetMessage(pin),
-                    from_email=util.fromEmailString(),
-                    recipient_list=[emp.email],
-                    fail_silently=False
-                )
-                return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-class ItemList(generics.ListCreateAPIView, LoginRequiredMixin):
 class ItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
