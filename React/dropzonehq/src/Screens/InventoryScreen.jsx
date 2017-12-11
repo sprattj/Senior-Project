@@ -30,7 +30,37 @@ const CONTAINER_ITEM_TYPE_ID = 4;
 const RIG_ITEM_TYPE_ID = 3;
 // const RESERVE_CANOPY_ITEM_TYPE_ID = 2;
 
+/**
+ * InventoryScreen displays all items and allows items to be edited,
+ * added, or deleted.
+ * @module InventoryScreen
+ */
+/** @const {Object} ITEM_TYPES - An object whose keys are the item type in all caps,
+ * and whose values are the database entry for the item type */
+const ITEM_TYPES = {
+    CANOPY: "canopy",
+    CONTAINER: "container",
+    AAD: "aad",
+    RIG: "rig",
+    RESERVE: "reserve",
+    RESERVE_CANOPY: "reserve_canopy"
+}
 
+/** @const {Object} ITEM_TYPE_ACCESSORS - An object whose keys are item type constants,
+ * and whose values are the endpoint and map name accessors. 
+ * Usage: this[ITEM_TYPE_ACCESSORS[ITEM_TYPES.CANOPY]] to access the this.canopies map,
+ * or endpoint = ITEM_TYPE_ACCESSORS[ITEM_TYPES.CANOPY] to get the base canopies endpoint*/
+const ITEM_TYPE_ACCESSORS = {
+    [ITEM_TYPES.CANOPY]: "canopies",
+    [ITEM_TYPES.CONTAINER]: "containers",
+    [ITEM_TYPES.AAD]: "aads",
+    [ITEM_TYPES.RIG]: "rigs",
+    [ITEM_TYPES.RESERVE_CANOPY]: "reserves",
+    [ITEM_TYPES.RESERVE]: "reserves"
+}
+
+/** * InventoryScreen displays all items and allows items to be edited,
+ * added, or deleted.  */
 export default class InventoryScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -145,7 +175,7 @@ export default class InventoryScreen extends React.Component {
      * and update the ItemTable's state to display them.
      */
     fetchRows() {
-        var endpoint = this.URLsection
+        var endpoint = this.URLsection;
         var self = this;
         var successMsg = "Fetched inventory data.";
         var errorMsg = "Problem fetching inventory data.";
@@ -179,7 +209,7 @@ export default class InventoryScreen extends React.Component {
     }
 
 
-    updateAADRow(itemInfo, AADInfo) {
+/*     updateAADRow(itemInfo, AADInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -246,9 +276,9 @@ export default class InventoryScreen extends React.Component {
             }
 
         }).catch(function (error) {
-            toast.error(error + "\n" + url);
+            // toast.error(error + "\n" + url);
         });
-    } 
+    }  */
     /**
      * Add a new container to the backend and display it on the frontend.
      * @param {Object} itemInfo - the fields&values from Item needed to perform this request
@@ -873,11 +903,11 @@ export default class InventoryScreen extends React.Component {
         });
     }
 
-    addAAD(itemInfo, AADInfo) {
+/*     addAAD(itemInfo, AADInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
-        var url = rootURL + "/AADs/";
+        // var url = rootURL + "/AADs/";
 
         console.log("in addAAD: itemInfo.item_type_id: " + itemInfo.item_type_id);
 
@@ -936,11 +966,11 @@ export default class InventoryScreen extends React.Component {
                 })
             }
         }).catch(function (error) {
-            toast.error(error + "\n" + url);
+           // toast.error(error + "\n" + url);
         });
-    }
+    } */
 
-    addContainer(itemInfo, containerInfo) {
+/*     addContainer(itemInfo, containerInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -991,9 +1021,9 @@ export default class InventoryScreen extends React.Component {
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
-    }
+    } */
 
-    addCanopy(itemInfo, canopyInfo) {
+/*     addCanopy(itemInfo, canopyInfo) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();
 
@@ -1050,7 +1080,7 @@ export default class InventoryScreen extends React.Component {
         }).catch(function (error) {
             toast.error(error + "\n" + url);
         });
-    }
+    } */
 
     addItemfilterChanged(selection)
     {

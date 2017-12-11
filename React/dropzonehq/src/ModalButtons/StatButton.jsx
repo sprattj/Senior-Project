@@ -16,14 +16,14 @@ export default class StatButton extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            total_tandem_count = 0,
-            total_student_count = 0,
-            yearly_jump_count = 0,
-            monthly_jump_count = 0,
-            weekly_jump_count = 0,
-            yearly_jump_count = 0,
-            monthly_jump_count = 0,
-            weekly_jump_count = 0
+            total_tandem_count: 0,
+            total_student_count: 0,
+            yearly_jump_count: 0,
+            monthly_jump_count: 0,
+            weekly_jump_count: 0,
+            yearly_jump_count: 0,
+            monthly_jump_count: 0,
+            weekly_jump_count: 0
         }
     }
 
