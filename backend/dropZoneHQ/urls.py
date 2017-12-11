@@ -65,7 +65,7 @@ urlpatterns = [
     url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
     url(r'^(?i)login/$', LoginDropzone.as_view(), name='login'),
     url(r'^(?i)logout/$', LogoutDropzone.as_view(), name='logout'),
-    url(r'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
+    url(fr'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
     url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='dropzone_password_change_done',),
     url(r'^password_reset', auth_views.PasswordResetView.as_view(), name='dropzone_password_reset'),
     url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='dropzone_password_reset_done'),
@@ -75,6 +75,7 @@ urlpatterns = [
     url(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='dropzone_password_reset_complete'),
     url(r'^(?i)reset_employee/$', PasswordResetEmployee.as_view(), name='pin reset'),
     url(r'^(?i)auth_employee/$', AuthenticateEmployeePin.as_view(), name='authenticate_user_pin'),
+    url(r'^(?i)auth_dropzone/$', CheckSession.as_view(), name='authenticate_user'),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += [
     url(r'^.*/', TemplateView.as_view(template_name="index.html"), name='base')

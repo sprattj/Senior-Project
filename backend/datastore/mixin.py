@@ -16,7 +16,7 @@ class CheckCookieMixin(object):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     def dispatch(self, request, *args, **kwargs):
-        if not self.check_cookie(request.session['id']):
+        if not self.check_cookie(request.session['pin']):
             return self.cookie_check_failed()
         else:
             return super(CheckCookieMixin, self).dispatch(request)

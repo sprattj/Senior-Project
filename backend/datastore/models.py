@@ -137,7 +137,8 @@ class Dropzones(models.Model):
 
     @receiver(post_save, sender=User)
     def save_user_profile(self, sender, instance, **kwargs):
-        instance.dropzone.save()
+        #instance.dropzone.save()
+        return None
 
     def get_dropzone(self, pk=None):
         try:
