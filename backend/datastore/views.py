@@ -11,7 +11,7 @@ import datetime
 from django.core.mail import send_mail
 
 
-class AADList(generics.ListCreateAPIView, LoginRequiredMixin):
+class AADList(generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
@@ -32,16 +32,18 @@ class AADList(generics.ListCreateAPIView, LoginRequiredMixin):
                             is_available=is_available,
                             is_on_rig=False)
         item_id = item.item_id
+        item.save()
         #TODO take deployment timestamp as a value?
-        AutomaticActivationDevices.objects.create(item_id=item_id,
+        aad = AutomaticActivationDevices.objects.create(item_id=item_id,
                                 deployment_timestamp=datetime.datetime.now(),
                                 lifespan=lifespan,
                                 serial_number=serial_number)
+        aad.save()
         data = {'item_id': item_id, 'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
-class AADDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class AADDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
 
@@ -60,7 +62,7 @@ class AADDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
+class CanopyList(generics.ListCreateAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
@@ -82,17 +84,19 @@ class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
                             is_available=is_available,
                             is_on_rig=False)
         item_id = item.item_id
-        Canopies.objects.create(item_id=item_id,
+        item.save()
+        canopy = Canopies.objects.create(item_id=item_id,
                                 rig_id=None,
                                 serial_number=serial_number,
                                 size=size,
                                 date_of_manufacture=date_of_manufacture,
                                 jump_count=0)
+        canopy.save()
         data = {'item_id': item_id, 'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
-class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class CanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
 
@@ -113,7 +117,7 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ContainerList(generics.ListCreateAPIView):
     queryset = Containers.objects.all()
     serializer_class = ContainerSerializer
 
@@ -133,12 +137,14 @@ class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
                             is_available=is_available,
                             is_on_rig=False)
         item_id = item.item_id
-        Containers.objects.create(item_id=item_id,
+        item.save()
+        container = Containers.objects.create(item_id=item_id,
                                 serial_number=serial_number)
+        container.save()
         data = {'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
-class ContainerDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ContainerDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
@@ -156,22 +162,22 @@ class ContainerDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin)
         
         
 
-class DropzoneList(generics.ListCreateAPIView, LoginRequiredMixin):
+class DropzoneList(generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
 
-class DropzoneDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class DropzoneDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
 
-class EmployeeEmployeeRoleList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeEmployeeRoleList(generics.ListCreateAPIView):
     queryset = EmployeesEmployeeRoles.objects.all()
     serializer_class = EmployeeEmployeeRoleSerializer
 
 
-class EmployeeEmployeeRoleDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeEmployeeRoleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesEmployeeRoles.objects.all()
     serializer_class = EmployeeEmployeeRoleSerializer
 
@@ -216,7 +222,7 @@ class EmployeeList(generics.ListCreateAPIView):
             return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
 
-class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
 
@@ -252,32 +258,32 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         except:
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
-class ItemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ItemList(generics.ListCreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
 
-class ItemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
 
-class ItemTypeList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ItemTypeList(generics.ListCreateAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
 
-class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
 
-class RentableItemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RentableItemList(generics.ListCreateAPIView):
     queryset = AllItems.objects.all().filter(is_rentable=1)
     serializer_class = AllItemSerializer
 
 
-class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RentalList(generics.ListCreateAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
@@ -297,15 +303,15 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
-class RentalDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class RentalDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
-class ActiveRentalList(generics.ListAPIView, LoginRequiredMixin):
+class ActiveRentalList(generics.ListAPIView):
     queryset = Rentals.objects.all().filter(returned_date=None)
     serializer_class = RentalSerializer
 
-class ReserveCanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ReserveCanopyList(generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
 
@@ -326,21 +332,23 @@ class ReserveCanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
                             is_rentable=is_rentable,
                             is_rented=False,
                             is_on_rig=False)
-        Canopies.objects.create(item_id=item_id,
+        canopy = Canopies.objects.create(item_id=item_id,
                                 rig_id=None,
                                 serial_number=serial_number,
                                 size=size,
                                 date_of_manufacture=date_of_manufacture,
                                 jump_count=0)
-        ReserveCanopies.objects.create(item_id=item_id,
+        canopy.save()
+        reserve = ReserveCanopies.objects.create(item_id=item_id,
                                         last_repack_date=None,
                                         next_repack_date=None,
                                         packed_by_employee_id=None,
                                         ride_count=0)
+        reserve.save()
         data = {'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
-class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
     
@@ -363,108 +371,108 @@ class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMi
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
-class RigList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RigList(generics.ListCreateAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
 
 
-class AvailableStudentRigList(generics.ListAPIView, LoginRequiredMixin):
+class AvailableStudentRigList(generics.ListAPIView):
     queryset = Rigs.objects.all().filter(istandem=0)
     serializer_class = RigSerializer
 
 
-class AvailableTandemRigList(generics.ListAPIView, LoginRequiredMixin):
+class AvailableTandemRigList(generics.ListAPIView):
     queryset = Rigs.objects.all().filter(istandem=1)
     serializer_class = RigSerializer
 
 
-class RigDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class RigDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
 
 
-class RigAuditTrailList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RigAuditTrailList(generics.ListCreateAPIView):
     queryset = RigsAuditTrail.objects.all()
     serializer_class = RigAuditTrailSerializer
 
 
-class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = RigsAuditTrail.objects.all()
     serializer_class = RigAuditTrailSerializer
 
 
-class RigComponentDetailList(generics.ListAPIView, LoginRequiredMixin):
+class RigComponentDetailList(generics.ListAPIView):
     queryset = RigComponentDetails.objects.all()
     serializer_class = RigComponentDetailSerializer
 
 
-class ClaimList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
-class ClaimWarningList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ClaimWarningList(generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.PENDING)
     serializer_class = ClaimSerializer
 
-class ClaimQueueList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ClaimQueueList(generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.IN_PROGRESS)
     serializer_class = ClaimSerializer
 
-class ClaimDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ClaimDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
 
-class PendingClaimList(generics.ListCreateAPIView, LoginRequiredMixin):
+class PendingClaimList(generics.ListCreateAPIView):
     queryset = Claims.objects.all().filter(status='Pending')
     serializer_class = ClaimSerializer
 
 
-class InProgressClaimList(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class InProgressClaimList(generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all().filter(status='In-Progress')
     serializer_class = ClaimSerializer
 
 
-class SignoutList(generics.ListCreateAPIView, LoginRequiredMixin):
+class SignoutList(generics.ListCreateAPIView):
     queryset = Signouts.objects.all()
     serializer_class = SignoutSerializer
 
 
-class SignoutDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class SignoutDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Signouts.objects.all()
     serializer_class = SignoutSerializer
 
 
-class AllCanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
+class AllCanopyList(generics.ListCreateAPIView):
     queryset = AllCanopies.objects.all()
     serializer_class = AllCanopySerializer
 
 
-class AllCanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class AllCanopyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AllCanopies.objects.all()
     serializer_class = AllCanopySerializer
 
 
-class AllItemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class AllItemList(generics.ListCreateAPIView):
     queryset = AllItems.objects.all()
     serializer_class = AllItemSerializer
 
 
-class AllItemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class AllItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = AllItems.objects.all()
     serializer_class = AllItemSerializer
 
 
-class EmployeeVsSignoutList(generics.ListAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutList(generics.ListAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-class EmployeeVsSignoutDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-class EmployeeVsSignoutStudentList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutStudentList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -485,7 +493,7 @@ class EmployeeVsSignoutStudentList(generics.ListCreateAPIView, LoginRequiredMixi
                     'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
-class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -511,7 +519,7 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView, Logi
         return JsonResponse(data=data, status=status.HTTP_204_NO_CONTENT)
 
 
-class EmployeeVsSignoutTandemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutTandemList(generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -533,7 +541,7 @@ class EmployeeVsSignoutTandemList(generics.ListCreateAPIView, LoginRequiredMixin
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
 
-class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
@@ -655,6 +663,7 @@ def loginDropzone(request):
 def logoutDropzone(request):
     logout(request)
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
 
 
 
@@ -812,3 +821,77 @@ def reset_url_dropzone(request, hash=None):
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     except:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmpTandemCount(generics.RetrieveAPIView):
+    
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        tjump_count = EmployeesVsSignoutsTandem.objects.filter(jumpmaster_id=employee_id).count()
+        return JsonResponse(data=tjump_count, status=status.HTTP_200_OK, safe=False)
+
+class EmpStudentCount(generics.RetrieveAPIView):
+    
+    def get(self, request, *args, **kwargs):
+        sjump_count = EmployeesVsSignoutsStudent.objects.filter(jumpmaster_id=self.kwargs.get('pk')).count()
+        return JsonResponse(data=sjump_count, status=status.HTTP_200_OK, safe=False)
+
+class EmpYearlyJumpCount(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=365)
+        jump_count = get_jump_count(employee_id=employee_id, start_date=start_date, end_date=end_date)
+        return JsonResponse(data=jump_count, status=status.HTTP_200_OK, safe=False)
+
+class EmpMonthlyJumpCount(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=30)
+        jump_count = get_jump_count(employee_id, start_date, end_date)
+        return JsonResponse(data=jump_count, status=status.HTTP_200_OK, safe=False)
+class EmpWeeklyJumpCount(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        employee_id = self.kwargs.get('pk')
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=7)
+        jump_count = get_jump_count(employee_id=employee_id, start_date=start_date, end_date=end_date)
+        return JsonResponse(data=jump_count, status=status.HTTP_200_OK, safe=False)
+
+class EmpWeeklyPackCount(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        # TODO start_date needs to be gathered from request -- format?
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=7)
+        pack_count = get_pack_count(self.kwargs.get('pk'), start_date, end_date)
+        return JsonResponse(data=pack_count, status=status.HTTP_200_OK, safe=False)
+
+class EmpMonthlyPackCount(generics.RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        # TODO start_date needs to be gathered from request -- format?
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=30)
+        pack_count = get_pack_count(self.kwargs.get('pk'), start_date, end_date)
+        return JsonResponse(data=pack_count, status=status.HTTP_200_OK, safe=False)
+
+class EmpYearlyPackCount(generics.RetrieveAPIView):
+    queryset = EmployeesSignouts.objects.all().count()
+    def get(self, request, *args, **kwargs):
+        start_date = datetime.datetime.now()
+        end_date = start_date - datetime.timedelta(days=365)
+        pack_count = get_pack_count(self.kwargs.get('pk'), start_date, end_date)
+        return JsonResponse(data=pack_count, status=status.HTTP_200_OK, safe=False)
+
+def get_jump_count(employee_id, start_date, end_date):
+    jump_count = EmployeesSignouts.objects.filter(employee_id=employee_id,
+                                                  timestamp__lte=start_date,
+                                                  timestamp__gte=end_date,
+                                                  packed_signout=EmployeesSignouts.SIGNOUT).count()
+    return jump_count
+def get_pack_count(employee_id, start_date, end_date):
+    pack_count = EmployeesSignouts.objects.filter(employee_id=employee_id,
+                                                  timestamp__lte=start_date,
+                                                  timestamp__gte=end_date,
+                                                  packed_signout=EmployeesSignouts.PACKED).count()
+    return pack_count

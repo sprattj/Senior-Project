@@ -8,6 +8,34 @@ export default class RequestHandler {
         this.rootURL = "http://127.0.0.1:8000/";
     }
     
+    getNoToast = function(endpoint, callback){
+        require('isomorphic-fetch');
+        require('es6-promise').polyfill();
+
+        var url = this.rootURL + endpoint;
+        
+        var data = {
+            method: "GET",
+            mode: 'CORS',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        };
+        
+        fetch(url, data)
+        .then(function (response) {
+            if (response.status >= 400) {
+                throw new Error("\n Bad response " + response.status + " from server." 
+                            + "\n URL:" + url);
+            }
+            return response.json();
+        }).then(function (responseData) {
+            callback(responseData);
+        }).catch(function (error) {
+            toast.error(error.message);
+        });
+    }
     makeRequest(endpoint, method, variables, successMsg, errorMsg, callback) {
         require('isomorphic-fetch');
         require('es6-promise').polyfill();

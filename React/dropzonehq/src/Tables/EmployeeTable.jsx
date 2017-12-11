@@ -39,10 +39,6 @@ export default class EmployeeTable extends React.Component {
         }, {
           Header: 'Actions',
           accessor: 'actions'
-        },
-        {
-          Header: 'Status',
-          accessor: 'is_active'
         }
       ],
       rows: [],
@@ -196,7 +192,7 @@ export default class EmployeeTable extends React.Component {
 
   editEmployee(id, firstName, lastName, email, jobs) {
 
-    var endpoint = this.URLsection + "/" + id;
+    var endpoint = this.URLsection + id;
     var successMsg = "Edited info for " + firstName + " " + lastName + " (" + id + ").";
     var errorMsg = "Problem editing info for " + firstName + " " + lastName + " (" + id + ").";
     var self = this;
@@ -263,7 +259,7 @@ export default class EmployeeTable extends React.Component {
   }
 
   toggleEmployeeStatus(id, status) {
-    
+    console.log(id, status)
     var endpoint = this.URLsection + id + "/";
     var self = this;
     var variables = {
@@ -296,10 +292,11 @@ export default class EmployeeTable extends React.Component {
       self.setState({
         rows: newRows
       })
-      var handler = new RequestHandler();
-      handler.patch(endpoint, variables, successMsg, errorMsg, callback);
-      return true;
+      
     };
+    var handler = new RequestHandler();
+    handler.patch(endpoint, variables, successMsg, errorMsg, callback);
+    return true;
   }
 
   render() {

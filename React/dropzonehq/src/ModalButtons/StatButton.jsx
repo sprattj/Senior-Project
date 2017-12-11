@@ -21,7 +21,7 @@ export default class StatButton extends React.Component {
         this.state = {
             total_tandem_count: 0,
             total_student_count: 0,
-            yearly_jump_count: 0,
+            yearly_tandem_count: 0,
             monthly_jump_count: 0,
             weekly_jump_count: 0,
             yearly_jump_count: 0,
@@ -29,7 +29,7 @@ export default class StatButton extends React.Component {
             weekly_jump_count: 0
         }
 
-        this.fetchTotalTandems(this.props.id);
+        //this.fetchTotalTandems(this.props.id);
         this.fetchTandemsWeek(this.props.id);
         this.fetchTandemsMonth(this.props.id);
         this.fetchTandemsYear(this.props.id);
@@ -42,22 +42,7 @@ export default class StatButton extends React.Component {
         
     }
 
-    //Method call to retrieve statistics, store them in the state, and call fetchRows()
-    fetchTotalTandems(id) {
-        
-        //save 'this' so we can reference it in callback
-        var self = this;
-        var endpoint = "stats/total_tandem_count/" + id;
-        var successMsg = "Fetched employee data.";
-        var errorMsg = "Problem fetching employee data.";
-        var callback = function (rowData) {
-            self.setState({ total_tandem_count: rowData });
-        }
-
-        var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
-    }
-
+    
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
     fetchTandemsYear(id) {
         
@@ -71,7 +56,7 @@ export default class StatButton extends React.Component {
         }
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.getNoToast(endpoint, callback);
     }
 
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
@@ -87,7 +72,7 @@ export default class StatButton extends React.Component {
         }
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.getNoToast(endpoint, callback);
     }
 
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
@@ -103,7 +88,7 @@ export default class StatButton extends React.Component {
         }
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.getNoToast(endpoint, callback);
     }
 
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
@@ -119,7 +104,7 @@ export default class StatButton extends React.Component {
         }
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.getNoToast(endpoint, callback);
     }
 
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
@@ -135,7 +120,7 @@ export default class StatButton extends React.Component {
         }
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.getNoToast(endpoint, callback);
     }
 
     //Method call to retrieve statistics, store them in the state, and call fetchRows()
@@ -151,7 +136,7 @@ export default class StatButton extends React.Component {
         }
 
         var handler = new RequestHandler();
-        handler.get(endpoint, successMsg, errorMsg, callback);
+        handler.getNoToast(endpoint, callback);
     }
 
     /*
@@ -167,23 +152,19 @@ export default class StatButton extends React.Component {
 
     render() {
 
-        const modalContent =
+        var modalContent =
             <Form>
                 <Card>
                     <CardBlock>
-                        <BioStatDisplay firstName={this.props.firstName}
-                            lastName={this.props.lastName}
-                        />
+                    <h2>{this.props.firstName} {this.props.lastName}</h2>
+                    <p>Jumps This Week: {this.state.weekly_jump_count}</p>
+                    <p>Jumps This Month: {this.state.monthly_jump_count}</p>
+                    <p>Jumps This Year: {this.state.yearly_tandem_count}</p>
 
-                        <TandemInstructorStatDisplay
-                            tandemJumpsWeek={this.weekly_jump_count}
-                            tandemJumpsMonth={this.monthly_jump_count}
-                            tandemJumpsYear={this.yearly_tandem_count} />
-
-                        <PackingStatDisplay
-                            tandemPackedWeek={this.weekly_pack_count}
-                            tandemPackedMonth={this.monthly_pack_count}
-                            tandemPackedYear={this.yearly_pack_count} />
+                    <p>Rigs Packed This Week: {this.state.weekly_pack_count}</p>
+                    <p>Rigs Packed This Month: {this.state.monthly_pack_count}</p>
+                    <p>Rigs Packed This Year: {this.state.yearly_pack_count}</p>
+                       
                     </CardBlock>
                 </Card>
             </Form>;
@@ -201,3 +182,18 @@ export default class StatButton extends React.Component {
         );
     }
 }
+
+/*
+ <TandemInstructorStatDisplay
+                            tandemJumpsWeek={this.state.weekly_jump_count}
+                            tandemJumpsMonth={this.state.monthly_jump_count}
+                            tandemJumpsYear={this.state.yearly_tandem_count} />
+
+                        <PackingStatDisplay
+                            tandemPackedWeek={this.state.weekly_pack_count}
+                            tandemPackedMonth={this.state.monthly_pack_count}
+                            tandemPackedYear={this.state.yearly_pack_count} />
+
+
+
+*/

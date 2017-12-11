@@ -32,7 +32,7 @@ export default class MainView extends React.Component {
                 <ToastContainer
                     position="top-center"
                     type="error"
-                    autoClose={7000}
+                    autoClose={2000}
                     hideProgressBar={false}
                     newestOnTop
                     closeOnClick
