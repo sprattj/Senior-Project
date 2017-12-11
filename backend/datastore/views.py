@@ -3,17 +3,20 @@ from django.http import JsonResponse, HttpResponse
 from .serializers import *
 from . import util
 from backend.datastore.models import *
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model, login, logout, authenticate
-from django.contrib.auth import views as auth_views
+from backend.datastore import mixin
+from django.contrib.auth import login, logout, authenticate
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
 import datetime
-from django.core.mail import send_mail
 
 
-class AADList(generics.ListCreateAPIView, LoginRequiredMixin):
+
+class AADList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
+    role = ['admin', 'loft_head', 'loft']
 
     def post(self, request, *args, **kwargs):
         item_type_id = request.data.get('item_type_id')
@@ -41,9 +44,10 @@ class AADList(generics.ListCreateAPIView, LoginRequiredMixin):
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
-class AADDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class AADDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = AutomaticActivationDevices.objects.all()
     serializer_class = AADSerializer
+    role = ['admin', 'loft_head', 'loft']
 
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
@@ -60,9 +64,10 @@ class AADDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
+class CanopyList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
+    role = ['admin', 'loft_head', 'loft']
 
     def post(self, request, *args, **kwargs):
         item_type_id = request.data.get('item_type_id')
@@ -92,9 +97,10 @@ class CanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
 
-class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class CanopyDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Canopies.objects.all()
     serializer_class = CanopySerializer
+    role = ['admin', 'loft_head', 'loft']
 
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
@@ -113,9 +119,10 @@ class CanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
-class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ContainerList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Containers.objects.all()
     serializer_class = ContainerSerializer
+    role = ['admin', 'loft_head', 'loft']
 
     def post(self, request, *args, **kwargs):
         item_type_id = request.data.get('item_type_id')
@@ -138,7 +145,9 @@ class ContainerList(generics.ListCreateAPIView, LoginRequiredMixin):
         data = {'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
-class ContainerDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+
+class ContainerDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
+    role = ['admin', 'loft_head', 'loft']
 
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
@@ -153,73 +162,73 @@ class ContainerDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin)
         serializer.is_valid(raise_exception=True)
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
-        
 
-class DropzoneList(generics.ListCreateAPIView, LoginRequiredMixin):
+
+class DropzoneList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
 
-class DropzoneDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class DropzoneDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Dropzones.objects.all()
     serializer_class = DropZoneSerializer
 
 
-class EmployeeEmployeeRoleList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeEmployeeRoleList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = EmployeesEmployeeRoles.objects.all()
     serializer_class = EmployeeEmployeeRoleSerializer
 
 
-class EmployeeEmployeeRoleDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeEmployeeRoleDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesEmployeeRoles.objects.all()
     serializer_class = EmployeeEmployeeRoleSerializer
 
 
-class EmployeeList(generics.ListCreateAPIView):
+class EmployeeList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
+    role = ['admin']
 
     def post(self, request, *args, **kwargs):
         dropzone_id = request.data.get('dropzone_id')
         email = request.data.get('email')
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
-        role = request.data.get('role')
-        
-        if Employees.employee_email_in_use(email) is not None:
-
+        roles = request.data.get('roles')
+        #todo ADD NOT
+        if Employees.employee_email_in_use(email):
             emp = Employees.objects.create(first_name=first_name, is_active=True, last_name=last_name, email=email, dropzone_id=dropzone_id)
-            
             emp_id = emp.employee_id
-            print(emp_id)
             pin = Employees.create_random_user_pin(emp_id)
-            #emp.pin = Employees.pin_to_hash(pin)
-            emp.pin = pin
-            #emp.roles = role
+            emp.pin = Employees.pin_to_hash(pin)
+            if roles is not None:
+                for role in roles:
+                    exsisting_role = EmployeeRoles.objects.filter(role=role).first()
+                    if not exsisting_role:
+                        exsisting_role = EmployeeRoles.objects.create(role=role)
+                        exsisting_role.save()
+                    emperole = EmployeesEmployeeRoles.objects.create(employee=emp, role=exsisting_role)
+                    emperole.save()
+                    emp.save()
             data = {'pin': pin}
-            
 
             serializer = EmployeeSerializer(emp, data=data, partial=True)
             serializer.is_valid(raise_exception=True)
-            new_instance = serializer.save()
+            serializer.save()
 
-            send_mail(
-                subject='DropzoneHQ Employee Pin [NO REPLY]',
-                message='Your new employee pin is ' + pin,
-                from_email='dropzonehqNO-REPLY@dropzonehq.com',
-                recipient_list=[emp.email],
-                fail_silently=False
-            )
-
-            data = {'success': 10}
+            mail = util.MailClient()
+            mail.send_mail(recipient=emp.email,
+                           subject='DropzoneHQ Employee Pin [NO REPLY]',
+                           body='Your new employee pin is ' + pin)
+            data = {'success': True}
             return JsonResponse(data, status=status.HTTP_202_ACCEPTED)
 
 
-class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
+    role = ['admin']
 
-    def post(self, request):
 
         try:
             dropzone = Dropzones.objects.get(request.POST['dropzone'])
@@ -255,31 +264,32 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
 
 
 class ItemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
 
-class ItemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ItemDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemSerializer
 
 
-class ItemTypeList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ItemTypeList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
 
-class ItemTypeDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class ItemTypeDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = ItemTypes.objects.all()
     serializer_class = ItemTypeSerializer
 
 
-class RentableItemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RentableItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AllItems.objects.all().filter(is_rentable=1)
     serializer_class = AllItemSerializer
 
 
-class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RentalList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
@@ -289,11 +299,7 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         """
         item = Items.objects.get(item_id=request.data.get('item_id'))
         item_id = item.item_id
-        '''
-        item = Items.objects.get(item_id=request.data.get('item')[0])
-        item_id = item.item_id
-        print(item_id)
-        '''
+
 
         # employee = Employees.objects.get(employee_id=request.data.get('employee')[0])
         # employee_id = employee.employee_id
@@ -304,17 +310,21 @@ class RentalList(generics.ListCreateAPIView, LoginRequiredMixin):
         ret_data = {'item_id': item_id, 'rental_id': rental_id}
         return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
 
-class RentalDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+
+class RentalDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Rentals.objects.all()
     serializer_class = RentalSerializer
 
-class ActiveRentalList(generics.ListAPIView, LoginRequiredMixin):
+
+class ActiveRentalList(LoginRequiredMixin, generics.ListAPIView):
     queryset = Rentals.objects.all().filter(returned_date=None)
     serializer_class = RentalSerializer
 
-class ReserveCanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
+
+class ReserveCanopyList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
+    role = ['admin', 'loft_head', 'loft']
 
     def post(self, request, *args, **kwargs):
         item_type_id = request.data.get('item_type_id')
@@ -347,10 +357,12 @@ class ReserveCanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
         data = {'success': True}
         return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
 
-class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+
+class ReserveCanopyDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = ReserveCanopies.objects.all()
     serializer_class = ReserveCanopySerializer
-    
+    role = ['admin', 'loft_head', 'loft']
+
     def patch(self, request, *args, **kwargs):
         item_id = self.kwargs.get('pk')
         item = Items.objects.get(item_id=item_id)
@@ -370,143 +382,161 @@ class ReserveCanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMi
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
 
-class RigList(generics.ListCreateAPIView, LoginRequiredMixin):
+
+class RigList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
 
 
-class AvailableStudentRigList(generics.ListAPIView, LoginRequiredMixin):
+class AvailableStudentRigList(LoginRequiredMixin, generics.ListAPIView):
     queryset = Rigs.objects.all().filter(istandem=0)
     serializer_class = RigSerializer
 
 
-class AvailableTandemRigList(generics.ListAPIView, LoginRequiredMixin):
+class AvailableTandemRigList(LoginRequiredMixin, generics.ListAPIView):
     queryset = Rigs.objects.all().filter(istandem=1)
     serializer_class = RigSerializer
 
 
-class RigDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class RigDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Rigs.objects.all()
     serializer_class = RigSerializer
 
 
-class RigAuditTrailList(generics.ListCreateAPIView, LoginRequiredMixin):
+class RigAuditTrailList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = RigsAuditTrail.objects.all()
     serializer_class = RigAuditTrailSerializer
 
 
-class RigAuditTrailDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class RigAuditTrailDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = RigsAuditTrail.objects.all()
     serializer_class = RigAuditTrailSerializer
 
 
-class RigComponentDetailList(generics.ListAPIView, LoginRequiredMixin):
+class RigComponentDetailList(LoginRequiredMixin, generics.ListAPIView):
     queryset = RigComponentDetails.objects.all()
     serializer_class = RigComponentDetailSerializer
 
 
-class ClaimList(generics.ListCreateAPIView, LoginRequiredMixin):
+class ClaimList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
+    role = ['admin', 'loft_head', 'loft']
 
-class ClaimWarningList(generics.ListCreateAPIView, LoginRequiredMixin):
+
+class ClaimWarningList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.PENDING)
     serializer_class = ClaimSerializer
+    role = ['admin', 'loft_head', 'loft']
 
-class ClaimQueueList(generics.ListCreateAPIView, LoginRequiredMixin):
+
+class ClaimQueueList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Claims.objects.filter(status=Claims.IN_PROGRESS)
     serializer_class = ClaimSerializer
+    role = ['admin', 'loft_head', 'loft']
 
-class ClaimDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+
+class ClaimDetail(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all()
     serializer_class = ClaimSerializer
+    role = ['admin', 'loft_head', 'loft']
 
-class PendingClaimList(generics.ListCreateAPIView, LoginRequiredMixin):
+class PendingClaimList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.ListCreateAPIView):
     queryset = Claims.objects.all().filter(status='Pending')
     serializer_class = ClaimSerializer
+    role = ['admin', 'loft_head', 'loft']
 
 
-class InProgressClaimList(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class InProgressClaimList(LoginRequiredMixin, mixin.RoleArrayCookieRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Claims.objects.all().filter(status='In-Progress')
     serializer_class = ClaimSerializer
+    role = ['admin', 'loft_head', 'loft']
 
 
-class SignoutList(generics.ListCreateAPIView, LoginRequiredMixin):
+class SignoutList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = Signouts.objects.all()
     serializer_class = SignoutSerializer
 
 
-class SignoutDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class SignoutDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Signouts.objects.all()
     serializer_class = SignoutSerializer
 
 
-class AllCanopyList(generics.ListCreateAPIView, LoginRequiredMixin):
+class AllCanopyList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AllCanopies.objects.all()
     serializer_class = AllCanopySerializer
 
 
-class AllCanopyDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class AllCanopyDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = AllCanopies.objects.all()
     serializer_class = AllCanopySerializer
 
 
-class AllItemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class AllItemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = AllItems.objects.all()
     serializer_class = AllItemSerializer
 
 
-class AllItemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class AllItemDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = AllItems.objects.all()
     serializer_class = AllItemSerializer
 
 
-class EmployeeVsSignoutList(generics.ListAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutList(LoginRequiredMixin, generics.ListAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-class EmployeeVsSignoutDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignouts.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
 
-class EmployeeVsSignoutStudentList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutStudentList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
     def post(self, request, *args, **kwargs):
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        employee_id = employee.employee_id
-        rig_id = request.data.get('rig_id')
-        load_number = request.data.get('load_number')
-        '''
-        employee = Employees.employee_pin_in_use(request.data.get('pin'))
-        employee_id = employee.employee_id
-        '''
-        jumpmaster = get_emp_full_name(employee_id)
-        signout_id = post_signout(request)
+        if Employees.check_employee_role(employee, 'instructor'):
+            employee_id = employee.employee_id
+            rig_id = request.data.get('rig_id')
+            load_number = request.data.get('load_number')
+            '''
+            employee = Employees.employee_pin_in_use(request.data.get('pin'))
+            employee_id = employee.employee_id
+            '''
+            jumpmaster = get_emp_full_name(employee_id)
+            signout_id = post_signout(request)
 
-        post_emp_signout(employee_id, signout_id)
-        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
-                    'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
-        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+            post_emp_signout(employee_id, signout_id)
+            ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
+                        'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
+            return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+
+class EmployeeVsSignoutStudentDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsStudent.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
     def patch(self, request, *args, **kwargs):
         # employee = Employees.employee_pin_in_use(request.data.get('pin'))
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        signout_id = self.kwargs.get('pk')
-        employee_id = employee.employee_id
+        if Employees.check_employee_role(employee,'packer'):
+            signout_id = self.kwargs.get('pk')
+            employee_id = employee.employee_id
+            patch_emp_signout(employee_id, signout_id)
 
-        patch_emp_signout(employee_id, signout_id)
-
-        packed_by = get_emp_full_name(employee_id)
-        data = {'packer_id': employee_id, 'packed_by': packed_by}
-        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+            packed_by = get_emp_full_name(employee_id)
+            data = {'packer_id': employee_id, 'packed_by': packed_by}
+            return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         signout_id = self.kwargs.get('pk')
@@ -518,43 +548,51 @@ class EmployeeVsSignoutStudentDetail(generics.RetrieveUpdateDestroyAPIView, Logi
         return JsonResponse(data=data, status=status.HTTP_204_NO_CONTENT)
 
 
-class EmployeeVsSignoutTandemList(generics.ListCreateAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutTandemList(LoginRequiredMixin, generics.ListCreateAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
     def post(self, request, *args, **kwargs):
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        employee_id = employee.employee_id
-        rig_id = request.data.get('rig_id')
-        load_number = request.data.get('load_number')
-        '''
-        employee = Employees.employee_pin_in_use(request.data.get('pin'))
-        employee_id = employee.employee_id
-        '''
-        jumpmaster = get_emp_full_name(employee_id)
-        signout_id = post_signout(request)
+        if Employees.check_employee_role(employee, 'instructor'):
+            employee_id = employee.employee_id
+            rig_id = request.data.get('rig_id')
+            load_number = request.data.get('load_number')
+            '''
+            employee = Employees.employee_pin_in_use(request.data.get('pin'))
+            employee_id = employee.employee_id
+            '''
+            jumpmaster = get_emp_full_name(employee_id)
+            signout_id = post_signout(request)
 
-        post_emp_signout(employee_id, signout_id)
-        ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
-                    'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
-        return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+            post_emp_signout(employee_id, signout_id)
+            ret_data = {'jumpmaster': jumpmaster, 'jumpmaster_id': employee_id,
+                        'rig_id': rig_id, 'load_number': load_number, 'signout_id': signout_id}
+            return JsonResponse(data=ret_data, status=status.HTTP_201_CREATED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EmployeeVsSignoutTandemDetail(generics.RetrieveUpdateDestroyAPIView, LoginRequiredMixin):
+class EmployeeVsSignoutTandemDetail(LoginRequiredMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = EmployeesVsSignoutsTandem.objects.all()
     serializer_class = EmployeeVsSignoutSerializer
 
     def patch(self, request, *args, **kwargs):
         # employee = Employees.employee_pin_in_use(request.data.get('pin'))
         employee = Employees.objects.get(pin=request.data.get('pin'))
-        signout_id = self.kwargs.get('pk')
-        employee_id = employee.employee_id
+        if Employees.check_employee_role(employee, 'packer'):
+            signout_id = self.kwargs.get('pk')
+            employee_id = employee.employee_id
 
-        patch_emp_signout(employee_id, signout_id)
+            patch_emp_signout(employee_id, signout_id)
 
-        packed_by = get_emp_full_name(employee_id)
-        data = {'packer_id': employee_id, 'packed_by': packed_by}
-        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+            packed_by = get_emp_full_name(employee_id)
+            data = {'packer_id': employee_id, 'packed_by': packed_by}
+            return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+        else:
+            data = {'success': False}
+            return JsonResponse(data=data, status=status.HTTP_400_BAD_REQUEST)
 
 
 def post_signout(request):
@@ -706,131 +744,48 @@ def get_emp_full_name(employee_id):
     return emp_name
 
 
-def createDropzone(request):
-    try:
-        username = request.POST['username']
-        password = request.POST['password']
-        location = request.POST['location']
-        email = request.POST['email']
-        if email or password or location or username is None:
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-        else:
-            try:
-                dropzone = Dropzones.objects.create_user(username=username, password=password, email=email, location=location)
-                dropzone.save()
-            except:
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-            serializer = DropZoneSerializer(data= dropzone)
-            return JsonResponse(data=serializer.data, status=status.HTTP_201_CREATED)
-    except:
-        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+class DropzoneCreate(generics.ListCreateAPIView):
+    queryset = Dropzones.objects.all()
+    serializer_class = DropZoneSerializer
 
-
-def loginDropzone(request):
-    try:
-        username = request.POST['username']
-        password = request.POST['password']
-        dropzone = authenticate(request=request,username=username,password=password)
-        if dropzone is None :
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        else:
-            login(request, user=dropzone)
-    except:
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-#@login_required()
-def logoutDropzone(request):
-    logout(request)
-    return HttpResponse(status=status.HTTP_202_ACCEPTED)
-
-
-
-def EmployeeView(request, dropzonePK):
-
-    if request.method == 'GET':
-
-        dropzone = Dropzones.objects.get(dropzonePK)
-        employees = Employees.objects.filter(dropzone)
-        employeeSerializer = EmployeeSerializer()
-        emp = employeeSerializer.data(data=employees)
-        return JsonResponse(data=emp, status=status.HTTP_202_ACCEPTED)
-
-    elif request.method == 'POST':
-
+    def post(seld, request, *args, **kwargs):
         try:
-            dropzone = Dropzones.objects.get(dropzonePK)
-            first = request.POST['first_name']
-            last = request.POST['last_name']
-            email = request.POST['email']
-            role = request.POST['role']
-            dev = request.POST['dev']
-            if Employees.employee_email_in_use(email) is not None:
-                emp = Employees(first_name=first, last_name=last, email=email, dropzone=dropzone)
-                if dev is True or None:
-                    emp.pin = pin = Employees.create_random_user_pin(emp.pk)
-                else:
-                    emp.pin = Employees.pin_to_hash(Employees.create_random_user_pin(emp.pk))
-                emp.roles = role
-                emp.save()
-                serializer = EmployeeSerializer(emp)
-                send_mail(
-                    subject=util.employeePinTo(),
-                    message=util.createPinResetMessage(pin),
-                    from_email=util.fromEmailString(),
-                    recipient_list=[emp.email],
-                    fail_silently=False
-                )
-                return JsonResponse(data= serializer.data ,status=201)
-            else :
-                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-
-# authenticate an employee based on their pin and return an http status if the user is authentic
-#@login_required()
-def authenticateUserPin(request):
-    if request.method == 'POST':
-
-        # the way our pin works sets the user primary as their last 3 digits
-        try:
-            pin = request.POST['pin']
-
-            if pin is None:
+            password = request.data.get['password']
+            email = request.data.get['email']
+            username = request.data.get['username']
+            if email or password is None:
                 return HttpResponse(status=status.HTTP_204_NO_CONTENT)
             else:
                 try:
-                    pk = int(pin[4:])
-                    employee = Employees.objects.get(pk)
-                    if employee is None:
-                        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-                    else:
-                        if Employees.check_employee_pin(pin, employee) :
-                            return HttpResponse(status=status.HTTP_202_ACCEPTED)
-                        else:
-                            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+                    user = User.objects.create_user(username=username, email=email, password=password)
+                    dropzone = Dropzones.objects.create_user()
+                    dropzone.save()
                 except:
                     return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+                data = {'success': True}
+                return JsonResponse(data=data, status=status.HTTP_201_CREATED)
         except:
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-    else:
-        return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
 
-# Session authentication
-def authenticateDropzone(request):
-    # todo
-    token = request.session
-    return False
+# authenticate an employee based on their pin and return an http status if the user is authentic
+class AuthenticateEmployeePin(LoginRequiredMixin, View):
 
+    #check pin return cookie
+    def post(self, request, *args, **kwargs):
+        pin = request.data.get('pin')
+        employee = Employees.objects.filter(Employees.pin_to_hash(pin))
+        if employee.exists():
+            request.session['pin'] = pin
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        else:
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
 
+'''
 # return a user object if the username is found
 # else return None
 def authenticateNameDropzone(request):
-    name = request.POST['name']
+    name = request.data.get['name']
     if name is None:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     else:
@@ -844,7 +799,7 @@ def authenticateNameDropzone(request):
 def password_reset_dropzone(request):
     email = None
     try:
-        email = request.POST['email']
+        email = request.data.get['email']
     except:
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
@@ -861,42 +816,74 @@ def password_reset_dropzone(request):
                                  from_email=util.fromEmailString())
         except:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+'''
 
+@method_decorator(csrf_exempt, name='dispatch')
+class LoginDropzone(View):
 
+    def post(self, request):
+        try:
+            username = request.data.get('username')
+            password = request.data.get('password')
+            dropzone = authenticate(request=request, username=username, password=password)
+            if dropzone is None:
+                return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                login(request, user=dropzone)
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        except:
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
-#@login_required()
-def password_reset_employee(request):
-    email = None
-    try:
-        email = request.POST['email']
-    except:
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+class LogoutDropzone(View):
 
-    if email is None:
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-    else:
-        employee = Employees.employee_email_in_use(email)
-        pin = Employees.create_random_user_pin(employee)
-        employee.pin = Employees.pin_to_hash(pin)
-        util.createPinResetMessage(employee.pin)
-        send_mail(
-            subject='DropzoneHQ Employee Pin [NO REPLY]',
-            message='Your new employee pin is ' + employee.pin,
-            from_email='dropzonehqNO-REPLY@dropzonehq.com',
-            recipient_list=[employee.email],
-            fail_silently=False
-        )
+    def post(self, request):
+        logout(request)
         return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
+
+class PasswordResetEmployee(LoginRequiredMixin, View):
+
+    def post(self, request):
+        email = None
+        try:
+            email = request.data.get('email')
+        except:
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        if email is None:
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        else:
+            employee = Employees.employee_email_in_use(email)
+            pin = Employees.create_random_user_pin(employee)
+            employee.pin = Employees.pin_to_hash(pin)
+            util.createPinResetMessage(employee.pin)
+            mail = util.MailClient
+            mail.send_mail(
+                subject='DropzoneHQ Employee Pin [NO REPLY]',
+                body='Your new employee pin is ' + employee.pin,
+                recipient=[employee.email]
+            )
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+class CheckSession(View):
+
+    def get(self, request):
+        if request.user.is_authenticated():
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        else:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+
+'''
 def reset_url_dropzone(request, hash=None):
     try:
         reset = TempUrl.objects.get(hash)
-        if reset is not None :
+        if reset is not None:
             dropzone = reset.dropzone
-            Dropzones.set_password(dropzone, request.POST['password'])
+            Dropzones.set_password(dropzone, request.data.get['password'])
             Dropzones.save(dropzone)
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
-        else :
+        else:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     except:
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+'''

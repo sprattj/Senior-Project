@@ -15,6 +15,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from . import util
 import random
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 # An item used on a rig that automatically deploys a parachute at a certain altitude
@@ -79,8 +81,8 @@ class Claims(models.Model):
     status = models.CharField(max_length=12, choices=STATUS_CHOICES)
     # Description of the problem that needs to be serviced.
     description = models.CharField(max_length=45, blank=True, null=True)
-    submitter = models.OneToOneField('Employees', models.DO_NOTHING)
-    handler = models.OneToOneField('Employees', models.DO_NOTHING)
+    submitter = models.OneToOneField('Employees', models.DO_NOTHING, related_name='employee_submitter')
+    handler = models.OneToOneField('Employees', models.DO_NOTHING, related_name= 'employee_handler')
     
     # Date the claim was submitted
     submit_date = models.DateField(blank=True, null=True)
@@ -120,12 +122,23 @@ class DjangoMigrations(models.Model):
 
 
 # A location that is used as a skydiving drop zone.
-class Dropzones(User):
+class Dropzones(models.Model):
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     # Autoincrement integer PK
     dropzone_id = models.AutoField(primary_key=True)
     # The location of the drop zone
     location = models.CharField(unique=True, max_length=45)
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(self, sender, instance, created, **kwargs):
+        if created:
+            Dropzones.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(self, sender, instance, **kwargs):
+        #instance.dropzone.save()
+        return None
 
     def get_dropzone(self, pk=None):
         try:
@@ -166,6 +179,12 @@ class EmployeeRoles(models.Model):
     # Autoincrement integer PK
     role_id = models.AutoField(primary_key=True)
     role = models.CharField(max_length=45)
+
+    def role_exsists(self, role):
+        try:
+            return Dropzones.objects.filter(role)
+        except:
+            return None
 
     class Meta:
         managed = True
@@ -216,7 +235,7 @@ class Employees(models.Model):
     is_active = models.BooleanField(max_length=4)
     roles = models.ManyToManyField('EmployeeRoles', through='EmployeesEmployeeRoles')
     # pin Sha hash
-    pin = models.CharField(max_length=45, blank=True)
+    pin = models.CharField(max_length=45, blank=True, unique=True)
     employment_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -227,38 +246,44 @@ class Employees(models.Model):
     # check is the pin of an employee matches the pin given
     @staticmethod
     def check_employee_pin(pin, employee):
-        if pin or employee is None:
-            return None
-        else:
-            salt = 3
-            if BCryptSHA256PasswordHasher().encode(password=pin, salt=salt) == employee.pin:
+        return util.verify(cookie=pin, cookie_hash=employee.pin, length=8)
+
+    #given a hashed pin check if the employee has a role
+    @staticmethod
+    def check_employee_role_based_pin(pin, role):
+        return Employees.check_employee_role(Employees.objects.filter(pin=pin).first(), role)
+
+    # given a pin that is not hashed check if the employee has a role
+    @staticmethod
+    def check_employee_role_based_pin_hash(pin, role):
+        return Employees.check_employee_role_based_pin(Employees.pin_to_hash(pin), role)
+
+    #for a specific employee check if the role matches their role
+    @staticmethod
+    def check_employee_role(employee, role):
+        eroles = list(employee.roles_set.all())
+        for trole in eroles:
+            if trole.role == role:
                 return True
-            else:
-                return False
+        return False
 
     # hash a pin to a value
     @staticmethod
     def pin_to_hash(pin):
-        if pin is None:
-            return None
-        else:
-            salt = "abcdefgh".encode('ascii')
-            return BCryptSHA256PasswordHasher().encode(password=pin, salt=None)
+        return util.sign(cookie=pin, length=8)
 
     # Create a random user pin with the salt # being the first three digits and the last 3 being the users primary key
     @staticmethod
-    def create_random_user_pin(userPK=None):
-        if userPK is None:
+    def create_random_user_pin(user_pk=None):
+        if user_pk is None:
             return None
         else:
             do_over = True
             while do_over:
                 salt = util.string_to_three(str(random.randint(0, 1000)))
-                key = util.string_to_three(salt) + str((int(userPK) % 1000))
+                key = util.string_to_three(salt) + str((int(user_pk) % 1000))
                 find_me = Employees.objects.filter(pin=key)
-                print(key)
-                #find_me_hash = Employees.objects.filter(pin=Employees.pin_to_hash(key))
-                find_me_hash = None
+                find_me_hash = Employees.objects.filter(pin=Employees.pin_to_hash(key))
                 if find_me or find_me_hash is not None:
                     do_over = True
                 else:
@@ -269,19 +294,14 @@ class Employees(models.Model):
     # returns true if the pin is in use and false if the pin is not being used
     @staticmethod
     def employee_pin_in_use(pin=None):
-        emp = Employees.objects.values()
-        if pin is None:
-            return None
-        for e in emp:
-            if Employees.check_employee_pin(pin=pin, employee=e) is True:
-                return e
-        return None
+        emp = Employees.objects.filter(pin)
+        return emp
 
     # Chcek if the email has been used in the database
     @staticmethod
     def employee_email_in_use(email):
-        use = Employees.objects.filter(email=email)
-        return use
+        emp = Employees.objects.filter(email=email)
+        return emp
 
 
 # Bridge between Employees and Roles. Many employees can perform many roles.
@@ -391,7 +411,7 @@ class Rentals(models.Model):
     # Date the gear was returned to the drop zone.
     returned_date = models.DateTimeField(blank=True, null=True)
 
-    item = models.ManyToManyField('Items', through='ItemsRentals')
+    item = models.ManyToManyField('Items', through='ItemsRentals', related_name='item_rental')
     employee = models.ManyToManyField('Employees', through='EmployeesRentals')
 
     class Meta:
@@ -422,9 +442,9 @@ class ReserveCanopies(models.Model):
 class Rigs(models.Model):
 
     # PK -> Shares PK from items table
-    item = models.OneToOneField(Items, on_delete=models.CASCADE, primary_key=True)
+    item = models.OneToOneField(Items, on_delete=models.CASCADE)
     # Unique identifier for this rig
-    rig_id = models.AutoField(auto_created=True, unique=True)
+    rig_id = models.AutoField(auto_created=True, unique=True, primary_key=True)
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
@@ -469,7 +489,7 @@ class RigComponentDetails(models.Model):
     aad_lifespan = models.CharField(max_length=45)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'rig_component_details'
         app_label = 'dropZoneHQ'
 
@@ -524,7 +544,7 @@ class AllCanopies(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'all_canopies'
 
 
@@ -557,7 +577,7 @@ class AllItems(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'all_items'
 
 
@@ -573,7 +593,7 @@ class EmployeesVsSignouts(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'all_employees_vs_signouts'
 
 
@@ -588,7 +608,7 @@ class EmployeesVsSignoutsStudent(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'employees_vs_signouts_student'
 
 
@@ -603,5 +623,5 @@ class EmployeesVsSignoutsTandem(models.Model):
 
     class Meta:
         app_label = 'dropZoneHQ'
-        managed = True
+        managed = False
         db_table = 'employees_vs_signouts_tandem'

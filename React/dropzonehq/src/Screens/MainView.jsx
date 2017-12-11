@@ -10,7 +10,6 @@ import SheetsScreen from '../Screens/SheetsScreen.jsx';
 import EmployeeInfoScreen from '../Screens/EmployeeInfoScreen.jsx';
 import InventoryScreen from '../Screens/InventoryScreen.jsx';
 import LoftScreen from '../Screens/LoftScreen.jsx';
-import TestScreen from '../Screens/TestScreen.jsx';
 import CreateDropzoneScreen from './CreateDropzoneScreen.jsx';
 import LoginScreen from './LoginScreen.jsx';
 import PasswordResetScreen from './PasswordResetScreen.jsx';
@@ -53,7 +52,6 @@ export default class MainView extends React.Component {
                         <Route path='/rig-sheets' component={SheetsScreen} />
                         <Route path='/inventory-menu' component={InventoryScreen} />
                         <Route path='/loft-menu' component={LoftScreen} />
-                        <Route path='/test-fetch' component={TestScreen} />
                         <Route path='*' exact={true} component={NotFoundScreen} />
                     </Switch>
                 </main>

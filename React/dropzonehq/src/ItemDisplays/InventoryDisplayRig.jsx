@@ -4,19 +4,16 @@ import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon, Card, Ca
 import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import InventoryDisplayItem from './InventoryDisplayItem.jsx';
+import Binder from '../Binder.js';
 
 export default class InventoryDisplayRig extends React.Component {
     constructor(props) {
         super(props);
 
-        this.rig_numberChanged = this.rig_numberChanged.bind(this);
-        this.aadChanged = this.aadChanged.bind(this);
-        this.containerChanged = this.containerChanged.bind(this);
-        this.isTandemChanged = this.isTandemChanged.bind(this);
-        this.canopy_on_rigChanged = this.canopy_on_rigChanged.bind(this);
-
-        this.updateRigRow = this.updateRigRow.bind(this);
-
+        //create a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, InventoryDisplayRig);
+        
         this.state = {
             rigInfo: this.props.rigInfo
         };

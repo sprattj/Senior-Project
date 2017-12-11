@@ -1,21 +1,18 @@
 import React from 'react';
 import ModalButton from './ModalButton.jsx';
 import Checkbox from '../CheckBox/Checkbox.js';
-import { Form, FormGroup, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
+import { Form, FormGroup, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
+import Binder from '../Binder.js';
 
 export default class EditEmployeeButton extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.verify = this.verify.bind(this);
-
-        this.firstNameChanged = this.firstNameChanged.bind(this);
-        this.lastNameChanged = this.lastNameChanged.bind(this);
-        this.jobsChanged = this.jobsChanged.bind(this);
-        this.emailChanged = this.emailChanged.bind(this);
-
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, EditEmployeeButton);
 
         this.state = {
             firstName: this.props.firstName,

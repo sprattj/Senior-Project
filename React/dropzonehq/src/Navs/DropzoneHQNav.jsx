@@ -35,9 +35,6 @@ export default class DropzoneHQNav extends React.Component {
                 <NavItem className="dzhq_nav_item">
                         <Link to='/loft-menu'>Loft</Link>
                 </NavItem>
-                <NavItem className="dzhq_nav_item">
-                        <Link to='/test-fetch'>Test</Link>
-                </NavItem>
             </SiteNavbar >
         );
     }

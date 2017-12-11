@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 sys.path.append('../')
 
@@ -61,6 +62,20 @@ urlpatterns = [
     url(r'^(?i)claim[s]?/(?P<pk>[0-9]+)[/]?$', ClaimDetail.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
     url(r'^(?i)rental[s]?[/]?$', RentalList.as_view()),
+    url(r'^(?i)dropzones-detail/$',DropzoneDetail.as_view()),
+    url(r'^(?i)login/$', LoginDropzone.as_view(), name='login'),
+    url(r'^(?i)logout/$', LogoutDropzone.as_view(), name='logout'),
+    url(r'^password_change/$', auth_views.PasswordChangeView.as_view, name='dropzone_password_change'),
+    url(r'^password_change/done/$', auth_views.PasswordChangeDoneView.as_view(), name='dropzone_password_change_done',),
+    url(r'^password_reset', auth_views.PasswordResetView.as_view(), name='dropzone_password_reset'),
+    url(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(), name='dropzone_password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.PasswordResetConfirmView.as_view(),
+        name='dropzone_password_reset_confirm'),
+    url(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(), name='dropzone_password_reset_complete'),
+    url(r'^(?i)reset_employee/$', PasswordResetEmployee.as_view(), name='pin reset'),
+    url(r'^(?i)auth_employee/$', AuthenticateEmployeePin.as_view(), name='authenticate_user_pin'),
+    url(r'^(?i)auth_dropzone/$', CheckSession.as_view(), name='authenticate_user'),
     url(r'^(?i)dropzones-detail/$', DropzoneDetail.as_view()),
     url(r'^(?i)login/$', loginDropzone, name='login'),
     url(r'^(?i)logout/$', logoutDropzone, name='logout'),

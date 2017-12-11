@@ -27,7 +27,6 @@ export default class LandingScreen extends React.Component {
                             <Link to='/rig-sheets'><Button className="btn_transparent" size="lg">Rigsheets</Button></Link>
                             <Link to='/inventory-menu'><Button className="btn_transparent" size="lg">Inventory</Button></Link>
                             <Link to='/loft-menu'><Button className="btn_transparent" size="lg">Loft</Button></Link>
-                            <Link to='/test-fetch'><Button className="btn_transparent" size="lg">Fetch Test</Button></Link>
                         </Col>
                     </Row>
                 </Container>

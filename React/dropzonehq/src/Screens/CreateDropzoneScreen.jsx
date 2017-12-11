@@ -1,15 +1,16 @@
 import React from 'react';
 import { Container, Button, Input, Row, Col, InputGroup, InputGroupAddon, Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import Binder from '../Binder.js';
 
 export default class CreateDropzoneScreen extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.updateEmail = this.updateEmail.bind(this);
-        this.updatePassword = this.updatePassword.bind(this);
-        this.updateConfirmPassword = this.updateConfirmPassword.bind(this);
-        this.submit = this.submit.bind(this);
+
+        //creater a new binder and bind all of the methods in this class
+        var binder = new Binder();
+        binder.bindAll(this, CreateDropzoneScreen);
 
         this.state = {
             email: "",
@@ -20,35 +21,35 @@ export default class CreateDropzoneScreen extends React.Component {
 
     }
 
-    updateEmail(e){
+    updateEmail(e) {
         this.setState({
             email: e.target.value
         });
     }
 
-    updatePassword(e){
+    updatePassword(e) {
         this.setState({
             password: e.target.value
         })
     }
 
-    updateConfirmPassword(e){
+    updateConfirmPassword(e) {
         this.setState({
             confirmPassword: e.target.value
         })
     }
 
-    submit(){
+    submit() {
         var warning;
-        if(this.state.password !== this.state.confirmPassword){
+        if (this.state.password !== this.state.confirmPassword) {
             warning = <Alert color="danger">Password and password confirmation do not match.</Alert>;
-        }if(this.state.password === ""){
+        } if (this.state.password === "") {
             warning = <Alert color="danger">Please enter a password.</Alert>;
-        }else if(this.state.confirmPassword === ""){
+        } else if (this.state.confirmPassword === "") {
             warning = <Alert color="danger">Please confirm your password.</Alert>;
-        }else if(this.state.email === ""){
+        } else if (this.state.email === "") {
             warning = <Alert color="danger">Please enter an email.</Alert>;
-        }else{
+        } else {
             warning = <div></div>
         }
         this.setState({
@@ -67,15 +68,15 @@ export default class CreateDropzoneScreen extends React.Component {
                         <h1>Create New Dropzone</h1>
                         <InputGroup>
                             <InputGroupAddon>Dropzone Email: </InputGroupAddon>
-                            <Input type='email' onChange={this.updateEmail}/>
+                            <Input type='email' onChange={this.updateEmail} />
                         </InputGroup>
                         <InputGroup>
                             <InputGroupAddon>Password: </InputGroupAddon>
-                            <Input type='password' onChange={this.updatePassword}/>
+                            <Input type='password' onChange={this.updatePassword} />
                         </InputGroup>
                         <InputGroup>
                             <InputGroupAddon>Confirm Password: </InputGroupAddon>
-                            <Input type='password' onChange={this.updateConfirmPassword}/>
+                            <Input type='password' onChange={this.updateConfirmPassword} />
                         </InputGroup>
                         <Button className="btn_transparent" size="lg" onClick={this.submit}>Create</Button>
                         <Link to='/main-menu'><Button className="btn_transparent" size="lg">Back to Main</Button></Link>

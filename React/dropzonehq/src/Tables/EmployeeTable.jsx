@@ -3,23 +3,20 @@ import TableSheet from './TableSheet.jsx';
 import EditEmployeeButton from '../ModalButtons/EditEmployeeButton.jsx';
 import EmployeeStatusButton from '../ModalButtons/EmployeeStatusButton.jsx';
 import AddEmployeeButton from '../ModalButtons/AddEmployeeButton.jsx';
+import StatButton from '../ModalButtons/StatButton.jsx';
 import { ButtonGroup } from 'reactstrap';
-import { rootURL } from '../restInfo.js';
-import { toast } from 'react-toastify';
-
+import RequestHandler from '../RequestHandler.js';
+import Binder from '../Binder.js';
 
 export default class EmployeeTable extends React.Component {
 
   constructor(props) {
     super(props)
-    this.URLsection = "/employees";
+    this.URLsection = "employees/";
 
-    this.editEmployee = this.editEmployee.bind(this);
-    this.toggleEmployeeStatus = this.toggleEmployeeStatus.bind(this);
-    this.addEmployee = this.addEmployee.bind(this);
-
-
-    this.processRows = this.processRows.bind(this);
+    //create a new binder and bind all of the methods in this class
+    var binder = new Binder();
+    binder.bindAll(this, EmployeeTable);
 
     this.state = {
       columns: [
@@ -49,7 +46,7 @@ export default class EmployeeTable extends React.Component {
         }
       ],
       rows: [],
-      rowID: 0
+      rowID: 0,
     };
   }
 
@@ -76,7 +73,13 @@ export default class EmployeeTable extends React.Component {
           toggleEmployeeStatus={this.toggleEmployeeStatus}
           firstName={rowData[i].first_name}
           lastName={rowData[i].last_name}
-          status={rowData[i].is_active} />
+          status={rowData[i].is_active}
+        />
+
+        <StatButton
+          id={rowData[i].employee_id}
+         />
+
       </ButtonGroup>;
       newRows[i].is_active = rowData[i].is_active + "";
       newRows[i].email = rowData[i].email;
@@ -98,43 +101,31 @@ export default class EmployeeTable extends React.Component {
   }
 
   fetchRows() {
-    require('isomorphic-fetch');
-    require('es6-promise').polyfill();
+    //employees
+    var endpoint = this.URLsection;
 
-    var url = rootURL + this.URLsection;
+    //save 'this' so we can reference it in callback
     var self = this;
+    var successMsg = "Fetched employee data.";
+    var errorMsg = "Problem fetching employee data.";
+    var callback = function (rowData) {
+      var newRows = self.processRows(rowData);
+      self.setState({
+        rows: newRows
+      });
+    };
 
-    fetch(url, {
-      method: "GET",
-      mode: 'cors',
-
-    }).then(function (response) {
-      if (response.status >= 400) {
-        throw new Error("Fetching rows failed. Bad response " + response.status + " from server");
-      }
-      return response.json();
-    })
-      .then(function (rowData) {
-        var newRows = self.processRows(rowData);
-        self.setState({
-          rows: newRows
-        });
-      }).catch(function (error) {
-        toast.error(error + "\n" + url);
-      });;
+    var handler = new RequestHandler();
+    handler.get(endpoint, successMsg, errorMsg, callback);
   }
 
-  addEmployee(firstName, lastName, email, jobs) {
-    require('isomorphic-fetch');
-    require('es6-promise').polyfill();
 
-    // var url = rootURL + this.URLsection + "/";
-    //var url = rootURL + "/dropzone/1/create_employee"
-    var url = rootURL + "/employees"
+  addEmployee(firstName, lastName, email, jobs) {
+
+    var endpoint = this.URLsection;
     var self = this;
-    //var employee_id = (Date.now() % 100000); //TODO
     var status = true;
-    var requestVariables = {
+    var variables = {
       first_name: firstName,
       last_name: lastName,
       email: email,
@@ -142,237 +133,177 @@ export default class EmployeeTable extends React.Component {
       dropzone_id: 1, //TODO UUHHHHHHH
       status: status
     };
-    fetch(url, {
-      method: "POST",
-      mode: 'CORS',
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestVariables)
-    })//when we get a response back
-      .then(function (response) {
-        if (response.status >= 400) {
-          throw new Error("Adding employee failed. Bad response " + response.status + " from server.");
+    var successMsg = "Employee added successfully.";
+    var errorMsg = "Problem adding employee.";
+    var callback = function (response) {
+      var jobsString = "";
+      var actionButtons = <ButtonGroup>
+        <EditEmployeeButton
+          id={response.employee_id}
+          authorize={self.editEmployee}
+          firstName={response.first_name}
+          lastName={response.last_name}
+          email={response.email} />
+        <EmployeeStatusButton
+          id={response.employee_id}
+          toggleEmployeeStatus={self.toggleEmployeeStatus}
+          firstName={firstName}
+          lastName={lastName}
+          status={status} />
+      </ButtonGroup>;
+      var newRowID = self.state.rowID;
+
+      for (var i = 0; i < jobs.length; i++) {
+        if (i === jobs.length - 1) {
+          jobsString += jobs[i];
+        } else {
+          jobsString += jobs[i] + ", ";
         }
-        return response.json();
-      })//when the call succeeds
-      .then(function (response) {
-        var jobsString = "";
-        var actionButtons = <ButtonGroup>
-          <EditEmployeeButton
+        if (jobs[i] === "Administrator") {
+          actionButtons = <EditEmployeeButton
             id={response.employee_id}
             authorize={self.editEmployee}
             firstName={response.first_name}
             lastName={response.last_name}
-            email={response.email} />
-          <EmployeeStatusButton
-            id={response.employee_id}
-            toggleEmployeeStatus={self.toggleEmployeeStatus}
-            firstName={firstName}
-            lastName={lastName}
-            status={status} />
-        </ButtonGroup>;
-        var newRowID = self.state.rowID;
+            email={response.email} />;
+        }
+      }
 
-        for (var i = 0; i < jobs.length; i++) {
-          if (i === jobs.length - 1) {
-            jobsString += jobs[i];
-          } else {
-            jobsString += jobs[i] + ", ";
-          }
-          if (jobs[i] === "Administrator") {
-            actionButtons = <EditEmployeeButton
+      var row = {
+        employee_id: response.employee_id,
+        firstname: firstName,
+        lastname: lastName,
+        email: email,
+        jobs: jobsString,
+        actions: actionButtons,
+        rowID: newRowID,
+        is_active: status
+      };
+
+      newRowID++;
+
+      var newRows = Array.from(self.state.rows);
+      newRows.unshift(row);
+
+      self.setState({
+        rows: newRows,
+        rowID: newRowID
+      })
+    };
+    //make the request via handler
+    var handler = new RequestHandler();
+    handler.post(endpoint, variables, successMsg, errorMsg, callback);
+  }
+
+  editEmployee(id, firstName, lastName, email, jobs) {
+
+    var endpoint = this.URLsection + "/" + id;
+    var successMsg = "Edited info for " + firstName + " " + lastName + " (" + id + ").";
+    var errorMsg = "Problem editing info for " + firstName + " " + lastName + " (" + id + ").";
+    var self = this;
+    var variables = {
+      pin: this.state.pin
+    };
+    if (firstName) {
+      variables.first_name = firstName
+    } if (lastName) {
+      variables.last_name = lastName
+    } if (email) {
+      variables.email = email
+    } if (jobs.length > 0) {
+      variables.roles = jobs
+    }
+
+    var callback = function (response) {
+      var newRows = Array.from(self.state.rows);
+      for (var i = 0; i < newRows.length; i++) {
+        if (newRows[i].employee_id === id) {
+          newRows[i].firstname = response.first_name;
+          newRows[i].lastname = response.last_name;
+          newRows[i].email = response.email;
+          newRows[i].roles = response.roles;
+          break;
+        }
+      }
+      self.setState({
+        rows: newRows
+      })
+      console.log(self.state.rows);
+      return true;
+    };
+
+    if (Object.keys(variables).length > 0) {
+      var handler = new RequestHandler();
+      handler.patch(endpoint, variables, successMsg, errorMsg, callback);
+    }
+    //TODO what happens if the request shouldnt be made because they put everything as blank?
+  }
+
+
+  deleteEmployee(id) {
+
+    var endpoint = this.URLsection + id + "/";
+    var self = this;
+    var successMsg = "Deleted employee " + id + ".";
+    var errorMsg = "Problem deleting employee " + id + ".";
+    var callback = function (rowData) {
+      var newRows = Array.from(self.state.rows);
+      for (var i = 0; i < newRows.length; i++) {
+        if (newRows[i].rowID === id) {
+          newRows.splice(i, 1);
+        }
+      }
+      self.setState({
+        rows: newRows
+      })
+      return true;
+    };
+
+    var handler = new RequestHandler();
+    handler.delete(endpoint, successMsg, errorMsg, callback);
+  }
+
+  toggleEmployeeStatus(id, status) {
+
+    var endpoint = this.URLsection + id + "/";
+    var self = this;
+    var variables = {
+      is_active: !status
+    }
+    var successMsg = "Changed status of employee " + id + ".";
+    var errorMsg = "Problem changing status for employee " + id + ".";
+    var callback = function (response) {
+      var newRows = Array.from(self.state.rows);
+      for (var i = 0; i < newRows.length; i++) {
+        if (newRows[i].employee_id === id) {
+          console.log("what is UP with you right now dude?")
+          newRows[i].is_active = response.is_active + "";
+          newRows[i].actions = <ButtonGroup>
+            <EditEmployeeButton
               id={response.employee_id}
               authorize={self.editEmployee}
               firstName={response.first_name}
               lastName={response.last_name}
-              email={response.email} />;
-          }
+              email={response.email} />
+            <EmployeeStatusButton
+              id={response.employee_id}
+              toggleEmployeeStatus={self.toggleEmployeeStatus}
+              firstName={response.first_name}
+              lastName={response.last_name}
+              status={response.is_active} />
+          </ButtonGroup>;
         }
-
-        var row = {
-          employee_id: response.employee_id,
-          firstname: firstName,
-          lastname: lastName,
-          email: email,
-          jobs: jobsString,
-          actions: actionButtons,
-          rowID: newRowID,
-          is_active: status
-        };
-
-        newRowID++;
-
-        var newRows = Array.from(self.state.rows);
-        newRows.unshift(row);
-
-        self.setState({
-          rows: newRows,
-          rowID: newRowID
-        })
-      }).catch(function (error) {
-        toast.error(error + "\n" + url);
-        return false;
-      });
-  }
-
-  editEmployee(id, firstName, lastName, email, jobs) {
-    require('isomorphic-fetch');
-    require('es6-promise').polyfill();
-
-    var url = rootURL + this.URLsection + "/" + id;
-
-    var self = this;
-    var requestVariables = {}
-    if (firstName) {
-      requestVariables.first_name = firstName
-    } if (lastName) {
-      requestVariables.last_name = lastName
-    } if (email) {
-      requestVariables.email = email
-    }
-    if (jobs.length > 0) {
-      requestVariables.roles = jobs
-    }
-    if (Object.keys(requestVariables).length > 0) {
-      fetch(url, {
-        method: "PATCH",
-        mode: 'CORS',
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestVariables)
-      })//when we get a response back
-        .then(function (response) {
-          if (response.status >= 400) {
-            throw new Error("Editing employee failed. Bad response " + response.status + " from server.");
-          }
-          return response.json();
-        })//when the call succeeds
-        .then(function (response) {
-
-          var newRows = Array.from(self.state.rows);
-          for (var i = 0; i < newRows.length; i++) {
-            if (newRows[i].employee_id === id) {
-              newRows[i].firstname = response.first_name;
-              newRows[i].lastname = response.last_name;
-              newRows[i].email = response.email;
-              newRows[i].roles = response.roles;
-              break;
-            }
-          }
-          self.setState({
-            rows: newRows
-          })
-          console.log(self.state.rows);
-          return true;
-        }).catch(function (error) {
-          toast.error(error + "\n" + url);
-          return false;
-        });
-    }
-  }
-
-  deleteEmployee(id) {
-    require('isomorphic-fetch');
-    require('es6-promise').polyfill();
-
-    var url = rootURL + this.URLsection + "/" + id + "/";
-
-    var self = this;
-
-    return fetch(url, {
-      method: "DELETE",
-      mode: 'CORS',
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
       }
-    })//when we get a response back
-      .then(function (response) {
-        if (response.status >= 400) {
-          throw new Error("Deleting employee failed. Bad response " + response.status + " from server.");
-        }
-        return response.json();
-      })//when the call succeeds
-      .then(function (rowData) {
-        var newRows = Array.from(self.state.rows);
-        for (var i = 0; i < newRows.length; i++) {
-          if (newRows[i].rowID === id) {
-            newRows.splice(i, 1);
-          }
-        }
-        self.setState({
-          rows: newRows
-        })
-        return true;
-      }).catch(function (error) {
-        toast.error(error + "\n" + url);
-        return false;
-      });
+      self.setState({
+        rows: newRows
+      })
+      var handler = new RequestHandler();
+      handler.patch(endpoint, variables, successMsg, errorMsg, callback);
+      return true;
+    };
   }
 
-  toggleEmployeeStatus(id, status) {
-    require('isomorphic-fetch');
-    require('es6-promise').polyfill();
 
-    var url = rootURL + this.URLsection + "/" + id + "/";
-
-    var self = this;
-    var requestVariables = {
-      is_active: !status
-    }
-
-    return fetch(url, {
-      method: "PATCH",
-      mode: 'CORS',
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestVariables)
-    })//when we get a response back
-      .then(function (response) {
-        if (response.status >= 400) {
-          throw new Error("Toggling employee failed. Bad response " + response.status + " from server.");
-        }
-        return response.json();
-      })//when the call succeeds
-      .then(function (response) {
-        
-        var newRows = Array.from(self.state.rows);
-        for (var i = 0; i < newRows.length; i++) {
-          if (newRows[i].employee_id === id) {
-            console.log("what is UP with you right now dude?")
-            newRows[i].is_active = response.is_active + "";
-            newRows[i].actions = <ButtonGroup>
-              <EditEmployeeButton
-                id={response.employee_id}
-                authorize={self.editEmployee}
-                firstName={response.first_name}
-                lastName={response.last_name}
-                email={response.email} />
-              <EmployeeStatusButton
-                id={response.employee_id}
-                toggleEmployeeStatus={self.toggleEmployeeStatus}
-                firstName={response.first_name}
-                lastName={response.last_name}
-                status={response.is_active} />
-            </ButtonGroup>;
-          }
-        }
-
-        self.setState({
-          rows: newRows
-        })
-        return true;
-      }).catch(function (error) {
-        toast.error(error + "\n" + url);
-        return false;
-      });
-  }
 
   render() {
     return (
