@@ -16,7 +16,7 @@ export default class StatButton extends React.Component {
         super(props);
         //creater a new binder and bind all of the methods in this class
         var binder = new Binder();
-        binder.bindAll(this, RentalScreen);
+        binder.bindAll(this, StatButton);
         
         this.state = {
             total_tandem_count: 0,
