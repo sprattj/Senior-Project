@@ -78,6 +78,8 @@ export default class EmployeeTable extends React.Component {
 
         <StatButton
           id={rowData[i].employee_id}
+          firstName = {rowData[i].first_name}
+          lastName = {rowData[i].last_name}
          />
 
       </ButtonGroup>;
