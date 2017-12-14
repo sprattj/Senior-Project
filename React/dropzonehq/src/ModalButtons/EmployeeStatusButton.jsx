@@ -8,11 +8,12 @@ export default class EmployeeStatusButton extends React.Component {
     this.toggle = this.toggle.bind(this);
 
   }
+
+  //Toggles the Employee's employeement status at the dropzone 
   toggle() {
     this.props.toggleEmployeeStatus(this.props.id, this.props.status);
   }
   
-
   render() {
     var name = this.props.firstName + " " + this.props.lastName;
     var title = "Toggle Employee: " + name;

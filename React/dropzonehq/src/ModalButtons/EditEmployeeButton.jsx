@@ -22,7 +22,9 @@ export default class EditEmployeeButton extends React.Component {
         }
     }
 
-    verify() {
+    //Updates the edited Employee by passing the states of this component to its parent component
+    //Then is sets its states to nothing to be used by the next row that's edit button it clicked
+    update() {
         this.props.authorize(this.props.id, this.state.firstName, this.state.lastName, this.state.email, this.state.jobs);
         this.setState({
             firstName: '',
@@ -33,18 +35,22 @@ export default class EditEmployeeButton extends React.Component {
         return true;
     }
 
+    //updates the first name state when the first name text field is edited
     firstNameChanged(e) {
         this.setState({ firstName: e.target.value });
     }
 
+    //updates the last name state when the last name text field is edited
     lastNameChanged(e) {
         this.setState({ lastName: e.target.value });
     }
 
+    //updates the email state when the email text field is edited
     emailChanged(e) {
         this.setState({ email: e.target.value });
     }
 
+    //updates the jobs state by checking which checkboxes are checked and unchecked
     jobsChanged(job) {
         var newJobs = Array.from(this.state.jobs);
         if (newJobs.length !== 0) {
@@ -70,12 +76,14 @@ export default class EditEmployeeButton extends React.Component {
         })
     }
 
+    //Gets the original roles of the employee and checks the appropriate checkboxes
+    //as the modal is being rendered
     getCheckBoxes(jobsList) {
         console.log("Hey this is your job list!");
         console.log(jobsList);
         var jobsArray = ["rigger", "loft head", "loft employee", "tandem instructor",
             "afp instructor", "packer", "manifest", "videographer",
-            "hanger master", "administrator"];
+            "hanger master", "administrator"];//list of all possible roles
         var col1 = [];
         var col2 = [];
         var col3 = [];
@@ -128,7 +136,7 @@ export default class EditEmployeeButton extends React.Component {
     }
 
     render() {
-        const checkboxes = this.getCheckBoxes(this.props.checkedJobs);
+        const checkboxes = this.getCheckBoxes(this.state.jobs);
         const modalContent = <Form>
             <InputGroup>
                 <InputGroupAddon >First Name: </InputGroupAddon>
@@ -168,7 +176,7 @@ export default class EditEmployeeButton extends React.Component {
             <ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"Edit"} modalTitle={"Edit Employee"}
                 modalContent={modalContent}
                 modalPrimaryButtonText="Save"
-                modalPrimaryClick={this.verify} />
+                modalPrimaryClick={this.update} />
         );
     }
 }

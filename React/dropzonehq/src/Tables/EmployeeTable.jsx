@@ -121,7 +121,8 @@ export default class EmployeeTable extends React.Component {
     handler.get(endpoint, successMsg, errorMsg, callback);
   }
 
-
+  //Adds an new employee to the data base. The new employee's status of employeement is automatically
+  //set as true after creation. Their ID and PIN are auto gernerated by the database
   addEmployee(firstName, lastName, email, jobs) {
 
     var endpoint = this.URLsection;
@@ -132,7 +133,7 @@ export default class EmployeeTable extends React.Component {
       last_name: lastName,
       email: email,
       role: jobs.splice(0, 1),
-      dropzone_id: 1, //TODO UUHHHHHHH
+      dropzone_id: 1, //Since we only have one dropzone in the data base
       status: status
     };
     var successMsg = "Employee added successfully.";
@@ -145,7 +146,8 @@ export default class EmployeeTable extends React.Component {
           authorize={self.editEmployee}
           firstName={response.first_name}
           lastName={response.last_name}
-          email={response.email} />
+          email={response.email} 
+          roels={response.roles}/>
         <EmployeeStatusButton
           id={response.employee_id}
           toggleEmployeeStatus={self.toggleEmployeeStatus}
@@ -167,7 +169,8 @@ export default class EmployeeTable extends React.Component {
             authorize={self.editEmployee}
             firstName={response.first_name}
             lastName={response.last_name}
-            email={response.email} />;
+            email={response.email} 
+            roles={response.roles}/>;
         }
       }
 
@@ -197,6 +200,8 @@ export default class EmployeeTable extends React.Component {
     handler.post(endpoint, variables, successMsg, errorMsg, callback);
   }
 
+  //Function is called using the parameters sent to it from its child component the EditEmployeeButton
+  //Edits the Employee row in the data base with the updated changes
   editEmployee(id, firstName, lastName, email, jobs) {
 
     var endpoint = this.URLsection + "/" + id;
@@ -238,33 +243,9 @@ export default class EmployeeTable extends React.Component {
       var handler = new RequestHandler();
       handler.patch(endpoint, variables, successMsg, errorMsg, callback);
     }
-    //TODO what happens if the request shouldnt be made because they put everything as blank?
   }
 
-
-  deleteEmployee(id) {
-
-    var endpoint = this.URLsection + id + "/";
-    var self = this;
-    var successMsg = "Deleted employee " + id + ".";
-    var errorMsg = "Problem deleting employee " + id + ".";
-    var callback = function (rowData) {
-      var newRows = Array.from(self.state.rows);
-      for (var i = 0; i < newRows.length; i++) {
-        if (newRows[i].rowID === id) {
-          newRows.splice(i, 1);
-        }
-      }
-      self.setState({
-        rows: newRows
-      })
-      return true;
-    };
-
-    var handler = new RequestHandler();
-    handler.delete(endpoint, successMsg, errorMsg, callback);
-  }
-
+  //Toggles the Employee's employeement status at the dropzone 
   toggleEmployeeStatus(id, status) {
 
     var endpoint = this.URLsection + id + "/";

@@ -1,6 +1,7 @@
 import React from 'react';
 import ModalButton from './ModalButton.jsx';
 import Checkbox from '../CheckBox/Checkbox.js';
+import Binder from '../Binder.js';
 import { Form, FormGroup, Alert, Input, Row, Col, InputGroup, InputGroupAddon } from 'reactstrap';
 
 export default class AddEmployeeButton extends React.Component {
@@ -8,12 +9,9 @@ export default class AddEmployeeButton extends React.Component {
   constructor(props) {
     super(props);
 
-    this.verify = this.verify.bind(this);
-
-    this.firstNameChanged = this.firstNameChanged.bind(this);
-    this.lastNameChanged = this.lastNameChanged.bind(this);   
-    this.emailChanged  = this.emailChanged.bind(this); 
-    this.jobsChanged = this.jobsChanged.bind(this);
+    //creater a new binder and bind all of the methods in this class
+    var binder = new Binder();
+    binder.bindAll(this, AddEmployeeButton);
 
     this.state = {
       firstName: '',
@@ -24,11 +22,12 @@ export default class AddEmployeeButton extends React.Component {
     }
   }
 
-  verify() {
-
-    if(this.state.firstName && this.state.lastName && this.state.email && this.state.jobs.length > 0){
+  //Updates the data base by adding a new employee with a first name, last name, email, and roles
+  //Then it clears its states to be reused when adding another employee
+  update() {
+    if (this.state.firstName && this.state.lastName && this.state.email && this.state.jobs.length > 0) {
       this.props.authorize(this.state.firstName, this.state.lastName, this.state.email, this.state.jobs);
-      this.setState( {
+      this.setState({
         firstName: '',
         lastName: '',
         email: '',
@@ -36,26 +35,31 @@ export default class AddEmployeeButton extends React.Component {
         jobs: []
       });
       return true;
-    }else{
+    } else {
       this.setState(
-        {error: 'All fields are required to add an employee.'}
+        { error: 'All fields are required to add an employee.' }
       );
       return false;
     }
   }
 
+
+  //updates the first name state when the first name text field is edited
   firstNameChanged(e) {
     this.setState({ firstName: e.target.value });
   }
 
+  //updates the last name state when the last name text field is edited
   lastNameChanged(e) {
     this.setState({ lastName: e.target.value });
   }
 
+  //updates the email state when the email text field is edited
   emailChanged(e) {
     this.setState({ email: e.target.value });
   }
 
+  //updates the jobs state by checking which checkboxes are checked and unchecked
   jobsChanged(job) {
     var newJobs = Array.from(this.state.jobs);
     if (newJobs.length !== 0) {
@@ -80,6 +84,7 @@ export default class AddEmployeeButton extends React.Component {
     })
   }
 
+  //Creates all of the unchecked checkboxes
   getCheckBoxes() {
     var jobs = ["Rigger", "Loft Head", "Loft Employee", "Tandem Instructor",
       "AFP Instructor", "Packer", "Manifest", "Videographer",
@@ -111,9 +116,9 @@ export default class AddEmployeeButton extends React.Component {
 
   render() {
     var error = <div></div>
-    if(this.state.error){
+    if (this.state.error) {
       error = <Alert color="danger">{this.state.error}</Alert>;
-  }
+    }
     const checkboxes = this.getCheckBoxes();
     const modalContent = <Form>
       {error}
@@ -131,7 +136,7 @@ export default class AddEmployeeButton extends React.Component {
         <InputGroupAddon >Email: </InputGroupAddon>
         <Input id="addEmployeeEmail" type='email' value={this.state.email} onChange={this.emailChanged} />
       </InputGroup>
-      <br />       
+      <br />
       <Col>
         <h3>Job(s)</h3>
         <FormGroup check>
@@ -143,7 +148,7 @@ export default class AddEmployeeButton extends React.Component {
       <ModalButton buttonSize="md" buttonColor={"primary"} buttonText={"New Employee"} modalTitle={"New Employee"}
         modalContent={modalContent}
         modalPrimaryButtonText="Add"
-        modalPrimaryClick={this.verify} />
+        modalPrimaryClick={this.update} />
     );
   }
 }
