@@ -1,12 +1,13 @@
 import React from 'react';
 import StatDisplay from './StatDisplay.jsx';
 import { Row, Col } from 'reactstrap';
+import { rootURL } from '../restInfo.js';
 
 export default class BioStatDisplay extends React.Component {
     constructor(props) {
         super(props);
         
-    }
+    }    
 
     render() {
         return (
@@ -17,16 +18,9 @@ export default class BioStatDisplay extends React.Component {
                             statsToDisplay={
                                 <Row>
                                     <Col>
-                                        <p>Tandems Packed Today: {this.state.tandemsPackedToday}</p>
-                                        <p>Tandems Packed This Week: {this.state.tandemsPackedWeek}</p>
-                                        <p>Tandems Packed This Month: {this.state.tandemsPackedMonth}</p>
-                                        <p>Tandems Packed This Year: {this.state.tandemsPackedYear}</p>
-                                    </Col>
-                                    <Col>
-                                        <p>Students Packed Today: {this.state.studentsPackedToday}</p>
-                                        <p>Students Packed This Week: {this.state.studentsPackedWeek}</p>
-                                        <p>Students Packed This Month: {this.state.studentsPackedMonth}</p>
-                                        <p>Students Packed This Year: {this.state.studentsPackedYear}</p>
+                                        <p>Tandems Packed This Week: {this.props.weekly_pack_count}</p>
+                                        <p>Tandems Packed This Month: {this.props.monthly_pack_count}</p>
+                                        <p>Tandems Packed This Year: {this.props.yearly_pack_count}</p>
                                     </Col>
                                 </Row>
                             } />

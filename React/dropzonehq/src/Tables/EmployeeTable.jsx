@@ -3,7 +3,7 @@ import TableSheet from './TableSheet.jsx';
 import EditEmployeeButton from '../ModalButtons/EditEmployeeButton.jsx';
 import EmployeeStatusButton from '../ModalButtons/EmployeeStatusButton.jsx';
 import AddEmployeeButton from '../ModalButtons/AddEmployeeButton.jsx';
-import StatButton from '../ModalButtons/StatButton.jsx';
+import StatButton from '../ModalButtons/StatButton';
 import { ButtonGroup } from 'reactstrap';
 import RequestHandler from '../RequestHandler.js';
 import Binder from '../Binder.js';
@@ -39,14 +39,10 @@ export default class EmployeeTable extends React.Component {
         }, {
           Header: 'Actions',
           accessor: 'actions'
-        },
-        {
-          Header: 'Status',
-          accessor: 'is_active'
         }
       ],
       rows: [],
-      rowID: 0,
+      rowID: 0
     };
   }
 
@@ -73,13 +69,13 @@ export default class EmployeeTable extends React.Component {
           toggleEmployeeStatus={this.toggleEmployeeStatus}
           firstName={rowData[i].first_name}
           lastName={rowData[i].last_name}
-          status={rowData[i].is_active}
-        />
+          status={rowData[i].is_active} />
 
         <StatButton
-          id={rowData[i].employee_id}
-         />
-
+          firstName={rowData[i].first_name}
+          lastName={rowData[i].last_name}
+          id={rowData[i].employee_id} />
+          
       </ButtonGroup>;
       newRows[i].is_active = rowData[i].is_active + "";
       newRows[i].email = rowData[i].email;
@@ -118,7 +114,6 @@ export default class EmployeeTable extends React.Component {
     var handler = new RequestHandler();
     handler.get(endpoint, successMsg, errorMsg, callback);
   }
-
 
   addEmployee(firstName, lastName, email, jobs) {
 
@@ -197,7 +192,7 @@ export default class EmployeeTable extends React.Component {
 
   editEmployee(id, firstName, lastName, email, jobs) {
 
-    var endpoint = this.URLsection + "/" + id;
+    var endpoint = this.URLsection + id;
     var successMsg = "Edited info for " + firstName + " " + lastName + " (" + id + ").";
     var errorMsg = "Problem editing info for " + firstName + " " + lastName + " (" + id + ").";
     var self = this;
@@ -264,7 +259,7 @@ export default class EmployeeTable extends React.Component {
   }
 
   toggleEmployeeStatus(id, status) {
-
+    console.log(id, status)
     var endpoint = this.URLsection + id + "/";
     var self = this;
     var variables = {
@@ -297,13 +292,12 @@ export default class EmployeeTable extends React.Component {
       self.setState({
         rows: newRows
       })
-      var handler = new RequestHandler();
-      handler.patch(endpoint, variables, successMsg, errorMsg, callback);
-      return true;
+      
     };
+    var handler = new RequestHandler();
+    handler.patch(endpoint, variables, successMsg, errorMsg, callback);
+    return true;
   }
-
-
 
   render() {
     return (

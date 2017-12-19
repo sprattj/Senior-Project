@@ -5,34 +5,33 @@ import { rootURL } from '../restInfo.js';
 import UncontrolledTextInput from '../UnControlledTextInput.jsx';
 import SaveItemDetailsBtn from '../Buttons/SaveItemDetailsBtn.jsx';
 import InventoryDisplayItem from './InventoryDisplayItem.jsx';
-import Binder from '../Binder.js';
 
 export default class InventoryDisplayAAD extends React.Component {
     constructor(props) {
         super(props);
 
-        //creater a new binder and bind all of the methods in this class
-        var binder = new Binder();
-        binder.bindAll(this, InventoryDisplayAAD);
+        this.aad_snChanged = this.aad_snChanged.bind(this);
+        this.lifespanChanged = this.lifespanChanged.bind(this);
+
+        this.updateAADRow = this.updateAADRow.bind(this);
 
         this.state = {
-            AADInfo: {
-                aad_sn: this.props.AADInfo.aad_sn,
-                lifespan: this.props.AADInfo.lifespan
-            }
+            AADInfo: this.props.AADInfo
         };
     }
 
     componentWillReceiveProps(newProps)
     {
-        console.log("in componentWillReceiveProps");
+        console.log("in componentWillReceiveProps (InvDisplayAAD)");
         // force update state 
         this.setState({
             AADInfo: newProps.AADInfo
         })
     }
 
-    aad_snChanged(e) {
+    aad_snChanged(e) 
+    {
+        console.log("in aad_snChanged: ");
         var newAADInfo = this.state.AADInfo;
         newAADInfo.aad_sn = e.target.value;
         this.setState({
@@ -40,7 +39,9 @@ export default class InventoryDisplayAAD extends React.Component {
         });
     }
 
-    lifespanChanged(e) {
+    lifespanChanged(e) 
+    {
+        console.log("in lifespanChanged: ");
         var newAADInfo = this.state.AADInfo;
         newAADInfo.lifespan = e.target.value;
         this.setState({
@@ -49,6 +50,7 @@ export default class InventoryDisplayAAD extends React.Component {
     }
 
     updateAADRow(itemInfo) {
+        console.log("updateAADRow: " + JSON.stringify(itemInfo));
         this.props.updateAADRow(itemInfo, this.state.AADInfo);
         console.log("AAD STATE AFTER: " + JSON.stringify(this.state.AADInfo));
     }
@@ -61,19 +63,21 @@ export default class InventoryDisplayAAD extends React.Component {
                     <Row>
                         <InputGroup>
                             <InputGroupAddon >AAD Lifespan: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.lifespanChanged}
                                 id="lifespanID"
                                 defaultText={this.props.AADInfo.lifespan}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.AADInfo.lifespan} onChange={this.lifespanChanged}  />
                         </InputGroup>
                         <InputGroup>
                             <InputGroupAddon >AAD Serial#: </InputGroupAddon>
-                            <UncontrolledTextInput
+                            {/* <UncontrolledTextInput
                                 onBlur={this.aad_snChanged}
                                 id="aad_snID"
                                 defaultText={this.props.AADInfo.aad_sn}
-                            />
+                            /> */}
+                            <input type="text" value={this.state.AADInfo.aad_sn} onChange={this.aad_snChanged}  />
                         </InputGroup>
                     </Row>
                     <InventoryDisplayItem

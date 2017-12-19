@@ -17,9 +17,6 @@ export default class DropzoneHQNav extends React.Component {
                 <NavItem className="dzhq_nav_item">
                         <Link to='/dropzone-home'>Home</Link>
                 </NavItem>
-                        <NavItem className="dzhq_nav_item">
-                <Link to='/employee-info'>Stats</Link>
-                </NavItem>
                 <NavItem className="dzhq_nav_item">
                         <Link to='/employee-management'>Employee Admin</Link>
                 </NavItem>

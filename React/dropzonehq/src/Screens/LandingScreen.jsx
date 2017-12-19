@@ -21,7 +21,6 @@ export default class LandingScreen extends React.Component {
                     </Row>
                     <Row>
                         <Col className="mainscreen_col" xs={{ size: 12 }}>
-                            <Link to='/employee-info'><Button className="btn_transparent" size="lg">Employee Info</Button></Link>
                             <Link to='/employee-management'><Button className="btn_transparent" size="lg">Employee Management</Button></Link>
                             <Link to='/rental-menu'><Button className="btn_transparent" size="lg">Rentals</Button></Link>
                             <Link to='/rig-sheets'><Button className="btn_transparent" size="lg">Rigsheets</Button></Link>

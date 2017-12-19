@@ -16,6 +16,13 @@ const itemFiltersData =
     { name: "Containers Only", id: "4" },
     { name: "AADs Only", id: "5" }];
 
+const addItemFiltersData =
+    [{ name: "Select Item type", id: "1" },
+    { name: "Add Rig", id: "2" },
+    { name: "Add Canopy", id: "3" },
+    { name: "Add Container", id: "4" },
+    { name: "Add AAD", id: "5" }];
+
 const defaultFiltersData = rentalFiltersData
 
 //a class to call the dropdowns of any filter we may need
@@ -38,6 +45,9 @@ export default class FilterDropdown extends React.Component {
             case "InventoryFilterDropdown":
                 choice = itemFiltersData;
                 break;
+            case "InventoryAddItemFilterDropdown":
+                choice = addItemFiltersData;
+                break;
             default:
                 choice = defaultFiltersData;
                 break;
@@ -57,10 +67,13 @@ export default class FilterDropdown extends React.Component {
         var choice;
         switch (this.props.id) {
             case "RentalFilterDropdown":
-                this.props.onChange(rentalFiltersData[index].name.toString());;
+                this.props.onChange(rentalFiltersData[index].name.toString());
                 break;
             case "InventoryFilterDropdown":
-                this.props.onChange(itemFiltersData[index].name.toString());;
+                this.props.onChange(itemFiltersData[index].name.toString());
+                break;
+            case "InventoryAddItemFilterDropdown":
+                this.props.onChange(addItemFiltersData[index].name.toString());
                 break;
             default:
                 choice = defaultFiltersData;
