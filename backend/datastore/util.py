@@ -41,8 +41,8 @@ def createPinResetMessage(pin=None):
 #sign a cookie
 #in our case we will be doing this for the pin of employees
 def sign(cookie, length):
-    cookie_hash = blake2b(digest_size=length, key=settings.SECRET_KEY)
-    cookie_hash.update(cookie)
+    cookie_hash = blake2b(digest_size=length, key=bytes(settings.SECRET_KEY))
+    cookie_hash.update(bytes(cookie))
     return cookie_hash.hexdigest()
 
 
@@ -56,7 +56,8 @@ def verify_hashed(cookie_hash, cookie_hash2):
 def verify(cookie, cookie_hash, length):
     return compare_digest(sign(cookie, length), cookie_hash)
 
-
+#Mail Client for sending of employee pin
+#This will be used for further email usage
 class MailClient(object):
 
     def __init__(self):

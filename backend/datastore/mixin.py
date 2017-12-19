@@ -7,14 +7,14 @@ from django.http import HttpResponse
 
 #Base cookie checker, used for abstraction otherwise not super useful
 class CheckCookieMixin(object):
-
+    #will be subclassed
     def check_cookie(self, cookie):
         return True
-
+    #return the fail message
     @staticmethod
-    def cookie_check_failed(self):
+    def cookie_check_failed():
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
-
+    #call dispatch after check
     def dispatch(self, request, *args, **kwargs):
         if not self.check_cookie(request.session['pin']):
             return self.cookie_check_failed()
@@ -37,13 +37,13 @@ class RoleCookieRequiredMixin(CheckCookieMixin):
 class RoleArrayCookieRequiredMixin(RoleCookieRequiredMixin):
 
     def check_cookie(self, cookie, role):
-        if not models.Employees.check_employee_role_based_pin_hash(cookie, role):
+        if not models.Employees.check_employee_role_based_pin_hash(cookie, self.role):
             return False
         else:
             return True
 
     def dispatch(self, request, *args, **kwargs):
         for r in self.role:
-            if self.check_cookie(request.session['id'], r):
+            if self.check_cookie(request.session['pin'], r):
                 return super(RoleArrayCookieRequiredMixin, self).dispatch(request)
         return self.cookie_check_failed()
