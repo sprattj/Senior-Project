@@ -52,9 +52,10 @@ export default class InventoryDisplayContainer extends React.Component {
         console.log("CONTAINER STATE AFTER: " + JSON.stringify(this.state.containerInfo));
     }
 
-    deleteContainerRow(item_id) {
-        console.log("deleteContainerRow: " + item_id);
-        this.props.deleteContainerRow(item_id);
+    deleteContainerRow(itemInfo) {
+        console.log("deleteContainerRow: " + itemInfo.item_id);
+        var containerInfo = this.state.containerInfo;
+        this.props.deleteContainerRow(itemInfo, containerInfo);
 
         console.log(" AFTER delete: ");
     }

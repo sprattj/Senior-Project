@@ -9,6 +9,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 import datetime
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 
 
 class AADList(generics.ListCreateAPIView):
@@ -159,8 +160,23 @@ class ContainerDetail(generics.RetrieveUpdateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
         new_instance = serializer.save()
         return JsonResponse(data=serializer.data, status=status.HTTP_202_ACCEPTED)
-        
-        
+
+    def delete(self, request, *args, **kwargs):
+        item_id = self.kwargs.get('pk')
+
+        print("request.data: ")
+        print(request.data)
+        #container = Containers.objects.get(item_id=item_id)
+        container = get_object_or_404(Containers, pk=item_id)
+        container.delete()
+
+        #item = Items.objects.get(item_id=item_id)
+        item = get_object_or_404(Items, pk=item_id)
+        item.delete()
+
+        data = {'success': True}
+        return JsonResponse(data=data, status=status.HTTP_202_ACCEPTED)
+
 
 class DropzoneList(generics.ListCreateAPIView):
     queryset = Dropzones.objects.all()

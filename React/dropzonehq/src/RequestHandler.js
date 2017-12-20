@@ -52,7 +52,8 @@ export default class RequestHandler {
         };
         //if there are variables and it's not a GET method, pass the variables in
         if(variables && method.toUpperCase() !== "GET"){
-            data.body = JSON.stringify(variables)
+            data.body = JSON.stringify(variables);
+            console.log("data.body: " + data.body);
         }
         
         fetch(url, data)

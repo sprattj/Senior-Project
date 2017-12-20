@@ -134,7 +134,8 @@ export default class InventoryDisplayItem extends React.Component {
     deleteItemInfo()
     {
         console.log("clicked delete");
-        this.props.deleteItemInfo(this.state.item_id);
+        //this.props.deleteItemInfo(this.state.item_id);
+        this.props.deleteItemInfo(this.state);
     }
 
     render() {
