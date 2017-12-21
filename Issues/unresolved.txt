@@ -1,1 +1,2 @@
-
+Authentication of the Dropzone.
+The initial strategy for the implementation of the authentication system was multitiered users that would require a nested login from employees, this system was implemented naively after the creation of the initial database and using dropzone as a proxy user.  This implementation caused several errors when attempting to refactor the database or refactor the authentication system for the use of a User one-to-one.  After consideration and discussion the use of Employee as the User and their authentication would have not only made the authentication easier but also allow for a single tiered login, with the associated permissions that the employee would have.
