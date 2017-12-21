@@ -53,6 +53,7 @@ screen component to use as a start for theirs.
 --->Reviewed rental screen code with Brian and helped solve problems interacting with endpoints on the rental screen.
 
 DJANGO/DATABASE
+-Helped design overall database over several meetings including actively making arguments for or against DB design decisions
 -Helped Paul T and Jon debug Django issues
 -Figured out how to modify Django setup to serve our react files for production
 -Wrote backend functions for adding and editing for each type of inventory item.
