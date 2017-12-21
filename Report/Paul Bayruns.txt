@@ -1,0 +1,68 @@
+Paul Bayruns
+CONTRIBUTIONS
+===================
+GENERAL
+-Offered consistent support and advice to other members for overall project design, development environment setup, and ultimately
+served as a resource available to any team member at any time I could be.
+-Communicated and made myself available extensively on slack, jumping into discussions of any issues that I had advice to offer.
+--->As a result, I ended up sending ~2,700 out of the ~6,000 total slack messages for our team.
+-Attended every project meeting that occured for the full meeting duration, including occasional long meetings on weekends.
+-Met with other team members independently when needed.
+-Helped keep meetings focused and keep project on track with members leaving meetings knowing what was to be done next.
+-Spearheaded unraveling of frontend frameworks and best practices. Took initiative to complete the full Codecademy for React and subsequently 
+investigated best practices, library weaknesses to avoid, and design priniciples, including dozens of articles and several 30+ minute conference talks from Facebook.
+--->Ultimately, this made using React and the associated libraries easier for the rest of the team as I setup the project structure and
+became a resource for React questions.
+-As the project progressed, began to work on the backend (in addition to the frontend) when it had more overall work needed and became a bottleneck.
+--->In doing so, I gained a full understanding of the project's full tech stack. There are no files in this project that I have not reviewed
+or do not understand.
+
+ARTIFACTS
+-Wrote portions of specification.
+-Revised and reviewed all portions of specification.
+-Wrote sections of design doc.
+-Revised and reviewed most sections of the design doc.
+-Helped in updating all artifacts when needed.
+
+REACT/FRONTEND
+-Sought out libraries to solve team problems. 
+--->Investigated different library options.
+--->Read library documentation and created first usage examples for other team members to go off of.
+--->In some cases, created custom handling of library usage cases in reusable components to abstract and make library usage easier 
+(such as wrapping library components in custom components or utility classes). 
+--->Libraries found, figured out, and implemented: reactstrap, react-router, react-table, react-toastify, react-big-calender, moment.js
+--->Created utility solutions for both handling requests and binding class methods in requestHandler.js and binder.js respectively.
+--->Helped extensively in managing team usage of Node Package Manager, often spending nontrivial amounts of time helping other team members get their setups working.
+
+-Created full user interface sections of the application
+--->Created the entirety of both the Signout/Rigsheet screen and the Loft/Problem queue screen (including all reusable components made for these that were used application-wide)
+--->Created the Landing page, 404 page, navbar, main menu, and the unused login, password reset, and account creation screens
+
+-Created crucial reusable component sections, along with first examples for other team members to use:
+--->All dropdowns except FilterDropdown
+--->All lists
+--->The base ModalButton and ModalDialog components and all implementations of them except the stat and employee buttons
+--->Created reusable tab group component
+--->Created the TableSheet component and used it for Rigsheet, which served as an example
+--->Created most of if not all of the frontend of the prototype, giving team members an example of a full functioning React
+screen component to use as a start for theirs.
+-Helped team members with their portions of the application
+--->Had several multiple hour calls with Jatin over Thanksgiving break assisting in the implementation of the inventory screen.
+--->Refactored the inventory screen and its subcomponents, cutting out over 2,000 lines of code while maintaining the same functionality.
+--->Met with Andres many times to work on the project outside of meeting times and helped in implementation of the employee screen.
+--->Reviewed rental screen code with Brian and helped solve problems interacting with endpoints on the rental screen.
+
+DJANGO/DATABASE
+-Helped Paul T and Jon debug Django issues
+-Figured out how to modify Django setup to serve our react files for production
+-Wrote backend functions for adding and editing for each type of inventory item.
+-Made edits to fix models when code from other members would accidentally cause django to throw errors and not run the server.
+-Helped research and attempt to implement solutions to authentication problems encountered later in the application. 
+
+AWS/HOSTING
+-Responsible for AWS hosting of the application
+-Got application live on EC2 instance after significant difficulties in deploying
+-Researched advice, best practices, and tutorials to get React and Django to work together to make backend able to actually serve frontend files 
+(Dev environment hosts frontend on one port, which makes requests to backend running on different port)
+-Managed our RDS instances, ensuring they were working and configured properly. 
+-Quickly restored RDS database from generated backup when entire schema was accidentally dropped
