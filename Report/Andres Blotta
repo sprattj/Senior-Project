@@ -1,0 +1,23 @@
+
+My contributions to Senior-Project included:
+	Contributing to the initial design and development of our relational database which consisted of over 30 tables. 
+  The database had to be changed a slightly over the course of the semester. 
+	Contributing to the creation of the design doc and specifications.
+  I designed and created the Employee Management Screen which had an assortment of functionality. I initially created a 
+  table component to be used in the Employee Management Screen and many other screens but after we found a React-Table 
+  library online we used that instead. The Add Employee modal button created a modal the enables the user to create a 
+  new employee by adding their first name, last name, email, and roles. The employee roles new fully worked because we 
+  never fully got the roles sorted out in the database, so rather than adding them to the database, I simply have them 
+  displayed on the frontend. The Edit Employee button worked by having data from our database pass into the appropriate 
+  text fields to be edited and put back into our database. The Deactivate/Activate Employee button simply toggled the 
+  employment status of the employee. The Employee Stats button worked by making calls to our Rest API that would query 
+  the database and return the appropriate statistical value. 
+	I also contributed with the initial try to get our project to run on the AWS EC2 instance.
+	I aided other frontend developers by trying my best to answer questions or helping them through the logic of their 
+  screens. I solved an issue in the inventory and rental screen where there was a problem in passing data from one component 
+  to another, specifically between the rental/inventory table on the left and the appropriate display on the  right. The 
+  problem was that the two components were completely independent of one another and in React data is passed vertically. 
+  To solve this issue, I proposed that we wrapped those two components in a parent component so that the data could flow 
+  back and forth between the two components through this parent class. It worked like a charm. 
+	Created the powerpoint presentation used in our demo and recorded the part of the video that had to do with the Employee 
+  Management Screen.
