@@ -1,1 +1,19 @@
+Jatin Bhakta's Contributions for SP:
 
+1.) Researched / took responsibile for frontend frameworks/library to use: Primiarliy between ReactJS vs Angular 2 or 4. (Consulted with John Saunders) 
+2.) Helped and actively involved in creating the database design and minor changes to it throughout semester
+3.) Aided in speciations document 
+4.) Assisted with design changes, adjusting design document
+5.) Helped team members with Git, installing packages used for React
+6.) Active in Slack communication and in team meetings, tried to help with any problems that I can / give suggestions/links, etc.
+7.) Implemented all Inventory Screen functionality including the following:
+  a.) Developed components for all the different item type displays dealing with Inventory (except for ItemTable as it is also used in Rentals, was done by Brian)
+  b.) Developed functionality to add, edit, and remove an item (update the frontend view and backend db accordingly)
+  c.) Figured out way to have input text and checkbox fields to have 2 way data binding (default value being the value pulled from db, while still being editable by the user)
+  d.) 
+  
+  Assisted Paul Bayruns with refactoring of http requests
+  Tested, Debugged, and resolved issues as they came
+  Documented code
+  Looked into Redux 
+n.) Fixed various bugs including in Inventory and Rental
