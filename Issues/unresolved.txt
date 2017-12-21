@@ -1,2 +1,14 @@
 Authentication of the Dropzone.
 The initial strategy for the implementation of the authentication system was multitiered users that would require a nested login from employees, this system was implemented naively after the creation of the initial database and using dropzone as a proxy user.  This implementation caused several errors when attempting to refactor the database or refactor the authentication system for the use of a User one-to-one.  After consideration and discussion the use of Employee as the User and their authentication would have not only made the authentication easier but also allow for a single tiered login, with the associated permissions that the employee would have.
+
+
+Inventory
+- After the user adds an item, selects row in left table view, the id is displayed as "undefined" in right details view. But, if you refresh page, it's there. 
+- When editing an item, the user should go top to bottom when changing whichever fields they want. Otherwise, if you change a field that's listed lower, then a higher one, the lower field will be repopulated with the previous default value from db and the user will need to change it again.
+
+Employee Management
+- Employee id doesn't display after adding employee, but then it does on a page refresh.
+- The old name appears when changing an employee's name and then editing them further, but then it does on refresh.
+
+Loft
+- Handled by/Submitted by IDs are not displayed
