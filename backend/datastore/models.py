@@ -223,7 +223,7 @@ class Permissions(models.Model):
         app_label = 'dropZoneHQ'
 
 
-# Employees the work at the drop zone
+# Employees working at the drop zone
 class Employees(models.Model):
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)
@@ -238,6 +238,10 @@ class Employees(models.Model):
     pin = models.CharField(max_length=45, blank=True, unique=True)
     employment_date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        managed = True
+        db_table = 'employees'
+        app_label = 'dropZoneHQ'
 
     # check is the pin of an employee matches the pin given
     @staticmethod
@@ -299,11 +303,6 @@ class Employees(models.Model):
         emp = Employees.objects.filter(email=email)
         return emp
 
-    class Meta:
-        managed = True
-        db_table = 'employees'
-        app_label = 'dropZoneHQ'
-
 
 # Bridge between Employees and Roles. Many employees can perform many roles.
 class EmployeesEmployeeRoles(models.Model):
@@ -337,7 +336,7 @@ class EmployeesSignouts(models.Model):
         (PACKED, 'packed'),
         (SIGNOUT, 'signout')
     )
-    employee = models.ForeignKey('Employees', models.DO_NOTHING)
+    employee = models.ForeignKey('Employees', models.DO_NOTHING, primary_key=True)
     signout = models.ForeignKey('Signouts', models.DO_NOTHING)
     # What type of sign off occurred
     packed_signout = models.CharField(db_column='packed_or_signout',
@@ -378,7 +377,6 @@ class Items(models.Model):
     brand = models.CharField(max_length=45, blank=True, null=True)
     description = models.CharField(max_length=45, blank=True, null=True)
     # Whether or not this item is rentable
-    # is_rentable = models.CharField(max_length=4)
     is_rentable = models.BooleanField(max_length=4)
     is_on_rig = models.BooleanField(max_length=4)
     is_available = models.BooleanField(max_length=4)
@@ -450,7 +448,7 @@ class Rigs(models.Model):
     container = models.OneToOneField(Containers, models.DO_NOTHING)
     aad = models.OneToOneField(AutomaticActivationDevices, models.DO_NOTHING)
     # Whether or not this ris is built for a tandem jump
-    istandem = models.CharField(db_column='isTandem', max_length=4)
+    istandem = models.BooleanField(db_column='isTandem', max_length=4)
     # isrentable = models.BooleanField('Items')
 
     class Meta:
